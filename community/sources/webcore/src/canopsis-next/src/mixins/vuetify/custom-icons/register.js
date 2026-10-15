@@ -1,13 +1,13 @@
-import { createNamespacedHelpers } from 'vuex';
+import { mapActions, mapState, mapStores } from 'pinia';
 
 import { SOCKET_ROOMS } from '@/config';
 import { MAX_LIMIT } from '@/constants';
 
 import { ICONS_RESPONSE_MESSAGES_TYPES } from '@/plugins/socket/constants';
 
-import { vuetifyCustomIconsBaseMixin } from './base';
+import { useIconStore } from '@/stores/modules/icon';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('icon');
+import { vuetifyCustomIconsBaseMixin } from './base';
 
 export const vuetifyCustomIconsRegisterMixin = {
   mixins: [vuetifyCustomIconsBaseMixin],
@@ -17,21 +17,20 @@ export const vuetifyCustomIconsRegisterMixin = {
     };
   },
   computed: {
-    ...mapGetters(['registeredIconsById']),
+    ...mapStores(useIconStore),
+    ...mapState(useIconStore, ['registeredIconsById']),
   },
   async mounted() {
-    this.$socket
-      .join(SOCKET_ROOMS.icons)
-      .addListener(this.setIcon);
+    this.$socket?.join?.(SOCKET_ROOMS.icons)?.addListener?.(this.setIcon);
   },
   methods: {
-    ...mapActions({
-      fetchIconsListWithoutStore: 'fetchListWithoutStore',
-      fetchIconWithoutStore: 'fetchItemWithoutStore',
-      setRegisteredIcons: 'setRegisteredIcons',
-      addRegisteredIcon: 'addRegisteredIcon',
-      removeRegisteredIcon: 'removeRegisteredIcon',
-    }),
+    ...mapActions(useIconStore, [
+      'fetchListWithoutStore',
+      'fetchItemWithoutStore',
+      'setRegisteredIcons',
+      'addRegisteredIcon',
+      'removeRegisteredIcon',
+    ]),
 
     async setIcon({ _id: id, type }) {
       const prevIcon = this.registeredIconsById[id];
@@ -47,7 +46,7 @@ export const vuetifyCustomIconsRegisterMixin = {
         return;
       }
 
-      const icon = await this.fetchIconWithoutStore({ id });
+      const icon = await this.fetchItemWithoutStore({ id });
 
       this.registerIconInVuetify(icon.title, icon.content, { fillBorder: icon.fill_border });
       this.addRegisteredIcon({ id, icon });
@@ -55,11 +54,12 @@ export const vuetifyCustomIconsRegisterMixin = {
 
     async fetchIconsWithRegistering() {
       try {
-        const { data: icons } = await this.fetchIconsListWithoutStore({ params: { limit: MAX_LIMIT } });
+        const response = await this.fetchListWithoutStore({ params: { limit: MAX_LIMIT } });
+        const icons = Array.isArray(response?.data) ? response.data : (response?.data?.data ?? []);
 
-        icons.forEach(({ title, content, fill_border: fillBorder }) => (
-          this.registerIconInVuetify(title, content, { fillBorder })
-        ));
+        icons.forEach(({ title, content, fill_border: fillBorder }) =>
+          this.registerIconInVuetify(title, content, { fillBorder }),
+        );
 
         this.setRegisteredIcons({ icons });
       } catch (err) {
@@ -68,3 +68,5 @@ export const vuetifyCustomIconsRegisterMixin = {
     },
   },
 };
+
+export default vuetifyCustomIconsRegisterMixin;

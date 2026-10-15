@@ -1,21 +1,63 @@
+<template>
+  <div class="limited-time-line-chart">
+    <div class="limited-time-line-chart__canvas">
+      <canvas ref="canvas" />
+    </div>
+    <slot :chart="chart" name="actions" />
+  </div>
+</template>
+
 <script>
+import {
+  CategoryScale,
+  Chart,
+  Filler,
+  Legend,
+  LinearScale,
+  LineController,
+  LineElement,
+  PointElement,
+  TimeScale,
+  Tooltip,
+} from 'chart.js';
+import annotationPlugin from 'chartjs-plugin-annotation';
+import zoomPlugin from 'chartjs-plugin-zoom';
+import 'chartjs-adapter-moment';
 import { merge } from 'lodash';
+import { markRaw } from 'vue';
 
 import { DATETIME_FORMATS } from '@/constants';
 
-import { chartAnnotationMixin } from '@/mixins/chart/annotation';
-import { chartLimitedSegmentMixin } from '@/mixins/chart/limited-segment';
-import { chartBackgroundMixin } from '@/mixins/chart/background';
-import { chartZoomMixin } from '@/mixins/chart/zoom';
+import { getUserInterfaceDateFormat } from '@/helpers/date/date-format';
 
-import { Line } from '@/externals/vue-chart/components';
+Chart.register(
+  CategoryScale,
+  Filler,
+  Legend,
+  LinearScale,
+  LineController,
+  LineElement,
+  PointElement,
+  TimeScale,
+  Tooltip,
+  annotationPlugin,
+  zoomPlugin,
+);
+
+const defaultDatasetOptions = {
+  backgroundColor: 'green',
+  pointBackgroundColor: 'transparent',
+  pointBorderColor: 'grey',
+  pointBorderWidth: 2,
+  radius: 0,
+  hoverRadius: 5,
+  tension: 0.2,
+};
 
 export default {
-  extends: Line,
-  mixins: [chartAnnotationMixin, chartLimitedSegmentMixin, chartZoomMixin, chartBackgroundMixin],
-  props: {
-    ...Line.props,
+  inject: ['$system'],
 
+  props: {
     labels: {
       type: Array,
       required: false,
@@ -28,131 +70,186 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    dark: {
+      type: Boolean,
+      default: false,
+    },
   },
+
+  data() {
+    return {
+      chart: null,
+    };
+  },
+
   computed: {
     chartData() {
       return {
         labels: this.labels,
         datasets: this.datasets.map(dataset => ({
-          backgroundColor: 'green',
-          pointBackgroundColor: 'transparent',
-          pointBorderColor: 'grey',
-          pointBorderWidth: 2,
-          radius: 0,
-          hoverRadius: 5,
-          tension: 0.2,
+          ...defaultDatasetOptions,
           ...dataset,
         })),
       };
     },
-    mergedOptions() {
-      const { limit = {} } = this.options.plugins;
 
-      return merge({
-        responsive: true,
-        maintainAspectRatio: false,
-        hover: {
-          mode: 'index',
-          intersect: false,
-        },
-        scales: {
-          x: {
-            type: 'time',
-            beginAtZero: true,
-            time: {
-              tooltipFormat: DATETIME_FORMATS.longWithDayOfWeek,
-              displayFormats: {
-                year: DATETIME_FORMATS.shortWithDayOfWeek,
-                quarter: DATETIME_FORMATS.shortWithDayOfWeek,
-                month: DATETIME_FORMATS.shortWithDayOfWeek,
-                week: DATETIME_FORMATS.shortWithDayOfWeek,
-                day: DATETIME_FORMATS.shortWithDayOfWeek,
-                hour: DATETIME_FORMATS.medium,
-                minute: DATETIME_FORMATS.medium,
-                second: DATETIME_FORMATS.medium,
-              },
-            },
-            ticks: {
-              max: Date.now(),
-              fontSize: 11,
-              autoSkip: true,
-              autoSkipPadding: 5,
-              maxRotation: 0,
-            },
-          },
-          y: {
-            type: 'linear',
-            beginAtZero: true,
-            ticks: {
-              min: 0,
-              fontSize: 11,
-              callback: value => (value >= 1000 ? `${value / 1000} k` : value),
-            },
-          },
-        },
-        plugins: {
-          legend: {
-            display: false,
-          },
-          tooltip: {
+    mergedOptions() {
+      const limit = this.options.plugins?.limit ?? {};
+      const dateFormat = getUserInterfaceDateFormat(this.$system.dateFormat);
+
+      return merge(
+        {
+          responsive: true,
+          maintainAspectRatio: false,
+          hover: {
             mode: 'index',
             intersect: false,
-            displayColors: false,
           },
-          annotation: {
-            annotations: {
-              limitLine: {
-                drawTime: 'afterDatasetsDraw',
-                display: !!limit.value,
-                type: 'line',
-                mode: 'horizontal',
-                scaleID: 'y',
-                value: limit.value,
-                borderColor: limit.borderColor || limit.backgroundColor,
-                borderWidth: limit.borderWidth || 2,
-                borderDash: limit.borderDash || [],
-                label: {
+          scales: {
+            x: {
+              type: 'time',
+              beginAtZero: true,
+              time: {
+                tooltipFormat: dateFormat.format,
+                displayFormats: {
+                  year: dateFormat.dateFormat,
+                  quarter: dateFormat.dateFormat,
+                  month: dateFormat.dateFormat,
+                  week: dateFormat.dateFormat,
+                  day: dateFormat.dateFormat,
+                  hour: DATETIME_FORMATS.medium,
+                  minute: DATETIME_FORMATS.medium,
+                  second: DATETIME_FORMATS.medium,
+                },
+              },
+              ticks: {
+                max: Date.now(),
+                font: {
+                  size: 11,
+                },
+                autoSkip: true,
+                autoSkipPadding: 5,
+                maxRotation: 0,
+              },
+            },
+            y: {
+              type: 'linear',
+              beginAtZero: true,
+              ticks: {
+                min: 0,
+                font: {
+                  size: 11,
+                },
+                callback: value => (value >= 1000 ? `${value / 1000} k` : value),
+              },
+            },
+          },
+          plugins: {
+            legend: {
+              display: false,
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+              displayColors: false,
+            },
+            annotation: {
+              annotations: {
+                limitLine: {
+                  drawTime: 'afterDatasetsDraw',
+                  display: !!limit.value,
+                  type: 'line',
+                  scaleID: 'y',
+                  value: limit.value,
+                  borderColor: limit.borderColor || limit.backgroundColor,
+                  borderWidth: limit.borderWidth || 2,
+                  borderDash: limit.borderDash || [],
+                  label: {
+                    display: false,
+                  },
+                },
+              },
+            },
+            zoom: {
+              pan: {
+                enabled: false,
+              },
+              zoom: {
+                wheel: {
                   enabled: false,
-                  font: {},
+                },
+                pinch: {
+                  enabled: false,
+                },
+                drag: {
+                  enabled: false,
                 },
               },
             },
           },
-          zoom: {
-            pan: {
-              enabled: false,
-            },
-            zoom: {
-              wheel: {
-                enabled: false,
-              },
-              pinch: {
-                enabled: false,
-              },
-              drag: {
-                enabled: false,
-              },
-            },
-          },
         },
-      }, this.options);
+        this.options,
+      );
     },
   },
+
   watch: {
-    chartData(data, oldData) {
-      if (data !== oldData) {
-        this.updateChart(data, this.mergedOptions);
-      }
+    chartData: {
+      deep: true,
+      handler() {
+        this.updateChart();
+      },
     },
 
-    mergedOptions(options, oldOptions) {
-      if (options !== oldOptions) {
-        this.updateChart(this.chartData, options);
-      }
+    mergedOptions: {
+      deep: true,
+      handler() {
+        this.updateChart();
+      },
     },
   },
+
   mounted() {
-    this.renderChart(this.chartData, this.mergedOptions);
+    this.renderChart();
+  },
+
+  beforeUnmount() {
+    this.chart?.destroy();
+    this.chart = null;
+  },
+
+  methods: {
+    renderChart() {
+      this.chart = markRaw(
+        new Chart(this.$refs.canvas, {
+          type: 'line',
+          data: this.chartData,
+          options: this.mergedOptions,
+        }),
+      );
+    },
+
+    updateChart() {
+      if (!this.chart) {
+        return;
+      }
+
+      this.chart.data = this.chartData;
+      this.chart.options = this.mergedOptions;
+      this.chart.update();
+    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.limited-time-line-chart {
+  position: relative;
+  width: 100%;
+
+  &__canvas {
+    position: relative;
+    height: 360px;
+  }
+}
+</style>

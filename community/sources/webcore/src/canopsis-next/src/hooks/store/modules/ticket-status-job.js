@@ -1,31 +1,28 @@
-import { useStoreModuleHooks } from '@/hooks/store';
+import { storeToRefs } from 'pinia';
 
-const useTicketStatusJobStoreModule = () => useStoreModuleHooks('ticketStatusJob');
+import { useTicketStatusJobStore } from '@/stores/modules/ticket-status-job';
 
 /**
- * Custom hook for accessing getters and actions related to ticket status job Vuex store module.
+ * Ticket status job store facade.
  *
- * @returns {Object} An object containing getters and actions for the ticket status job store module.
+ * @returns {Object}
  */
 export const useTicketStatusJob = () => {
-  const { useGetters, useActions } = useTicketStatusJobStoreModule();
-
-  const getters = useGetters({
-    ticketStatusJobs: 'items',
-    ticketStatusJobsMeta: 'meta',
-    ticketStatusJobsPending: 'pending',
-  });
-
-  const actions = useActions({
-    fetchTicketStatusJobsList: 'fetchList',
-    fetchTicketStatusJobsListWithPreviousParams: 'fetchListWithPreviousParams',
-    updateTicketStatusJob: 'update',
-    playTicketStatusJob: 'play',
-    pauseTicketStatusJob: 'pause',
-  });
+  const ticketStatusJobStore = useTicketStatusJobStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(ticketStatusJobStore);
 
   return {
-    ...getters,
-    ...actions,
+    ticketStatusJobs: items,
+    ticketStatusJobsMeta: meta,
+    ticketStatusJobsPending: pending,
+    ticketStatusJobsFetchingParams: fetchingParams,
+
+    fetchTicketStatusJobsList: ticketStatusJobStore.fetchList,
+    fetchTicketStatusJobsListWithPreviousParams: ticketStatusJobStore.fetchListWithPreviousParams,
+    createTicketStatusJob: ticketStatusJobStore.create,
+    updateTicketStatusJob: ticketStatusJobStore.update,
+    removeTicketStatusJob: ticketStatusJobStore.remove,
+    playTicketStatusJobs: ticketStatusJobStore.play,
+    pauseTicketStatusJobs: ticketStatusJobStore.pause,
   };
 };

@@ -1,29 +1,33 @@
 <template>
   <v-list-item
-    :to="link.route"
     :class="link.class"
+    :disabled="disabled"
     class="top-bar-menu-link"
-    active-class=""
     @click="click"
     @mouseenter="handleMouseEnter"
   >
-    <v-list-item-avatar class="ml-2" size="24" rounded="lg">
-      <v-icon :class="{ 'text--secondary': !link.color }" :color="link.color" size="24">
+    <template #prepend>
+      <v-icon :color="link.color || undefined" size="24">
         {{ link.icon }}
       </v-icon>
-    </v-list-item-avatar>
-    <v-list-item-title :class="{ [`${link.color}--text`]: link.color }">
-      <v-layout justify-space-between>
+    </template>
+
+    <v-list-item-title :class="{ [`text-${link.color}`]: link.color }">
+      <c-layout align="center" justify="space-between">
         <span>{{ link.title }}</span>
-      </v-layout>
+      </c-layout>
     </v-list-item-title>
-    <v-list-item-action v-if="link.links">
+
+    <template v-if="link.links" #append>
       <v-icon>arrow_right</v-icon>
-    </v-list-item-action>
+    </template>
   </v-list-item>
 </template>
 
 <script>
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+
 export default {
   props: {
     link: {
@@ -31,19 +35,38 @@ export default {
       default: () => ({}),
     },
   },
+
+  emits: ['click', 'mouseenter'],
+
   setup(props, { emit }) {
-    const click = () => {
+    const router = useRouter();
+
+    const disabled = computed(
+      () => props.link.route?.name && !router.hasRoute(props.link.route.name),
+    );
+
+    const click = async () => {
       if (props.link.links?.length) {
         return;
       }
 
-      props.link.handler?.();
-      emit('click');
+      if (props.link.handler) {
+        await props.link.handler();
+        emit('click');
+
+        return;
+      }
+
+      if (props.link.route && !disabled.value) {
+        await router.push(props.link.route);
+        emit('click');
+      }
     };
 
     const handleMouseEnter = event => emit('mouseenter', event);
 
     return {
+      disabled,
       click,
       handleMouseEnter,
     };
@@ -52,12 +75,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.top-bar-menu-link ::v-deep a {
+.top-bar-menu-link {
+  min-width: 190px;
   text-decoration: none;
-  color: inherit;
-
-  .v-list-item__avatar {
-    min-width: unset;
-  }
 }
 </style>

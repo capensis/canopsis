@@ -1,29 +1,25 @@
 <template>
-  <v-layout column>
-    <c-enabled-field v-field="form.enabled" with-background />
+  <c-layout gap="2" column>
+    <c-enabled-field v-model="enabledField" hide-details with-background />
+
     <c-form-general-patterns-tabs>
       <template #general="{ setRef }">
-        <idle-rule-general-form
-          v-field="form"
-          :ref="setRef"
-          :is-entity-type="isEntityType"
-        />
+        <idle-rule-general-form :ref="setRef" :is-entity-type="isEntityType" />
       </template>
+
       <template #patterns="{ setRef }">
-        <idle-rule-patterns-form
-          v-field="form.patterns"
-          :ref="setRef"
-          :is-entity-type="isEntityType"
-        />
+        <idle-rule-patterns-form :ref="setRef" :is-entity-type="isEntityType" />
       </template>
     </c-form-general-patterns-tabs>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
 import { computed } from 'vue';
 
 import { isIdleRuleEntityType } from '@/helpers/entities/idle-rule/form';
+
+import { useFormModels } from '@/hooks/form';
 
 import IdleRuleGeneralForm from './idle-rule-general-form.vue';
 import IdleRulePatternsForm from './idle-rule-patterns-form.vue';
@@ -33,20 +29,17 @@ export default {
     IdleRuleGeneralForm,
     IdleRulePatternsForm,
   },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
-  props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
-  },
-  setup(props) {
-    const isEntityType = computed(() => isIdleRuleEntityType(props.form.type));
+
+  setup() {
+    const { enabledField, typeField } = useFormModels({
+      enabledField: 'enabled',
+      typeField: 'type',
+    });
+
+    const isEntityType = computed(() => isIdleRuleEntityType(typeField.value));
 
     return {
+      enabledField,
       isEntityType,
     };
   },

@@ -1,10 +1,7 @@
 <template>
-  <v-layout
-    class="pbehavior-exception-field"
-    column
-  >
-    <v-layout class="gap-2" justify-space-between>
-      <v-flex class="pbehavior-exception-field__interval" xs7>
+  <div class="pbehavior-exception-field">
+    <v-row class="pbehavior-exception-field__row" align="center">
+      <v-col class="pbehavior-exception-field__interval">
         <date-time-splitted-range-picker-field
           v-if="editing"
           :start="value.begin"
@@ -16,6 +13,7 @@
           :name="datesName"
           :full-day="fullDay"
           :disabled="disabled"
+          control-variant="modal"
           @update:start="updateField('begin', $event)"
           @update:end="updateField('end', $event)"
         />
@@ -27,40 +25,29 @@
           :end-label="$t('common.end')"
           :full-day="fullDay"
         />
-      </v-flex>
-      <v-flex
-        v-if="withType"
-        xs5
-      >
+      </v-col>
+      <v-col v-if="withType" class="pbehavior-exception-field__type">
         <c-pbehavior-type-field
           v-if="editing"
-          v-field="value.type"
+          :model-value="value.type"
           :required="!disabled"
           :name="typeName"
           :disabled="disabled"
           return-object
+          @update:model-value="updateField('type', $event)"
         />
-        <c-pbehavior-type-text
-          v-else
-          :value="value.type"
-        />
-      </v-flex>
-      <v-flex
-        v-if="!disabled"
-        class="pbehavior-exception-field__actions"
-        shrink
-      >
+        <c-pbehavior-type-text v-else :value="value.type" />
+      </v-col>
+      <v-col v-if="!disabled" class="pbehavior-exception-field__actions">
         <v-btn
           :input-value="editing"
           class="btn--editing"
+          size="small"
+          variant="text"
           icon
-          fab
           @click="toggleEditing"
         >
-          <v-icon
-            v-if="editing"
-            color="primary"
-          >
+          <v-icon v-if="editing" color="primary">
             check
           </v-icon>
           <v-icon v-else>
@@ -70,24 +57,28 @@
         <v-btn
           class="v-btn-legacy-m--y"
           color="error"
+          size="small"
+          variant="text"
           icon
           @click="$emit('delete')"
         >
           <v-icon>delete</v-icon>
         </v-btn>
-      </v-flex>
-    </v-layout>
-    <v-layout>
-      <v-switch
-        v-model="fullDay"
-        :label="$t('modals.createPbehavior.steps.general.fields.fullDay')"
-        :disabled="disabled || !editing"
-        class="mt-0"
-        color="primary"
-        hide-details
-      />
-    </v-layout>
-  </v-layout>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-switch
+          v-model="fullDay"
+          :label="$t('modals.createPbehavior.steps.general.fields.fullDay')"
+          :disabled="disabled || !editing"
+          class="mt-0"
+          color="primary"
+          hide-details
+        />
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script>
@@ -106,18 +97,14 @@ import {
 import { useModelField } from '@/hooks/form/model-field';
 import { useValidationChildren } from '@/hooks/validator/validation-children';
 
-import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
 import DateTimeSplittedRangePickerText from '@/components/forms/fields/date-time-picker/date-time-splitted-range-picker-text.vue';
+import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
 
 export default {
-  inject: ['$validator'],
+  emits: ['update:value'],
   components: {
     DateTimeSplittedRangePickerField,
     DateTimeSplittedRangePickerText,
-  },
-  model: {
-    prop: 'value',
-    event: 'input',
   },
   props: {
     value: {
@@ -139,7 +126,8 @@ export default {
 
     const editing = ref(!props.value.type);
     const fullDay = ref(
-      isStartOfDay(props.value.begin) && (isEndOfDay(props.value.end) || isStartOfDay(props.value.end)),
+      isStartOfDay(props.value.begin) &&
+        (isEndOfDay(props.value.end) || isStartOfDay(props.value.end)),
     );
 
     const beginRules = computed(() => ({
@@ -154,9 +142,7 @@ export default {
     }));
 
     const nameSuffix = computed(() => (props.value.key ? `-${props.value.key}` : ''));
-
     const datesName = computed(() => `dates${nameSuffix.value}`);
-
     const typeName = computed(() => `type${nameSuffix.value}`);
 
     watch(fullDay, () => {
@@ -194,17 +180,28 @@ export default {
 
 <style lang="scss" scoped>
 .pbehavior-exception-field {
+  &__row {
+    flex-wrap: nowrap;
+  }
+
+  &__interval,
+  &__type {
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
   &__interval {
-    flex-shrink: 0;
+    flex-grow: 2;
   }
 
   &__actions {
-    min-width: 90px;
-
-    .btn--editing {
-      height: 36px;
-      width: 36px;
-    }
+    flex: 0 0 auto;
+    width: auto;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
   }
 }
 </style>

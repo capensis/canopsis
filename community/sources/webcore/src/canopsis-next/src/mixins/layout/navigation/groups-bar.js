@@ -4,13 +4,9 @@ import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/vi
 import { layoutNavigationEditingModeMixin } from './editing-mode';
 
 export const layoutNavigationGroupsBarMixin = {
-  mixins: [
-    entitiesViewGroupMixin,
-    permissionsTechnicalViewMixin,
-    layoutNavigationEditingModeMixin,
-  ],
+  mixins: [entitiesViewGroupMixin, permissionsTechnicalViewMixin, layoutNavigationEditingModeMixin],
   props: {
-    value: {
+    modelValue: {
       type: Boolean,
       default: false,
     },

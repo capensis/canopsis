@@ -1,48 +1,70 @@
 <template>
   <div class="fab ma-2">
-    <v-layout column>
-      <v-flex class="mb-3">
-        <c-refresh-btn @click="$emit('refresh')" />
-      </v-flex>
-      <c-speed-dial
+    <c-layout column>
+      <div class="mb-3">
+        <c-refresh-btn @click="emit('refresh')" />
+      </div>
+
+      <v-speed-dial
         v-if="hasAccess"
-        :transition="transition"
-        direction="left"
+        location="left center"
+        persistent
+        attach
       >
-        <template #activator="{ bind }">
+        <template #activator="{ props: activatorProps, isActive }">
           <v-btn
-            v-bind="bind"
+            v-bind="activatorProps"
+            :class="{ 'c-fab--active': isActive }"
             color="primary"
-            fab
+            class="c-fab"
+            icon
           >
-            <slot name="icons">
-              <v-icon>add</v-icon>
-              <v-icon>close</v-icon>
+            <slot
+              :is-active="isActive"
+              name="icons"
+            >
+              <v-icon size="large" icon="add" />
             </slot>
           </v-btn>
         </template>
+
         <slot />
-      </c-speed-dial>
-    </v-layout>
+      </v-speed-dial>
+    </c-layout>
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    transition: {
-      type: String,
-      default: 'slide-y-reverse-transition',
-    },
-    hasAccess: {
-      type: Boolean,
-      default: true,
-    },
+<script setup>
+const emit = defineEmits(['refresh']);
+
+defineProps({
+  transition: {
+    type: String,
+    default: 'slide-y-reverse-transition',
   },
-  data() {
-    return {
-      fab: false,
-    };
+  hasAccess: {
+    type: Boolean,
+    default: true,
   },
-};
+});
 </script>
+
+<style lang="scss" scoped>
+.c-fab {
+  --v-btn-height: 56px;
+
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+
+  .v-icon {
+    transition: transform 0.2s ease;
+  }
+
+  &--active {
+    .v-icon {
+      transform: rotate(45deg);
+    }
+  }
+}
+</style>

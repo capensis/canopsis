@@ -1,19 +1,20 @@
 <template>
-  <div style="display: none;">
+  <div style="display: none">
     <slot v-if="ready" />
   </div>
 </template>
 
 <script>
-import { MarkerClusterGroup } from 'leaflet.markercluster';
-import { LayerGroupMixin, optionsMerger, findRealParent, propsBinder } from 'vue2-leaflet';
-import { DivIcon, Point, DomEvent } from 'leaflet';
+import * as L from 'leaflet';
 
 import { GEOMAP_PANES } from '@/constants';
 
-const CustomDivIcon = DivIcon.extend({
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+
+const CustomDivIcon = L.DivIcon.extend({
   createIcon(oldIcon) {
-    const div = DivIcon.prototype.createIcon.apply(this, oldIcon);
+    const div = L.DivIcon.prototype.createIcon.apply(this, oldIcon);
 
     if (this.options.style) {
       Object.entries(this.options.style).forEach(([name, value]) => {
@@ -26,8 +27,24 @@ const CustomDivIcon = DivIcon.extend({
 });
 
 export default {
-  mixins: [LayerGroupMixin],
+  inject: ['geomapRoot'],
+
+  provide() {
+    return {
+      geomapRoot: this.geomapRoot,
+      geomapParent: this,
+    };
+  },
+
   props: {
+    name: {
+      type: String,
+      required: false,
+    },
+    layerType: {
+      type: String,
+      default: 'overlay',
+    },
     showCoverageOnHover: {
       type: Boolean,
       default: false,
@@ -41,11 +58,16 @@ export default {
       required: false,
     },
   },
+
+  emits: ['ready'],
+
   data() {
     return {
+      mapObject: undefined,
       ready: false,
     };
   },
+
   watch: {
     clusterClassName() {
       this.mapObject.refreshClusters();
@@ -54,46 +76,46 @@ export default {
       this.mapObject.refreshClusters();
     },
   },
-  mounted() {
-    const options = optionsMerger(
-      {
-        iconCreateFunction: this.createIcon,
-        showCoverageOnHover: this.showCoverageOnHover,
-        clusterPane: GEOMAP_PANES.clusters,
-      },
-      this,
-    );
-    this.mapObject = new MarkerClusterGroup(options);
 
-    propsBinder(this, this.mapObject, this.$options.props);
-    DomEvent.on(this.mapObject, this.$listeners);
+  async mounted() {
+    window.L = L;
+    await import('leaflet.markercluster');
+
+    this.mapObject = new L.MarkerClusterGroup({
+      iconCreateFunction: this.createIcon,
+      showCoverageOnHover: this.showCoverageOnHover,
+      clusterPane: GEOMAP_PANES.clusters,
+    });
 
     this.ready = true;
-
-    this.parentContainer = findRealParent(this.$parent, true);
-
-    if (this.visible) {
-      this.parentContainer.addLayer(this);
-    }
+    this.geomapRoot.addLayer(this);
 
     this.$nextTick(() => {
-      /**
-       * Triggers when the component is ready
-       * @type {object}
-       * @property {object} mapObject - reference to leaflet map object
-       */
       this.$emit('ready', this.mapObject);
     });
   },
+
+  beforeUnmount() {
+    this.geomapRoot.removeLayer(this);
+  },
+
   methods: {
+    addLayer(layer) {
+      this.mapObject.addLayer(layer.mapObject);
+    },
+
+    removeLayer(layer) {
+      this.mapObject.removeLayer(layer.mapObject);
+    },
+
     createIcon(cluster) {
       const count = cluster.getChildCount();
 
       return new CustomDivIcon({
         html: `<div><span>${count}</span></div>`,
-        className: `marker-cluster ${this.clusterClassName}`,
+        className: `marker-cluster ${this.clusterClassName || ''}`,
         style: this.clusterStyle,
-        iconSize: new Point(40, 40),
+        iconSize: new L.Point(40, 40),
       });
     },
   },
@@ -110,8 +132,22 @@ export default {
   width: 30px;
   height: 30px;
 
-  background: #5a6D80;
-  border: 1px solid #FFFFFF;
+  background: #5a6d80;
+  border: 1px solid #ffffff;
   border-radius: 50%;
+
+  div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border-radius: 50%;
+  }
+
+  span {
+    line-height: 1;
+  }
 }
 </style>

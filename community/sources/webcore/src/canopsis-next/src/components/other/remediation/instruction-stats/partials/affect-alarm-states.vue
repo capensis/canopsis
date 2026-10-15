@@ -1,9 +1,6 @@
 <template>
-  <div class="d-flex">
-    <c-state-count-changes-chips
-      :affect="alarmStates.minor"
-      :state="ALARM_STATES.minor"
-    />
+  <c-layout>
+    <c-state-count-changes-chips :affect="alarmStates.minor" :state="ALARM_STATES.minor" />
     <c-state-count-changes-chips
       :affect="alarmStates.major"
       :state="ALARM_STATES.major"
@@ -14,13 +11,11 @@
       :state="ALARM_STATES.critical"
       class="ml-2"
     />
-  </div>
+  </c-layout>
 </template>
 
 <script>
 import { ALARM_STATES } from '@/constants';
-
-import { getAlarmStateColor } from '@/helpers/entities/alarm/color';
 
 export default {
   props: {
@@ -29,23 +24,9 @@ export default {
       required: true,
     },
   },
+
   setup() {
-    return {
-      ALARM_STATES,
-    };
-  },
-  computed: {
-    minorColor() {
-      return getAlarmStateColor(ALARM_STATES.minor);
-    },
-
-    majorColor() {
-      return getAlarmStateColor(ALARM_STATES.major);
-    },
-
-    criticalColor() {
-      return getAlarmStateColor(ALARM_STATES.critical);
-    },
+    return { ALARM_STATES };
   },
 };
 </script>

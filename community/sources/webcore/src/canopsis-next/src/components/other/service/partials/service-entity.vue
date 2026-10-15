@@ -2,23 +2,18 @@
   <div class="weather-service-entity-expansion-panel">
     <v-expansion-panels v-model="opened">
       <v-expansion-panel>
-        <v-expansion-panel-header :class="entityColorClass">
-          <template #actions="">
-            <v-icon>
-              keyboard_arrow_down
-            </v-icon>
-          </template>
+        <v-expansion-panel-title :class="entityColorClass">
           <service-entity-header
             :selected="selected"
             :selectable="!!availableActions.length"
             :entity="entity"
             :entity-name-field="entityNameField"
             :last-action-unavailable="lastActionUnavailable"
-            @update:selected="$listeners['update:selected']"
-            @remove:unavailable="$listeners['remove:unavailable']"
+            @update:selected="$emit('update:selected', $event)"
+            @remove:unavailable="$emit('remove:unavailable')"
           />
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
+        </v-expansion-panel-title>
+        <v-expansion-panel-text eager>
           <v-card>
             <v-card-text>
               <service-entity-info-tab
@@ -29,37 +24,39 @@
                 @apply="applyActionForEntity"
                 @execute="executeAlarmInstruction"
               />
-              <v-tabs
-                v-else
-                v-model="activeTab"
-                ref="tabs"
-                slider-color="primary"
-                centered
-              >
-                <v-tab>{{ $t('modals.service.entity.tabs.info') }}</v-tab>
-                <v-tab-item>
-                  <service-entity-info-tab
-                    :entity="entity"
-                    :template="template"
-                    :actions="availableActions"
-                    @apply="applyActionForEntity"
-                    @execute="executeAlarmInstruction"
-                  />
-                </v-tab-item>
-                <template v-if="isService">
-                  <v-tab>{{ $t('modals.service.entity.tabs.treeOfDependencies') }}</v-tab>
-                  <v-tab-item>
+              <template v-else>
+                <v-tabs
+                  v-model="activeTab"
+                  align-tabs="center"
+                  color="primary"
+                >
+                  <v-tab :value="tabs.info">{{ $t('modals.service.entity.tabs.info') }}</v-tab>
+                  <v-tab v-if="isService" :value="tabs.treeOfDependencies">
+                    {{ $t('modals.service.entity.tabs.treeOfDependencies') }}
+                  </v-tab>
+                  <v-tab v-if="hasAccessToPbehaviors" :value="tabs.pbehavior">
+                    {{ $t('common.pbehavior', 2) }}
+                  </v-tab>
+                </v-tabs>
+                <v-window v-model="activeTab" class="mt-2">
+                  <v-window-item :value="tabs.info">
+                    <service-entity-info-tab
+                      :entity="entity"
+                      :template="template"
+                      :actions="availableActions"
+                      @apply="applyActionForEntity"
+                      @execute="executeAlarmInstruction"
+                    />
+                  </v-window-item>
+                  <v-window-item v-if="isService" :value="tabs.treeOfDependencies">
                     <service-entity-tree-of-dependencies-tab
                       :entity="entity"
                       :columns="serviceDependenciesColumns"
                       :type="treeOfDependenciesShowType"
                       class="pa-2"
                     />
-                  </v-tab-item>
-                </template>
-                <template v-if="hasAccessToPbehaviors">
-                  <v-tab>{{ $tc('common.pbehavior', 2) }}</v-tab>
-                  <v-tab-item>
+                  </v-window-item>
+                  <v-window-item v-if="hasAccessToPbehaviors" :value="tabs.pbehavior">
                     <pbehaviors-simple-list
                       :entity="entity"
                       removable
@@ -67,31 +64,28 @@
                       dense
                       with-active-status
                     />
-                  </v-tab-item>
-                </template>
-              </v-tabs>
+                  </v-window-item>
+                </v-window>
+              </template>
             </v-card-text>
           </v-card>
-        </v-expansion-panel-content>
+        </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
   </div>
 </template>
 
 <script>
-import { isNull } from 'lodash';
-
 import { ENTITY_TYPES, MODALS, TREE_OF_DEPENDENCIES_SHOW_TYPES, USER_PERMISSIONS } from '@/constants';
 
-import { getEntityColorClass } from '@/helpers/entities/entity/color';
-import { isInstructionTypeManual } from '@/helpers/entities/remediation/instruction/form';
 import {
   getAvailableActionsByEntity,
   isDisabledActionForEntityByActionsRequests,
 } from '@/helpers/entities/entity/actions';
+import { getEntityColorClass } from '@/helpers/entities/entity/color';
+import { isInstructionTypeManual } from '@/helpers/entities/remediation/instruction/form';
 
 import { authMixin } from '@/mixins/auth';
-import { vuetifyTabsMixin } from '@/mixins/vuetify/tabs';
 import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
@@ -99,6 +93,12 @@ import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehav
 import ServiceEntityHeader from './service-entity-header.vue';
 import ServiceEntityInfoTab from './service-entity-info-tab.vue';
 import ServiceEntityTreeOfDependenciesTab from './service-entity-tree-of-dependencies-tab.vue';
+
+const tabs = {
+  info: 'info',
+  treeOfDependencies: 'treeOfDependencies',
+  pbehavior: 'pbehavior',
+};
 
 export default {
   components: {
@@ -109,7 +109,6 @@ export default {
   },
   mixins: [
     authMixin,
-    vuetifyTabsMixin,
     widgetActionPanelServiceEntityMixin,
   ],
   props: {
@@ -138,10 +137,12 @@ export default {
       default: () => [],
     },
   },
+  emits: ['add:action', 'refresh', 'update:selected', 'remove:unavailable'],
   data() {
     return {
-      opened: [0],
-      activeTab: 0,
+      opened: undefined,
+      activeTab: tabs.info,
+      tabs,
     };
   },
   computed: {
@@ -189,13 +190,6 @@ export default {
         }));
     },
   },
-  watch: {
-    opened(opened) {
-      if (!isNull(opened) && this.$refs.tabs) {
-        this.$nextTick(this.callTabsUpdateTabsMethod);
-      }
-    },
-  },
   methods: {
     applyActionForEntity({ type }) {
       this.applyEntityAction(type, [this.entity]);
@@ -222,12 +216,12 @@ export default {
 
 <style lang="scss" scoped>
 .weather-service-entity-expansion-panel {
-  & ::v-deep .v-expansion-panel-header {
+  :deep(.v-expansion-panel-title) {
     padding: 0 16px;
   }
 
-  & ::v-deep .v-expansion-panel-header__icon .v-icon,
-  & ::v-deep .v-expansion-panel__header .v-input .v-icon {
+  :deep(.v-expansion-panel-title__icon .v-icon),
+  :deep(.v-expansion-panel-title .v-input .v-icon) {
     color: inherit !important;
   }
 }

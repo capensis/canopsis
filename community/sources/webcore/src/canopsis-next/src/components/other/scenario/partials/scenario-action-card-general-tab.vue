@@ -1,12 +1,9 @@
 <template>
-  <v-layout
-    class="scenario-action-card-general-tab"
-    wrap
-  >
-    <v-flex
+  <c-layout class="scenario-action-card-general-tab" wrap>
+    <div
       v-for="(item, index) in items"
       :key="index"
-      :class="item.flexClass || 'xs12'"
+      :class="item.flexClass || 'w-100'"
       class="mt-1"
     >
       <scenario-info-item-multiline
@@ -21,13 +18,9 @@
         :label="item.label"
         :value="item.value"
       />
-      <component
-        v-if="item.subcomponent"
-        :is="item.subcomponent"
-        v-bind="item.subcomponentProps"
-      />
-    </v-flex>
-  </v-layout>
+      <component v-if="item.subcomponent" :is="item.subcomponent" v-bind="item.subcomponentProps" />
+    </div>
+  </c-layout>
 </template>
 
 <script>
@@ -35,11 +28,12 @@ import { rrulestr } from 'rrule';
 
 import { ACTION_TYPES } from '@/constants';
 
+import { convertDateToString } from '@/helpers/date/date';
 import { convertDurationToString } from '@/helpers/date/duration';
 
-import ScenarioInfoItem from './scenario-info-item.vue';
-import ScenarioInfoItemMultiline from './scenario-info-item-multiline.vue';
 import ScenarioActionCardCompiledTemplate from './scenario-action-card-compiled-template.vue';
+import ScenarioInfoItemMultiline from './scenario-info-item-multiline.vue';
+import ScenarioInfoItem from './scenario-info-item.vue';
 
 export default {
   components: {
@@ -47,12 +41,14 @@ export default {
     ScenarioInfoItemMultiline,
     ScenarioActionCardCompiledTemplate,
   },
+
   props: {
     action: {
       type: Object,
       required: true,
     },
   },
+
   computed: {
     outputItem() {
       return {
@@ -66,24 +62,36 @@ export default {
     },
 
     items() {
-      const getItems = {
-        [ACTION_TYPES.ack]: this.getItemsDefault,
-        [ACTION_TYPES.ackremove]: this.getItemsDefault,
-        [ACTION_TYPES.cancel]: this.getItemsDefault,
-        [ACTION_TYPES.assocticket]: this.getItemsForAssocTicketType,
-        [ACTION_TYPES.changeState]: this.getItemsForChangeStateType,
-        [ACTION_TYPES.snooze]: this.getItemsForSnoozeType,
-        [ACTION_TYPES.pbehavior]: this.getItemsForPbehaviorType,
-        [ACTION_TYPES.webhook]: this.getItemsForWebhookType,
-      }[this.action.type];
+      const getItems =
+        {
+          [ACTION_TYPES.ack]: this.getItemsDefault,
+          [ACTION_TYPES.ackremove]: this.getItemsDefault,
+          [ACTION_TYPES.cancel]: this.getItemsDefault,
+          [ACTION_TYPES.assocticket]: this.getItemsForAssocTicketType,
+          [ACTION_TYPES.changeState]: this.getItemsForChangeStateType,
+          [ACTION_TYPES.snooze]: this.getItemsForSnoozeType,
+          [ACTION_TYPES.pbehavior]: this.getItemsForPbehaviorType,
+          [ACTION_TYPES.webhook]: this.getItemsForWebhookType,
+          [ACTION_TYPES.pause]: this.getItemsForPauseType,
+        }[this.action.type] ?? this.getItemsDefault;
 
-      const items = getItems();
+      const items = getItems.call(this);
 
       const dropScenarioItemField = this.action.drop_scenario_if_not_matched
-        ? { icon: 'stop', label: this.$t('scenario.actionDidNotMatch'), value: this.$t('common.stop'), multiline: true }
-        : { icon: 'trending_flat', label: this.$t('scenario.actionDidNotMatch'), value: this.$t('scenario.remainingAction'), multiline: true };
+        ? {
+            icon: 'stop',
+            label: this.$t('scenario.actionDidNotMatch'),
+            value: this.$t('common.stop'),
+            multiline: true,
+          }
+        : {
+            icon: 'trending_flat',
+            label: this.$t('scenario.actionDidNotMatch'),
+            value: this.$t('scenario.remainingAction'),
+            multiline: true,
+          };
 
-      const workflowFields = [{ ...dropScenarioItemField, flexClass: 'xs6' }];
+      const workflowFields = [{ ...dropScenarioItemField, flexClass: 'w-50' }];
 
       if (this.action.type === ACTION_TYPES.webhook) {
         const { parameters = {} } = this.action;
@@ -94,14 +102,14 @@ export default {
             icon: stopOnFail ? 'stop' : 'trending_flat',
             value: stopOnFail ? this.$t('common.stop') : this.$t('scenario.remainingStep'),
             label: this.$t('scenario.caseFailure'),
-            flexClass: 'offset-xs6 xs6',
+            flexClass: 'w-50 ml-auto',
             multiline: true,
           },
           {
             icon: stopOnSuccess ? 'stop' : 'trending_flat',
             value: stopOnSuccess ? this.$t('common.stop') : this.$t('scenario.remainingStep'),
             label: this.$t('scenario.caseSuccess'),
-            flexClass: 'offset-xs6 xs6',
+            flexClass: 'w-50 ml-auto',
             multiline: true,
           },
         );
@@ -111,7 +119,7 @@ export default {
         {
           icon: 'bolt',
           label: this.$t('common.emitTriggerSuccess'),
-          flexClass: 'xs6',
+          flexClass: 'w-50',
         },
       ];
 
@@ -119,14 +127,14 @@ export default {
         triggerFields.push({
           icon: 'bolt',
           label: this.$t('common.emitTriggerFail'),
-          flexClass: 'xs6',
+          flexClass: 'w-50',
         });
       }
 
       items.push(
         {
           icon: 'message',
-          label: this.$tc('common.comment'),
+          label: this.$t('common.comment'),
           subcomponent: 'scenario-action-card-compiled-template',
           subcomponentProps: {
             template: this.action.comment,
@@ -139,6 +147,7 @@ export default {
       return items;
     },
   },
+
   methods: {
     /**
      * Get items for rendering for action types which have only `output` parameter
@@ -147,6 +156,27 @@ export default {
      */
     getItemsDefault() {
       return [this.outputItem];
+    },
+
+    /**
+     * Get items for an entity pause action.
+     *
+     * @returns {Object[]}
+     */
+    getItemsForPauseType() {
+      return [
+        this.outputItem,
+        {
+          icon: 'label',
+          label: this.$t('common.type'),
+          value: this.action.parameters.type,
+        },
+        {
+          icon: 'account_tree',
+          label: this.$t('settings.pause.propagate'),
+          value: this.$t(this.action.parameters.inherited ? 'common.yes' : 'common.no'),
+        },
+      ];
     },
 
     /**
@@ -232,7 +262,6 @@ export default {
      */
     getItemsForPbehaviorType() {
       const { parameters } = this.action;
-      const { filters } = this.$options;
       const result = [
         {
           icon: 'short_text',
@@ -246,13 +275,13 @@ export default {
           {
             icon: 'alarm_on',
             label: this.$t('modals.createPbehavior.steps.general.fields.startOnTrigger'),
-            flexClass: 'xs6',
+            flexClass: 'w-50',
           },
           {
             icon: 'av_timer',
             label: this.$t('common.duration'),
-            value: filters.duration(parameters.duration),
-            flexClass: 'xs6',
+            value: convertDurationToString(parameters.duration),
+            flexClass: 'w-50',
           },
         );
       } else {
@@ -260,14 +289,14 @@ export default {
           {
             icon: 'alarm_on',
             label: this.$t('common.start'),
-            value: filters.date(parameters.tstart),
-            flexClass: 'xs6',
+            value: convertDateToString(parameters.tstart),
+            flexClass: 'w-50',
           },
           {
             icon: 'alarm_off',
             label: this.$t('common.stop'),
-            value: filters.date(parameters.tstop),
-            flexClass: 'xs6',
+            value: convertDateToString(parameters.tstop),
+            flexClass: 'w-50',
           },
         );
       }
@@ -314,13 +343,13 @@ export default {
           icon: 'short_text',
           label: this.$t('common.method'),
           value: request.method,
-          flexClass: 'xs6',
+          flexClass: 'w-50',
         },
         {
           icon: 'language',
           label: this.$t('common.url'),
           value: request.url,
-          flexClass: 'xs6',
+          flexClass: 'w-50',
         },
       ];
 
@@ -328,29 +357,25 @@ export default {
         result.push({
           icon: 'link',
           label: this.$t('scenario.allowMultipleUrls'),
-          flexClass: 'offset-xs6 xs6',
+          flexClass: 'w-50 ml-auto',
         });
       }
 
       if (request.auth?.username) {
-        result.push(
-          {
-            icon: 'person',
-            label: this.$t('common.username'),
-            value: request.auth.username,
-            flexClass: 'xs6',
-          },
-        );
+        result.push({
+          icon: 'person',
+          label: this.$t('common.username'),
+          value: request.auth.username,
+          flexClass: 'w-50',
+        });
       }
 
       if (request.timeout) {
-        result.push(
-          {
-            icon: 'av_timer',
-            label: this.$t('common.request.timeout'),
-            value: convertDurationToString(request.timeout),
-          },
-        );
+        result.push({
+          icon: 'av_timer',
+          label: this.$t('common.request.timeout'),
+          value: convertDurationToString(request.timeout),
+        });
       }
 
       if (request.retry_count) {
@@ -362,12 +387,12 @@ export default {
           {
             label: this.$t('common.retryCount'),
             value: request.retry_count,
-            flexClass: 'xs6',
+            flexClass: 'w-50',
           },
           {
             label: this.$t('common.retryDelay'),
             value: convertDurationToString(request.retry_delay),
-            flexClass: 'xs6',
+            flexClass: 'w-50',
           },
         );
       }
@@ -376,14 +401,17 @@ export default {
         const headersItems = headersArray.map(([label, value]) => ({ label, value }));
 
         result.push(
-          { icon: 'list', label: this.$tc('common.header', 2) },
+          { icon: 'list', label: this.$t('common.header', 2) },
 
           ...headersItems,
         );
       }
 
       if (declareTicketArray.length) {
-        const declareTicketItems = declareTicketArray.map(([label, value]) => ({ label, value: String(value) }));
+        const declareTicketItems = declareTicketArray.map(([label, value]) => ({
+          label,
+          value: String(value),
+        }));
 
         result.push(
           { icon: 'list', label: this.$t('scenario.declareTicket') },
@@ -398,10 +426,9 @@ export default {
           label: this.$t('common.payload'),
           subcomponent: 'v-textarea',
           subcomponentProps: {
-            value: request.payload,
+            modelValue: request.payload,
             rows: 3,
             autoGrow: true,
-            box: true,
             readonly: true,
             disabled: true,
           },
@@ -415,8 +442,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.scenario-action-card-general-tab ::v-deep {
-  .v-input, .compiled-template__wrapper {
+.scenario-action-card-general-tab {
+  .v-input,
+  .compiled-template__wrapper {
     margin-left: 16px;
 
     textarea {

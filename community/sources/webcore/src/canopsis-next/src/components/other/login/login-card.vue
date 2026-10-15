@@ -1,77 +1,70 @@
 <template>
   <v-card class="login-card">
-    <v-card-title class="primary white--text">
-      <v-layout
-        justify-space-between
-        align-center
-      >
+    <v-card-title class="bg-primary text-white">
+      <div class="d-flex justify-space-between align-center w-100">
         <h3>{{ $t('common.login') }}</h3>
-        <img
-          class="login-card__logo"
-          src="@/assets/canopsis.png"
-          alt=""
-        >
-      </v-layout>
+
+        <img :src="logo" class="login-card__logo" alt="Canopsis logo" />
+      </div>
     </v-card-title>
+
     <v-card-text>
-      <v-layout column>
+      <c-layout column>
         <component
           v-for="{ key, component } in components"
           :is="component"
           :key="key"
           class="login-card__item py-4"
         />
-      </v-layout>
+      </c-layout>
     </v-card-text>
   </v-card>
 </template>
-<script>
+
+<script setup>
 import { computed } from 'vue';
+
+import logo from '@/assets/canopsis.png';
 
 import BasicLogin from './basic-login.vue';
 import CasLogin from './cas-login.vue';
-import SamlLogin from './saml-login.vue';
 import OauthLogin from './oauth-login.vue';
+import SamlLogin from './saml-login.vue';
 
-export default {
-  components: {
-    BasicLogin,
-    CasLogin,
-    SamlLogin,
-    OauthLogin,
+const props = defineProps({
+  basic: {
+    type: Boolean,
+    default: true,
   },
-  props: {
-    basic: {
-      type: Boolean,
-      default: true,
-    },
-    cas: {
-      type: Boolean,
-      default: true,
-    },
-    saml: {
-      type: Boolean,
-      default: true,
-    },
-    oauth: {
-      type: Boolean,
-      default: true,
-    },
+  cas: {
+    type: Boolean,
+    default: false,
   },
-  setup(props) {
-    const components = computed(() => (
-      ['basic', 'cas', 'saml', 'oauth'].reduce((acc, key) => {
-        if (props[key]) {
-          acc.push({ key, component: `${key}-login` });
-        }
+  saml: {
+    type: Boolean,
+    default: false,
+  },
+  oauth: {
+    type: Boolean,
+    default: false,
+  },
+});
 
-        return acc;
-      }, [])
-    ));
-
-    return { components };
-  },
+const loginComponents = {
+  basic: BasicLogin,
+  cas: CasLogin,
+  saml: SamlLogin,
+  oauth: OauthLogin,
 };
+
+const components = computed(() => Object.entries(loginComponents).reduce((acc, [key, component]) => {
+    if (props[key]) {
+      acc.push({ key, component });
+    }
+
+    return acc;
+  }, []),
+);
 </script>
 
 <style lang="scss" scoped>
@@ -90,7 +83,7 @@ export default {
 
   &__item {
     &:not(:last-child) {
-      border-bottom: 1px solid var(--v-divider-border-color);
+      border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
     }
   }
 }

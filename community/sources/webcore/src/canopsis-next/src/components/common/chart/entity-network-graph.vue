@@ -8,7 +8,7 @@
         :tooltip-options="tooltipOptions"
         :node-html-label-options="nodeHtmlLabelsOptions"
         :class="{ 'entity-network-graph__canvas--ready': ready }"
-        class="entity-network-graph__canvas fill-height black--text"
+        class="entity-network-graph__canvas fill-height text-black"
         ctrl-wheel-zoom
       />
     </c-zoom-overlay>
@@ -18,15 +18,16 @@
 <script>
 import {
   computed,
-  ref,
   nextTick,
-  watch,
-  onMounted,
   onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
 } from 'vue';
 
 import { COLOR_INDICATOR_TYPES_WITH_STATUS } from '@/constants';
 
+import { getEntityColor, getEntityColorClass } from '@/helpers/entities/entity/color';
 import {
   getBadgeElement,
   getButtonHTML,
@@ -34,7 +35,6 @@ import {
   getIconElement,
   getProgressElement,
 } from '@/helpers/entities/entity/cytoscape';
-import { getEntityColorClass } from '@/helpers/entities/entity/color';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -42,6 +42,7 @@ import NetworkGraph from '@/components/common/chart/network-graph.vue';
 
 export default {
   components: { NetworkGraph },
+
   props: {
     options: {
       type: Object,
@@ -84,6 +85,7 @@ export default {
       required: false,
     },
   },
+
   setup(props) {
     const { t } = useI18n();
 
@@ -101,20 +103,34 @@ export default {
      */
     const getNodeContent = (node) => {
       const { entity, pending, opened, root, colorIndicator } = node;
+      const indicator = colorIndicator ?? props.colorIndicator;
 
       const element = getEntityNodeElement(node);
 
       element.classList.add(
-        getEntityColorClass(entity, colorIndicator ?? props.colorIndicator, props.withoutPauseColor),
+        getEntityColorClass(entity, indicator, props.withoutPauseColor),
       );
+
+      const backgroundColor = getEntityColor(entity, indicator);
+
+      if (backgroundColor) {
+        element.style.backgroundColor = backgroundColor;
+      }
 
       if (pending || (!root && props.hasChildren?.(entity))) {
         const badge = getBadgeElement();
         badge.dataset.id = entity._id;
 
-        badge.appendChild(
-          pending ? getProgressElement() : getIconElement(opened ? 'remove' : 'add', 'white'),
-        );
+        const badgeIcon = pending
+          ? getProgressElement()
+          : getIconElement(opened ? 'remove' : 'add', 'white');
+
+        if (!pending) {
+          badgeIcon.style.width = '100%';
+          badgeIcon.style.height = '100%';
+        }
+
+        badge.appendChild(badgeIcon);
 
         element.appendChild(badge);
       }
@@ -161,14 +177,17 @@ export default {
      * Executes the layout configuration on cytoscape instance without animation
      */
     const runLayout = async () => {
-      if (networkGraphElement.value.$cy.nodes().empty()) {
+      const cy = networkGraphElement.value.$cy;
+
+      if (cy.nodes().empty()) {
         return;
       }
 
       try {
         await nextTick();
 
-        networkGraphElement.value.$cy.layout({
+        cy.stop();
+        cy.layout({
           ...props.options.layout,
           animate: false,
         }).run();
@@ -187,6 +206,7 @@ export default {
         return;
       }
 
+      networkGraphElement.value.$cy.stop();
       networkGraphElement.value.$cy.elements().remove();
       networkGraphElement.value.$cy.add(props.options.elements);
       runLayout();
@@ -225,7 +245,12 @@ export default {
       props.onShowMoreClick?.(networkGraphElement.value.$cy.getElementById(entity._id));
     };
 
-    const fit = (padding = 0) => networkGraphElement.value.$cy.fit(padding);
+    const fit = (padding = 0) => {
+      const cy = networkGraphElement.value.$cy;
+
+      cy.stop();
+      cy.fit(padding);
+    };
 
     watch(() => props.options.elements, () => resetLayout());
 
@@ -267,7 +292,47 @@ export default {
     display: none;
   }
 
+  &__node {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+
+    &.state-ok {
+      background-color: var(--v-state-ok-base);
+    }
+
+    &.state-minor {
+      background-color: var(--v-state-minor-base);
+    }
+
+    &.state-major {
+      background-color: var(--v-state-major-base);
+    }
+
+    &.state-critical {
+      background-color: var(--v-state-critical-base);
+    }
+
+    &.state-pause {
+      background-color: var(--v-state-pause-base);
+    }
+  }
+
+  &__node-icon {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    line-height: 1 !important;
+  }
+
+  &__node-label {
+    position: absolute !important;
+    line-height: normal;
+  }
+
   .v-badge__badge {
+    position: absolute;
     top: -7px;
     right: -7px;
 

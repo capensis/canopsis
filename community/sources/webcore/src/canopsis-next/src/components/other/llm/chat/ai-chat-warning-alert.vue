@@ -3,8 +3,8 @@
     v-if="isVisible"
     class="ma-0"
     type="warning"
-    dismissible
-    @input="dismiss"
+    closable
+    @click:close="dismiss"
   >
     <div
       v-html="messageHtml"
@@ -40,11 +40,7 @@ export default {
      *
      * @param {boolean} visible - `false` when the user closes the alert (Vuetify dismissible `input`).
      */
-    const dismiss = async (visible) => {
-      if (visible) {
-        return;
-      }
-
+    const dismiss = async () => {
       dismissedLocally.value = true;
 
       updateCurrentUserTours({ data: { [LLM_AI_CHAT_TOURS.hiddenWarningAlert]: true } });

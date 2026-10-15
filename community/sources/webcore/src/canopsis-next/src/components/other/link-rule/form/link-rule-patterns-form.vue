@@ -1,6 +1,6 @@
 <template>
   <c-patterns-field
-    v-field="patterns"
+    :value="patternsField"
     :alarm-attributes="alarmAttributes"
     :entity-attributes="entityAttributes"
     :pending="pending"
@@ -8,44 +8,41 @@
     :entity-counters-type="!isAlarmType"
     some-required
     with-entity
+    @update:value="patternsField = $event"
   />
 </template>
 
 <script>
+import { useFormModel } from '@/hooks/form';
+import {
+  usePatternsFields,
+  usePatternsFieldsFetching,
+} from '@/hooks/store/modules/patterns-fields';
 import { useValidationHeader } from '@/hooks/validator/validation-header';
-import { usePatternsFields, usePatternsFieldsFetching } from '@/hooks/store/modules/patterns-fields';
 
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'patterns',
-    event: 'input',
-  },
   props: {
-    patterns: {
-      type: Object,
-      default: () => ({}),
-    },
     isAlarmType: {
       type: Boolean,
       default: false,
     },
   },
+
   setup() {
+    const patternsField = useFormModel('patterns');
     const { fetchLinkRulePatternFields } = usePatternsFields();
     const { hasAnyError } = useValidationHeader();
 
-    const {
-      pending,
-      alarmAttributes,
-      entityAttributes,
-    } = usePatternsFieldsFetching(fetchLinkRulePatternFields);
+    const { pending, alarmAttributes, entityAttributes } = usePatternsFieldsFetching(
+      fetchLinkRulePatternFields,
+    );
 
     return {
       /**
        * It's using in the parent component to display the validation header color for tabs
        */
       hasAnyError,
+      patternsField,
       pending,
       alarmAttributes,
       entityAttributes,

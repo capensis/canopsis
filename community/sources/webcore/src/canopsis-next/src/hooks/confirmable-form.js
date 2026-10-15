@@ -43,7 +43,6 @@ export const useConfirmableForm = ({
   action,
   modalName = MODALS.confirmation,
   comparator = isEqual,
-  cloning = false,
 } = {}) => {
   const modals = useModals();
 
@@ -73,9 +72,7 @@ export const useConfirmableForm = ({
   };
 
   onBeforeMount(() => {
-    if (cloning) {
-      originalForm = cloneDeep(unref(form));
-    }
+    originalForm = cloneDeep(unref(form));
   });
 
   return {

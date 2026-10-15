@@ -1,0 +1,115 @@
+diff --git a/node_modules/vuetify/lib/components/VCombobox/VCombobox.js b/node_modules/vuetify/lib/components/VCombobox/VCombobox.js
+index 8841a2d..08fbcd0 100644
+--- a/node_modules/vuetify/lib/components/VCombobox/VCombobox.js
++++ b/node_modules/vuetify/lib/components/VCombobox/VCombobox.js
+@@ -590,6 +590,7 @@ export const VCombobox = genericComponent()({
+               }, null)), _createVNode(VVirtualScroll, {
+                 "ref": vVirtualScrollRef,
+                 "renderless": true,
++                "disableVirtualScroll": props.multiple,
+                 "items": displayItems.value,
+                 "itemKey": "value"
+               }, {
+diff --git a/node_modules/vuetify/lib/components/VVirtualScroll/VVirtualScroll.js b/node_modules/vuetify/lib/components/VVirtualScroll/VVirtualScroll.js
+index 7621844..3f181c5 100644
+--- a/node_modules/vuetify/lib/components/VVirtualScroll/VVirtualScroll.js
++++ b/node_modules/vuetify/lib/components/VVirtualScroll/VVirtualScroll.js
+@@ -42,7 +42,7 @@ export const VVirtualScroll = genericComponent()({
+       paddingBottom,
+       computedItems
+     } = useVirtual(props, toRef(() => props.items));
+-    useToggleScope(() => props.renderless, () => {
++    useToggleScope(() => props.renderless && !props.disableVirtualScroll, () => {
+       function handleListeners(add = false) {
+         const method = add ? 'addEventListener' : 'removeEventListener';
+         if (!IN_BROWSER) return;
+@@ -76,13 +76,13 @@ export const VVirtualScroll = genericComponent()({
+           ...slotProps
+         })
+       }));
+-      return props.renderless ? _createElementVNode(_Fragment, null, [_createElementVNode("div", {
++      return props.renderless ? _createElementVNode(_Fragment, null, [!props.disableVirtualScroll && _createElementVNode("div", {
+         "ref": markerRef,
+         "class": "v-virtual-scroll__spacer",
+         "style": {
+           paddingTop: convertToUnit(paddingTop.value)
+         }
+-      }, null), children, _createElementVNode("div", {
++      }, null), children, !props.disableVirtualScroll && _createElementVNode("div", {
+         "class": "v-virtual-scroll__spacer",
+         "style": {
+           paddingBottom: convertToUnit(paddingBottom.value)
+diff --git a/node_modules/vuetify/lib/composables/layout.js b/node_modules/vuetify/lib/composables/layout.js
+index e0b2242..ddfed0e 100644
+--- a/node_modules/vuetify/lib/composables/layout.js
++++ b/node_modules/vuetify/lib/composables/layout.js
+@@ -108,13 +108,25 @@ export function createLayout(props) {
+     return resolveSize(value, span ?? 0);
+   }
+   const isResizing = shallowRef(false);
++  const ignoreIsResizing = shallowRef(false);
+   let resizeTimeout = -1;
++  let ignoreIsResizingTimeout = -1;
+   watch(() => [layoutRect.value?.width, layoutRect.value?.height], () => {
+     isResizing.value = true;
+     window.clearTimeout(resizeTimeout);
+     resizeTimeout = window.setTimeout(() => isResizing.value = false, 100);
+   });
+-  onScopeDispose(() => window.clearTimeout(resizeTimeout));
++  const ignoreIsResizingFor = (duration = 300) => {
++    ignoreIsResizing.value = true;
++    window.clearTimeout(ignoreIsResizingTimeout);
++    ignoreIsResizingTimeout = window.setTimeout(() => {
++      ignoreIsResizing.value = false;
++    }, duration);
++  };
++  onScopeDispose(() => {
++    window.clearTimeout(resizeTimeout);
++    window.clearTimeout(ignoreIsResizingTimeout);
++  });
+   const computedOverlaps = computed(() => {
+     const map = new Map();
+     const overlaps = props.overlaps ?? [];
+@@ -147,7 +159,7 @@ export function createLayout(props) {
+     return generateLayers(layout, positions, layoutSizes, activeItems, sizeOf);
+   });
+   const transitionsEnabled = computed(() => {
+-    return !isResizing.value && !Array.from(disabledTransitions.values()).some(ref => ref.value);
++    return (ignoreIsResizing.value || !isResizing.value) && !Array.from(disabledTransitions.values()).some(ref => ref.value);
+   });
+   const mainRect = computed(() => {
+     return layers.value[layers.value.length - 1].layer;
+@@ -264,6 +276,7 @@ export function createLayout(props) {
+     },
+     mainRect,
+     mainStyles,
++    ignoreIsResizing: ignoreIsResizingFor,
+     getLayoutItem,
+     items,
+     layoutRect,
+diff --git a/node_modules/vuetify/lib/composables/virtual.js b/node_modules/vuetify/lib/composables/virtual.js
+index 8b427cb..554c697 100644
+--- a/node_modules/vuetify/lib/composables/virtual.js
++++ b/node_modules/vuetify/lib/composables/virtual.js
+@@ -9,6 +9,7 @@ const DOWN = 1;
+ /** Determines how large each batch of items should be */
+ const BUFFER_PX = 100;
+ export const makeVirtualProps = propsFactory({
++  disableVirtualScroll: Boolean,
+   itemHeight: {
+     type: [Number, String],
+     default: null
+@@ -267,6 +268,13 @@ export function useVirtual(props, items) {
+     });
+   }
+   const computedItems = computed(() => {
++    if (props.disableVirtualScroll) {
++      return items.value.map((item, index) => ({
++        raw: item,
++        index,
++        key: getPropertyFromItem(item, props.itemKey, index)
++      }));
++    }
+     return items.value.slice(first.value, last.value).map((item, index) => {
+       const _index = index + first.value;
+       return {

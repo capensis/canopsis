@@ -1,7 +1,7 @@
 <template>
-  <v-layout :column="!row">
+  <c-layout :column="!row">
     <c-number-field
-      v-field.number="value.lat"
+      :value="value.lat"
       :class="{ 'mr-3': row }"
       :label="$t('map.latitude')"
       :name="`${name}.lat`"
@@ -11,9 +11,10 @@
       :step="step"
       :required="isFieldRequired"
       @paste="pasteHandler('lat', $event)"
+      @update:value="updateField('lat', $event)"
     />
     <c-number-field
-      v-field.number="value.lng"
+      :value="value.lng"
       :label="$t('map.longitude')"
       :name="`${name}.lng`"
       :disabled="disabled"
@@ -22,8 +23,9 @@
       :step="step"
       :required="isFieldRequired"
       @paste="pasteHandler('lng', $event)"
+      @update:value="updateField('lng', $event)"
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -33,10 +35,14 @@ import { formMixin } from '@/mixins/form';
 
 export default {
   mixins: [formMixin],
+  emits: ['input', 'update:value'],
   props: {
     value: {
       type: Object,
-      required: false,
+      default: () => ({
+        lat: undefined,
+        lng: undefined,
+      }),
     },
     name: {
       type: String,

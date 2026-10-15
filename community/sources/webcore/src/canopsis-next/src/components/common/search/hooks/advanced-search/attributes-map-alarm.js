@@ -21,12 +21,12 @@ import {
 import { useI18n } from '@/hooks/i18n';
 import { useEntityInfoProperty } from '@/hooks/store/modules/entity-info-property';
 
-import { useEntityInfosKeys, useAdvancedSearchGroupedAttributes } from './basic';
 import {
   useAdvancedSearchAlarmAttributes,
   useAdvancedSearchEntityAttributes,
   useAdvancedSearchPbehaviorAttributes,
 } from './attributes-map';
+import { useEntityInfosKeys, useAdvancedSearchGroupedAttributes } from './basic';
 
 /**
  * Hook to manage advanced search attributes for alarms, entities, and pbehaviors for alarms list.
@@ -36,7 +36,7 @@ import {
  * @returns {Object} An object containing the pending state, the computed attributes, and the computed flags.
  */
 export const useAlarmAdvancedSearchAttributes = ({ rules }) => {
-  const { tc } = useI18n();
+  const { t } = useI18n();
 
   const {
     pending: infosPending,
@@ -44,12 +44,11 @@ export const useAlarmAdvancedSearchAttributes = ({ rules }) => {
     entityItems: entityInfosItems,
   } = useEntityInfosKeys();
 
-  const {
-    entityInfoPropertiesWithAlias,
-    entityInfoPropertyPending,
-  } = useEntityInfoProperty();
+  const { entityInfoPropertiesWithAlias, entityInfoPropertiesPending } = useEntityInfoProperty();
 
-  const { attributesMap: alarmAttributesMap } = useAdvancedSearchAlarmAttributes({ infosItems: alarmInfosItems });
+  const { attributesMap: alarmAttributesMap } = useAdvancedSearchAlarmAttributes({
+    infosItems: alarmInfosItems,
+  });
   const { attributesMap: entityAttributesMap } = useAdvancedSearchEntityAttributes({
     infosItems: entityInfosItems,
     prefix: ALARM_ADVANCED_SEARCH_PATTERNS_PREFIXES.entity,
@@ -59,32 +58,44 @@ export const useAlarmAdvancedSearchAttributes = ({ rules }) => {
     prefix: `${ALARM_ADVANCED_SEARCH_PBEHAVIOR_PATTERN_PREFIX}${PBEHAVIOR_PATTERN_PREFIX}`,
   });
 
-  const wholePending = computed(() => infosPending.value || entityInfoPropertyPending.value);
+  const wholePending = computed(() => infosPending.value || entityInfoPropertiesPending.value);
 
   /**
    * HAS FLAGS
    */
-  const hasOr = computed(() => unref(rules).some(({ union }) => union === ADVANCED_SEARCH_UNION_CONDITIONS.or));
-  const hasAlarmField = computed(() => unref(rules).some(({ attribute }) => isAlarmPatternField(attribute)));
-  const hasEntityField = computed(() => unref(rules).some(({ attribute }) => isAlarmEntityPatternField(attribute)));
-  const hasPbehaviorField = computed(() => (
-    unref(rules).some(({ attribute }) => (
-      isPbehaviorPatternField(attribute, ALARM_ADVANCED_SEARCH_PBEHAVIOR_PATTERN_PREFIX)
-    ))
-  ));
+  const hasOr = computed(() =>
+    unref(rules).some(({ union }) => union === ADVANCED_SEARCH_UNION_CONDITIONS.or),
+  );
+  const hasAlarmField = computed(() =>
+    unref(rules).some(({ attribute }) => isAlarmPatternField(attribute)),
+  );
+  const hasEntityField = computed(() =>
+    unref(rules).some(({ attribute }) => isAlarmEntityPatternField(attribute)),
+  );
+  const hasPbehaviorField = computed(() =>
+    unref(rules).some(({ attribute }) =>
+      isPbehaviorPatternField(attribute, ALARM_ADVANCED_SEARCH_PBEHAVIOR_PATTERN_PREFIX),
+    ),
+  );
 
   /**
    * ALLOW FLAGS
    */
-  const allowOr = computed(() => [
-    hasEntityField.value,
-    hasPbehaviorField.value,
-    hasAlarmField.value,
-  ].filter(Boolean).length <= 1);
+  const allowOr = computed(
+    () =>
+      [hasEntityField.value, hasPbehaviorField.value, hasAlarmField.value].filter(Boolean).length <=
+      1,
+  );
 
-  const allowAlarmFields = computed(() => !hasOr.value || (!hasEntityField.value && !hasPbehaviorField.value));
-  const allowEntityFields = computed(() => !hasOr.value || (!hasAlarmField.value && !hasPbehaviorField.value));
-  const allowPbehaviorFields = computed(() => !hasOr.value || (!hasAlarmField.value && !hasEntityField.value));
+  const allowAlarmFields = computed(
+    () => !hasOr.value || (!hasEntityField.value && !hasPbehaviorField.value),
+  );
+  const allowEntityFields = computed(
+    () => !hasOr.value || (!hasAlarmField.value && !hasPbehaviorField.value),
+  );
+  const allowPbehaviorFields = computed(
+    () => !hasOr.value || (!hasAlarmField.value && !hasEntityField.value),
+  );
 
   const attributesMap = computed(() => ({
     ...alarmAttributesMap.value,
@@ -96,7 +107,7 @@ export const useAlarmAdvancedSearchAttributes = ({ rules }) => {
 
   const { attributes } = useAdvancedSearchGroupedAttributes({
     attributesMap,
-    getText: (field, attrs) => attrs.text ?? tc(ALARM_FIELDS_TO_LABELS_KEYS[field], 2),
+    getText: (field, attrs) => attrs.text ?? t(ALARM_FIELDS_TO_LABELS_KEYS[field], 2),
     groups: ALARM_GROUPED_ADVANCED_SEARCH_FIELDS,
     aliases: entityInfoPropertiesWithAlias,
     disabled: disallowAlarmFields,

@@ -1,14 +1,29 @@
 <template>
-  <shared-actions-panel :actions="actions" />
+  <shared-actions-panel
+    :actions="actions"
+    :inline-count="actions.length"
+    ignore-media-query
+  />
 </template>
 
 <script>
 import { compact, pickBy } from 'lodash';
 
-import { MODALS, CONTEXT_ACTIONS_TYPES, ENTITY_TYPES, ENTITY_EXPORT_FILE_NAME_PREFIX } from '@/constants';
+import {
+  CONTEXT_ACTIONS_TYPES,
+  ENTITY_EXPORT_FILE_NAME_PREFIX,
+  ENTITY_TYPES,
+  MODALS,
+} from '@/constants';
 
-import { convertObjectToTreeview } from '@/helpers/treeview';
+import {
+  isPausePropagationAvailableForEntity,
+  entityResumeFormToRequest,
+  isEntityPaused,
+  isEntityPauseInherited,
+} from '@/helpers/entities/entity/pause';
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
+import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
 
@@ -23,9 +38,11 @@ import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.
  */
 export default {
   components: { SharedActionsPanel },
+
   mixins: [
     widgetActionsPanelContextMixin,
   ],
+
   props: {
     item: {
       type: Object,
@@ -36,13 +53,13 @@ export default {
       default: false,
     },
   },
+
   computed: {
     actionsMap() {
       return {
         editEntity: {
           type: CONTEXT_ACTIONS_TYPES.editEntity,
           icon: 'edit',
-          iconColor: 'primary',
           title: this.$t('context.actions.titles.editEntity'),
           method: this.showEditEntityModal,
         },
@@ -61,10 +78,11 @@ export default {
         },
         pbehavior: {
           type: CONTEXT_ACTIONS_TYPES.pbehaviorAdd,
-          icon: 'pause',
+          icon: '$vuetify.icons.pbehavior',
           title: this.$t('context.actions.titles.pbehavior'),
           method: this.showAddPbehaviorModal,
         },
+        pause: this.pauseAction,
         variablesHelp: {
           type: CONTEXT_ACTIONS_TYPES.variablesHelp,
           icon: 'help',
@@ -78,11 +96,36 @@ export default {
       return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
     },
 
+    pauseAction() {
+      if (!isEntityPaused(this.item)) {
+        return {
+          type: CONTEXT_ACTIONS_TYPES.pause,
+          icon: 'pause',
+          title: this.$t('context.actions.titles.pause'),
+          method: this.showPauseModal,
+        };
+      }
+
+      const isInherited = isEntityPauseInherited(this.item);
+      return {
+        type: CONTEXT_ACTIONS_TYPES.resume,
+        icon: 'play_arrow',
+        title: isInherited
+          ? this.$t('context.actions.titles.inheritedPause')
+          : this.$t('context.actions.titles.unpause'),
+        disabledButton: isInherited,
+        method: this.resumeEntityPause,
+      };
+    },
+
     actions() {
       const { filteredActionsMap } = this;
 
       const actions = [
         filteredActionsMap.editEntity,
+        filteredActionsMap.pause,
+        filteredActionsMap.pbehavior,
+        filteredActionsMap.variablesHelp,
       ];
 
       if (this.item.type === ENTITY_TYPES.service) {
@@ -93,11 +136,10 @@ export default {
         actions.push(filteredActionsMap.deleteEntity);
       }
 
-      actions.push(filteredActionsMap.pbehavior, filteredActionsMap.variablesHelp);
-
       return compact(actions);
     },
   },
+
   methods: {
     async showEditEntityModal() {
       if (this.item.type === ENTITY_TYPES.service) {
@@ -188,6 +230,46 @@ export default {
           withInherited: true,
         },
       });
+    },
+
+    showPauseModal() {
+      this.$modals.show({
+        name: MODALS.createEntityPauseEvent,
+        config: {
+          withInherited: isPausePropagationAvailableForEntity(this.item),
+          action: async (pause) => {
+            try {
+              await this.pauseContextEntity({
+                data: { ...pause, _id: this.item._id },
+              });
+              this.$popups.success({ text: this.$t('entity.popups.pauseOperation') });
+
+              return this.fetchContextEntitiesListWithPreviousParams();
+            } catch (error) {
+              console.error(error);
+              this.$popups.error({ text: this.$t('alarm.popups.pauseFailed') });
+            }
+          },
+        },
+      });
+    },
+
+    async resumeEntityPause() {
+      if (isEntityPauseInherited(this.item)) {
+        return;
+      }
+
+      try {
+        await this.resumeContextEntity({
+          data: { ...entityResumeFormToRequest(), _id: this.item._id },
+        });
+        this.$popups.success({ text: this.$t('entity.popups.resumeOperation') });
+
+        return this.fetchContextEntitiesListWithPreviousParams();
+      } catch (error) {
+        console.error(error);
+        this.$popups.error({ text: this.$t('alarm.popups.unpauseFailed') });
+      }
     },
 
     showVariablesHelpModal() {

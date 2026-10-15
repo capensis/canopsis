@@ -12,7 +12,7 @@ import { DEFAULT_BROADCAST_MESSAGE_COLOR } from '@/constants';
  */
 
 /**
- * Convert maintenance to form
+ * Convert maintenance to form.
  *
  * @param {Maintenance} maintenance
  * @returns {MaintenanceForm}

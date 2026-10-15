@@ -1,5 +1,5 @@
 <template>
-  <div class="anomaly-monitored-connector-history-graph-placeholder text-body-1 text--secondary">
+  <div class="anomaly-monitored-connector-history-graph-placeholder text-body-1 text-medium-emphasis">
     {{ $t('healthcheck.connectorsBlocks.graphNotEnoughData') }}
   </div>
 </template>

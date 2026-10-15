@@ -1,62 +1,49 @@
 <template>
-  <v-layout column>
-    <v-flex xs12>
-      <v-alert
-        v-if="!groups.length"
-        type="info"
-      >
-        {{ disabled || readonly ? $t('pattern.noDataDisabled') : $t('pattern.noData') }}
-      </v-alert>
-    </v-flex>
-    <v-layout
-      v-for="(group, index) in groups"
-      :key="group.key"
-      wrap
-    >
-      <v-flex xs12>
-        <pattern-group-field
-          v-field="groups[index]"
-          :attributes="attributes"
-          :disabled="disabled"
-          :readonly="readonly"
-          @remove="removeItemFromArray(index)"
-        />
-      </v-flex>
-      <v-layout
-        v-show="index !== groups.length - 1"
-        justify-center
-      >
+  <c-layout gap="3" column>
+    <v-alert v-if="!groups.length" type="info">
+      {{ disabled || readonly ? $t('pattern.noDataDisabled') : $t('pattern.noData') }}
+    </v-alert>
+    <c-layout v-for="(group, index) in groups" :key="group.key" wrap>
+      <pattern-group-field
+        :group="groups[index]"
+        :attributes="attributes"
+        :disabled="disabled"
+        :readonly="readonly"
+        @update:group="updateItemInArray(index, $event)"
+        @remove="removeItemFromArray(index)"
+      />
+      <c-layout v-show="index !== groups.length - 1" justify-center>
         <c-pattern-operator-chip>{{ $t('common.or') }}</c-pattern-operator-chip>
-      </v-layout>
-    </v-layout>
+      </c-layout>
+    </c-layout>
 
-    <c-btn-with-error
-      v-if="!readonly"
-      :error="hasGroupsErrors ? $t('pattern.errors.groupRequired'): ''"
-      :disabled="disabled"
-      class="mt-2"
-      @click="addFilterGroup"
-    >
-      {{ $t('pattern.addGroup') }}
-    </c-btn-with-error>
-  </v-layout>
+    <div class="align-self-start">
+      <c-btn-with-error
+        v-if="!readonly"
+        :error="hasGroupsErrors ? $t('pattern.errors.groupRequired') : ''"
+        :disabled="disabled"
+        class="mt-2"
+        @click="addFilterGroup"
+      >
+        {{ $t('pattern.addGroup') }}
+      </c-btn-with-error>
+    </div>
+  </c-layout>
 </template>
 
 <script>
+import { computed, nextTick, onBeforeUnmount, toRef, watch } from 'vue';
+
 import { patternRulesToGroup } from '@/helpers/entities/pattern/form';
 
-import { formArrayMixin } from '@/mixins/form';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useValidationAttachMinValue } from '@/hooks/validator/validation-attach-min-value';
 
 import PatternGroupField from './pattern-group-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: { PatternGroupField },
-  mixins: [formArrayMixin],
-  model: {
-    prop: 'groups',
-    event: 'input',
-  },
+  emits: ['update:groups'],
   props: {
     groups: {
       type: Array,
@@ -83,54 +70,69 @@ export default {
       default: false,
     },
   },
-  computed: {
-    hasGroupsErrors() {
-      return this.errors.has(this.name);
-    },
-  },
-  watch: {
-    groups() {
-      this.$nextTick(() => {
-        if (this.required) {
-          this.$validator.validate(this.name);
-        }
-      });
-    },
-    required: {
-      immediate: true,
-      handler(value) {
-        if (value) {
-          this.attachMinValueRule();
-        } else {
-          this.detachMinValueRule();
+  setup(props, { emit }) {
+    const { addItemIntoArray, updateItemInArray, removeItemFromArray } = useArrayModelField(
+      props,
+      emit,
+    );
+    const fieldName = toRef(props, 'name');
+    const { hasError, clearError, attachMinValueRule, detachMinValueRule, validateMinValueRule } =
+      useValidationAttachMinValue(fieldName);
+
+    const hasGroupsErrors = computed(() => hasError(fieldName.value));
+    const groupsLengthGetter = () => props.groups?.length ?? 0;
+
+    /**
+     * Attaches min_value:1 when the groups field is required.
+     */
+    const attachRequiredMinValueRule = () => attachMinValueRule(groupsLengthGetter);
+
+    const validateGroupsField = async () => {
+      if (!props.required) {
+        clearError(fieldName.value);
+
+        return true;
+      }
+
+      return validateMinValueRule();
+    };
+
+    const addFilterGroup = () => {
+      const [firstAttribute] = props.attributes;
+
+      addItemIntoArray(patternRulesToGroup([{ field: firstAttribute?.value }]));
+    };
+
+    watch(
+      () => props.groups,
+      () => {
+        if (props.required) {
+          nextTick(validateMinValueRule);
         }
       },
-    },
-  },
-  beforeDestroy() {
-    this.detachMinValueRule();
-  },
-  methods: {
-    attachMinValueRule() {
-      this.$validator.attach({
-        name: this.name,
-        rules: 'min_value:1',
-        getter: () => this.groups.length,
-        vm: this,
-      });
-    },
+    );
 
-    detachMinValueRule() {
-      this.$validator.detach(this.name);
-    },
+    watch(
+      () => props.required,
+      (required) => {
+        if (required) {
+          attachRequiredMinValueRule();
+        } else {
+          detachMinValueRule();
+        }
+      },
+      { immediate: true },
+    );
 
-    addFilterGroup() {
-      const [firstAttribute] = this.attributes;
+    onBeforeUnmount(detachMinValueRule);
 
-      this.addItemIntoArray(patternRulesToGroup([
-        { field: firstAttribute?.value },
-      ]));
-    },
+    return {
+      hasGroupsErrors,
+      validateGroupsField,
+      addFilterGroup,
+      updateItemInArray,
+      removeItemFromArray,
+    };
   },
 };
 </script>

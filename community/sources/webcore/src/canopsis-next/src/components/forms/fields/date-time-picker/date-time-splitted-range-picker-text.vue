@@ -1,26 +1,22 @@
 <template>
-  <v-layout class="date-time-splitted-range-picker-field">
-    <v-flex class="date-time-splitted-range-picker-field__start">
-      <date-time-splitted-picker-text
-        :value="start"
-        :full-day="fullDay"
-        :label="startLabel"
-      />
-    </v-flex>
+  <c-layout class="date-time-splitted-range-picker-field">
+    <div class="date-time-splitted-range-picker-field__start">
+      <date-time-splitted-picker-text :value="start" :full-day="fullDay" :label="startLabel" />
+    </div>
     <template v-if="!noEnding">
       <div class="date-time-splitted-range-picker-field__time-dash">
-        –
+        -
       </div>
-      <v-flex class="date-time-splitted-range-picker-field__end">
+      <div class="date-time-splitted-range-picker-field__end">
         <date-time-splitted-picker-text
           :value="end"
           :full-day="fullDay"
           :label="endLabel"
           reverse
         />
-      </v-flex>
+      </div>
     </template>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>

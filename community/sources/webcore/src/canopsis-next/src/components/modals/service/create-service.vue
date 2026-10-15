@@ -1,110 +1,105 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper text-class="position-relative" close>
-      <template #title="">
-        {{ config.title }}
+    <c-modal-wrapper text-class="position-relative" close>
+      <template #title>
+        {{ title }}
       </template>
-      <template #text="">
+
+      <template #text>
         <c-progress-overlay :pending="pending" />
         <service-form
-          v-model="form"
+          :form="values"
           :prepare-state-setting-form="prepareStateSettingForm"
           :template-vars="templateVars"
-        />
-        <ai-chat-sidebar
-          v-if="chatShown"
-          v-bind="chatOptions.bind"
-          v-on="chatOptions.on"
+          @update:form="updateForm"
         />
       </template>
-      <template #actions="">
-        <v-btn
-          :disabled="submitting"
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn :disabled="submitting" variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="submitting || chatOptions.bind.pending"
+          :disabled="submitting"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
           {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { ref, onMounted, toRef } from 'vue';
+import { computed, onMounted } from 'vue';
 
-import { ENTITY_TYPES, LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY } from '@/constants';
+import { ENTITY_TYPES, MODALS } from '@/constants';
 
-import { serviceToForm, formToService } from '@/helpers/entities/service/form';
+import { formToService, serviceToForm } from '@/helpers/entities/service/form';
 
-import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
+import { getSubmitErrorPopupText, useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
 import { useTemplateVarsList } from '@/hooks/vars/template';
 
-import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import ServiceForm from '@/components/other/service/form/service-form.vue';
-
-import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.createService,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
+
+  components: {
+    ServiceForm,
   },
-  components: { ServiceForm, ModalWrapper, AiChatSidebar },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
-    const { config, close } = useInnerModal(props);
-
-    const form = ref(serviceToForm(config.value.item));
-
-    const {
-      shown: chatShown,
-      options: chatOptions,
-    } = useAiChatForm({
-      form,
-
-      modal: toRef(props, 'modal'),
-      ruleId: props.modal.config?.item?._id,
-      context: LLM_SOCKET_CONTEXTS.entityService,
+    const { t } = useI18n();
+    const modals = useModals();
+    const popups = usePopups();
+    const config = computed(() => props.modal.config ?? {});
+    const item = computed(() => config.value.item);
+    const title = computed(() => config.value.title);
+    const form = useForm({
+      initialValues: serviceToForm(item.value),
+      onValidationError: errors => popups.error({
+        text: getSubmitErrorPopupText(errors, t('errors.default')),
+      }),
     });
+    const { values, handleSubmit, isSubmitting: submitting } = form;
 
-    const { submit, submitting, submitLabel } = useSubmittableForm({
-      form,
-      item: config.value.item,
-      method: async () => {
-        const result = await config.value.action?.(formToService(form.value));
+    const closeModal = () => modals.hide({ id: props.modal.id });
+    const updateForm = value => (values.value = value);
+    const submitLabel = computed(() => t(item.value?._id ? 'common.save' : 'common.create'));
 
-        await config.value.afterSubmit?.(result);
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToService(values.value));
 
-        close();
+      await config.value.afterSubmit?.(result);
 
-        return result;
-      },
+      closeModal();
+
+      return result;
     });
 
     const { vars: templateVars, pending, fetchList } = useTemplateVarsList({
       type: ENTITY_TYPES.service,
     });
 
-    useFormConfirmableCloseModal({ form, submit, close });
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
+    });
 
     /**
      * Prepares a service object for state setting form by transforming it to the proper format
@@ -122,17 +117,16 @@ export default {
     onMounted(fetchList);
 
     return {
-      config,
-      form,
+      t,
+      title,
+      values,
       templateVars,
       pending,
       submitting,
-      chatShown,
-      chatOptions,
-
-      close,
-      prepareStateSettingForm,
       submitLabel,
+      closeModal,
+      prepareStateSettingForm,
+      updateForm,
       submit,
     };
   },

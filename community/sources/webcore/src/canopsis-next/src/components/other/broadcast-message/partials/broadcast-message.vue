@@ -9,10 +9,7 @@
       class="broadcast-message__text"
       parent-element="span"
     />
-    <div
-      class="broadcast-message__actions"
-      title=""
-    >
+    <div class="broadcast-message__actions" title="">
       <slot name="actions" />
     </div>
   </div>
@@ -34,8 +31,10 @@ export default {
       default: '',
     },
   },
+
   setup(props) {
-    const textColor = computed(() => getMostReadableTextColor(props.color, { level: 'AA', size: 'large' }));
+    const textColor = computed(() => getMostReadableTextColor(props.color, { level: 'AA', size: 'large' }),
+    );
 
     return {
       textColor,
@@ -45,34 +44,34 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .broadcast-message {
-    position: relative;
-    color: white;
-    display: flex;
+.broadcast-message {
+  position: relative;
+  color: white;
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  &__text {
     width: 100%;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
-    &__text {
-      width: 100%;
-      text-align: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-
-      & ::v-deep p {
-        margin: 0 !important;
-      }
-    }
-
-    &__actions {
-      display: flex;
-      align-items: center;
-      position: absolute;
-      right: 0;
-      top: 0;
-      bottom: 0;
+    :deep(p) {
+      margin: 0 !important;
     }
   }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
+}
 </style>

@@ -1,99 +1,109 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
-        {{ config.title || $t('modals.createEntity.create.title') }}
+    <c-modal-wrapper close>
+      <template #title>
+        {{ title }}
       </template>
-      <template #text="">
+
+      <template #text>
         <entity-form
-          v-model="form"
+          :form="values"
           :prepare-state-setting-form="prepareStateSettingForm"
+          @update:form="updateForm"
         />
       </template>
-      <template #actions="">
-        <v-btn
-          :disabled="submitting"
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn :disabled="submitting" variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
         <v-btn
           :disabled="submitting"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
           {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { computed } from 'vue';
 
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { MODALS } from '@/constants';
 
 import { entityToForm, formToEntity } from '@/helpers/entities/entity/form';
 
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import EntityForm from '@/components/other/entity/form/entity-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
   name: MODALS.createEntity,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
+
   components: {
     EntityForm,
-    ModalWrapper,
   },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
-    const { config, close } = useInnerModal(props);
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const entity = computed(() => config.value.entity);
+    const title = computed(() => config.value.title || t('modals.createEntity.create.title'));
+    const form = useForm({
+      initialValues: entityToForm(entity.value),
+    });
+    const { values, handleSubmit, isSubmitting: submitting } = form;
 
-    const form = ref(entityToForm(config.value.entity));
+    const closeModal = () => modals.hide({ id: props.modal.id });
+    const updateForm = value => (values.value = value);
+    const submitLabel = computed(() => t(entity.value?._id ? 'common.save' : 'common.create'));
 
-    const { submit, submitting, submitLabel } = useSubmittableForm({
-      form,
-      item: config.value.entity,
-      method: async () => {
-        await config.value.action?.(formToEntity(form.value));
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToEntity(values.value));
 
-        close();
-      },
+      await config.value.afterSubmit?.(result);
+
+      closeModal();
+
+      return result;
     });
 
-    useFormConfirmableCloseModal({ form, submit, close });
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
+    });
 
-    const prepareStateSettingForm = entity => ({
-      ...formToEntity(entity),
-      connector: config.value.entity.connector,
-      _id: entity._id,
+    const prepareStateSettingForm = preparedEntity => ({
+      ...formToEntity(preparedEntity),
+      connector: entity.value?.connector,
+      _id: preparedEntity._id,
     });
 
     return {
-      config,
-      form,
+      t,
+      title,
+      values,
       submitting,
-
-      close,
-      prepareStateSettingForm,
       submitLabel,
+      closeModal,
+      prepareStateSettingForm,
+      updateForm,
       submit,
     };
   },
