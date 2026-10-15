@@ -528,6 +528,7 @@ export const CSV_SEPARATORS_TO_SYMBOLS = {
 
 export const VIEW_PERIODIC_REFRESH_KEY = '$periodicRefresh';
 export const WIDGET_PERIODIC_REFRESH_KEY = '$periodicRefresh';
+export const REFRESH_OBSERVER_KEY = '$refresh';
 
 export const RESIZING_CELLS_CONTENTS_BEHAVIORS = {
   wrap: 'wrap',

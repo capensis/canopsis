@@ -120,6 +120,7 @@
               <external-data-table-column-data-type-field
                 v-field="columns[header.value]"
                 :table-separator="separator"
+                :disabled="disabled || disabledTypes"
               />
               <v-flex>
                 <external-data-table-column-tag-field
@@ -336,6 +337,10 @@ export default {
       required: false,
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    disabledTypes: {
       type: Boolean,
       default: false,
     },

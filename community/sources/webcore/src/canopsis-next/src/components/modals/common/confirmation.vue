@@ -54,7 +54,7 @@ import { sanitizeHtml } from '@/helpers/html';
 
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
+import { usePendingHandler } from '@/hooks/query/pending';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -83,13 +83,11 @@ export default {
       close();
     };
 
-    const { submit, submitting, isDisabled } = useSubmittableForm({
-      method: async () => {
-        await config.value.action?.();
+    const { pending: submitting, handler: submit } = usePendingHandler(async () => {
+      await config.value.action?.();
 
-        submitted.value = true;
-        close();
-      },
+      submitted.value = true;
+      close();
     });
 
     onBeforeUnmount(() => {
@@ -102,7 +100,6 @@ export default {
       config,
 
       submitting,
-      isDisabled,
       title,
       sanitizedText,
       sanitizedAlertText,

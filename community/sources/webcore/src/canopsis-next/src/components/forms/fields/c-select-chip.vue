@@ -10,7 +10,7 @@
     <template #activator="{ on }">
       <c-chip
         v-bind="$attrs"
-        :closable="!isEmptyValue && clearable"
+        :closable="!disabled && !isEmptyValue && clearable"
         class="px-2"
         v-on="on"
         @close="selectItem(null)"
