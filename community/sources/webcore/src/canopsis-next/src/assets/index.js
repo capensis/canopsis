@@ -1,20 +1,14 @@
-/**
- * @typedef {Function} RequireContextResult
- * @property {string | number} id
- * @property {Function} resolve
- * @property {Function} keys
- */
+const modules = import.meta.glob('@/assets/event-filter-actions-types/*.svg', {
+  eager: true,
+  import: 'default',
+});
 
-/**
- * Require all modules from context result
- *
- * @param {RequireContextResult} requireModule
- * @return {Object<string, unknown>}
- */
-const requireAllModules = requireModule => requireModule.keys().reduce((acc, key) => {
-  acc[key] = requireModule(key);
+export const eventFilterActionsTypesImages = Object.fromEntries(
+  Object.entries(modules).map(([path, url]) => {
+    const fileName = path
+      .split('/')
+      .pop();
 
-  return acc;
-}, []);
-
-export const eventFilterActionsTypesImages = requireAllModules(require.context('./event-filter-actions-types/'));
+    return [`./${fileName}`, url];
+  }),
+);

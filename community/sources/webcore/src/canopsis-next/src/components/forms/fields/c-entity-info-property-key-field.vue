@@ -10,8 +10,9 @@
     :name="name"
     item-text="value"
     item-value="value"
+    class="c-entity-info-property-key-field"
     return-object
-    @input="changeSelectedItems"
+    @update:value="changeSelectedItems"
     @fetch="fetchItems"
     @fetch:more="fetchMoreItems"
     @update:search="updateSearch"
@@ -25,10 +26,6 @@ import { useLazySearch } from '@/hooks/form/lazy-search';
 import { useService } from '@/hooks/store/modules/service';
 
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
     value: {
       type: String,
@@ -51,6 +48,9 @@ export default {
       default: 'name',
     },
   },
+
+  emits: ['update:value', 'update:selected-items'],
+
   setup(props, { emit }) {
     const { fetchEntityInfosKeysWithoutStore } = useService();
 
@@ -62,15 +62,17 @@ export default {
       fetchItems,
       fetchMoreItems,
       changeSelectedItems,
-      removeItemFromSelectedItemsByIndex,
       updateSearch,
-    } = useLazySearch({
-      value: toRef(props, 'value'),
-      idKey: 'value',
-      idParamsKey: 'ids',
-      fetchHandler: fetchEntityInfosKeysWithoutStore,
-      addable: true,
-    }, emit);
+    } = useLazySearch(
+      {
+        value: toRef(props, 'value'),
+        idKey: 'value',
+        idParamsKey: 'ids',
+        fetchHandler: fetchEntityInfosKeysWithoutStore,
+        addable: true,
+      },
+      emit,
+    );
 
     return {
       selectedItem,
@@ -80,9 +82,26 @@ export default {
       fetchItems,
       fetchMoreItems,
       changeSelectedItems,
-      removeItemFromSelectedItemsByIndex,
       updateSearch,
     };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.c-entity-info-property-key-field {
+  :deep(.v-field__input) {
+    min-width: 0;
+  }
+
+  :deep(.v-select__selection),
+  :deep(.v-select__selection-text) {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+</style>

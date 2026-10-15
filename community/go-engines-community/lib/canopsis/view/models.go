@@ -151,8 +151,8 @@ func (p Parameters) MarshalJSON() ([]byte, error) {
 }
 
 func (p *Parameters) UnmarshalJSON(b []byte) error {
-	type Alias *Parameters
-	err := json.Unmarshal(b, Alias(p))
+	type alias Parameters
+	err := json.Unmarshal(b, (*alias)(p))
 	if err != nil {
 		return err
 	}

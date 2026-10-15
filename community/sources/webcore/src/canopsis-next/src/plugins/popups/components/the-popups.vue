@@ -1,50 +1,33 @@
 <template>
-  <div
-    v-if="popups.length"
-    class="popups"
-  >
-    <popup-item
-      v-for="popup in popups"
-      v-bind="popup"
-      :key="popup.id"
-    />
-  </div>
+  <teleport to="body">
+    <div v-if="popups.length" class="popups">
+      <popup-item v-for="popup in popups" v-bind="popup" :key="popup.id" />
+    </div>
+  </teleport>
 </template>
 
-<script>
-import { computed } from 'vue';
+<script setup>
+import { storeToRefs } from 'pinia';
 
-import { useStore } from '@/hooks/store';
-import { usePopups } from '@/hooks/popups';
+import { usePopupsStore } from '../stores';
 
 import PopupItem from './popup-item.vue';
 
-/**
- * Wrapper for the popups
- */
-export default {
-  components: { PopupItem },
-  setup() {
-    const store = useStore();
-    const popupsModule = usePopups();
+const popupsStore = usePopupsStore();
 
-    const popups = computed(() => store.getters[`${popupsModule.moduleName}/popups`]);
-
-    return {
-      popups,
-    };
-  },
-};
+const { popups } = storeToRefs(popupsStore);
 </script>
 
 <style lang="scss">
-  .popups {
-    position: fixed;
-    z-index: 1000;
-    right: 2rem;
-    top: 75px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-  }
+.popups {
+  position: fixed;
+  z-index: 2147483647;
+  right: 2rem;
+  top: 75px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  max-width: calc(100vw - 4rem);
+  gap: 4px;
+}
 </style>

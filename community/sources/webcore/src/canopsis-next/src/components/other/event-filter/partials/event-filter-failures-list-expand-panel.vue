@@ -1,7 +1,7 @@
 <template>
   <v-card flat>
     <v-card-text>
-      <v-layout align-center>
+      <c-layout align="center">
         <span>{{ $t('eventFilter.event') }}:</span>
         <c-copy-btn
           :value="eventString"
@@ -12,8 +12,12 @@
           @success="onSuccessCopied"
           @error="onErrorCopied"
         />
-      </v-layout>
-      <c-json-treeview :json="eventString" />
+      </c-layout>
+      <c-object-treeview
+        :root-name="$t('eventFilter.event')"
+        :value="failure.event"
+        value-max-width="520px"
+      />
     </v-card-text>
   </v-card>
 </template>

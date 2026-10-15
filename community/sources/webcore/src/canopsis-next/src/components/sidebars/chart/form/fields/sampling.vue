@@ -1,8 +1,9 @@
 <template>
   <widget-settings-item :title="$t('settings.defaultSampling')">
     <c-sampling-field
-      v-field="value"
+      :value="modelValue"
       :name="name"
+      @update:value="$emit('update:modelValue', $event)"
     />
   </widget-settings-item>
 </template>
@@ -13,14 +14,15 @@ import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-i
 export default {
   components: { WidgetSettingsItem },
   props: {
-    value: {
+    modelValue: {
       type: String,
-      required: false,
+      default: undefined,
     },
     name: {
       type: String,
-      required: false,
+      default: '',
     },
   },
+  emits: ['update:modelValue'],
 };
 </script>

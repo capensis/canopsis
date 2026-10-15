@@ -1,42 +1,36 @@
 <template>
-  <div>
+  <div class="view-tabs-stack">
     <view-tabs
       v-if="view && isTabsChanged"
-      :tabs.sync="tabs"
+      :tabs="tabs"
       :changed="isTabsChanged"
       :updatable="updatable"
       class="view-tabs--absolute"
+      @update:tabs="tabs = $event"
     />
-    <v-fade-transition>
-      <v-overlay
-        :value="view && isTabsChanged"
-        class="view-tabs__overlay"
-        z-index="10"
-      >
-        <v-btn
-          class="ma-2"
-          color="primary"
-          @click="submit"
-        >
-          {{ $t('common.submit') }}
-        </v-btn>
-        <v-btn
-          class="ma-2"
-          light
-          @click="cancel"
-        >
-          {{ $t('common.cancel') }}
-        </v-btn>
-      </v-overlay>
-    </v-fade-transition>
+
+    <div v-if="view && isTabsChanged" class="view-tabs__scrim" />
+
+    <div v-if="view && isTabsChanged" class="view-tabs__actions">
+      <v-btn class="ma-2" color="primary" @click="submit">
+        {{ $t('common.submit') }}
+      </v-btn>
+
+      <v-btn class="ma-2" variant="elevated" @click="cancel">
+        {{ $t('common.cancel') }}
+      </v-btn>
+    </div>
+
     <view-tabs
-      :tabs.sync="tabs"
+      :tabs="tabs"
       :changed="isTabsChanged"
-      :editing="activeViewEditing"
       :updatable="updatable"
+      @update:tabs="tabs = $event"
     >
       <template #default="props">
-        <view-tab-widgets v-bind="props" />
+        <slot v-bind="props">
+          <view-tab-widgets v-bind="props" />
+        </slot>
       </template>
     </view-tabs>
   </div>
@@ -44,24 +38,23 @@
 
 <script>
 import { isEqual } from 'lodash';
+import { mapActions } from 'pinia';
+
+import { useViewStore } from '@/stores/modules/view';
 
 import { mapIds } from '@/helpers/array';
 
 import { activeViewMixin } from '@/mixins/active-view';
-import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
 
-import ViewTabs from './view-tabs.vue';
 import ViewTabWidgets from './view-tab-widgets.vue';
+import ViewTabs from './view-tabs.vue';
 
 export default {
   components: {
     ViewTabs,
     ViewTabWidgets,
   },
-  mixins: [
-    activeViewMixin,
-    entitiesViewTabMixin,
-  ],
+  mixins: [activeViewMixin],
   props: {
     updatable: {
       type: Boolean,
@@ -71,15 +64,12 @@ export default {
   data() {
     return {
       tabs: [],
+      initialTabsIds: [],
     };
   },
   computed: {
     isTabsChanged() {
-      if (this.view.tabs.length === this.tabs.length) {
-        return this.view.tabs.some((tab, index) => this.tabs[index] && tab._id !== this.tabs[index]._id);
-      }
-
-      return true;
+      return !isEqual(mapIds(this.tabs), this.initialTabsIds);
     },
   },
   watch: {
@@ -88,13 +78,19 @@ export default {
       handler(tabs, prevTabs) {
         if (!isEqual(tabs, prevTabs)) {
           this.tabs = [...tabs];
+          this.initialTabsIds = mapIds(tabs);
         }
       },
     },
   },
   methods: {
+    ...mapActions(useViewStore, {
+      updateViewTabPositions: 'updateViewTabPositions',
+    }),
+
     cancel() {
       this.tabs = [...this.view.tabs];
+      this.initialTabsIds = mapIds(this.view.tabs);
     },
 
     async submit() {
@@ -112,13 +108,26 @@ export default {
 .view-tabs {
   &--absolute {
     position: absolute;
-    z-index: 11;
+    z-index: 1006;
     width: 100%;
   }
 
-  &__overlay {
-    align-items: flex-start;
-    justify-content: flex-start;
+  &__actions {
+    position: absolute;
+    z-index: 1007;
+    top: -50px;
+    left: 0;
   }
+
+  &__scrim {
+    position: fixed;
+    z-index: 1005;
+    inset: 0;
+    background: rgba(33, 33, 33, 0.46);
+  }
+}
+
+.view-tabs-stack {
+  position: relative;
 }
 </style>

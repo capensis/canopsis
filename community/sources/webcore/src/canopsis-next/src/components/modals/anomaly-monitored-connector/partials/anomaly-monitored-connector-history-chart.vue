@@ -1,11 +1,6 @@
 <template>
   <div class="anomaly-monitored-connector-history-chart">
-    <line-chart
-      :chart-id="chartId"
-      :options="chartOptions"
-      :datasets="datasets"
-      :dark="$system.dark"
-    />
+    <line-chart :options="chartOptions" :datasets="datasets" />
   </div>
 </template>
 
@@ -14,30 +9,29 @@ import { computed } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
 
-const LineChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/line-chart.vue');
+import LineChart from '@/components/common/chart/line-chart.vue';
 
 const ANOMALY_COLOR = '#E53935';
 const MAIN_COLOR = '#1E88E5';
 const AVERAGE_COLOR = '#9E9E9E';
 
 export default {
-  inject: ['$system'],
   components: { LineChart },
+
   props: {
     history: {
       type: Object,
-      default: null,
+      default: () => ({}),
     },
   },
+
   setup(props) {
     const { t } = useI18n();
 
-    const chartId = 'anomaly-connector-history-chart';
-
     const datasets = computed(() => {
-      const { data = [], average_events: average = 0 } = props.history ?? {};
+      const { data = [], average_events: average = 0 } = props.history;
 
-      if (!data?.length) {
+      if (!data.length) {
         return [];
       }
 
@@ -45,13 +39,10 @@ export default {
         x: point.time * 1000,
         y: point.count,
       }));
-
-      const pointBackgroundColors = data.map(p => (p.anomaly ? ANOMALY_COLOR : MAIN_COLOR));
-      const pointBorderColors = pointBackgroundColors;
-      const pointStyles = data.map(p => (p.anomaly ? 'rect' : 'circle'));
-
-      const averagePoints = data.map(p => ({
-        x: p.time * 1000,
+      const pointBackgroundColors = data.map(point => (point.anomaly ? ANOMALY_COLOR : MAIN_COLOR),
+      );
+      const averagePoints = data.map(point => ({
+        x: point.time * 1000,
         y: average,
       }));
 
@@ -65,8 +56,8 @@ export default {
           pointRadius: 5,
           pointHoverRadius: 7,
           pointBackgroundColor: pointBackgroundColors,
-          pointBorderColor: pointBorderColors,
-          pointStyle: pointStyles,
+          pointBorderColor: pointBackgroundColors,
+          pointStyle: data.map(point => (point.anomaly ? 'rect' : 'circle')),
           borderWidth: 2,
         },
         {
@@ -86,7 +77,6 @@ export default {
     const chartOptions = computed(() => ({
       responsive: true,
       maintainAspectRatio: false,
-
       scales: {
         x: {
           type: 'time',
@@ -132,7 +122,6 @@ export default {
     }));
 
     return {
-      chartId,
       chartOptions,
       datasets,
     };
@@ -146,12 +135,12 @@ export default {
   width: 100%;
   height: 340px;
 
-  ::v-deep {
-    canvas, div {
-      width: 100% !important;
-      height: 100% !important;
-      position: relative !important;
-    }
+  :deep(canvas),
+  :deep(.line-chart),
+  :deep(.line-chart__canvas) {
+    width: 100% !important;
+    height: 100% !important;
+    position: relative !important;
   }
 }
 </style>

@@ -1,5 +1,5 @@
-import { PATTERNS_FIELDS } from '@/constants';
 import { COLORS } from '@/config';
+import { PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 
@@ -12,12 +12,10 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
  * Convert tag to patterns
  *
  * @param {AlarmTag} tag
- * @return {FilterPatterns}
+ * @returns {FilterPatterns}
  */
-export const tagFilterPatternsToForm = tag => filterPatternsToForm(
-  tag,
-  [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
-);
+export const tagFilterPatternsToForm = tag =>
+  filterPatternsToForm(tag, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]);
 
 /**
  * Convert tag to form object
@@ -37,10 +35,8 @@ export const tagToForm = (tag = {}) => ({
  * @param {FilterPatternsForm} patterns
  * @returns {FilterPatterns}
  */
-const formPatternsToTagPatterns = patterns => formFilterToPatterns(
-  patterns,
-  [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
-);
+const formPatternsToTagPatterns = patterns =>
+  formFilterToPatterns(patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]);
 
 /**
  * Convert tag form to user object

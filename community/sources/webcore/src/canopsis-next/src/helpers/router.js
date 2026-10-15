@@ -1,113 +1,119 @@
-import {
-  isEmpty,
-  isFunction,
-  isMatch,
-  isArray,
-  pick,
-} from 'lodash';
+import { isArray, isEmpty, isFunction, pick } from 'lodash';
 
-import { USER_PERMISSIONS_TO_PAGES_RULES, POPUP_TYPES, CRUD_ACTIONS } from '@/constants';
+import { CRUD_ACTIONS, POPUP_TYPES } from '@/constants';
 
-import store from '@/store';
-import i18n from '@/i18n';
+import { usePopupsStore } from '@/plugins/popups/stores';
 
-import { checkUserAnyAccess } from '@/helpers/entities/permissions/list';
-import { groupedPermissionToPermission } from '@/helpers/permission';
+import { i18n } from '@/i18n';
+
+import { useAuthStore } from '@/stores/modules/auth';
+
+import { checkUserAnyAccess, groupedPermissionToPermission } from '@/helpers/permission';
+
+import { useInfo } from '@/hooks/store/modules/info';
 
 /**
- * Get app info value promise by key
- *
- * @param {string} key
- * @returns {Promise<unknown>|*}
+ * @typedef {Object} RouteRequiresPermission
+ * @property {string|string[]|function(import('vue-router').RouteLocationNormalized): string|string[]} id -
+ *   Permission id, grouped ids, or a function of the target route (e.g. view kiosk `params.id`).
+ * @property {string} [action] - CRUD action to check; defaults to `CRUD_ACTIONS.read` in user access checks.
  */
-export const getAppInfoValuePromiseByKey = (key) => {
-  const getterKey = `info/${key}`;
-
-  if (store.getters[getterKey]) {
-    return Promise.resolve(store.getters[getterKey]);
-  }
-
-  return store.watchOnce(state => state.info.appInfo[key], v => !isEmpty(v));
-};
 
 /**
- * Check app info access for route
+ * Resolves `meta.requiresPermission.id`: calls it with `route` when it is a function, otherwise returns the
+ * static id (string or grouped-permission array).
  *
- * @param {Object} [to={}] - Route object
- * @returns {Promise<boolean>}
+ * @param {RouteRequiresPermission} requiresPermission - Route meta permission descriptor.
+ * @param {import('vue-router').RouteLocationNormalized} route - Target route from the navigation guard.
+ * @returns {string|string[]} Permission id or grouped ids.
  */
-export async function checkAppInfoAccessForRoute(to = {}) {
-  const { requiresPermission } = to.meta;
+const resolvePermissionId = (requiresPermission, route) =>
+  isFunction(requiresPermission.id) ? requiresPermission.id(route) : requiresPermission.id;
+
+/**
+ * Guards a route by app edition: fetches app info when missing, then checks
+ * `checkAppInfoAccessByPermission`. Used in `router.beforeResolve`.
+ *
+ * Routes without `meta.requiresPermission` pass. On denial, shows a not-found popup and throws.
+ *
+ * @param {import('vue-router').RouteLocationNormalized} [route={}] - Target route (`to`).
+ * @returns {Promise<true>} Resolves when the edition allows the page.
+ * @throws {Error} When the application edition does not include this page.
+ */
+export const checkAppInfoAccessForRoute = async (route = {}) => {
+  const { requiresPermission } = route.meta;
 
   if (!requiresPermission) {
     return true;
   }
 
-  let permissionId = isFunction(requiresPermission.id) ? requiresPermission.id(to) : requiresPermission.id;
+  const { edition, fetchAppInfo, checkAppInfoAccessByPermission } = useInfo();
+
+  let permissionId = resolvePermissionId(requiresPermission, route);
 
   if (isArray(permissionId)) {
     permissionId = groupedPermissionToPermission(permissionId);
   }
 
-  const permissionAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[permissionId];
+  if (!edition.value) {
+    await fetchAppInfo();
+  }
 
-  if (!permissionAppInfoRules) {
+  if (checkAppInfoAccessByPermission(permissionId)) {
     return true;
   }
 
-  const edition = await getAppInfoValuePromiseByKey('edition');
+  const popupsStore = usePopupsStore();
 
-  const appInfo = { edition };
+  popupsStore.error({ text: i18n.global.t('common.notFound') });
 
-  if (isMatch(appInfo, permissionAppInfoRules)) {
-    return true;
-  }
-
-  store.dispatch('popups/error', { text: i18n.t('common.notFound') });
-
-  throw new Error('Application don\'t have access to the page');
-}
+  throw new Error('Application does not have access to the page');
+};
 
 /**
- * Check user access for route
+ * Guards a logged-in route by user permission: fetches the current user when needed, then checks
+ * `checkUserAnyAccess` for `requiresPermission.action` (default `CRUD_ACTIONS.read`). Used in
+ * `router.beforeResolve`.
  *
- * @param {Object} [to={}] - Route object
- * @returns {Promise<boolean>}
+ * Routes without `meta.requiresLogin` or `meta.requiresPermission` pass. On denial, shows a forbidden
+ * popup and throws.
+ *
+ * @param {import('vue-router').RouteLocationNormalized} [route={}] - Target route (`to`).
+ * @returns {Promise<true>} Resolves when the user may open the page.
+ * @throws {Error} When the user lacks the required permission for `route.path`.
  */
-export async function checkUserAccessForRoute(to = {}) {
-  const { requiresPermission, requiresLogin } = to.meta;
+export const checkUserAccessForRoute = async (route = {}) => {
+  const { requiresPermission, requiresLogin } = route.meta;
 
   if (!requiresLogin || !requiresPermission) {
     return true;
   }
 
-  const permissionAction = requiresPermission.action ? requiresPermission.action : CRUD_ACTIONS.read;
-  let permissionId = isFunction(requiresPermission.id) ? requiresPermission.id(to) : requiresPermission.id;
+  const authStore = useAuthStore();
+  const popupsStore = usePopupsStore();
+  const permissionAction = requiresPermission.action || CRUD_ACTIONS.read;
+  let permissionId = resolvePermissionId(requiresPermission, route);
 
-  const currentUser = store.getters['auth/currentUser'];
-
-  if (isEmpty(currentUser)) {
-    await store.watchOnce(state => state.auth.currentUser, v => !isEmpty(v));
+  if (isEmpty(authStore.currentUser) && authStore.isLoggedIn) {
+    await authStore.fetchCurrentUser();
   }
-
-  if (!store.getters['info/popupTimeout']) {
-    await store.watchOnce(state => state.info.popupTimeout, v => v);
-  }
-
-  const currentUserPermissionsById = store.getters['auth/currentUserPermissionsById'];
 
   if (!isArray(permissionId)) {
     permissionId = [permissionId];
   }
 
-  if (checkUserAnyAccess(pick(currentUserPermissionsById, permissionId), permissionAction)) {
+  if (
+    checkUserAnyAccess(pick(authStore.currentUserPermissionsById, permissionId), permissionAction)
+  ) {
     return true;
   }
 
-  store.dispatch('popups/add', {
-    text: i18n.t('common.forbidden'),
+  popupsStore.add({
+    text: i18n.global.t('common.forbidden'),
     type: POPUP_TYPES.error,
   });
 
-  throw new Error(`User doesn't have access to page '${to.path}' with permission id '${permissionId}'`);
-}
+  throw new Error(
+    `User does not have access to page '${route.path}' with permission id '${permissionId}'`,
+  );
+};

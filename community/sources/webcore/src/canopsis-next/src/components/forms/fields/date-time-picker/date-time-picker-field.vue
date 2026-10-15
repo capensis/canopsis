@@ -1,33 +1,43 @@
 <template>
   <v-menu
     v-model="opened"
-    ref="menu"
     :close-on-content-click="false"
     :disabled="disabled"
     content-class="date-time-picker"
     transition="slide-y-transition"
-    max-width="290px"
-    right
+    min-width="370"
+    max-width="370"
+    location="bottom start"
   >
-    <template #activator="{ on }">
-      <div :aria-required="isRequired" v-on="on">
-        <v-text-field
+    <template #activator="{ props: activatorProps }">
+      <div
+        v-bind="activatorProps"
+        :aria-required="fieldRequired"
+        class="date-time-picker-field"
+      >
+        <c-text-field
           :label="label"
-          :error-messages="errors.collect(name)"
-          :value="dateTextValue"
-          :append-icon="clearable ? 'close' : ''"
+          :name="name"
+          :model-value="dateTextValue"
+          :append-inner-icon="clearable ? 'close' : ''"
           :disabled="disabled"
           :hide-details="hideDetails"
+          :required="fieldRequired"
+          :validation-rules="validationRules"
+          :validate-on-blur="false"
           readonly
-          @click:append="clear"
+          @click:append-inner="clear"
         >
-          <template #append="">
+          <template v-if="$slots['append-inner']" #append-inner>
+            <slot name="append-inner" />
+          </template>
+          <template v-if="$slots.append" #append>
             <slot name="append" />
           </template>
-          <template #append-outer="">
+          <template v-if="$slots['append-outer']" #append-outer>
             <slot name="append-outer" />
           </template>
-        </v-text-field>
+        </c-text-field>
       </div>
     </template>
     <date-time-picker
@@ -35,52 +45,24 @@
       :label="label"
       :round-hours="roundHours"
       :allowed-dates="allowedDates"
+      :control-variant="controlVariant"
       @close="close"
-      @input="input"
+      @update:value="updateValue"
     />
   </v-menu>
 </template>
 
 <script>
-import { ref, computed, nextTick } from 'vue';
+import { DATETIME_FORMATS } from '@/constants';
 
-import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
-
-import { convertDateToStartOfUnitDateObject, convertDateToString } from '@/helpers/date/date';
-
-import { useValidator } from '@/hooks/validator/validator';
+import { convertDateToString } from '@/helpers/date/date';
 
 import DateTimePicker from './date-time-picker.vue';
+import { createDateTimeValidationRules, isRequiredRule } from './validation-rules';
 
-/**
- * Date time picker component
- *
- * @warning If you want to use validation on the field you shouldn't use `v-field`
- *
- * @prop {Date} [value=null] - Date value
- * @prop {Boolean} [clearable=false] - if it is true input field will be have cross button with clear event on click
- * @prop {string} [label=''] - Label of the input field
- * @prop {string} [name=null] - Name property in the validation object
- * @prop {Boolean} [roundHours=false] - Deny to change minutes it will be only 0
- *
- * @event value#input
- */
 export default {
-  $_veeValidate: {
-    value() {
-      if (!this.value) {
-        return this.value;
-      }
-
-      return convertDateToStartOfUnitDateObject(this.value, TIME_UNITS.minute);
-    },
-
-    name() {
-      return this.name;
-    },
-  },
-  inject: ['$validator'],
   components: { DateTimePicker },
+  emits: ['update:value'],
   props: {
     clearable: {
       type: Boolean,
@@ -96,11 +78,15 @@ export default {
     },
     name: {
       type: String,
-      default: null,
+      default: '',
     },
     roundHours: {
       type: Boolean,
       default: false,
+    },
+    controlVariant: {
+      type: String,
+      default: undefined,
     },
     disabled: {
       type: Boolean,
@@ -114,46 +100,51 @@ export default {
       type: Function,
       required: false,
     },
+    rules: {
+      type: Object,
+      default: () => ({}),
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
-  setup(props, { emit }) {
-    const validator = useValidator();
-
-    const opened = ref(false);
-
-    const isRequired = computed(() => validator?.fields?.find?.({ name: props.name })?.isRequired);
-    const dateTextValue = computed(() => convertDateToString(props.value, DATETIME_FORMATS.dateTimePicker));
-
-    /**
-     * Closes the date time picker menu
-     */
-    const close = () => opened.value = false;
-
-    /**
-     * Clears the date time picker value
-     */
-    const clear = () => emit('input', null);
-
-    /**
-     * Handles input event from date time picker
-     *
-     * @param {Date|Number} value - Date value
-     */
-    const input = (value) => {
-      emit('input', value);
-
-      if (validator && props.name) {
-        nextTick(() => validator.validate(props.name));
-      }
-    };
-
+  data() {
     return {
-      opened,
-      isRequired,
-      dateTextValue,
-      close,
-      clear,
-      input,
+      opened: false,
     };
+  },
+  computed: {
+    dateTextValue() {
+      return convertDateToString(this.value, DATETIME_FORMATS.dateTimePicker);
+    },
+
+    fieldRequired() {
+      return this.required || isRequiredRule(this.rules);
+    },
+
+    validationRules() {
+      return createDateTimeValidationRules(this.rules);
+    },
+  },
+  methods: {
+    close() {
+      this.opened = false;
+    },
+
+    updateValue(value) {
+      this.$emit('update:value', value);
+    },
+
+    clear() {
+      this.updateValue(null);
+    },
   },
 };
 </script>
+
+<style lang="scss">
+.date-time-picker-field {
+  width: 100%;
+}
+</style>

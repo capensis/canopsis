@@ -1,14 +1,6 @@
 <template>
-  <div
-    v-if="total"
-    :class="{ 'py-1': isTop }"
-    class="container text-center"
-  >
-    <ul
-      v-if="isTop"
-      :class="{ 'theme--light': !$vuetify.theme.dark, 'theme--dark': $vuetify.theme.dark }"
-      class="v-pagination"
-    >
+  <div v-if="total" :class="isTop ? 'py-1' : 'pa-6'" class="container text-center">
+    <ul v-if="isTop" class="v-pagination">
       <li>
         <button
           :disabled="isPreviousPageDisabled"
@@ -17,7 +9,7 @@
           data-test="paginationPreviewButton"
           @click="previous"
         >
-          <v-icon>chevron_left</v-icon>
+          <c-icon>chevron_left</c-icon>
         </button>
       </li>
       <div class="pagination-details">
@@ -31,31 +23,27 @@
           data-test="paginationNextButton"
           @click="next"
         >
-          <v-icon>chevron_right</v-icon>
+          <c-icon>chevron_right</c-icon>
         </button>
       </li>
     </ul>
-    <v-layout
-      v-else
-      align-center
-      justify-center
-    >
-      <span class="text--secondary">
+    <c-layout v-else align="center" justify="center">
+      <span class="text-medium-emphasis">
         {{ $t('common.paginationItems', { first, last, total }) }}
       </span>
       <v-pagination
-        :value="page"
-        :total-visible="$config.PAGINATION_TOTAL_VISIBLE"
+        :model-value="page"
+        :total-visible="paginationTotalVisible"
         :length="totalPages"
         data-test="vPagination"
-        @input="updatePage"
+        @update:model-value="updatePage"
       />
-    </v-layout>
+    </c-layout>
   </div>
 </template>
 
 <script>
-import { PAGINATION_LIMIT } from '@/config';
+import { PAGINATION_LIMIT, PAGINATION_TOTAL_VISIBLE } from '@/config';
 
 /**
  * Pagination component
@@ -69,10 +57,6 @@ import { PAGINATION_LIMIT } from '@/config';
  * @event input
  */
 export default {
-  model: {
-    prop: 'page',
-    event: 'input',
-  },
   props: {
     page: {
       type: Number,
@@ -91,8 +75,19 @@ export default {
       validator: value => ['top', 'bottom'].indexOf(value) !== -1,
       default: 'bottom',
     },
+    totalVisible: {
+      type: Number,
+      required: false,
+    },
   },
+
+  emits: ['update:page'],
+
   computed: {
+    paginationTotalVisible() {
+      return this.totalVisible ?? PAGINATION_TOTAL_VISIBLE;
+    },
+
     isTop() {
       return this.type === 'top';
     },
@@ -105,7 +100,7 @@ export default {
      * Calculate first item nb to display on pagination, in case it's not given by the backend
      */
     first() {
-      return 1 + (this.limit * (this.page - 1));
+      return 1 + this.limit * (this.page - 1);
     },
 
     /**
@@ -125,6 +120,7 @@ export default {
       return this.page >= this.totalPages;
     },
   },
+
   methods: {
     previous() {
       this.updatePage(this.page - 1);
@@ -135,23 +131,61 @@ export default {
     },
 
     updatePage(page) {
-      this.$emit('input', page);
+      this.$emit('update:page', page);
     },
   },
 };
 </script>
 
 <style scoped>
-  .pagination__navigation:disabled {
-    opacity: .6;
-    pointer-events: none;
-  }
+.pagination__navigation:disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
 
-  .container {
-    flex-direction: column;
-  }
+.container {
+  flex-direction: column;
+}
 
-  span {
-    padding-left: 1%;
-  }
+.v-pagination {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.v-pagination li {
+  display: flex;
+  list-style: none;
+}
+
+.v-pagination__navigation {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: rgba(var(--v-theme-on-surface), 0.87);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+}
+
+.v-pagination__navigation--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.pagination-details {
+  display: inline-flex;
+  align-items: center;
+}
+
+span {
+  padding-left: 1%;
+}
 </style>

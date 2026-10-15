@@ -28,11 +28,14 @@ SOURCE_DATE_EPOCH:=$(shell date -u +%s)
 VERSION:=$(shell (git -C "$(MONOREPO_ROOT)" tag --list --sort=-taggerdate --merged 2>/dev/null || echo "0.0.0") | head -1)
 GITCOMMIT:=$(shell git -C "$(MONOREPO_ROOT)" log -n 1 --format=oneline --abbrev=12 --pretty="%h" 2>/dev/null || echo "unknown Git commit")
 
-# Yarn/NPM flags
+# NPM flags
 export FORCE_COLOR=0
 export NPM_CONFIG_COLOR=false
 export NPM_CONFIG_PROGRESS=false
 export NPM_CONFIG_SPIN=false
+export NPM_CONFIG_FUND=false
+export NPM_CONFIG_AUDIT=false
+export HUSKY=0 # no git hooks in package builds
 export NODE_OPTIONS="--max-old-space-size=6144" # canopsis/canopsis-pro#4066
 
 #
@@ -42,14 +45,14 @@ export NODE_OPTIONS="--max-old-space-size=6144" # canopsis/canopsis-pro#4066
 .PHONY: all
 all: $(CURRENT_BUILD_OUTPUT_DIR)/www
 
-$(CURRENT_BUILD_OUTPUT_DIR)/www: jest.config.js package.json src/ vue.config.js
+$(CURRENT_BUILD_OUTPUT_DIR)/www: package.json package-lock.json index.html public/ src/ vite.config.js
 	if test "$$(node -v | sed -e 's/v//' -e 's/\..*//g')" \
 	    != "$$(echo "$(NODE_VERSION)" | sed -e 's/\..*//g')" ;then \
 	echo "ERROR: Couldn't find NodeJS $$(echo "$(NODE_VERSION)" |  sed -e 's/\..*//g').x on your system"; \
 	exit 1; \
 	fi
-	yarn workspaces focus --production
-	yarn build --dest "$@"
+	cd "$(CURRENT_ROOT_DIR)" && npm ci
+	cd "$(CURRENT_ROOT_DIR)" && npm run build -- --outDir "$@"
 
 #
 # INSTALLATION

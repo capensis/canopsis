@@ -5,27 +5,24 @@
       :disabled="!wasChanged"
       :tooltip="$t('common.reset')"
       icon="restart_alt"
-      btn-color="grey darken-1"
+      btn-color="grey-darken-1"
       left
       @click="reset"
     />
-    <div
-      ref="codeEditor"
-      class="code-editor"
-    />
+    <div ref="codeEditor" class="code-editor" />
   </div>
 </template>
 
 <script>
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import 'monaco-editor/esm/vs/basic-languages/html/html.contribution';
+import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution';
+import 'monaco-editor/esm/vs/language/json/monaco.contribution';
 import initEditor from 'monaco-mermaid';
 import iPlasticTheme from 'monaco-themes/themes/iPlastic.json';
 
-import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution';
-import 'monaco-editor/esm/vs/basic-languages/html/html.contribution';
-import 'monaco-editor/esm/vs/language/json/monaco.contribution';
-
 import { promisedWait } from '@/helpers/async';
+import { setupMonacoEnvironment } from '@/helpers/monaco-environment';
 
 export default {
   props: {
@@ -50,6 +47,9 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:value', 'focus', 'blur'],
+
   computed: {
     editorOptions() {
       return {
@@ -63,10 +63,11 @@ export default {
       return this.originalValue !== this.value;
     },
   },
+
   watch: {
     value(value) {
       if (value !== this.$editor?.getValue()) {
-        this.$editor.setValue(value);
+        this.$editor?.setValue(value);
         this.originalValue = value;
       }
     },
@@ -87,10 +88,14 @@ export default {
       }
     },
   },
+
   created() {
     this.originalValue = this.value;
   },
+
   async mounted() {
+    setupMonacoEnvironment();
+
     try {
       this.$monaco = monaco;
     } catch {
@@ -116,14 +121,14 @@ export default {
     this.$editor.onDidFocusEditorWidget(this.onFocus);
     this.$editor.onDidBlurEditorWidget(this.onBlur);
   },
-  beforeDestroy() {
-    this.$editor.dispose();
+
+  beforeUnmount() {
+    this.$editor?.dispose();
   },
+
   methods: {
     /**
      * This function fixes this problem: https://github.com/mermaid-js/mermaid-live-editor/issues/175
-     *
-     * @returns {Promise<void>}
      */
     async loadMonaco() {
       for (let i = 0; i < 10; i += 1) {
@@ -131,14 +136,13 @@ export default {
           this.$monaco = monaco;
           return;
         } catch {
-          // eslint-disable-next-line no-await-in-loop
           await promisedWait(500);
         }
       }
     },
 
     onChange() {
-      this.$emit('input', this.$editor.getValue());
+      this.$emit('update:value', this.$editor.getValue());
     },
 
     onFocus(...args) {
@@ -150,7 +154,7 @@ export default {
     },
 
     reset() {
-      this.$emit('input', this.originalValue);
+      this.$emit('update:value', this.originalValue);
     },
   },
 };
@@ -165,12 +169,12 @@ export default {
   &__wrapper {
     position: relative;
 
-    ::v-deep .c-action-btn__button-wrapper {
+    :deep(.c-action-btn__button-wrapper) {
       height: auto;
       position: absolute;
       right: 16px;
       top: 6px;
-      opacity: .6;
+      opacity: 0.6;
       z-index: 2;
 
       &:hover {

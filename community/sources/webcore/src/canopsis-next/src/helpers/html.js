@@ -1,104 +1,162 @@
-import { escape, unescape } from 'lodash';
-import { registerCustomProtocol } from 'linkifyjs';
+import DOMPurify from 'dompurify';
 import linkifyHtmlLib from 'linkify-html';
-import sanitizeHtmlLib from 'sanitize-html';
+import { registerCustomProtocol } from 'linkifyjs';
+import { escape, unescape } from 'lodash';
 
 import { DEFAULT_SANITIZE_OPTIONS, DEFAULT_LINKIFY_OPTIONS, LINKIFY_PROTOCOLS } from '@/config';
 
 import { uid } from '@/helpers/uid';
 
 /**
- * Register custom protocols for linkify
+ * Encodes Vue template attributes so DOMPurify does not strip them during sanitization.
+ *
+ * Replaces `:attr` with `data-v-bind-attr` and `@event` with `data-v-on-event`.
+ *
+ * @param {string} [html = ''] - HTML string that may contain Vue bindings.
+ * @returns {string} HTML with Vue attributes encoded as data attributes.
  */
+export const encodeVueAttributes = (html = '') =>
+  html
+    .replace(/(\s):([^\s=>/]+)(?=\s*=)/g, '$1data-v-bind-$2')
+    .replace(/(\s)@([^\s=>/]+)(?=\s*=)/g, '$1data-v-on-$2');
+
+/**
+ * Restores Vue template attributes from their encoded data-attribute form.
+ *
+ * Reverses {@link encodeVueAttributes} by converting `data-v-bind-attr` to `:attr`
+ * and `data-v-on-event` to `@event`.
+ *
+ * @param {string} [html = ''] - HTML string with encoded Vue attributes.
+ * @returns {string} HTML with Vue attributes restored.
+ */
+export const decodeVueAttributes = (html = '') =>
+  html
+    .replace(/(\s)data-v-bind-([^\s=>/]+)(?=\s*=)/g, '$1:$2')
+    .replace(/(\s)data-v-on-([^\s=>/]+)(?=\s*=)/g, '$1@$2');
+
 LINKIFY_PROTOCOLS.forEach(registerCustomProtocol);
 
 const COMMENT_REGEX = /<!--([\s\S]*?)-->/g;
 const COMMENT_DIV_REGEX = /<div class="html-comment"[^>]*data-c="([^"]+)"[^>]*><\/div>/g;
 
+const SANITIZE_HTML_CACHE_LIMIT = 500;
+const SANITIZE_HTML_MAX_CACHEABLE_LENGTH = 20_000;
+const sanitizeHtmlCache = new Map();
+
 /**
- * Replace HTML comments with encoded div elements
+ * Returns a cached sanitized value and refreshes its LRU position.
  *
- * This function finds all HTML comments (<!-- -->) in the provided HTML string and replaces them
- * with div elements containing the encoded comment content. The encoding process:
- * 1. Extracts the comment content
- * 2. Encodes it to base64 using btoa()
- * 3. Escapes the base64 string using lodash escape() to make it safe for HTML attributes
- * 4. Generates a unique ID for each comment
- * 5. Returns a div element with class "html-comment" containing the encoded data
- *
- * This is useful for preserving HTML comments during sanitization, as most HTML sanitizers
- * remove comments. The comments can later be restored using restoreHtmlComments().
- *
- * @param {string} [html = ''] - HTML string that may contain comments
- * @return {string} - HTML string with comments replaced by encoded div elements
- *
- * @example
- * replaceHtmlComments('<!-- This is a comment --><p>Text</p>')
- * // Returns: '<div class="html-comment" data-id="cmt_123" data-c="VGhpcyBpcyBhIGNvbW1lbnQ="></div><p>Text</p>'
+ * @param {string} html
+ * @returns {string | undefined}
  */
-export const replaceHtmlComments = (html = '') => html.replace(COMMENT_REGEX, (_, content) => {
-  const encoded = btoa(content);
-  const safe = escape(encoded);
-  const id = uid('cmt_');
+const getCachedSanitizedHtml = (html) => {
+  if (!sanitizeHtmlCache.has(html)) {
+    return undefined;
+  }
 
-  return `<div class="html-comment" data-id="${id}" data-c="${safe}"></div>`;
-});
+  const sanitizedHtml = sanitizeHtmlCache.get(html);
+
+  sanitizeHtmlCache.delete(html);
+  sanitizeHtmlCache.set(html, sanitizedHtml);
+
+  return sanitizedHtml;
+};
 
 /**
- * Restore HTML comments from encoded div elements
+ * Stores a sanitized value in the bounded LRU cache.
  *
- * This function finds all div elements with class "html-comment" that were created by
- * replaceHtmlComments() and restores them back to their original HTML comment format.
- * The restoration process:
- * 1. Extracts the escaped base64 string from the data-c attribute
- * 2. Unescapes it using lodash unescape()
- * 3. Decodes the base64 string using atob()
- * 4. Returns the original HTML comment format (<!-- -->)
- *
- * This function is the inverse of replaceHtmlComments() and should be called after
- * sanitization to restore the original comments.
- *
- * @param {string} [html = ''] - HTML string containing encoded comment div elements
- * @return {string} - HTML string with encoded divs restored to original comments
- *
- * @example
- * restoreHtmlComments(
- *   '<div class="html-comment" data-id="cmt_123" data-c="VGhpcyBpcyBhIGNvbW1lbnQ="></div><p>Text</p>'
- * )
- * // Returns: '<!-- This is a comment --><p>Text</p>'
+ * @param {string} html
+ * @param {string} sanitizedHtml
  */
-export const restoreHtmlComments = (html = '') => html.replace(COMMENT_DIV_REGEX, (_, encodedEscaped) => {
-  const encoded = unescape(encodedEscaped);
-  const content = atob(encoded);
+const cacheSanitizedHtml = (html, sanitizedHtml) => {
+  sanitizeHtmlCache.set(html, sanitizedHtml);
 
-  return `<!--${content}-->`;
-});
+  if (sanitizeHtmlCache.size > SANITIZE_HTML_CACHE_LIMIT) {
+    sanitizeHtmlCache.delete(sanitizeHtmlCache.keys().next().value);
+  }
+};
 
 /**
- * Sanitize HTML document
+ * Replaces HTML comments with placeholder elements so DOMPurify preserves them.
  *
- * @param {string} [html = '']
- * @param {Object} [options = DEFAULT_SANITIZE_OPTIONS]
- * @return {string}
+ * Each comment is base64-encoded, escaped, and stored in a `div.html-comment` element.
+ *
+ * @param {string} [html = ''] - HTML string that may contain comments.
+ * @returns {string} HTML with comments replaced by placeholder divs.
  */
-export const sanitizeHtml = (html = '', options = DEFAULT_SANITIZE_OPTIONS) => (
-  restoreHtmlComments(sanitizeHtmlLib(replaceHtmlComments(html), options))
-);
+export const replaceHtmlComments = (html = '') =>
+  html.replace(COMMENT_REGEX, (_, content) => {
+    const encoded = btoa(content);
+    const safe = escape(encoded);
+    const id = uid('cmt_');
+
+    return `<div class="html-comment" data-id="${id}" data-c="${safe}"></div>`;
+  });
 
 /**
- * Convert all links in html to tag <a>
+ * Restores HTML comments from placeholder elements created by {@link replaceHtmlComments}.
  *
- * @param {string} [html = '']
- * @param {Object} [options = DEFAULT_LINKIFY_OPTIONS]
- * @return {string}
+ * @param {string} [html = ''] - HTML string with comment placeholder divs.
+ * @returns {string} HTML with original comments restored.
  */
-export const linkifyHtml = (html = '', options = DEFAULT_LINKIFY_OPTIONS) => linkifyHtmlLib(html, options);
+export const restoreHtmlComments = (html = '') =>
+  html.replace(COMMENT_DIV_REGEX, (_, encodedEscaped) => {
+    const encoded = unescape(encodedEscaped);
+    const content = atob(encoded);
+
+    return `<!--${content}-->`;
+  });
 
 /**
- * Normilize HTML (close not closed tags and etc.)
+ * Sanitizes HTML while preserving Vue attributes and comments.
  *
- * @param {string} [html = '']
- * @return {string}
+ * Pipeline: encode Vue attributes → replace comments → DOMPurify → restore comments → decode Vue attributes.
+ *
+ * @param {string} [html = ''] - Raw HTML to sanitize.
+ * @param {import('dompurify').Config} [options = DEFAULT_SANITIZE_OPTIONS] - DOMPurify configuration.
+ * @returns {string} Sanitized HTML safe for rendering.
+ */
+export const sanitizeHtml = (html = '', options = DEFAULT_SANITIZE_OPTIONS) => {
+  const cacheable =
+    options === DEFAULT_SANITIZE_OPTIONS && html.length <= SANITIZE_HTML_MAX_CACHEABLE_LENGTH;
+  const cachedHtml = cacheable ? getCachedSanitizedHtml(html) : undefined;
+
+  if (cachedHtml !== undefined) {
+    return cachedHtml;
+  }
+
+  const sanitizedHtml = decodeVueAttributes(
+    restoreHtmlComments(
+      DOMPurify.sanitize(replaceHtmlComments(encodeVueAttributes(html)), options),
+    ),
+  );
+
+  if (cacheable) {
+    cacheSanitizedHtml(html, sanitizedHtml);
+  }
+
+  return sanitizedHtml;
+};
+
+/**
+ * Converts plain-text URLs in HTML into clickable anchor tags.
+ *
+ * Custom protocols from {@link LINKIFY_PROTOCOLS} are registered at module load time.
+ *
+ * @param {string} [html = ''] - HTML string to linkify.
+ * @param {Object} [options = DEFAULT_LINKIFY_OPTIONS] - linkify-html options.
+ * @returns {string} HTML with detected URLs wrapped in anchor tags.
+ */
+export const linkifyHtml = (html = '', options = DEFAULT_LINKIFY_OPTIONS) =>
+  linkifyHtmlLib(html, options);
+
+/**
+ * Normalizes HTML by parsing and re-serializing it through the browser DOM.
+ *
+ * Useful for canonicalizing markup before registration or comparison (e.g. custom Vuetify icons).
+ *
+ * @param {string} [html = ''] - HTML string to normalize.
+ * @returns {string} Browser-normalized HTML.
  */
 export const normalizeHtml = (html = '') => {
   const element = document.createElement('div');

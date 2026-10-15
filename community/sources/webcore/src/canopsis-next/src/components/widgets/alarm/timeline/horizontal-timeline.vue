@@ -9,18 +9,14 @@
         {{ group.day }}
       </span>
       <v-divider
-        class="grey mr-2"
+        class="mr-2"
         vertical
       />
       <div class="c-horizontal-time-line__cards">
-        <template v-for="(step, stepIndex) in group.steps">
-          <horizontal-timeline-card
-            :key="stepIndex"
-            :step="step"
-          />
+        <template v-for="(step, stepIndex) in group.steps" :key="step._id ?? stepIndex">
+          <horizontal-timeline-card :step="step" />
           <v-icon
             v-if="groupIndex !== groupedSteps.length - 1 || stepIndex !== group.steps.length - 1"
-            :key="`arrow-${stepIndex}`"
             class="mx-2"
             size="16"
           >
@@ -39,12 +35,14 @@ import HorizontalTimelineCard from './horizontal-timeline-card.vue';
 
 export default {
   components: { HorizontalTimelineCard },
+
   props: {
     steps: {
       type: Array,
       default: () => [],
     },
   },
+
   computed: {
     groupedSteps() {
       return Object.entries(groupAlarmSteps(this.steps)).map(([day, steps]) => ({
@@ -57,26 +55,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  $timeFontSize: 10px;
-  $dayPadding: 5px;
+$timeFontSize: 10px;
+$dayPadding: 5px;
 
-  .c-horizontal-time-line {
-    display: inline-flex;
-    position: relative;
-    padding-top: $timeFontSize + $dayPadding;
+.c-horizontal-time-line {
+  display: inline-flex;
+  position: relative;
+  padding-top: $timeFontSize + $dayPadding;
 
-    &__day {
-      font-size: $timeFontSize;
-      position: absolute;
-      top: 0;
-    }
-
-    &__groups {
-      display: flex;
-    }
-
-    &__cards {
-      display: flex;
-    }
+  &__day {
+    font-size: $timeFontSize;
+    position: absolute;
+    top: 0;
   }
+
+  &__groups {
+    display: flex;
+  }
+
+  &__cards {
+    display: flex;
+  }
+}
 </style>

@@ -4,7 +4,7 @@ import { useComponentModel } from '../vue';
 
 /**
  * A composable that provides functionality to update a model field and emit events to the parent component.
- * This hook is designed to work with v-field directive and Vue's component model pattern.
+ * This hook is designed to work with Vue's component model pattern.
  * It handles both full model updates and individual field updates within the model.
  *
  * @param {Object} props - The component's props object containing the model data
@@ -41,9 +41,8 @@ export const useModelField = (props, emit) => {
    * @param {...*} rest - Additional arguments to pass to the emit function
    * @returns {*} The updated model value
    */
-  const updateField = (fieldName, value, ...rest) => (
-    updateModel(setField(props[prop], fieldName, value), ...rest)
-  );
+  const updateField = (fieldName, value, ...rest) =>
+    updateModel(setField(props[prop], fieldName, value), ...rest);
 
   return {
     modelEvent: event,

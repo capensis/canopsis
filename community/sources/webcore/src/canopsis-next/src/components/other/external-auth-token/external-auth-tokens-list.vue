@@ -1,69 +1,76 @@
 <template>
-  <div>
-    <c-advanced-data-table
-      :loading="pending"
-      :options="options"
-      :items="preparedTokens"
-      :headers="headers"
-      :total-items="totalItems"
-      :is-expandable-item="isExpandableItem"
-      expand
-      search
-      advanced-pagination
-      @update:options="$emit('update:options', $event)"
-    >
-      <template #expiration_duration="{ item }">
-        {{ item.expiration_duration | duration }}
-      </template>
-      <template #last_used="{ item }">
-        <span v-if="item.failed" class="error--text">
-          {{ item.fail_reason }}
-          <v-icon class="ml-2" color="error">
-            warning
-          </v-icon>
-        </span>
-        <span v-else>
-          {{ item.last_used | date }}
-        </span>
-      </template>
-      <template #updated="{ item }">
-        {{ item.updated | date }}
-      </template>
-      <template #actions="{ item }">
-        <v-layout>
-          <c-action-btn
-            v-if="editable"
-            type="edit"
-            @click="$emit('edit', item)"
-          />
-          <c-action-btn
-            v-if="deletable"
-            :disabled-button="!!item.deleteTooltip"
-            :tooltip="item.deleteTooltip"
-            type="delete"
-            @click="$emit('remove', item)"
-          />
-        </v-layout>
-      </template>
-      <template #expand="{ item }">
-        <external-auth-tokens-list-expand-panel :token="item" />
-      </template>
-    </c-advanced-data-table>
-  </div>
+  <c-advanced-data-table
+    :loading="pending"
+    :options="options"
+    :items="preparedTokens"
+    :headers="headers"
+    :total-items="totalItems"
+    :is-expandable-item="isExpandableItem"
+    expand
+    search
+    advanced-pagination
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #expiration_duration="{ item }">
+      {{ formatDuration(item.expiration_duration) }}
+    </template>
+
+    <template #last_used="{ item }">
+      <span v-if="item.failed" class="text-error">
+        {{ item.fail_reason }}
+        <v-icon class="ml-2" color="error"> warning </v-icon>
+      </span>
+      <span v-else>
+        {{ formatDate(item.last_used) }}
+      </span>
+    </template>
+
+    <template #updated="{ item }">
+      {{ formatDate(item.updated) }}
+    </template>
+
+    <template #actions="{ item }">
+      <c-layout>
+        <c-action-btn v-if="editable" type="edit" @click="$emit('edit', item)" />
+        <c-action-btn
+          v-if="deletable"
+          :disabled-button="!!item.deleteTooltip"
+          :tooltip="item.deleteTooltip"
+          type="delete"
+          @click="$emit('remove', item)"
+        />
+      </c-layout>
+    </template>
+
+    <template #expand="{ item }">
+      <external-auth-tokens-list-expand-panel :token="item" />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
 import { computed } from 'vue';
+
+import { convertDateToString } from '@/helpers/date/date';
+import { convertDurationToString } from '@/helpers/date/duration';
 
 import { useI18n } from '@/hooks/i18n';
 import { useLinkedRulesTooltips } from '@/hooks/table/linked-rules-tooltips';
 
 import ExternalAuthTokensListExpandPanel from './partials/external-auth-tokens-list-expand-panel.vue';
 
+const htmlToTooltipText = (html = '') => html
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/(li|ul)>/gi, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/\n\s*\n/g, '\n')
+    .trim();
+
 export default {
   components: {
     ExternalAuthTokensListExpandPanel,
   },
+
   props: {
     tokens: {
       type: Array,
@@ -90,6 +97,9 @@ export default {
       default: false,
     },
   },
+
+  emits: ['edit', 'remove', 'update:options'],
+
   setup(props) {
     const { t } = useI18n();
     const { getLinkedRulesMessage } = useLinkedRulesTooltips();
@@ -125,28 +135,35 @@ export default {
     ]);
 
     const preparedTokens = computed(() => props.tokens.map((token) => {
-      const linkedRulesTooltip = getLinkedRulesMessage(token.linked_rules);
+        const linkedRulesTooltip = getLinkedRulesMessage(token.linked_rules);
 
-      if (!linkedRulesTooltip.trim()) {
-        return token;
-      }
+        if (!linkedRulesTooltip.trim()) {
+          return token;
+        }
 
-      const deleteTooltip = t('externalAuthToken.tokenCanNotBeDeleted', { rules: linkedRulesTooltip });
+        const deleteTooltip = t('externalAuthToken.tokenCanNotBeDeleted', {
+          rules: htmlToTooltipText(linkedRulesTooltip),
+        });
 
-      return {
-        ...token,
+        return {
+          ...token,
 
-        linkedRulesTooltip,
-        deleteTooltip: `<span class="pre-wrap">${deleteTooltip}</span>`,
-      };
-    }));
+          linkedRulesTooltip,
+          deleteTooltip,
+        };
+      }),
+    );
 
     const isExpandableItem = item => item?.failed;
+    const formatDate = date => convertDateToString(date);
+    const formatDuration = duration => convertDurationToString(duration);
 
     return {
       headers,
       preparedTokens,
       isExpandableItem,
+      formatDate,
+      formatDuration,
     };
   },
 };

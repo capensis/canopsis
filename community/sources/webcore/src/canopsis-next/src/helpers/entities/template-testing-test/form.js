@@ -1,12 +1,12 @@
-import { differenceBy, mapValues, isArray, isNil } from 'lodash';
+import { differenceBy, isArray, isNil, isObject, mapValues } from 'lodash';
 
 import {
+  ACTION_TYPES,
+  EXTERNAL_DATA_TYPES,
+  LINK_RULE_TYPES,
+  PATTERNS_FIELDS,
   TEMPLATE_TESTING_TEST_TYPES,
   TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES,
-  ACTION_TYPES,
-  LINK_RULE_TYPES,
-  EXTERNAL_DATA_TYPES,
-  PATTERNS_FIELDS,
 } from '@/constants';
 
 import { formGroupsToPatternRules } from '@/helpers/entities/pattern/form';
@@ -35,16 +35,6 @@ import { formGroupsToPatternRules } from '@/helpers/entities/pattern/form';
 /**
  * @typedef {Object|Array|string} TemplateTestingDataForm
  * Object with nested objects converted to their IDs, arrays processed recursively, or string IDs
- */
-
-/**
- * @typedef {Object} TemplateTestingTest
- * @property {string} name - Name of the template testing test
- * @property {string} description - Description of the template testing test
- * @property {TemplateTestingTestType} type - Type of the template testing test
- * @property {string} rule - ID of the rule
- * @property {TemplateTestingDataInput} data - Additional data for the template testing test
- * @property {TemplateTestingTestValidate} [validate] - Validation data for the test
  */
 
 /**
@@ -112,45 +102,31 @@ import { formGroupsToPatternRules } from '@/helpers/entities/pattern/form';
 /**
  * Converts template testing data by extracting IDs from nested objects
  *
- * @param {TemplateTestingDataInput} [templateTestingData={}] - The template testing data to convert
- * @returns {TemplateTestingDataForm} Processed data with objects converted to IDs
- *
- * @example
- * // Convert object with nested objects to form format
- * const data = {
- *   rule: { _id: 'rule-123', name: 'My Rule' },
- *   user: { _id: 'user-456', name: 'John Doe' },
- *   tags: [
- *     { _id: 'tag-1', name: 'Tag 1' },
- *     { _id: 'tag-2', name: 'Tag 2' }
- *   ]
- * };
- *
- * const formData = templateTestingDataToForm(data);
- * // Result: {
- * //   rule: 'rule-123',
- * //   user: 'user-456',
- * //   tags: ['tag-1', 'tag-2']
- * // }
+ * @param {Object|Array} [templateTestingData={}]
+ * @returns {Object|Array|string}
  */
-export const templateTestingDataToForm = (templateTestingData = {}) => (
-  /**
-   * We need to use code block {} to avoid eslint error
-   */
+export const templateTestingDataToForm = (templateTestingData = {}) =>
   mapValues(templateTestingData, (dataItem) => {
     if (isArray(dataItem)) {
       return dataItem.map(item => item?._id || item);
     }
 
-    return dataItem?._id;
-  })
-);
+    if (dataItem?._id) {
+      return dataItem._id;
+    }
+
+    if (isObject(dataItem)) {
+      return templateTestingDataToForm(dataItem);
+    }
+
+    return dataItem;
+  });
 
 /**
  * Convert template testing test object to form
  *
- * @param {TemplateTestingTest} [templateTestingTest={}] - The template testing test object
- * @returns {TemplateTestingTestForm} Form object with rule as object instead of ID
+ * @param {Object} [templateTestingTest={}]
+ * @returns {Object}
  */
 export const templateTestingTestToForm = (templateTestingTest = {}) => ({
   name: templateTestingTest.name ?? '',
@@ -163,8 +139,8 @@ export const templateTestingTestToForm = (templateTestingTest = {}) => ({
 /**
  * Converts a template testing test form object to a template testing test object
  *
- * @param {TemplateTestingTestForm} [form={}] - The form object containing template testing test data
- * @returns {TemplateTestingTest} Template testing test object with rule converted to IDrmWithoutRule);
+ * @param {Object} [form={}]
+ * @returns {Object}
  */
 export const formToTemplateTestingTest = (form = {}) => ({
   ...form,
@@ -208,16 +184,23 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
       getTemplateTestingTestValidateFormItem({
         type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event,
         required: true,
-        params: { [PATTERNS_FIELDS.event]: formGroupsToPatternRules(form.patterns[PATTERNS_FIELDS.event]?.groups) },
+        params: {
+          [PATTERNS_FIELDS.event]: formGroupsToPatternRules(
+            form.patterns?.[PATTERNS_FIELDS.event]?.groups ?? [],
+          ),
+        },
       }),
-      ...form.external_data.reduce((acc, externalData, index) => {
+
+      ...(form.external_data ?? []).reduce((acc, externalData, index) => {
         if (externalData.type === EXTERNAL_DATA_TYPES.api) {
-          acc.push(getTemplateTestingTestValidateFormItem({
-            index,
-            required: true,
-            type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
-            key: externalData.key,
-          }));
+          acc.push(
+            getTemplateTestingTestValidateFormItem({
+              index,
+              required: true,
+              type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+              key: externalData.key,
+            }),
+          );
         }
 
         return acc;
@@ -232,22 +215,26 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
         required: true,
       }),
 
-      ...form.actions.reduce((acc, action, index) => {
+      ...(form.actions ?? []).reduce((acc, action, index) => {
         if (action.type === ACTION_TYPES.webhook) {
-          acc.push(getTemplateTestingTestValidateFormItem({
-            index,
-            required: true,
-            key: action.key,
-            type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
-          }));
-
-          if (action.parameters?.webhook?.declare_ticket?.check_ticket_status?.enabled) {
-            acc.push(getTemplateTestingTestValidateFormItem({
+          acc.push(
+            getTemplateTestingTestValidateFormItem({
               index,
               required: true,
-              key: `${action.key}.check_ticket_status.ticket_status_tpl`,
-              type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
-            }));
+              key: action.key,
+              type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+            }),
+          );
+
+          if (action.parameters?.webhook?.declare_ticket?.check_ticket_status?.enabled) {
+            acc.push(
+              getTemplateTestingTestValidateFormItem({
+                index,
+                required: true,
+                key: `${action.key}.check_ticket_status.ticket_status_tpl`,
+                type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
+              }),
+            );
           }
         }
 
@@ -264,14 +251,14 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
 
       form.type === LINK_RULE_TYPES.alarm
         ? getTemplateTestingTestValidateFormItem({
-          type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
-          required: true,
-          params: { opened: true },
-        })
+            type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+            required: true,
+            params: { opened: true },
+          })
         : getTemplateTestingTestValidateFormItem({
-          type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.entity,
-          required: true,
-        }),
+            type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.entity,
+            required: true,
+          }),
     ];
   }
 
@@ -284,6 +271,22 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
     ];
   }
 
+  if (
+    [
+      TEMPLATE_TESTING_TEST_TYPES.instruction,
+      TEMPLATE_TESTING_TEST_TYPES.job,
+      TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule,
+    ].includes(type)
+  ) {
+    return [
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+        required: true,
+        params: { opened: true },
+      }),
+    ];
+  }
+
   if (type === TEMPLATE_TESTING_TEST_TYPES.declareTicketRule) {
     return [
       getTemplateTestingTestValidateFormItem({
@@ -292,21 +295,25 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
         params: { opened: true },
       }),
 
-      ...form.webhooks.reduce((acc, webhook, index) => {
-        acc.push(getTemplateTestingTestValidateFormItem({
-          index,
-          required: true,
-          key: webhook.key,
-          type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
-        }));
-
-        if (webhook?.declare_ticket?.check_ticket_status?.enabled) {
-          acc.push(getTemplateTestingTestValidateFormItem({
+      ...(form.webhooks ?? []).reduce((acc, webhook, index) => {
+        acc.push(
+          getTemplateTestingTestValidateFormItem({
             index,
             required: true,
-            key: `${webhook.key}.check_ticket_status.ticket_status_tpl`,
-            type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
-          }));
+            key: webhook.key,
+            type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+          }),
+        );
+
+        if (webhook.declare_ticket?.check_ticket_status?.enabled) {
+          acc.push(
+            getTemplateTestingTestValidateFormItem({
+              index,
+              required: true,
+              key: `${webhook.key}.check_ticket_status.ticket_status_tpl`,
+              type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
+            }),
+          );
         }
 
         return acc;
@@ -324,36 +331,6 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
       getTemplateTestingTestValidateFormItem({
         type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event,
         someRequired: true,
-      }),
-    ];
-  }
-
-  if (type === TEMPLATE_TESTING_TEST_TYPES.instruction) {
-    return [
-      getTemplateTestingTestValidateFormItem({
-        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
-        required: true,
-        params: { opened: true },
-      }),
-    ];
-  }
-
-  if (type === TEMPLATE_TESTING_TEST_TYPES.job) {
-    return [
-      getTemplateTestingTestValidateFormItem({
-        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
-        required: true,
-        params: { opened: true },
-      }),
-    ];
-  }
-
-  if (type === TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule) {
-    return [
-      getTemplateTestingTestValidateFormItem({
-        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
-        required: true,
-        params: { opened: true },
       }),
     ];
   }
@@ -388,34 +365,38 @@ export const getChangesForValidateForm = (form = [], oldForm = []) => ({
  * @param {TemplateTestingTestValidateFormItem[]} [form] - Array of form items
  * @returns {TemplateTestingTestValidate} The validate object with entity values and responses
  */
-export const formToTemplateTestingTestValidate = (form = []) => form.reduce((acc, item) => {
-  const isResponse = [
-    TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
-    TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
-  ].includes(item.type);
+export const formToTemplateTestingTestValidate = (form = []) =>
+  form.reduce((acc, item) => {
+    const isResponse = [
+      TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+      TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
+    ].includes(item.type);
 
-  if (isResponse) {
-    if (isNil(item.index)) {
-      acc.response = item.value;
+    if (isResponse) {
+      if (isNil(item.index)) {
+        acc.response = item.value;
+
+        return acc;
+      }
+
+      const responsesField =
+        item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse
+          ? 'ticket_status_responses'
+          : 'responses';
+
+      if (!acc[responsesField]) {
+        acc[responsesField] = {};
+      }
+
+      acc[responsesField][item.index] = item.value;
 
       return acc;
     }
 
-    const responsesField = item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse ? 'ticket_status_responses' : 'responses';
-
-    if (!acc[responsesField]) {
-      acc[responsesField] = {};
-    }
-
-    acc[responsesField][item.index] = item.value;
+    acc[item.type] = item.value;
 
     return acc;
-  }
-
-  acc[item.type] = item.value;
-
-  return acc;
-}, {});
+  }, {});
 
 /**
  * Converts template testing test validate object back to form array

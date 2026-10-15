@@ -1,10 +1,10 @@
 <template>
   <div>
     <span class="text-subtitle-2">
-      {{ $t('common.preview') }}
+      {{ t('common.preview') }}
     </span>
     <external-data-table-records-list
-      v-field="form"
+      :columns="form"
       :original-columns="originalForm"
       :records="records"
       :pending="pending"
@@ -12,23 +12,22 @@
       :total-items="totalItems"
       :separator="separator"
       has-structure
+      @update:columns="updateForm"
       @update:options="updateOptions"
     />
   </div>
 </template>
 
 <script>
-import ExternalDataTableRecordsList
-  from '@/components/other/external-data-table/partials/external-data-table-records-list.vue';
+import { useI18n } from '@/hooks/i18n';
+
+import ExternalDataTableRecordsList from '@/components/other/external-data-table/partials/external-data-table-records-list.vue';
 
 export default {
   components: {
     ExternalDataTableRecordsList,
   },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+
   props: {
     activeImportFileId: {
       type: String,
@@ -63,10 +62,22 @@ export default {
       required: true,
     },
   },
+
+  emits: ['input', 'update:form', 'update:options'],
+
   setup(props, { emit }) {
+    const { t } = useI18n();
+
+    const updateForm = (newForm) => {
+      emit('update:form', newForm);
+      emit('input', newForm);
+    };
+
     const updateOptions = newOptions => emit('update:options', newOptions);
 
     return {
+      t,
+      updateForm,
       updateOptions,
     };
   },

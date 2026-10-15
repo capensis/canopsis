@@ -1,33 +1,24 @@
 <template>
-  <v-radio-group
-    v-field="value"
+  <c-radio-group
+    :model-value="value"
     hide-details
-    row
+    inline
+    @update:model-value="$emit('update:value', $event)"
   >
-    <v-radio
-      :label="$t('view.duplicateAsPrivate')"
-      :value="true"
-      color="primary"
-    />
-    <v-radio
-      :label="$t('view.duplicateAsRegular')"
-      :value="false"
-      color="primary"
-    />
-  </v-radio-group>
+    <v-radio :label="$t('view.duplicateAsPrivate')" :value="true" color="primary" />
+    <v-radio :label="$t('view.duplicateAsRegular')" :value="false" color="primary" />
+  </c-radio-group>
 </template>
 
 <script>
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
     value: {
       type: Boolean,
       required: true,
     },
   },
+
+  emits: ['update:value'],
 };
 </script>

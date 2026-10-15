@@ -5,6 +5,7 @@ import { shownHeaderMixin } from '@/mixins/shown-header';
 
 export const widgetStickyAlarmMixin = {
   mixins: [shownHeaderMixin],
+
   props: {
     stickyHeader: {
       type: Boolean,
@@ -16,21 +17,39 @@ export const widgetStickyAlarmMixin = {
     },
   },
 
+  data() {
+    return {
+      actionsTranslateY: 0,
+      previousScrollTranslateY: 0,
+      scrollBarTranslateY: 0,
+      stickyScrollTarget: null,
+      translateY: 0,
+    };
+  },
+
   computed: {
     topBarHeight() {
+      if (this.isFullscreenMode || this.isKioskMode) {
+        return 0;
+      }
+
       return this.shownHeader ? TOP_BAR_HEIGHT : 0;
     },
 
-    tableWrapper() {
-      return this.$el?.querySelector('.alarms-list-table .v-data-table__wrapper');
+    stickyTableWrapper() {
+      return this.$refs.dataTable?.$el?.querySelector('.v-table__wrapper');
     },
 
-    tableHeader() {
-      return this.$el?.querySelector('.alarms-list-table .v-data-table-header');
+    stickyTable() {
+      return this.$refs.dataTable?.$el?.querySelector('table');
     },
 
-    tableBody() {
-      return this.$el?.querySelector('.alarms-list-table table  tbody');
+    stickyTableHeader() {
+      return this.$refs.dataTable?.$el?.querySelector('thead');
+    },
+
+    stickyTableBody() {
+      return this.$refs.dataTable?.$el?.querySelector('tbody');
     },
 
     stickyFlagsArray() {
@@ -43,34 +62,34 @@ export const widgetStickyAlarmMixin = {
   },
 
   watch: {
+    activeViewScreenMode() {
+      if (this.someSticky) {
+        this.scheduleStickyScrollHandler();
+      }
+    },
+
     stickyFlagsArray() {
       if (this.someSticky) {
-        this.calculateStickyPositions();
-        this.setHeaderPosition();
-        this.setHorizontalScrollPosition();
+        this.scheduleStickyScrollHandler();
         this.registerScrollHandler();
       } else {
         this.unregisterScrollHandler();
         this.resetHeaderPosition();
+        this.$refs.horizontalScrollbar?.disconnect?.();
       }
     },
   },
 
-  created() {
-    this.actionsTranslateY = 0;
-    this.translateY = 0;
-    this.previousTranslateY = 0;
-    this.previousScrollTranslateY = 0;
-  },
-
-  async mounted() {
+  mounted() {
     if (this.someSticky) {
       this.registerScrollHandler();
+      this.scheduleStickyScrollHandler();
     }
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.unregisterScrollHandler();
+    this.clearFinishTimer();
   },
 
   methods: {
@@ -83,64 +102,97 @@ export const widgetStickyAlarmMixin = {
         return;
       }
 
-      window.addEventListener('scroll', this.stickyScrollHandler);
+      window.addEventListener('scroll', this.stickyScrollEventHandler);
+      window.addEventListener('resize', this.scheduleStickyScrollHandler);
+      document.addEventListener('fullscreenchange', this.updateStickyScrollTarget);
+      this.updateStickyScrollTarget();
       this.registeredScrollHandler = true;
     },
 
     unregisterScrollHandler() {
-      window.removeEventListener('scroll', this.stickyScrollHandler);
+      window.removeEventListener('scroll', this.stickyScrollEventHandler);
+      window.removeEventListener('resize', this.scheduleStickyScrollHandler);
+      document.removeEventListener('fullscreenchange', this.updateStickyScrollTarget);
+      this.stickyScrollTarget?.removeEventListener('scroll', this.stickyScrollEventHandler);
+      this.stickyScrollTarget = null;
       this.registeredScrollHandler = false;
     },
 
+    updateStickyScrollTarget() {
+      const scrollTarget = this.$el?.closest('.view-fullscreen') ?? null;
+
+      if (scrollTarget === this.stickyScrollTarget) {
+        return;
+      }
+
+      this.stickyScrollTarget?.removeEventListener('scroll', this.stickyScrollEventHandler);
+      scrollTarget?.addEventListener('scroll', this.stickyScrollEventHandler);
+      this.stickyScrollTarget = scrollTarget;
+      this.scheduleStickyScrollHandler();
+    },
+
     connectHorizontalScroll() {
-      /**
-       * We need to use nextTick here to wait component creation
-       */
-      this.$nextTick(() => this.$refs.horizontalScrollbar?.connect(this.tableWrapper));
+      this.$nextTick(() => this.$refs.horizontalScrollbar?.connect(this.stickyTableWrapper));
+    },
+
+    getStickyActionsEl() {
+      const actions = this.$refs.actions;
+
+      if (actions instanceof HTMLElement) {
+        return actions;
+      }
+
+      if (actions?.$el instanceof HTMLElement) {
+        return actions.$el;
+      }
+
+      return this.$el?.querySelector('.alarms-list-table__top-pagination') ?? null;
     },
 
     startScrollingForHeader() {
-      if (this.translateY !== this.previousTranslateY) {
-        this.tableHeader.style.opacity = '0';
+      if (!this.stickyHeader || !this.stickyTableHeader) {
+        return;
+      }
 
-        if (this.$refs.actions) {
-          this.$refs.actions.style.opacity = '0';
-        }
+      this.stickyTableHeader.style.opacity = '0';
+
+      const stickyActions = this.getStickyActionsEl();
+
+      if (stickyActions) {
+        stickyActions.style.opacity = '0';
       }
     },
 
     startScrollingForScrollbar() {
-      if (this.$refs.horizontalScrollbar && this.previousScrollTranslateY !== this.scrollBarTranslateY) {
-        this.$refs.horizontalScrollbar.$el.style.opacity = '0';
+      if (
+        this.$refs.horizontalScrollbar &&
+        this.previousScrollTranslateY !== this.scrollBarTranslateY
+      ) {
+        this.$refs.horizontalScrollbar.setOpacity('0');
       }
     },
 
-    startScrolling() {
-      this.scrolling = true;
-    },
-
     finishScrollingForHeader() {
-      if (!Number(this.tableHeader.style.opacity)) {
-        this.tableHeader.style.opacity = '1.0';
+      if (!this.stickyTableHeader || Number(this.stickyTableHeader.style.opacity)) {
+        return;
+      }
 
-        if (this.$refs.actions) {
-          this.$refs.actions.style.opacity = '1.0';
-        }
+      this.stickyTableHeader.style.opacity = '1';
+
+      const stickyActions = this.getStickyActionsEl();
+
+      if (stickyActions) {
+        stickyActions.style.opacity = '1';
       }
     },
 
     finishScrollingForScrollbar() {
       if (this.$refs.horizontalScrollbar?.$el?.style?.opacity === '0') {
-        this.$refs.horizontalScrollbar.$el.style.opacity = '1';
+        this.$refs.horizontalScrollbar.setOpacity('1');
       }
     },
 
-    finishScrolling() {
-      this.scrolling = false;
-    },
-
     fullFinishScrolling() {
-      this.finishScrolling();
       this.finishScrollingForHeader();
       this.finishScrollingForScrollbar();
     },
@@ -151,22 +203,45 @@ export const widgetStickyAlarmMixin = {
       }
     },
 
+    stickyScrollEventHandler() {
+      this.clearFinishTimer();
+      this.startScrollingForHeader();
+      this.startScrollingForScrollbar();
+      this.stickyScrollHandler();
+
+      this.finishTimer = setTimeout(this.fullFinishScrolling, ALARMS_LIST_HEADER_OPACITY_DELAY);
+    },
+
     setHeaderPosition() {
-      if (!this.translateY || !this.actionsTranslateY) {
+      if (!this.stickyHeader || !this.stickyTableHeader) {
+        return;
+      }
+
+      if (!this.translateY) {
         this.removeShadowFromHeader();
       } else {
         this.addShadowToHeader();
       }
 
-      this.tableHeader.style.transform = `translateY(${this.translateY}px)`;
+      this.stickyTableHeader.style.transform = `translateY(${this.translateY}px)`;
 
-      if (this.$refs.actions) {
-        this.$refs.actions.style.transform = `translateY(${this.actionsTranslateY}px)`;
+      const stickyActions = this.getStickyActionsEl();
+
+      if (stickyActions) {
+        stickyActions.style.transform = `translateY(${this.actionsTranslateY}px)`;
       }
 
       if (this.translateY === 0) {
         this.finishScrollingForHeader();
       }
+    },
+
+    setHeaderWidth() {
+      if (!this.stickyTableHeader || !this.stickyTable) {
+        return;
+      }
+
+      this.stickyTableHeader.style.width = `${this.stickyTable.scrollWidth}px`;
     },
 
     setHorizontalScrollPosition() {
@@ -178,30 +253,36 @@ export const widgetStickyAlarmMixin = {
     },
 
     calculateHeaderPosition() {
-      const { height: bodyHeight } = this.tableBody.getBoundingClientRect();
-      const { top: headerTop } = this.tableHeader.getBoundingClientRect();
-      const { top: actionsTop = 0, height: actionsHeight = 0 } = this.$refs.actions?.getBoundingClientRect() ?? {};
+      if (!this.stickyTableBody || !this.stickyTableHeader) {
+        return;
+      }
 
+      const { height: bodyHeight } = this.stickyTableBody.getBoundingClientRect();
+      const { top: headerTop } = this.stickyTableHeader.getBoundingClientRect();
+      const { top: actionsTop = 0, height: actionsHeight = 0 } =
+        this.getStickyActionsEl()?.getBoundingClientRect() ?? {};
       const offset = headerTop - this.translateY - this.topBarHeight - actionsHeight;
       const actionsOffset = actionsTop - this.actionsTranslateY - this.topBarHeight;
 
-      this.previousTranslateY = this.actionsTranslateY;
       this.translateY = Math.min(bodyHeight, Math.max(0, -offset));
       this.actionsTranslateY = Math.min(bodyHeight, Math.max(0, -actionsOffset));
     },
 
     calculateScrollPosition() {
-      const { bottom: bodyBottom } = this.tableBody.getBoundingClientRect();
-      const {
-        height: scrollBarHeight = 0,
-      } = this.$refs.horizontalScrollbar?.$el.getBoundingClientRect() ?? {};
+      if (!this.stickyTableBody) {
+        return;
+      }
+
+      const { bottom: bodyBottom } = this.stickyTableBody.getBoundingClientRect();
+      const { height: scrollBarHeight = 0 } =
+        this.$refs.horizontalScrollbar?.$el.getBoundingClientRect() ?? {};
 
       this.previousScrollTranslateY = this.scrollBarTranslateY;
       this.scrollBarTranslateY = Math.min(window.innerHeight - bodyBottom - scrollBarHeight, 0);
     },
 
     setHorizontalScrollbarWidth() {
-      this.$refs.horizontalScrollbar?.setContentWidth?.(this.tableWrapper?.scrollWidth ?? 0);
+      this.$refs.horizontalScrollbar?.setContentWidth?.(this.stickyTableWrapper?.scrollWidth ?? 0);
     },
 
     calculateStickyPositions() {
@@ -215,16 +296,14 @@ export const widgetStickyAlarmMixin = {
     },
 
     addShadowToHeader() {
-      this.tableHeader.classList.add('head-shadow');
+      this.stickyTableHeader?.classList.add('head-shadow');
     },
 
     removeShadowFromHeader() {
-      this.tableHeader.classList.remove('head-shadow');
+      this.stickyTableHeader?.classList.remove('head-shadow');
     },
 
     stickyScrollHandler() {
-      this.clearFinishTimer();
-
       this.calculateStickyPositions();
       this.setHeaderPosition();
 
@@ -233,30 +312,38 @@ export const widgetStickyAlarmMixin = {
         this.setHorizontalScrollPosition();
       }
 
-      if (!this.actionsTranslateY || !this.translateY) {
-        this.finishScrollingForHeader();
-
-        if (!this.scrollBarTranslateY) {
-          this.finishScrollingForScrollbar();
-          this.finishScrolling();
-          return;
-        }
+      if (!this.scrollBarTranslateY) {
+        this.finishScrollingForScrollbar();
       }
+    },
 
-      if (!this.scrolling) {
-        this.startScrolling();
-        this.startScrollingForHeader();
-        this.startScrollingForScrollbar();
-      }
-
-      this.finishTimer = setTimeout(this.fullFinishScrolling, ALARMS_LIST_HEADER_OPACITY_DELAY);
+    scheduleStickyScrollHandler() {
+      this.$nextTick(() => {
+        window.requestAnimationFrame(() => {
+          this.connectHorizontalScroll();
+          this.setHeaderWidth();
+          this.stickyScrollHandler();
+        });
+      });
     },
 
     resetHeaderPosition() {
       this.translateY = 0;
       this.actionsTranslateY = 0;
-      this.previousTranslateY = 0;
       this.previousScrollTranslateY = 0;
+
+      if (this.stickyTableHeader) {
+        this.stickyTableHeader.style.opacity = '';
+        this.stickyTableHeader.style.transform = '';
+        this.stickyTableHeader.style.width = '';
+      }
+
+      const stickyActions = this.getStickyActionsEl();
+
+      if (stickyActions) {
+        stickyActions.style.opacity = '';
+        stickyActions.style.transform = '';
+      }
 
       this.setHeaderPosition();
       this.clearFinishTimer();

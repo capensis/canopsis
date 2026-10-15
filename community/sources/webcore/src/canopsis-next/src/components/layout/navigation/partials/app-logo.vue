@@ -1,27 +1,24 @@
 <template>
-  <img
-    :src="appLogo"
-    alt=""
-  >
+  <img :src="appLogo" alt="" />
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { useInfo } from '@/hooks/store/modules/info';
 
 import defaultLogo from '@/assets/canopsis.png';
 
-const { mapGetters } = createNamespacedHelpers('info');
-
 export default {
+  setup() {
+    const { logo } = useInfo();
+
+    return {
+      logo,
+    };
+  },
+
   computed: {
-    ...mapGetters(['logo']),
-
     appLogo() {
-      if (this.logo) {
-        return this.logo;
-      }
-
-      return defaultLogo;
+      return this.logo || defaultLogo;
     },
   },
 };

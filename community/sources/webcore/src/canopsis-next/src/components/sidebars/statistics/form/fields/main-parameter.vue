@@ -1,77 +1,75 @@
 <template>
-  <widget-settings-item :title="$t('settings.mainParameter.title')">
-    <c-progress-overlay
-      :pending="pending"
-      transition
-    />
-    <v-radio-group
-      v-field="form.criteria"
-      v-validate="'required'"
-      :error-messages="errors.collect('mainParameter')"
+  <widget-settings-item :title="t('settings.mainParameter.title')">
+    <c-progress-overlay :pending="pending" transition />
+    <c-radio-group
+      :model-value="modelValue.criteria"
       name="mainParameter"
+      required
+      @update:model-value="updateField('criteria', $event)"
     >
-      <v-layout
-        v-for="{ id, label, tooltip } of mainRatingSettingsWithCustom"
-        :key="id"
-      >
-        <v-radio
-          :value="id"
-          :label="label"
-          class="my-0"
-          color="primary"
-        />
+      <c-layout v-for="{ id, label, tooltip } of mainRatingSettingsWithCustom" :key="id">
+        <v-radio :value="id" class="my-0" color="primary">
+          <template #label>
+            <span class="text-error mr-1">*</span>
+            <span>{{ getCriteriaLabel(label) }}</span>
+          </template>
+        </v-radio>
         <c-help-icon
           v-if="tooltip"
           :text="tooltip"
           icon="help"
           top
         />
-      </v-layout>
-    </v-radio-group>
+      </c-layout>
+    </c-radio-group>
     <template v-if="isCustomCriteria">
       <c-name-field
-        v-field="form.columnName"
-        :label="$t('settings.columnName')"
+        :model-value="modelValue.columnName"
+        :label="t('settings.columnName')"
         name="columnName"
         required
+        @update:model-value="updateField('columnName', $event)"
       />
       <field-filters-list
-        v-field="form.patterns"
+        :filters="modelValue.patterns"
         :widget-id="widgetId"
         name="patterns"
         with-entity
         addable
         editable
         required
+        @update:filters="updateField('patterns', $event)"
       />
     </template>
   </widget-settings-item>
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { computed, onMounted, ref } from 'vue';
 
-import { KPI_RATING_SETTINGS_TYPES, KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA } from '@/constants';
+import {
+  KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA,
+  KPI_RATING_CRITERIA,
+  KPI_RATING_SETTINGS_TYPES,
+} from '@/constants';
 
-import { isCustomCriteria } from '@/helpers/entities/metric/form';
+import { isCustomCriteria as checkCustomCriteria } from '@/helpers/entities/metric/form';
 
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
+import { useModelField } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useRatingSettings } from '@/hooks/store/modules/rating-settings';
+
 import FieldFiltersList from '@/components/sidebars/form/fields/filters-list.vue';
-
-const { mapActions } = createNamespacedHelpers('ratingSettings');
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     WidgetSettingsItem,
     FieldFiltersList,
   },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+
   props: {
-    form: {
+    modelValue: {
       type: Object,
       default: () => ({}),
     },
@@ -84,54 +82,64 @@ export default {
       required: false,
     },
   },
-  data() {
-    return {
-      pending: false,
-      mainRatingSettings: [],
-    };
-  },
-  computed: {
-    isEntityType() {
-      return this.type === KPI_RATING_SETTINGS_TYPES.entity;
-    },
 
-    isCustomCriteria() {
-      return isCustomCriteria(this.form.criteria);
-    },
+  emits: ['update:modelValue'],
 
-    mainRatingSettingsWithCustom() {
-      return this.isEntityType && !this.pending
+  setup(props, { emit }) {
+    const pending = ref(false);
+    const mainRatingSettings = ref([]);
+
+    const { t } = useI18n();
+    const { updateField } = useModelField(props, emit);
+    const { fetchRatingSettingsListWithoutStore } = useRatingSettings();
+
+    const isEntityType = computed(() => props.type === KPI_RATING_SETTINGS_TYPES.entity);
+    const isCustomCriteria = computed(() => checkCustomCriteria(props.modelValue.criteria));
+    const criteriaLabels = computed(() => ({
+      [KPI_RATING_CRITERIA.user]: t('common.user'),
+      [KPI_RATING_CRITERIA.role]: t('common.role', 1),
+      [KPI_RATING_CRITERIA.category]: t('common.category'),
+      [KPI_RATING_CRITERIA.impactLevel]: t('common.impactLevel'),
+    }));
+    const mainRatingSettingsWithCustom = computed(() => isEntityType.value && !pending.value
         ? [
-          ...this.mainRatingSettings,
-          {
-            id: KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA,
-            label: this.$t('settings.mainParameter.custom.label'),
-            tooltip: this.$t('settings.mainParameter.custom.tooltip'),
-          },
-        ]
-        : this.mainRatingSettings;
-    },
-  },
-  mounted() {
-    this.fetchList();
-  },
-  methods: {
-    ...mapActions({ fetchRatingSettingsWithoutStore: 'fetchListWithoutStore' }),
+            ...mainRatingSettings.value,
+            {
+              id: KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA,
+              label: t('settings.mainParameter.custom.label'),
+              tooltip: t('settings.mainParameter.custom.tooltip'),
+            },
+          ]
+        : mainRatingSettings.value,
+    );
 
-    async fetchList() {
-      this.pending = true;
+    const getCriteriaLabel = label => criteriaLabels.value[label] || label;
 
-      const { data: mainRatingSettings = [] } = await this.fetchRatingSettingsWithoutStore({
+    const fetchList = async () => {
+      pending.value = true;
+
+      const { data = [] } = await fetchRatingSettingsListWithoutStore({
         params: {
-          type: this.type,
+          type: props.type,
           main: true,
           paginate: false,
         },
       });
 
-      this.mainRatingSettings = mainRatingSettings;
-      this.pending = false;
-    },
+      mainRatingSettings.value = data;
+      pending.value = false;
+    };
+
+    onMounted(fetchList);
+
+    return {
+      t,
+      pending,
+      isCustomCriteria,
+      mainRatingSettingsWithCustom,
+      getCriteriaLabel,
+      updateField,
+    };
   },
 };
 </script>

@@ -1,26 +1,20 @@
 <template>
-  <widget-settings-flat-item :title="title">
-    <template #actions>
-      <v-btn
-        class="primary"
-        small
-        @click="showTextEditorModal"
-      >
-        {{ $t('common.show') }}/{{ $t('common.edit') }}
-      </v-btn>
-    </template>
-  </widget-settings-flat-item>
+  <field-text-editor
+    :model-value="modelValue"
+    :title="title"
+    :variables="variables"
+    @update:model-value="$emit('update:modelValue', $event)"
+  />
 </template>
 
 <script>
-import { MODALS } from '@/constants';
-
-import WidgetSettingsFlatItem from '@/components/sidebars/partials/widget-settings-flat-item.vue';
+import FieldTextEditor from '@/components/sidebars/form/fields/text-editor.vue';
 
 export default {
-  components: { WidgetSettingsFlatItem },
+  components: { FieldTextEditor },
+
   props: {
-    value: {
+    modelValue: {
       type: String,
       required: true,
     },
@@ -33,18 +27,7 @@ export default {
       required: false,
     },
   },
-  methods: {
-    showTextEditorModal() {
-      this.$modals.show({
-        name: MODALS.textEditor,
-        config: {
-          title: this.title,
-          text: this.value,
-          variables: this.variables,
-          action: value => this.$emit('input', value),
-        },
-      });
-    },
-  },
+
+  emits: ['update:modelValue'],
 };
 </script>

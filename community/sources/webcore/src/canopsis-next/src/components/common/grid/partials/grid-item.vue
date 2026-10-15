@@ -1,22 +1,12 @@
 <template>
-  <v-card
-    :class="cardClass"
-    :style="style"
-    class="grid-item"
-  >
+  <v-card :class="cardClass" :style="style" class="grid-item">
     <div ref="defaultSlotWrapper">
-      <slot
-        :on="slotOn"
-        :item="item"
-      />
+      <slot :on="slotListeners" :item="item" />
     </div>
-    <div
-      v-if="!disabled"
-      class="grid-item__resize-handler"
-      v-on="resizeHandlerOn"
-    >
-      <v-icon small>
-        $vuetify.icons.resize_right
+
+    <div v-if="!disabled" class="grid-item__resize-handler" @pointerdown="resizeStartHandler">
+      <v-icon class="grid-item__resize-icon" size="small">
+        resize_window
       </v-icon>
     </div>
   </v-card>
@@ -25,9 +15,15 @@
 <script>
 import { debounce, throttle } from 'lodash';
 
+import { WIDGET_COLORS_MODES } from '@/constants';
+
+import { colorToRgb } from '@/helpers/color';
+import { themeWidgetColorsToForm } from '@/helpers/entities/theme/form';
 import { getControlPosition, getCountAboveItems, getItemDelta } from '@/helpers/grid';
 
 export default {
+  inject: ['$system'],
+
   props: {
     layout: {
       type: Array,
@@ -82,6 +78,7 @@ export default {
       default: 50,
     },
   },
+  emits: ['toggle', 'resized', 'resize', 'move', 'moved'],
   data() {
     return {
       resizing: null,
@@ -96,33 +93,48 @@ export default {
       };
     },
 
-    columnWidth() {
-      return (this.containerWidth - (this.margin[0] * (this.columnsCount + 1))) / this.columnsCount;
+    widgetCardStyle() {
+      const widgetColors = this.item.widget?.parameters?.colors;
+      const themeWidgetColors = this.$system?.theme?.colors?.widget ?? {};
+      const widget = widgetColors?.mode === WIDGET_COLORS_MODES.custom
+        ? themeWidgetColorsToForm(widgetColors.widget)
+        : themeWidgetColors;
+      const border = widget.border;
+      const style = {
+        backgroundColor: widget.content_background,
+      };
+
+      if (!border?.enabled) {
+        return style;
+      }
+
+      return {
+        ...style,
+        border: `1px solid ${border.color}`,
+        '--v-shadow-color': colorToRgb(border.color).replace(/^rgb\((.*)\)$/, '$1'),
+        borderRadius: `${border.radius}px`,
+      };
     },
 
-    slotOn() {
+    columnWidth() {
+      return (this.containerWidth - this.margin[0] * (this.columnsCount + 1)) / this.columnsCount;
+    },
+
+    slotListeners() {
       if (this.disabled) {
         return {};
       }
 
       return {
-        pointerdown: this.dragStartHandler,
-        toggle: this.toggleAutoHeightHandler,
-      };
-    },
-
-    resizeHandlerOn() {
-      return {
-        pointerdown: this.resizeStartHandler,
+        onPointerdown: this.dragStartHandler,
+        onToggle: this.toggleAutoHeightHandler,
       };
     },
 
     x() {
       const { x = 0, w = 1 } = this.item;
 
-      return x + w > this.columnsCount
-        ? 0
-        : x;
+      return x + w > this.columnsCount ? 0 : x;
     },
 
     y() {
@@ -132,9 +144,7 @@ export default {
     w() {
       const { x = 0, w = 1 } = this.item;
 
-      return (x + w > this.columnsCount) && (w > this.columnsCount)
-        ? this.columnsCount
-        : w;
+      return x + w > this.columnsCount && w > this.columnsCount ? this.columnsCount : w;
     },
 
     h() {
@@ -151,6 +161,7 @@ export default {
 
     disabledItemStyle() {
       const [, marginY = 0] = this.margin;
+
       return {
         margin: `${marginY / 2}px 0`,
         gridColumnStart: this.x + 1,
@@ -189,7 +200,10 @@ export default {
     },
 
     style() {
-      return this.disabled ? this.disabledItemStyle : this.enabledItemStyle;
+      return {
+        ...(this.disabled ? this.disabledItemStyle : this.enabledItemStyle),
+        ...this.widgetCardStyle,
+      };
     },
   },
   watch: {
@@ -205,14 +219,17 @@ export default {
   created() {
     this.throttledResizeProcessHandler = throttle(this.resizeProcessHandler, this.throttle);
     this.throttledDragProcessHandler = throttle(this.dragProcessHandler, this.throttle);
-    this.debouncedSetAutoCalculatedHeight = debounce(() => setTimeout(this.setAutoCalculatedHeight, 0), this.debounce);
+    this.debouncedSetAutoCalculatedHeight = debounce(
+      () => setTimeout(this.setAutoCalculatedHeight, 0),
+      this.debounce,
+    );
   },
   mounted() {
     if (!this.disabled) {
       this.addAllWatchersAndListeners();
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.removeAllWatchersAndListeners();
   },
   methods: {
@@ -279,7 +296,7 @@ export default {
     calculateWH(width, height) {
       const [marginX] = this.margin;
       const w = Math.round((width + marginX) / (this.columnWidth + marginX));
-      const h = Math.round((height) / this.rowHeight);
+      const h = Math.round(height / this.rowHeight);
 
       return {
         w: Math.min(Math.max(Math.min(w, this.columnsCount - this.x), this.minW), this.maxW),
@@ -293,7 +310,7 @@ export default {
 
       return {
         left: Math.round(this.columnWidth * x + (x + 1) * marginX),
-        top: Math.round((this.rowHeight * y) + (marginY * marginCount) + marginY),
+        top: Math.round(this.rowHeight * y + marginY * marginCount + marginY),
         width: w === Infinity ? w : Math.round(this.columnWidth * w + Math.max(0, w - 1) * marginX),
         height: h === Infinity ? h : Math.round(this.rowHeight * h),
       };
@@ -311,9 +328,6 @@ export default {
 
       this.$mutationObserver = new MutationObserver(this.debouncedSetAutoCalculatedHeight);
 
-      /**
-       * We are observe on the mutationObserver after render
-       */
       this.$nextTick(() => {
         const element = this.$refs.defaultSlotWrapper;
 
@@ -398,14 +412,17 @@ export default {
 
       const { height = 0 } = element.getBoundingClientRect();
       const controlPosition = getControlPosition(event, this.layoutElement);
-      const delta = getItemDelta(this.controlX, this.controlY, controlPosition.x, controlPosition.y);
+      const delta = getItemDelta(
+        this.controlX,
+        this.controlY,
+        controlPosition.x,
+        controlPosition.y,
+      );
 
       this.setWHByResizing(
         {
           width: this.resizing.width + delta.deltaX,
-          height: this.autoHeight
-            ? height
-            : this.resizing.height + delta.deltaY,
+          height: this.autoHeight ? height : this.resizing.height + delta.deltaY,
         },
         controlPosition,
       );
@@ -477,7 +494,12 @@ export default {
       }
 
       const controlPosition = getControlPosition(event, this.layoutElement);
-      const delta = getItemDelta(this.controlX, this.controlY, controlPosition.x, controlPosition.y);
+      const delta = getItemDelta(
+        this.controlX,
+        this.controlY,
+        controlPosition.x,
+        controlPosition.y,
+      );
 
       this.setXYByDragging(
         {
@@ -497,8 +519,16 @@ export default {
       window.removeEventListener('pointerup', this.dragEndHandler);
 
       const controlPosition = getControlPosition(event, this.layoutElement);
-      const delta = getItemDelta(this.controlX, this.controlY, controlPosition.x, controlPosition.y);
-      const { x, y } = this.calculateXY(this.dragging.top + delta.deltaY, this.dragging.left + delta.deltaX);
+      const delta = getItemDelta(
+        this.controlX,
+        this.controlY,
+        controlPosition.x,
+        controlPosition.y,
+      );
+      const { x, y } = this.calculateXY(
+        this.dragging.top + delta.deltaY,
+        this.dragging.left + delta.deltaX,
+      );
 
       this.dragging = null;
 
@@ -523,7 +553,11 @@ export default {
     bottom: 3px;
     right: 3px;
     z-index: 3;
-    opacity: .7;
+    opacity: 0.7;
+  }
+
+  &__resize-icon {
+    transform: rotate(-90deg);
   }
 
   &:not(&--disabled) {
@@ -535,7 +569,7 @@ export default {
     height: 1000px;
 
     &.grid-item--resizing {
-      opacity: .7;
+      opacity: 0.7;
       z-index: 999;
       user-select: none;
     }

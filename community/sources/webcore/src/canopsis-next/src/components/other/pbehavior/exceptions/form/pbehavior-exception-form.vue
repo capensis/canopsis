@@ -1,57 +1,56 @@
 <template>
-  <v-layout
-    class="gap-3"
-    column
-  >
-    <c-enabled-field
-      v-field="form.visible"
-      :label="$t('pbehavior.visible')"
-      with-background
-    />
+  <c-layout gap="3" column>
+    <c-enabled-field v-model="visible" :label="t('pbehavior.visible')" with-background />
+
     <c-name-field
-      v-field="form.name"
+      v-model="name"
+      :label="t('modals.createPbehaviorException.fields.name')"
       autofocus
       required
     />
+
     <c-form-block>
-      <c-form-block-row :label="$t('modals.createPbehaviorException.fields.description')">
-        <c-description-field
-          v-field="form.description"
-          name="description"
-          required
-        />
+      <c-form-block-row :label="t('modals.createPbehaviorException.fields.description')" indented>
+        <c-description-field v-model="description" name="description" required />
       </c-form-block-row>
 
       <c-form-block-row
-        :label="$t('pbehavior.exdates.title')"
-        :align-center="!form.exdates.length"
+        :label="t('pbehavior.exdates.title')"
+        :align="!exdates.length ? 'center' : undefined"
         indented
       >
         <pbehavior-exceptions-field
-          v-field="form.exdates"
+          :exdates="exdates"
           with-exdate-type
           required
+          @update:exdates="exdates = $event"
         />
       </c-form-block-row>
     </c-form-block>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
+import { useFormArray, useFormModels } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+
 import PbehaviorExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exceptions-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: { PbehaviorExceptionsField },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
-  props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
+
+  setup() {
+    const { t } = useI18n();
+    const { name, description, visible } = useFormModels(['name', 'description', 'visible']);
+    const exdates = useFormArray('exdates');
+
+    return {
+      t,
+      name,
+      description,
+      visible,
+      exdates,
+    };
   },
 };
 </script>

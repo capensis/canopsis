@@ -1,13 +1,13 @@
-import { createNamespacedHelpers } from 'vuex';
+import { mapActions, mapState } from 'pinia';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('availability');
+import { useMetricsStore } from '@/stores/modules/metrics';
 
 export const entitiesAvailabilityMixin = {
   computed: {
-    ...mapGetters({
-      getAvailabilityListByWidgetId: 'getListByWidgetId',
-      getAvailabilityPendingByWidgetId: 'getPendingByWidgetId',
-      getAvailabilityMetaByWidgetId: 'getMetaByWidgetId',
+    ...mapState(useMetricsStore, {
+      getAvailabilityListByWidgetId: 'getAvailabilityListByWidgetId',
+      getAvailabilityPendingByWidgetId: 'getAvailabilityPendingByWidgetId',
+      getAvailabilityMetaByWidgetId: 'getAvailabilityMetaByWidgetId',
     }),
 
     availabilities() {
@@ -22,9 +22,10 @@ export const entitiesAvailabilityMixin = {
       return this.getAvailabilityMetaByWidgetId(this.widget._id);
     },
   },
+
   methods: {
-    ...mapActions({
-      fetchAvailabilityList: 'fetchList',
+    ...mapActions(useMetricsStore, {
+      fetchAvailabilityList: 'fetchAvailabilityList',
       createAvailabilityExport: 'createAvailabilityExport',
       fetchAvailabilityExport: 'fetchAvailabilityExport',
     }),

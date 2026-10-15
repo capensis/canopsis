@@ -1,51 +1,51 @@
 <template>
-  <v-layout
-    class="alarm-counters"
-    column
-  >
-    <v-tooltip
+  <div class="alarm-counters d-flex flex-column">
+    <c-tooltip
       v-for="counter in preparedCounters.selected"
       :key="counter.key"
-      top
+      :theme="$system.dark ? 'dark' : 'light'"
+      location="top"
     >
-      <template #activator="{ on }">
+      <template #activator="{ props: tooltipProps }">
         <alarm-counter
           :count="counter.count"
           :icon="counter.icon"
-          v-on="on"
+          v-bind="tooltipProps"
         />
       </template>
       <span>{{ counter.name }}</span>
-    </v-tooltip>
-    <v-tooltip
+    </c-tooltip>
+
+    <c-tooltip
       v-if="otherCountersValue"
-      top
+      :theme="$system.dark ? 'dark' : 'light'"
+      location="top"
     >
-      <template #activator="{ on }">
+      <template #activator="{ props: tooltipProps }">
         <alarm-counter
           :count="otherCountersValue"
           icon="more_horiz"
-          v-on="on"
+          v-bind="tooltipProps"
         />
       </template>
-      <div
-        v-for="otherCounter in preparedCounters.other"
-        :key="otherCounter.key"
-      >
+      <div v-for="otherCounter in preparedCounters.other" :key="otherCounter.key">
         <strong>{{ otherCounter.name }}</strong>
         <span>: {{ otherCounter.count }}</span>
       </div>
-    </v-tooltip>
-  </v-layout>
+    </c-tooltip>
+  </div>
 </template>
 
 <script>
 import AlarmCounter from './alarm-counter.vue';
 
 export default {
+  inject: ['$system'],
+
   components: {
     AlarmCounter,
   },
+
   props: {
     counters: {
       type: Array,
@@ -56,29 +56,33 @@ export default {
       default: () => [],
     },
   },
+
   computed: {
     preparedCounters() {
-      return this.counters.reduce((acc, { count, type }) => {
-        if (this.types.includes(type._id)) {
-          acc.selected.push({
-            key: type._id,
-            name: type.name,
-            icon: type.icon_name,
-            count,
-          });
-        } else {
-          acc.other.push({
-            key: type._id,
-            name: type.name,
-            count,
-          });
-        }
+      return this.counters.reduce(
+        (acc, { count, type }) => {
+          if (this.types.includes(type._id)) {
+            acc.selected.push({
+              key: type._id,
+              name: type.name,
+              icon: type.icon_name,
+              count,
+            });
+          } else {
+            acc.other.push({
+              key: type._id,
+              name: type.name,
+              count,
+            });
+          }
 
-        return acc;
-      }, {
-        selected: [],
-        other: [],
-      });
+          return acc;
+        },
+        {
+          selected: [],
+          other: [],
+        },
+      );
     },
 
     otherCountersValue() {
