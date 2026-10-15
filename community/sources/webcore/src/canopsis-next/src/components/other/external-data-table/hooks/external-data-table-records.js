@@ -1,7 +1,7 @@
 import { omit } from 'lodash';
 import { computed, unref, inject, onMounted } from 'vue';
 
-import { MODALS } from '@/constants';
+import { MODALS, REFRESH_OBSERVER_KEY } from '@/constants';
 
 import { pickIds } from '@/helpers/array';
 
@@ -17,6 +17,7 @@ import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
  * @param {Object} options - Options for configuring the modals.
  * @param {Object} options.externalDataTable - The external data table instance.
  * @param {Function} options.fetchList - Function to fetch the list of records.
+ * @param {Observer} [options.refreshObserver] - Observer used to refresh the table and records after import.
  * @returns {Object} An object containing functions to show various modals.
  * @property {Function} showImportExternalDataTablesModal - Shows the modal for importing records.
  * @property {Function} showCreateExternalDataTableRecordModal - Shows the modal for creating a new record.
@@ -28,11 +29,12 @@ import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 export const useExternalDataTableRecordsModals = ({
   externalDataTable,
   fetchList,
+  refreshObserver: providedRefreshObserver,
 }) => {
   const { t } = useI18n();
   const modals = useModals();
 
-  const refreshObserver = inject('$refresh', null);
+  const refreshObserver = providedRefreshObserver ?? inject(REFRESH_OBSERVER_KEY, null);
 
   const {
     createExternalDataTableRecord,
@@ -166,6 +168,7 @@ export const useExternalDataTableRecordsModals = ({
  * @param {Object} options - Configuration options
  * @param {Object|Ref<Object>} [options.externalDataTable] - The external data table object
  * @param {Object|Ref<Object>} [options.initialQuery] - The initial qurty parameter
+ * @param {Observer} [options.refreshObserver] - Observer used to refresh the table and records after import
  * @returns {Object} Object containing records state and methods
  * @property {Ref<Array>} records - Reactive reference to the fetched records
  * @property {Ref<Object>} meta - Metadata associated with the fetched records
@@ -182,7 +185,11 @@ export const useExternalDataTableRecordsModals = ({
  * @property {Function} showRemoveExternalDataTableRecordModal - Shows the modal for removing a record
  * @property {Function} showRemoveSelectedExternalDataTableRecordsModal - Shows the modal for removing selected records
  */
-export const useExternalDataTableRecordsList = ({ externalDataTable, initialQuery } = {}) => {
+export const useExternalDataTableRecordsList = ({
+  externalDataTable,
+  initialQuery,
+  refreshObserver,
+} = {}) => {
   const { fetchExternalDataTableRecordsListWithoutStore } = useExternalDataTableRecord();
 
   const {
@@ -214,6 +221,7 @@ export const useExternalDataTableRecordsList = ({ externalDataTable, initialQuer
   } = useExternalDataTableRecordsModals({
     externalDataTable,
     fetchList,
+    refreshObserver,
   });
 
   onMounted(() => {

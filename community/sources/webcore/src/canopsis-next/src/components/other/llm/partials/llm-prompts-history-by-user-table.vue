@@ -37,6 +37,7 @@
 import { computed, onMounted } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
+import { REFRESH_OBSERVER_KEY } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
@@ -83,7 +84,7 @@ export default {
       { text: t('llm.promptsHistory.columns.lastUsed'), value: 'last_used' },
     ]);
 
-    useChildObserver({ handler: fetchList, key: '$refresh' });
+    useChildObserver({ handler: fetchList, key: REFRESH_OBSERVER_KEY });
 
     onMounted(fetchList);
 

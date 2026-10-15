@@ -21,7 +21,7 @@
 <script>
 import { ref, onMounted } from 'vue';
 
-import { MODALS, USER_PERMISSIONS } from '@/constants';
+import { MODALS, REFRESH_OBSERVER_KEY, USER_PERMISSIONS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
@@ -133,7 +133,7 @@ export default {
       },
     });
 
-    const { observer } = useObserver({ key: '$refresh' });
+    const { observer } = useObserver({ key: REFRESH_OBSERVER_KEY });
 
     const refresh = () => observer.notify();
 

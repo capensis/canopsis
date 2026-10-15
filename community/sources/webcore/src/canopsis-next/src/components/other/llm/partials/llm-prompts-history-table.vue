@@ -68,7 +68,7 @@
 <script>
 import { computed, ref, watch, onMounted } from 'vue';
 
-import { MODALS, LLM_SOCKET_CONTEXTS } from '@/constants';
+import { MODALS, LLM_SOCKET_CONTEXTS, REFRESH_OBSERVER_KEY } from '@/constants';
 
 import { convertQueryToRequest } from '@/helpers/query';
 
@@ -208,7 +208,7 @@ export default {
       fetchList();
     });
 
-    useChildObserver({ handler: fetchList, key: '$refresh' });
+    useChildObserver({ handler: fetchList, key: REFRESH_OBSERVER_KEY });
 
     onMounted(fetchList);
 

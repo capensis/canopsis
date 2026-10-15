@@ -38,6 +38,8 @@ import {
   onBeforeUnmount,
 } from 'vue';
 
+import { REFRESH_OBSERVER_KEY } from '@/constants';
+
 import Observer from '@/services/observer';
 
 import {
@@ -92,7 +94,7 @@ export default {
       },
     });
 
-    const observer = inject('$refresh', new Observer());
+    const observer = inject(REFRESH_OBSERVER_KEY, new Observer());
 
     watch(() => props.externalDataTable, (newExternalDataTable) => {
       columns.value = externalDataTableColumnConfigsToForm(newExternalDataTable.column_configs);
