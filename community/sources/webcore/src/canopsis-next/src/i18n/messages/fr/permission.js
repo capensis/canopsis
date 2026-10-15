@@ -428,6 +428,10 @@ export default {
     [USER_PERMISSIONS.api.general.techmetrics]: 'Métriques techniques',
     [USER_PERMISSIONS.api.general.ticketStatusJobManagement]:
       'Gestion des tâches de statut de ticket',
+    [USER_PERMISSIONS.api.general.webhookJobManagement]: 'Gestion des jobs webhook',
+    [USER_PERMISSIONS.api.general.webhookTokenJobManagement]:
+      'Gestion des jobs de jeton webhook',
+    [USER_PERMISSIONS.api.general.remediationJobManagement]: 'Gestion des jobs de remédiation',
     [USER_PERMISSIONS.api.general.techmetricsSettings]: 'Paramètres des métriques techniques',
     [USER_PERMISSIONS.api.general.userInterfaceDelete]: 'Supprimer l\'interface utilisateur',
     [USER_PERMISSIONS.api.general.userInterfaceUpdate]: 'Mettre à jour l\'interface utilisateur',
