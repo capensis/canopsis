@@ -53,10 +53,12 @@ func TestListPipeline_ShouldCheckFullPipeline(t *testing.T) {
 				}},
 			}},
 			{"$project": bson.M{
-				"services":  0,
-				"perf_data": 0,
-				"comments":  0,
-				"imtags":    0,
+				"services":     0,
+				"perf_data":    0,
+				"comments":     0,
+				"imtags":       0,
+				"latest_pause": 0,
+				"pause.path":   0,
 			}},
 		},
 		Sort: bson.M{"$sort": bson.D{

@@ -575,6 +575,12 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			} else {
 				out.PauseSource = string(in.String())
 			}
+		case "pause_source_type":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.PauseSourceType = string(in.String())
+			}
 		case "pause_path":
 			if in.IsNull() {
 				in.Skip()
@@ -1108,6 +1114,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"pause_source\":"
 		out.RawString(prefix)
 		out.String(string(in.PauseSource))
+	}
+	if in.PauseSourceType != "" {
+		const prefix string = ",\"pause_source_type\":"
+		out.RawString(prefix)
+		out.String(string(in.PauseSourceType))
 	}
 	if len(in.PausePath) != 0 {
 		const prefix string = ",\"pause_path\":"
@@ -2744,6 +2755,12 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			} else {
 				out.Source = string(in.String())
 			}
+		case "source_type":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.SourceType = string(in.String())
+			}
 		case "inherited":
 			if in.IsNull() {
 				in.Skip()
@@ -2837,6 +2854,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.String(string(in.Source))
 	}
+	{
+		const prefix string = ",\"source_type\":"
+		out.RawString(prefix)
+		out.String(string(in.SourceType))
+	}
 	if in.Inherited {
 		const prefix string = ",\"inherited\":"
 		out.RawString(prefix)
@@ -2915,6 +2937,12 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				in.Skip()
 			} else {
 				out.Source = string(in.String())
+			}
+		case "source_type":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.SourceType = string(in.String())
 			}
 		case "inherited":
 			if in.IsNull() {
@@ -2997,6 +3025,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"source\":"
 		out.RawString(prefix)
 		out.String(string(in.Source))
+	}
+	{
+		const prefix string = ",\"source_type\":"
+		out.RawString(prefix)
+		out.String(string(in.SourceType))
 	}
 	if in.Inherited {
 		const prefix string = ",\"inherited\":"
@@ -4668,6 +4701,12 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			} else {
 				out.SnoozeDuration = int64(in.Int64())
 			}
+		case "pause_duration":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.PauseDuration = int64(in.Int64())
+			}
 		case "pbh_inactive_duration":
 			if in.IsNull() {
 				in.Skip()
@@ -5143,6 +5182,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"snooze_duration\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.SnoozeDuration))
+	}
+	{
+		const prefix string = ",\"pause_duration\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.PauseDuration))
 	}
 	{
 		const prefix string = ",\"pbh_inactive_duration\":"

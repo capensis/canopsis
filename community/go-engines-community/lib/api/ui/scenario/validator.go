@@ -89,6 +89,9 @@ func (v *Validator) validateActionParametersRequest(sl validator.StructLevel, t 
 		if params.Duration == nil {
 			sl.ReportError(params.Duration, "Duration", "Parameters.Duration", "required", "")
 		}
+	case types.ActionTypePause,
+		types.ActionTypeResume:
+		// do nothing
 	case types.ActionTypePbehavior:
 		if params.Name == "" {
 			sl.ReportError(params.Name, "Name", "Parameters.Name", "required", "")

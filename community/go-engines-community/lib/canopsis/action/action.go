@@ -85,8 +85,8 @@ type Parameters struct {
 	Name string `json:"name,omitempty" binding:"max=255" bson:"name,omitempty"`
 	// Reason is used in pbehavior action.
 	Reason string `json:"reason,omitempty" bson:"reason,omitempty"`
-	// Type is used in pbehavior action.
-	Type string `json:"type,omitempty" bson:"type,omitempty"`
+	// Type is used in pbehavior and pause action.
+	Type string `json:"type,omitempty" bson:"type,omitempty" binding:"max=255"`
 	// RRule is used in pbehavior action.
 	RRule string `json:"rrule,omitempty" bson:"rrule,omitempty"`
 	// Tstart is used in pbehavior action.
@@ -97,6 +97,8 @@ type Parameters struct {
 	StartOnTrigger *bool `json:"start_on_trigger,omitempty" bson:"start_on_trigger,omitempty"`
 	// Color is used in pbehavior action.
 	Color string `json:"color,omitempty" bson:"color,omitempty"`
+	// Inherited is used in pause action.
+	Inherited bool `json:"inherited,omitempty" bson:"inherited,omitempty"`
 
 	webhook.Webhook `bson:",inline"`
 

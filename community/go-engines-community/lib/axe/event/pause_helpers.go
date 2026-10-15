@@ -89,7 +89,7 @@ func updatePauseOnServicesChange(
 	entityCollection, alarmCollection mongo.DbCollection,
 	entity *types.Entity,
 	alarm *types.Alarm,
-	now datetime.CpsTime,
+	ts datetime.CpsTime,
 	logger zerolog.Logger,
 ) (pauseChange, error) {
 	if len(entity.ServicesToAdd) == 0 && len(entity.ServicesToRemove) == 0 {
@@ -108,7 +108,7 @@ func updatePauseOnServicesChange(
 		}
 
 		// None of the parents has the entity pause anymore.
-		err = resumeInheritedPause(ctx, entityCollection, alarmCollection, entity, alarm, now)
+		err = resumeInheritedPause(ctx, entityCollection, alarmCollection, entity, alarm, ts)
 		if err != nil {
 			return pauseChange{}, err
 		}
@@ -121,14 +121,19 @@ func updatePauseOnServicesChange(
 		return pauseChange{}, nil
 	}
 
+	// The entity has had the same pause, but it has been ended by a disable or a removal from a service,
+	// not by a resume, since a parent still has it: a resume ends the pause of the parents first.
+	endedOutsideResume := entity.LatestPause != nil && entity.LatestPause.End != nil &&
+		entity.LatestPause.Source == inherited.Source && entity.LatestPause.Timestamp.Equal(inherited.Timestamp)
+
 	// The entity has already received a pause which the inherited one doesn't replace.
-	if entity.LatestPause != nil && !inherited.CanApplyOver(entity.LatestPause, entity.ID) {
+	if entity.LatestPause != nil && !endedOutsideResume && !inherited.CanApplyOver(entity.LatestPause, entity.ID) {
 		return pauseChange{}, nil
 	}
 
 	wasPaused := entity.Pause != nil
 
-	err = applyInheritedPause(ctx, entityCollection, alarmCollection, entity, alarm, *inherited, now)
+	err = applyInheritedPause(ctx, entityCollection, alarmCollection, entity, alarm, *inherited)
 	if err != nil {
 		return pauseChange{}, err
 	}
@@ -147,7 +152,6 @@ func applyInheritedPause(
 	entity *types.Entity,
 	alarm *types.Alarm,
 	pause types.LatestPause,
-	now datetime.CpsTime,
 ) error {
 	wasPaused := entity.Pause != nil
 
@@ -165,18 +169,19 @@ func applyInheritedPause(
 		return nil
 	}
 
-	newStepQuery := stepUpdateQueryWithInPbhIntervalByStep(types.NewAlarmStep(types.AlarmStepPause, pause.Timestamp,
+	now := datetime.NewCpsTime()
+	newStepQuery := stepUpdateQueryWithInPbhIntervalByStep(types.NewAlarmStep(types.AlarmStepPause, now,
 		pause.Author, pause.Message, pause.UserID, "", pause.Initiator, false))
 	set := bson.M{
 		"v.pause":          newStepQuery,
 		"v.steps":          addStepUpdateQuery(newStepQuery),
-		"v.inactive_start": pause.Timestamp,
+		"v.inactive_start": now,
 		"v.inactive_duration": bson.M{"$sum": bson.A{
 			"$v.inactive_duration",
 			bson.M{"$cond": bson.M{
 				"if": bson.M{"$gt": bson.A{"$v.inactive_start", 0}},
 				"then": bson.M{"$subtract": bson.A{
-					pause.Timestamp,
+					now,
 					"$v.inactive_start",
 				}},
 				"else": 0,
@@ -188,7 +193,7 @@ func applyInheritedPause(
 		// The replaced pause is not resumed, so its duration is kept.
 		set["v.pause_duration"] = bson.M{"$sum": bson.A{
 			"$v.pause_duration",
-			bson.M{"$subtract": bson.A{pause.Timestamp, "$v.pause.t"}},
+			bson.M{"$subtract": bson.A{now, "$v.pause.t"}},
 		}}
 	}
 
@@ -209,14 +214,14 @@ func resumeInheritedPause(
 	entityCollection, alarmCollection mongo.DbCollection,
 	entity *types.Entity,
 	alarm *types.Alarm,
-	now datetime.CpsTime,
+	ts datetime.CpsTime,
 ) error {
 	ended := types.LatestPause{Pause: *entity.Pause}
 	if entity.LatestPause != nil {
 		ended = *entity.LatestPause
 	}
 
-	ended.End = &now
+	ended.End = &ts
 
 	newEntity, err := updateEntityByID(ctx, entity.ID, bson.M{
 		"$set":   bson.M{"latest_pause": ended},
@@ -232,8 +237,34 @@ func resumeInheritedPause(
 		return nil
 	}
 
+	parentID := ended.Source
+	if len(ended.Path) > 0 {
+		parentID = ended.Path[len(ended.Path)-1]
+	}
+
+	output := ""
+	if parentID != "" {
+		parent := types.Entity{}
+		err = entityCollection.
+			FindOne(ctx, bson.M{"_id": parentID}, options.FindOne().SetProjection(bson.M{"name": 1})).
+			Decode(&parent)
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return fmt.Errorf("cannot find parent entity: %w", err)
+		}
+
+		switch ended.SourceType {
+		case types.EntityTypeComponent:
+			output = types.OutputComponentPrefix
+		case types.EntityTypeService:
+			output = types.OutputServicePrefix
+		}
+
+		output += parent.Name
+	}
+
+	now := datetime.NewCpsTime()
 	newStepQuery := stepUpdateQueryWithInPbhIntervalByStep(types.NewAlarmStep(types.AlarmStepResume, now,
-		"", ended.Message, "", "", types.InitiatorSystem, false))
+		"", output, "", "", types.InitiatorSystem, false))
 	update := []bson.M{
 		{"$set": bson.M{
 			"v.steps": addStepUpdateQuery(newStepQuery),
@@ -273,7 +304,7 @@ func publishPauseChange(
 	entity types.Entity,
 	alarmID string,
 	change pauseChange,
-	now datetime.CpsTime,
+	ts datetime.CpsTime,
 ) error {
 	if change.alarmChange == "" && change.pause == nil {
 		return nil
@@ -287,7 +318,7 @@ func publishPauseChange(
 			return fmt.Errorf("cannot generate event: %w", err)
 		}
 
-		triggerEvent.Timestamp = now
+		triggerEvent.Timestamp = ts
 		triggerEvent.AlarmChange = &types.AlarmChange{Type: change.alarmChange}
 		triggerEvent.EventType = types.EventTypeTrigger
 		triggerEvent.AlarmID = alarmID
@@ -346,6 +377,7 @@ func publishPauseChange(
 			depEvent.EventType = types.EventTypePause
 			depEvent.Timestamp = change.pause.Timestamp
 			depEvent.PauseSource = change.pause.Source
+			depEvent.PauseSourceType = change.pause.SourceType
 			depEvent.PauseType = change.pause.Type
 			depEvent.Output = change.pause.Message
 			depEvent.Author = change.pause.Author
@@ -353,10 +385,11 @@ func publishPauseChange(
 			depEvent.Initiator = change.pause.Initiator
 		} else {
 			depEvent.EventType = types.EventTypeResume
-			depEvent.Timestamp = now
+			depEvent.Timestamp = ts
 			depEvent.Initiator = types.InitiatorSystem
 			if entity.LatestPause != nil {
 				depEvent.PauseSource = entity.LatestPause.Source
+				depEvent.PauseSourceType = entity.LatestPause.SourceType
 			}
 		}
 

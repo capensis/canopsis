@@ -113,10 +113,12 @@ func ListPipeline(r ListRequest) (beforeLimit []bson.M, afterLimit []bson.M, sor
 	afterLimit = append(afterLimit, nestedObjectsPipeline()...)
 	afterLimit = append(afterLimit, bson.M{
 		"$project": bson.M{
-			"services":  0,
-			"perf_data": 0,
-			"comments":  0,
-			"imtags":    0,
+			"services":     0,
+			"perf_data":    0,
+			"comments":     0,
+			"imtags":       0,
+			"pause.path":   0,
+			"latest_pause": 0,
 		},
 	})
 
@@ -168,10 +170,12 @@ func SearchPipeline(r SearchRequest) (beforeLimit []bson.M, afterLimit []bson.M,
 	afterLimit = append(afterLimit, nestedObjectsPipeline()...)
 	afterLimit = append(afterLimit, bson.M{
 		"$project": bson.M{
-			"services":  0,
-			"perf_data": 0,
-			"comments":  0,
-			"imtags":    0,
+			"services":     0,
+			"perf_data":    0,
+			"comments":     0,
+			"imtags":       0,
+			"pause.path":   0,
+			"latest_pause": 0,
 		},
 	})
 

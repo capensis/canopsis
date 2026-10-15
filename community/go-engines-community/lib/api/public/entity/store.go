@@ -2,37 +2,66 @@ package entity
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/db"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	liblink "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
+	"github.com/rabbitmq/amqp091-go"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type Store interface {
 	Find(ctx context.Context, r PaginatedListRequest, userID string) (pagination.ListResponse[Response], error)
 	Search(ctx context.Context, r PaginatedSearchRequest, userID string) (pagination.ListResponse[Response], error)
+	Pause(ctx context.Context, r PauseRequest, userID, username string) error
+	Resume(ctx context.Context, r ResumeRequest, userID, username string) error
 }
 
 type store struct {
-	dbClient     mongo.DbClient
-	dbCollection mongo.DbCollection
-	transformer  patternfields.Transformer
-	generator    link.Generator
-	userProvider liblink.UserProvider
+	dbClient       mongo.DbClient
+	dbCollection   mongo.DbCollection
+	transformer    patternfields.Transformer
+	generator      link.Generator
+	userProvider   liblink.UserProvider
+	amqpPublisher  amqp.Publisher
+	eventGenerator event.Generator
+	encoder        encoding.Encoder
 }
 
-func NewStore(dbClient mongo.DbClient, transformer patternfields.Transformer, generator link.Generator, userProvider liblink.UserProvider) Store {
+func NewStore(
+	dbClient mongo.DbClient,
+	transformer patternfields.Transformer,
+	generator link.Generator,
+	userProvider liblink.UserProvider,
+	amqpPublisher amqp.Publisher,
+	eventGenerator event.Generator,
+	encoder encoding.Encoder,
+) Store {
 	return &store{
-		dbClient:     dbClient,
-		dbCollection: dbClient.Collection(mongo.EntityMongoCollection),
-		transformer:  transformer,
-		generator:    generator,
-		userProvider: userProvider,
+		dbClient:       dbClient,
+		dbCollection:   dbClient.Collection(mongo.EntityMongoCollection),
+		transformer:    transformer,
+		generator:      generator,
+		userProvider:   userProvider,
+		amqpPublisher:  amqpPublisher,
+		eventGenerator: eventGenerator,
+		encoder:        encoder,
 	}
 }
 
@@ -114,4 +143,115 @@ func (s *store) Search(ctx context.Context, r PaginatedSearchRequest, userID str
 	res = pagination.NewResponse[Response](r.Query, ar)
 
 	return res, nil
+}
+
+func (s *store) Pause(ctx context.Context, r PauseRequest, userID, username string) error {
+	entity, err := s.findEntity(ctx, bson.M{"_id": r.ID, "pause": nil})
+	if err != nil {
+		return err
+	}
+
+	output := ""
+	if r.Type == "" {
+		output = r.Comment
+	} else {
+		ob := strings.Builder{}
+		if r.Comment != "" {
+			ob.WriteString(types.OutputCommentPrefix)
+			ob.WriteString(r.Comment)
+			ob.WriteString(". ")
+		}
+
+		ob.WriteString(types.OutputTypePrefix)
+		ob.WriteString(r.Type)
+		if r.Comment != "" {
+			ob.WriteRune('.')
+		}
+
+		output = ob.String()
+	}
+
+	e, err := s.genEvent(types.EventTypePause, entity, output, username, userID)
+	if err != nil {
+		return err
+	}
+
+	e.Inherited = r.Inherited
+	e.PauseType = r.Type
+
+	return s.sendEvent(ctx, e)
+}
+
+func (s *store) Resume(ctx context.Context, r ResumeRequest, userID, username string) error {
+	entity, err := s.findEntity(ctx, bson.M{"_id": r.ID, "pause": bson.M{"$ne": nil}})
+	if err != nil {
+		return err
+	}
+
+	e, err := s.genEvent(types.EventTypeResume, entity, r.Comment, username, userID)
+	if err != nil {
+		return err
+	}
+
+	return s.sendEvent(ctx, e)
+}
+
+func (s *store) findEntity(ctx context.Context, match bson.M) (types.Entity, error) {
+	if match == nil {
+		match = bson.M{}
+	}
+
+	match["v.resolved"] = nil
+	entity := types.Entity{}
+	err := s.dbCollection.FindOne(ctx, match).Decode(&entity)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return entity, httperror.ErrNotFound
+		}
+
+		return entity, err
+	}
+
+	return entity, nil
+}
+
+func (s *store) genEvent(
+	eventType string,
+	entity types.Entity,
+	output string,
+	username, userID string,
+) (types.Event, error) {
+	e, err := s.eventGenerator.Generate(entity)
+	if err != nil {
+		return e, fmt.Errorf("cannot generate event: %w", err)
+	}
+
+	e.EventType = eventType
+	e.Timestamp = datetime.NewCpsTime()
+	e.Output = output
+	e.Author = username
+	e.UserID = userID
+	e.Initiator = types.InitiatorUser
+
+	return e, nil
+}
+
+func (s *store) sendEvent(ctx context.Context, event types.Event) error {
+	body, err := s.encoder.Encode(event)
+	if err != nil {
+		return err
+	}
+
+	return s.amqpPublisher.PublishWithContext(
+		ctx,
+		canopsis.DefaultExchangeName,
+		canopsis.FIFOQueueName,
+		false,
+		false,
+		amqp091.Publishing{
+			ContentType:  canopsis.JsonContentType,
+			Body:         body,
+			DeliveryMode: amqp091.Persistent,
+		},
+	)
 }
