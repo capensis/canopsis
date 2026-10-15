@@ -1,125 +1,149 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
-        <span>{{ $t('modals.createAssociateTicketEvent.title') }}</span>
+    <c-modal-wrapper close>
+      <template #title>
+        <span>{{ t('modals.createAssociateTicketEvent.title') }}</span>
       </template>
-      <template #text="">
-        <v-layout column>
-          <alarm-general-table
-            v-if="config.items"
-            :items="config.items"
-          />
+
+      <template #text>
+        <div class="d-flex flex-column gap-3">
+          <alarm-general-table v-if="config.items" :items="config.items" />
           <v-divider />
-          <v-checkbox
+          <c-checkbox
             v-if="isAllComponentAlarms"
-            v-model="form.ticket_resources"
-            :label="$t('alarm.associateTicketResources')"
+            v-model="ticketResources"
+            :label="t('alarm.associateTicketResources')"
             color="primary"
           />
-          <associate-ticket-event-form
-            v-model="form"
-            class="mt-3"
-          />
-          <c-description-field
-            v-model="form.comment"
-            :label="$tc('common.comment')"
-            :max-length="255"
-            name="comment"
-          />
-          <c-alert
-            v-if="itemsWithoutAck.length"
-            type="info"
-          >
+          <c-form-block class="mt-3">
+            <associate-ticket-event-form
+              :form="values"
+              :ticket-formats="config.ticketFormats"
+              @update:form="updateForm"
+            />
+            <c-form-block-row :label="t('common.comment')" top-border indented>
+              <c-description-field
+                v-model="comment"
+                :label="t('common.comment')"
+                :max-length="FORM_MAX_STRING_LENGTH"
+                name="comment"
+              />
+            </c-form-block-row>
+          </c-form-block>
+          <c-alert v-if="itemsWithoutAck.length" type="info">
             {{ alertMessage }}
           </c-alert>
-        </v-layout>
+        </div>
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn :disabled="submitting" variant="text" @click="close">
+          {{ t('common.cancel') }}
         </v-btn>
         <v-btn
           :loading="submitting"
-          :disabled="isDisabled"
-          class="primary"
+          :disabled="submitting"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.saveChanges') }}
+          {{ t('common.saveChanges') }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { computed } from 'vue';
 
-import { eventToAssociateTicketForm, formToAssociateTicketEvent } from '@/helpers/entities/associate-ticket/event/form';
+import { FORM_MAX_STRING_LENGTH, MODALS } from '@/constants';
+
+import {
+  eventToAssociateTicketForm,
+  formToAssociateTicketEvent,
+} from '@/helpers/entities/associate-ticket/event/form';
 import { isEntityComponentType } from '@/helpers/entities/entity/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
-import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 import AssociateTicketEventForm from '@/components/other/declare-ticket/form/associate-ticket-event-form.vue';
-
-import ModalWrapper from '../modal-wrapper.vue';
+import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 
 /**
- * Modal to associate a ticket to an alarm
+ * Modal to associate a ticket to an alarm.
  */
 export default {
   name: MODALS.createAssociateTicketEvent,
 
-  $_veeValidate: {
-    validator: 'new',
+  components: { AssociateTicketEventForm, AlarmGeneralTable },
+
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
   },
-  components: { AssociateTicketEventForm, AlarmGeneralTable, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    const { associateTicket } = this.modal.config;
+
+  setup(props) {
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+
+    const form = useForm({
+      initialValues: eventToAssociateTicketForm(config.value.associateTicket),
+    });
+    const { values, handleSubmit, isSubmitting: submitting } = form;
+
+    const close = () => modals.hide({ id: props.modal.id });
+    const updateForm = (nextForm) => {
+      values.value = nextForm;
+    };
+
+    const ticketResources = form.model('ticket_resources');
+    const comment = form.model('comment');
+
+    const itemsWithoutAck = computed(
+      () => (config.value.ignoreAck ? [] : (config.value.items ?? []).filter(item => !item.v.ack)),
+    );
+    const alertMessage = computed(() => {
+      const { length: count } = itemsWithoutAck.value;
+
+      return t('declareTicket.noAckItems', count, { count });
+    });
+    const isAllComponentAlarms = computed(
+      () => (config.value.items ?? []).every(({ entity }) => isEntityComponentType(entity.type)),
+    );
+
+    const submit = handleSubmit(async () => {
+      await config.value.action?.(formToAssociateTicketEvent(values.value));
+
+      close();
+    });
+
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close,
+    });
 
     return {
-      form: eventToAssociateTicketForm(associateTicket),
+      t,
+      FORM_MAX_STRING_LENGTH,
+      config,
+      values,
+      ticketResources,
+      comment,
+      itemsWithoutAck,
+      alertMessage,
+      isAllComponentAlarms,
+      submitting,
+      submit,
+      close,
+      updateForm,
     };
-  },
-  computed: {
-    itemsWithoutAck() {
-      return this.config.ignoreAck ? [] : this.config.items.filter(item => !item.v.ack);
-    },
-
-    alertMessage() {
-      const { length: count } = this.itemsWithoutAck;
-
-      return this.$tc('declareTicket.noAckItems', count, { count });
-    },
-
-    isAllComponentAlarms() {
-      return this.config.items.every(({ entity }) => isEntityComponentType(entity.type));
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(formToAssociateTicketEvent(this.form));
-        }
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>

@@ -95,11 +95,9 @@ type History struct {
 
 func (h History) CloneForURL(url string) History {
 	return History{
-		BaseHistory: BaseHistory{
-			ID:      utils.NewID(),
-			Status:  StatusCreated,
-			Request: h.Request,
-		},
+		ID:        utils.NewID(),
+		Status:    StatusCreated,
+		Request:   h.Request,
 		Execution: h.Execution,
 		Alarms:    h.Alarms,
 		Rule:      h.Rule,

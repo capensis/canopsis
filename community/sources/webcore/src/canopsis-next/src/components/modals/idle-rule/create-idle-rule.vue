@@ -1,120 +1,93 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper text-class="position-relative" close>
-      <template #title="">
+    <c-modal-wrapper text-class="position-relative" close>
+      <template #title>
         <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <idle-rule-form v-model="form" />
-        <ai-chat-sidebar
-          v-if="chatShown"
-          v-bind="chatOptions.bind"
-          v-on="chatOptions.on"
-        />
+
+      <template #text>
+        <idle-rule-form />
       </template>
-      <template #actions="">
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
+        </v-btn>
+
         <v-btn
           :disabled="submitting"
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
-        </v-btn>
-        <v-btn
-          :disabled="submitting || chatOptions.bind.pending"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
           {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed, ref, toRef } from 'vue';
-
-import { LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY } from '@/constants';
+import { computed } from 'vue';
 
 import { formToIdleRule, idleRuleToForm } from '@/helpers/entities/idle-rule/form';
 
-import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
-import { useEntityInfoPropertyFetching } from '@/hooks/store/modules/entity-info-property';
+import { useModals } from '@/hooks/modals';
 
-import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import IdleRuleForm from '@/components/other/idle-rule/form/idle-rule-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
-  name: MODALS.createIdleRule,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
-  components: {
-    IdleRuleForm,
-    ModalWrapper,
-    AiChatSidebar,
-  },
+  components: { IdleRuleForm },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
     const { t } = useI18n();
-    const { config, close } = useInnerModal(props);
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
 
-    const form = ref(idleRuleToForm(config.value.idleRule));
+    const isNew = computed(() => !config.value.idleRule?._id || config.value.duplicating);
+    const title = computed(() => config.value.title);
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
 
-    const title = computed(() => config.value.title || t('modals.createAlarmIdleRule.create.title'));
+    const form = useForm({
+      initialValues: idleRuleToForm(config.value.idleRule),
+    });
+    const { values, handleSubmit, submitting } = form;
 
-    const {
-      shown: chatShown,
-      options: chatOptions,
-    } = useAiChatForm({
-      form,
+    const closeModal = () => modals.hide({ id: props.modal.id });
 
-      modal: toRef(props, 'modal'),
-      ruleId: props.modal.config?.idleRule?._id,
-      context: LLM_SOCKET_CONTEXTS.idleRule,
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToIdleRule(values.value));
+
+      await config.value.afterSubmit?.(result);
+
+      closeModal();
+
+      return result;
     });
 
-    const { submit, submitting, submitLabel } = useSubmittableForm({
-      form,
-      item: config.value.idleRule,
-      method: async () => {
-        const result = await config.value.action?.(formToIdleRule(form.value));
-
-        await config.value.afterSubmit?.(result);
-
-        close();
-
-        return result;
-      },
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
     });
-
-    useEntityInfoPropertyFetching();
-    useFormConfirmableCloseModal({ form, submit, close });
 
     return {
-      form,
+      t,
       title,
-      submitting,
-      chatShown,
-      chatOptions,
       submitLabel,
+      submitting,
+      closeModal,
       submit,
-      close,
     };
   },
 };

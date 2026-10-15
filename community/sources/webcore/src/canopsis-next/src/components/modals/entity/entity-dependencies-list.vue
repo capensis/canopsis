@@ -1,9 +1,9 @@
 <template>
-  <modal-wrapper close>
-    <template #title="">
+  <c-modal-wrapper close>
+    <template #title>
       <span>{{ title }}</span>
     </template>
-    <template #text="">
+    <template #text>
       <entity-dependencies-list-component
         :widget="widget"
         :columns="widget.parameters.widgetColumns"
@@ -11,10 +11,10 @@
         :impact="config.impact"
       />
     </template>
-  </modal-wrapper>
+  </c-modal-wrapper>
 </template>
 
-<script>
+<script setup>
 import { computed } from 'vue';
 
 import { MODALS } from '@/constants';
@@ -26,38 +26,25 @@ import { useInnerModal } from '@/hooks/modals';
 
 import EntityDependenciesListComponent from '@/components/other/entity/entity-dependencies-list.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
+defineOptions({ name: MODALS.entityDependenciesList });
 
-export default {
-  name: MODALS.entityDependenciesList,
-  components: {
-    ModalWrapper,
-    EntityDependenciesListComponent,
+const props = defineProps({
+  modal: {
+    type: Object,
+    required: true,
   },
-  props: {
-    modal: {
-      type: Object,
-      required: true,
-    },
-  },
-  setup(props) {
-    const { t } = useI18n();
-    const { config } = useInnerModal(props);
+});
 
-    const entity = computed(() => config.value.entity ?? {});
+const { t } = useI18n();
+const { config } = useInnerModal(props);
 
-    const title = computed(() => config.value.title ?? t('modals.entityDependenciesList.title', {
+const entity = computed(() => config.value.entity ?? {});
+const title = computed(
+  () =>
+    config.value.title ??
+    t('modals.entityDependenciesList.title', {
       name: entity.value.name,
-    }));
-
-    const widget = computed(() => config.value.widget ?? generatePreparedDefaultContextWidget());
-
-    return {
-      config,
-      entity,
-      title,
-      widget,
-    };
-  },
-};
+    }),
+);
+const widget = computed(() => config.value.widget ?? generatePreparedDefaultContextWidget());
 </script>

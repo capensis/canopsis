@@ -12,7 +12,7 @@ export const useActiveKey = () => {
    *
    * @param {string} key - The key to set as active.
    */
-  const makeActive = key => activeKey.value = key;
+  const makeActive = key => (activeKey.value = key);
 
   /**
    * Resets the active key if it matches the specified key.

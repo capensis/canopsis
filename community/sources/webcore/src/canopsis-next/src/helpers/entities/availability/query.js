@@ -1,12 +1,16 @@
 import { isUndefined } from 'lodash';
 
-import { AVAILABILITY_TREND_TYPE_BY_QUICK_RANGE, AVAILABILITY_TREND_TYPES, QUICK_RANGES } from '@/constants';
+import {
+  AVAILABILITY_TREND_TYPE_BY_QUICK_RANGE,
+  AVAILABILITY_TREND_TYPES,
+  QUICK_RANGES,
+} from '@/constants';
 
 import { findQuickRangeByInterval } from '@/helpers/date/date-intervals';
 import { getInfosWidgetColumn } from '@/helpers/entities/widget/column/form';
 
 /**
- * This function converts userPreference with widget availability type to query Object
+ * Convert userPreference with widget availability type to query object.
  *
  * @param {Object} userPreference
  * @returns {Object}
@@ -41,17 +45,18 @@ export const convertAvailabilityUserPreferenceToQuery = (userPreference) => {
 };
 
 /**
- * Remove useless part of infos value
+ * Remove useless part of infos value.
  *
- * We should remove .value, because it's useless for this endpoint
+ * We should remove .value, because it's useless for this endpoint.
  *
  * @param {string} value
- * @return {string}
+ * @returns {string}
  */
-export const prepareAvailabilityWidgetColumnValue = value => (getInfosWidgetColumn(value) ? value.replace(/.value$/, '') : value);
+export const prepareAvailabilityWidgetColumnValue = value =>
+  getInfosWidgetColumn(value) ? value.replace(/.value$/, '') : value;
 
 /**
- * This function converts availability widgets default parameters to query Object
+ * Convert availability widget default parameters to query object.
  *
  * @param {Widget} widget
  * @returns {Object}
@@ -83,15 +88,17 @@ export const convertAvailabilityWidgetParametersToQuery = (widget) => {
 };
 
 /**
- * Find quick availability range by interval
+ * Find quick availability range by interval.
  *
  * @param {Object} interval
- * @return {string}
+ * @returns {string}
  */
 export const getAvailabilitiesTrendByInterval = (interval) => {
   const selectedQuickRange = findQuickRangeByInterval(interval);
   const selectedQuickRangeType = selectedQuickRange?.value;
 
-  return AVAILABILITY_TREND_TYPE_BY_QUICK_RANGE[selectedQuickRangeType]
-    || AVAILABILITY_TREND_TYPES.custom;
+  return (
+    AVAILABILITY_TREND_TYPE_BY_QUICK_RANGE[selectedQuickRangeType] ||
+    AVAILABILITY_TREND_TYPES.custom
+  );
 };

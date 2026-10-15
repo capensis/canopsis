@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"slices"
 	"strings"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -315,8 +316,7 @@ func resolveSnoozeAfterPbhLeave(timestamp datetime.CpsTime, alarm types.Alarm) i
 	var lastEnterTime int64
 
 Loop:
-	for i := len(steps) - 1; i >= 0; i-- {
-		step := steps[i]
+	for _, step := range slices.Backward(steps) {
 		switch step.Type {
 		case types.AlarmStepSnooze:
 			// this means, that snooze step is happened after pbh_enter step,

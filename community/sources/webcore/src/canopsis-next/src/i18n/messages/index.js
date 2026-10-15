@@ -1,8 +1,10 @@
 import { camelCase } from 'lodash';
 
-const requireModule = require.context('.', true, /\.js$/);
+const modules = import.meta.glob('./**/*.js', {
+  eager: true,
+});
 
-const messages = requireModule.keys().reduce((acc, fileName) => {
+const messages = Object.entries(modules).reduce((acc, [fileName, module]) => {
   if (fileName.includes('index.js')) {
     return acc;
   }
@@ -13,7 +15,7 @@ const messages = requireModule.keys().reduce((acc, fileName) => {
     acc[language] = {};
   }
 
-  acc[language][camelCase(moduleName)] = requireModule(fileName).default;
+  acc[language][camelCase(moduleName)] = module.default;
 
   return acc;
 }, {});

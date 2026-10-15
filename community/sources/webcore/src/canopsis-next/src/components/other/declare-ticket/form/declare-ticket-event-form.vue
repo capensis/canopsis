@@ -1,37 +1,40 @@
 <template>
-  <v-layout column>
+  <c-layout column>
     <declare-ticket-event-alarms-tickets-field
-      v-field="form.alarms_by_tickets"
+      :value="form.alarms_by_tickets"
       :alarms="alarms"
       :tickets-by-alarms="ticketsByAlarms"
       :hide-tickets="hideTickets"
       :hide-row-select="hideRowSelect"
+      @update:value="updateField('alarms_by_tickets', $event)"
     />
-    <v-checkbox
+    <c-checkbox
       v-if="!hideTicketResource"
-      v-field="form.ticket_resources"
+      :model-value="form.ticket_resources"
       :label="$t('declareTicket.ticketResources')"
       color="primary"
+      @update:model-value="updateField('ticket_resources', $event)"
     />
     <c-description-field
-      v-field="form.comment"
-      :label="$tc('common.comment')"
+      :model-value="form.comment"
+      :label="$t('common.comment')"
       :autofocus="autofocus"
       class="mt-3"
       name="comment"
+      @update:model-value="updateField('comment', $event)"
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
+import { formMixin } from '@/mixins/form';
+
 import DeclareTicketEventAlarmsTicketsField from './fields/declare-ticket-event-alarms-tickets-field.vue';
 
 export default {
   components: { DeclareTicketEventAlarmsTicketsField },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+  mixins: [formMixin],
+  emits: ['update:form'],
   props: {
     form: {
       type: Object,

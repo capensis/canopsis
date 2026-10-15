@@ -1,0 +1,64 @@
+import { generateShallowRenderer } from '@unit/utils/vue';
+import Faker from 'faker';
+
+import GeomapMapForm from '@/components/other/map/form/geomap-map-form.vue';
+
+const stubs = {
+  'c-name-field': true,
+  'geomap-editor': true,
+};
+
+const selectNameField = wrapper => wrapper.find('c-name-field-stub');
+const selectGeomapEditor = wrapper => wrapper.find('geomap-editor-stub');
+
+describe('geomap-map-form', () => {
+  const factory = generateShallowRenderer(GeomapMapForm, { stubs });
+
+  test('Name changed after trigger name field', () => {
+    const form = {
+      name: '',
+      parameters: {},
+    };
+    const wrapper = factory({
+      propsData: {
+        form,
+      },
+    });
+
+    const newName = Faker.datatype.string();
+
+    const nameField = selectNameField(wrapper);
+
+    nameField.triggerCustomEvent('input', newName);
+
+    expect(wrapper).toEmitInput({
+      ...form,
+      name: newName,
+    });
+  });
+
+  test('Parameters changed after trigger mermaid editor field', () => {
+    const form = {
+      name: '',
+      parameters: {},
+    };
+    const wrapper = factory({
+      propsData: {
+        form,
+      },
+    });
+
+    const newParameters = {
+      param: Faker.datatype.string(),
+    };
+
+    const geomapEditor = selectGeomapEditor(wrapper);
+
+    geomapEditor.triggerCustomEvent('input', newParameters);
+
+    expect(wrapper).toEmitInput({
+      ...form,
+      parameters: newParameters,
+    });
+  });
+});

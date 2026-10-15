@@ -1,18 +1,12 @@
 <template>
-  <line-chart
-    :chart-id="chartId"
-    :options="chartOptions"
-    :datasets="datasets"
-    :width="width"
-    :height="height"
-    :dark="$system.dark"
-  >
+  <line-chart :options="chartOptions" :datasets="datasets" :dark="$system.dark">
     <template #actions="{ chart }">
       <chart-export-actions
         :downloading="downloading"
         :chart="chart"
         class="mt-4"
-        v-on="$listeners"
+        @export:csv="$emit('export:csv')"
+        @export:png="$emit('export:png', $event)"
       />
     </template>
   </line-chart>
@@ -21,45 +15,34 @@
 <script>
 import { computed } from 'vue';
 
+import { COLORS } from '@/config';
 import {
+  AVAILABILITY_DISPLAY_PARAMETERS,
   AVAILABILITY_LINE_CHART_X_AXES_IDS,
-  SAMPLINGS,
   AVAILABILITY_LINE_CHART_Y_AXES_IDS,
   AVAILABILITY_SHOW_TYPE,
-  AVAILABILITY_DISPLAY_PARAMETERS,
   MAX_TIME_VALUE_BY_SAMPLING,
+  SAMPLINGS,
   TIME_UNITS_BY_SAMPLING,
 } from '@/constants';
-import { COLORS } from '@/config';
 
-import { getDateLabelBySampling } from '@/helpers/entities/metric/list';
-import { convertNumberToFixedString } from '@/helpers/string';
 import { convertDurationToString, fromSeconds } from '@/helpers/date/duration';
 import { getAvailabilityFieldByDisplayParameterAndShowType } from '@/helpers/entities/availability/entity';
+import { getDateLabelBySampling } from '@/helpers/entities/metric/list';
+import { convertNumberToFixedString } from '@/helpers/string';
 
 import ChartExportActions from '@/components/common/chart/chart-export-actions.vue';
-
-const LineChart = () => import(/* webpackChunkName: "Charts" */ '@/components/common/chart/line-chart.vue');
+import LineChart from '@/components/common/chart/line-chart.vue';
 
 export default {
   inject: ['$system'],
+
   components: { ChartExportActions, LineChart },
+
   props: {
-    chartId: {
-      type: String,
-      required: false,
-    },
     availabilities: {
       type: Array,
       default: () => [],
-    },
-    width: {
-      default: 600,
-      type: Number,
-    },
-    height: {
-      default: 440,
-      type: Number,
     },
     sampling: {
       type: String,
@@ -86,8 +69,13 @@ export default {
       default: true,
     },
   },
+
+  emits: ['export:csv', 'export:png'],
+
   setup(props) {
-    const isUptimeParameter = computed(() => props.displayParameter === AVAILABILITY_DISPLAY_PARAMETERS.uptime);
+    const isUptimeParameter = computed(
+      () => props.displayParameter === AVAILABILITY_DISPLAY_PARAMETERS.uptime,
+    );
     const isPercentType = computed(() => props.showType === AVAILABILITY_SHOW_TYPE.percent);
 
     const labelsFont = computed(() => ({
@@ -100,6 +88,7 @@ export default {
 
       return getDateLabelBySampling(value, props.sampling);
     };
+
     const xAxes = computed(() => ({
       [AVAILABILITY_LINE_CHART_X_AXES_IDS.default]: {
         type: 'time',
@@ -151,6 +140,7 @@ export default {
 
       return fromSeconds(value, samplingUnit.value);
     };
+
     const datasets = computed(() => {
       const color = isUptimeParameter.value ? COLORS.kpi.uptime : COLORS.kpi.downtime;
 
@@ -176,6 +166,7 @@ export default {
 
       return getDateLabelBySampling(timestamp, props.sampling);
     };
+
     const getChartTooltipLabel = ({ raw }) => {
       if (isPercentType.value) {
         return `${convertNumberToFixedString(raw.y, 2)}%`;
@@ -183,6 +174,7 @@ export default {
 
       return convertDurationToString(raw.y, undefined, samplingUnit.value);
     };
+
     const chartOptions = computed(() => ({
       responsive: props.responsive,
       animation: props.animation,

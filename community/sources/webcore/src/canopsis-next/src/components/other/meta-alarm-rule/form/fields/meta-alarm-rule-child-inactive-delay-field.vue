@@ -1,55 +1,61 @@
 <template>
-  <c-form-block-row :label="$t('metaAlarmRule.childInactiveDelay')">
-    <v-layout class="gap-3" column>
-      <v-layout class="gap-2">
+  <c-form-block-row :label="t('metaAlarmRule.childInactiveDelay')">
+    <c-layout gap="3" column>
+      <c-layout gap="2" align="center">
         <c-enabled-field
-          :value="!!value"
-          :label="$t('metaAlarmRule.childInactiveDelay')"
-          @input="handleToggle"
+          :model-value="enabled"
+          :label="t('metaAlarmRule.childInactiveDelay')"
+          hide-details
+          @update:model-value="toggle"
         />
         <c-help-icon
-          :text="$t('metaAlarmRule.childInactiveDelayHelpText')"
+          :text="t('metaAlarmRule.childInactiveDelayHelpText')"
           icon="help"
           max-width="300"
           top
         />
-      </v-layout>
+      </c-layout>
+
       <c-duration-field
-        v-if="value"
-        :duration="value"
+        v-if="modelValue"
+        :duration="modelValue"
+        name="child_inactive_delay"
         clearable
-        @input="handleDurationInput"
+        @update:duration="updateModel"
       />
-    </v-layout>
+    </c-layout>
   </c-form-block-row>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { durationToForm } from '@/helpers/date/duration';
 
+import { useI18n } from '@/hooks/i18n';
+
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: Object,
       default: undefined,
     },
   },
-  setup(_, { emit }) {
-    const handleToggle = (enabled) => {
-      emit('input', enabled ? durationToForm() : undefined);
-    };
 
-    const handleDurationInput = (duration) => {
-      emit('input', duration);
-    };
+  emits: ['update:modelValue'],
+
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const enabled = computed(() => !!props.modelValue);
+
+    const updateModel = value => emit('update:modelValue', value);
+    const toggle = value => updateModel(value ? durationToForm() : undefined);
 
     return {
-      handleToggle,
-      handleDurationInput,
+      t,
+      enabled,
+      updateModel,
+      toggle,
     };
   },
 };

@@ -6,7 +6,7 @@ export const permissionsWidgetsNumbersSampling = {
   mixins: [authMixin],
   computed: {
     hasAccessToSampling() {
-      return this.checkAccess(USER_PERMISSIONS.business.pieChart.actions.sampling);
+      return this.checkAccess(USER_PERMISSIONS.business.numbers.actions.sampling);
     },
   },
 };

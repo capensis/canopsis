@@ -1,31 +1,37 @@
 <template>
   <v-card>
     <v-card-text>
-      <v-layout class="approval-alert-text">
-        <div class="approval-alert-text__icon">
+      <v-row class="approval-alert-text" no-gutters>
+        <v-col class="approval-alert-text__icon" cols="auto">
           <v-icon color="error">
             notification_important
           </v-icon>
-        </div>
-        <v-layout column>
-          <v-layout>
-            <strong>{{ userName }}</strong>
-            <span class="ml-1">
-              {{ statusText }}
-            </span>
-          </v-layout>
-          <v-layout class="mt-3">
-            <span class="grey--text text--darken-2">
-              {{ $tc('common.comment', 1) }}:
-            </span>
-          </v-layout>
-          <v-layout class="mt-3">
-            <span>{{ comment }}</span>
-          </v-layout>
+        </v-col>
+        <v-col>
+          <v-row no-gutters>
+            <v-col>
+              <strong>{{ userName }}</strong>
+              <span class="ml-1">
+                {{ statusText }}
+              </span>
+            </v-col>
+          </v-row>
+          <v-row class="mt-3" no-gutters>
+            <v-col>
+              <span class="grey--text text--darken-2">
+                {{ $t('common.comment', 1) }}:
+              </span>
+            </v-col>
+          </v-row>
+          <v-row class="mt-3" no-gutters>
+            <v-col>
+              <span>{{ comment }}</span>
+            </v-col>
+          </v-row>
 
           <slot />
-        </v-layout>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>
@@ -48,7 +54,9 @@ export default {
   },
   computed: {
     statusText() {
-      return this.$t(`modals.remediationInstructionApproval.${this.dismissed ? 'dismissed' : 'requested'}`);
+      return this.$t(
+        `modals.remediationInstructionApproval.${this.dismissed ? 'dismissed' : 'requested'}`,
+      );
     },
   },
 };

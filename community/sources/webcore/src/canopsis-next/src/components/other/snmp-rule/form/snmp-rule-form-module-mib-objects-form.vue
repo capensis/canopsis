@@ -1,36 +1,36 @@
 <template>
-  <v-layout wrap>
-    <v-flex xs12>
+  <v-row density="comfortable">
+    <v-col cols="12">
       <v-menu
+        v-model="menu"
         :items="items"
         max-height="200"
-        offset-y
+        location="bottom"
       >
-        <template #activator="{ on }">
-          <v-text-field
-            v-field="form.value"
-            v-validate="valueRules"
-            :label="$t('snmpRule.moduleMibObjects')"
+        <template #activator="{ props: menuProps }">
+          <c-text-field
+            v-bind="menuProps"
+            v-model="value"
+            :label="label || t('snmpRule.moduleMibObjects')"
             :name="valueName"
-            :error-messages="errors.collect(valueName)"
+            :required="required"
             class="vars-input pt-0"
             hide-details
-            v-on="on"
           >
-            <template
-              v-if="large"
-              #append=""
-            >
+            <template v-if="large" #append-inner>
               <v-btn
                 :class="{ active: isVisible }"
+                size="small"
+                variant="text"
                 icon
                 @click.stop="toggleVisibility"
               >
                 <v-icon>attach_file</v-icon>
               </v-btn>
             </template>
-          </v-text-field>
+          </c-text-field>
         </template>
+
         <v-list>
           <v-list-item
             v-for="(item, index) in items"
@@ -41,34 +41,29 @@
           </v-list-item>
         </v-list>
       </v-menu>
-    </v-flex>
+    </v-col>
+
     <v-expand-transition v-if="large">
-      <v-flex v-show="isVisible" xs12>
-        <v-text-field
-          v-field="form.regex"
-          :label="$t('snmpRule.regex')"
+      <v-col v-show="isVisible" cols="12">
+        <c-text-field
+          v-model="regex"
+          :label="t('snmpRule.regex')"
+          :name="regexName"
           hide-details
         />
-        <v-text-field
-          v-field="form.formatter"
-          :label="$t('snmpRule.formatter')"
-        />
-      </v-flex>
+        <c-text-field v-model="formatter" :label="t('snmpRule.formatter')" :name="formatterName" />
+      </v-col>
     </v-expand-transition>
-  </v-layout>
+  </v-row>
 </template>
 
 <script>
 import { computed, ref } from 'vue';
 
 import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
   props: {
     form: {
       type: Object,
@@ -86,28 +81,63 @@ export default {
       type: String,
       default: '',
     },
+    label: {
+      type: String,
+      default: '',
+    },
     required: {
       type: Boolean,
       default: false,
     },
   },
+
+  emits: ['update:form'],
+
   setup(props, { emit }) {
+    const { t } = useI18n();
     const { updateField } = useModelField(props, emit);
 
-    const isVisible = ref(!!(props.form.regex || props.form.format));
+    const menu = ref(false);
+    const isVisible = ref(!!(props.form.regex || props.form.formatter));
 
-    const valueRules = computed(() => ({ required: props.required }));
     const valueName = computed(() => (props.name ? `${props.name}.value` : 'value'));
+    const regexName = computed(() => (props.name ? `${props.name}.regex` : 'regex'));
+    const formatterName = computed(() => (props.name ? `${props.name}.formatter` : 'formatter'));
 
-    const toggleVisibility = () => isVisible.value = !isVisible.value;
-    const updateSelectableInput = item => updateField('value', `${props.form.value || ''}{{ ${item} }}`);
+    const value = computed({
+      get: () => props.form.value,
+      set: nextValue => updateField('value', nextValue),
+    });
+
+    const regex = computed({
+      get: () => props.form.regex,
+      set: nextValue => updateField('regex', nextValue),
+    });
+
+    const formatter = computed({
+      get: () => props.form.formatter,
+      set: nextValue => updateField('formatter', nextValue),
+    });
+
+    const toggleVisibility = () => {
+      isVisible.value = !isVisible.value;
+    };
+
+    const updateSelectableInput = (item) => {
+      updateField('value', `${props.form.value || ''}{{ ${item} }}`);
+      menu.value = false;
+    };
 
     return {
+      t,
+      menu,
       isVisible,
-
-      valueRules,
       valueName,
-
+      regexName,
+      formatterName,
+      value,
+      regex,
+      formatter,
       toggleVisibility,
       updateSelectableInput,
     };
@@ -117,16 +147,20 @@ export default {
 
 <style lang="scss" scoped>
 .v-btn.active {
-  &:hover:before {
-    opacity: .16;
+  &:hover::before {
+    opacity: 0.16;
   }
 
-  &:before {
+  &::before {
     background-color: currentColor;
   }
 }
 
-.vars-input ::v-deep .v-input__slot {
+.vars-input :deep(.v-input__slot) {
   height: 56px;
+}
+
+.vars-input :deep(.v-field__append-inner) {
+  padding-top: 4px;
 }
 </style>

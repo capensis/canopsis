@@ -5,7 +5,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/v2/bson"
-	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	mongo2 "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
@@ -29,7 +29,7 @@ func UpdateFollowing(
 
 	defer cursor.Close(ctx)
 
-	writeModels := make([]mongodriver.WriteModel, 0)
+	writeModels := make([]mongo2.WriteModel, 0)
 	seq := priority
 	for cursor.Next(ctx) {
 		item := struct {
@@ -51,7 +51,7 @@ func UpdateFollowing(
 		}
 
 		seq++
-		writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
+		writeModels = append(writeModels, mongo2.NewUpdateOneModel().
 			SetFilter(bson.M{"_id": item.ID}).
 			SetUpdate(bson.M{"$set": bson.M{"priority": seq}}))
 	}

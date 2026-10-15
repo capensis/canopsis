@@ -6,25 +6,34 @@ export default {
   queueOverflow: 'Queue overflow',
   lackOfInstances: 'Lack of instances',
   diffInstancesConfig: 'Invalid instances configuration',
-  queueLength: 'Queue length {queueLength}/{maxQueueLength}',
+  queueLength: 'Queue length {queueLength}',
   instancesCount: 'Instances {instances}/{minInstances}',
   runningNodes: 'Running nodes {runningNodes}/{nodes}',
-  activeInstances: 'Only {instances} is active out of {minInstances}. The optimal number of instances is {optimalInstances}.',
-  queueOverflowed: 'Queue is overflowed: {queueLength} messages out of {maxQueueLength}.\nPlease check the instances.',
-  engineDown: '{name} is down, the system is not operational.\nPlease check the log or restart the service.',
-  engineDownOrSlow: '{name} is down or responds too slow, the system is not operational.\nPlease check the log or restart the instance.',
-  timescaleDown: '{name} is down, metrics and KPIs are not collecting.\nPlease check the log or restart the instance.',
+  activeInstances:
+    'Only {instances} is active out of {minInstances}. The optimal number of instances is {optimalInstances}.',
+  queueOverflowed:
+    'Queue is overflowed: {queueLength} messages out of {maxQueueLength}.\nPlease check the instances.',
+  engineDown:
+    '{name} is down, the system is not operational.\nPlease check the log or restart the service.',
+  engineDownOrSlow:
+    '{name} is down or responds too slow, the system is not operational.\nPlease check the log or restart the instance.',
+  timescaleDown:
+    '{name} is down, metrics and KPIs are not collecting.\nPlease check the log or restart the instance.',
   invalidEnginesOrder: 'Invalid engines configuration',
-  invalidInstancesConfiguration: 'Invalid instances configuration: engine instances read or write to different queues.\nPlease check the instances.',
-  chainConfigurationInvalid: 'Engines chain configuration is invalid.\nRefer below for the correct sequence of engines:',
+  invalidInstancesConfiguration:
+    'Invalid instances configuration: engine instances read or write to different queues.\nPlease check the instances.',
+  chainConfigurationInvalid:
+    'Engines chain configuration is invalid.\nRefer below for the correct sequence of engines:',
   queueLimit: 'Queue length limit',
   defineQueueLimit: 'Define the engines queue length limit',
   notifyUsersQueueLimit: 'Users can be notified when the queue length limit is exceeded',
   messagesLimit: 'Messages processing limit',
   defineMessageLimit: 'Define the FIFO messages processing limit (per minute)',
-  notifyUsersMessagesLimit: 'Users can be notified when the FIFO messages processing limit is exceeded',
+  notifyUsersMessagesLimit:
+    'Users can be notified when the FIFO messages processing limit is exceeded',
   numberOfInstances: 'Number of instances',
-  notifyUsersNumberOfInstances: 'Users can be notified when the number of active instances is less than the minimal value. The optimal number of instances is shown when the engine state is unavailable.',
+  notifyUsersNumberOfInstances:
+    'Users can be notified when the number of active instances is less than the minimal value. The optimal number of instances is shown when the engine state is unavailable.',
   messagesHistory: 'FIFO messages processing history',
   messagesLastHour: 'FIFO messages processing for the last hour',
   messagesPerHour: 'messages/hour',
@@ -33,6 +42,14 @@ export default {
   systemStatusChipError: 'The system is not operational',
   systemStatusServerError: 'System configuration is invalid, please contact the administrator',
   systemsOperational: 'All systems are operational',
+  issues: {
+    node_down: 'One or more {name} nodes are down',
+    no_quorum: '{name} has no quorum',
+    quorum_degraded: '{name} quorum is degraded',
+    queue_overflowed: '{name}: Queue overflow',
+    too_few_instances: '{name}: Lack of instances',
+    instances_config_mismatch: '{name}: Invalid instances configuration',
+  },
   connectors: 'Connectors',
   connectorsBlocks: {
     description: 'Model training in progress, please check later',

@@ -5,27 +5,28 @@
     :loading="pending"
     :total-items="totalItems"
     :options="options"
+    :toolbar-props="{ class: 'mb-3' }"
     search
     advanced-pagination
     @update:options="updateOptions"
   >
-    <template #toolbar="">
-      <v-layout align-center>
-        <c-quick-date-interval-field
-          :interval="options.interval"
-          with-hours
-          @input="updateInterval"
-        />
-      </v-layout>
+    <template #toolbar>
+      <c-quick-date-interval-field
+        :interval="options.interval"
+        with-hours
+        @input="updateInterval"
+      />
     </template>
     <template #time="{ item }">
-      {{ item.time | date }}
+      {{ dateToString(item.time) }}
     </template>
   </c-advanced-data-table>
 </template>
 
 <script>
 import { computed } from 'vue';
+
+import { convertDateToString } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -48,6 +49,9 @@ export default {
       required: true,
     },
   },
+
+  emits: ['update:options'],
+
   setup(props, { emit }) {
     const { t } = useI18n();
 
@@ -83,24 +87,15 @@ export default {
       },
     ]);
 
-    /**
-     * Updates the table options and emits the changes to the parent component
-     *
-     * @param {Object} options - The updated options object
-     */
     const updateOptions = options => emit('update:options', options);
-
-    /**
-     * Updates the interval in the table options and emits the changes to the parent component
-     *
-     * @param {Object} interval - The new interval object to apply to the options
-     */
     const updateInterval = interval => updateOptions({ ...props.options, interval });
+    const dateToString = date => convertDateToString(date);
 
     return {
+      dateToString,
       headers,
-      updateOptions,
       updateInterval,
+      updateOptions,
     };
   },
 };
