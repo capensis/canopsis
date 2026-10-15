@@ -285,7 +285,7 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 	case types.ActionTypePause:
 		axeParams.Output = s.genPauseOutput(params, axeParams.RuleName)
 		axeParams.Inherited = params.Inherited
-		axeParams.PauseType = params.Type
+		axeParams.PauseType = params.PauseType
 	default:
 		axeParams.Output = s.getEventOutput(params, axeParams.RuleName)
 	}
@@ -428,7 +428,7 @@ func (s *pool) genPauseOutput(params Parameters, ruleName string) string {
 		outputBuilder.WriteRune('.')
 	}
 
-	if params.Type != "" {
+	if params.PauseType != "" {
 		if params.Output == "" {
 			outputBuilder.WriteString(". ")
 		} else {
@@ -436,7 +436,7 @@ func (s *pool) genPauseOutput(params Parameters, ruleName string) string {
 		}
 
 		outputBuilder.WriteString(types.OutputTypePrefix)
-		outputBuilder.WriteString(params.Type)
+		outputBuilder.WriteString(params.PauseType)
 		outputBuilder.WriteRune('.')
 	}
 

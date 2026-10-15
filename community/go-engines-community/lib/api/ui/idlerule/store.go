@@ -292,20 +292,48 @@ func transformRequestToModel(r EditRequest) idlerule.Rule {
 
 func getNestedObjectsPipeline() []bson.M {
 	return []bson.M{
+		{"$addFields": bson.M{
+			"pbehavior_type": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$operation.type", types.ActionTypePbehavior}},
+				"then": "$operation.parameters.type",
+				"else": nil,
+			}},
+			"pbehavior_reason": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$operation.type", types.ActionTypePbehavior}},
+				"then": "$operation.parameters.reason",
+				"else": nil,
+			}},
+		}},
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorTypeMongoCollection,
-			"localField":   "operation.parameters.type",
+			"localField":   "pbehavior_type",
 			"foreignField": "_id",
-			"as":           "operation.parameters.type",
+			"as":           "pbehavior_type",
 		}},
-		{"$unwind": bson.M{"path": "$operation.parameters.type", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$pbehavior_type", "preserveNullAndEmptyArrays": true}},
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorReasonMongoCollection,
-			"localField":   "operation.parameters.reason",
+			"localField":   "pbehavior_reason",
 			"foreignField": "_id",
-			"as":           "operation.parameters.reason",
+			"as":           "pbehavior_reason",
 		}},
-		{"$unwind": bson.M{"path": "$operation.parameters.reason", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$pbehavior_reason", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"operation.parameters.type": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$operation.type", types.ActionTypePbehavior}},
+				"then": "$pbehavior_type",
+				"else": "$operation.parameters.type",
+			}},
+			"operation.parameters.reason": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$operation.type", types.ActionTypePbehavior}},
+				"then": "$pbehavior_reason",
+				"else": "$operation.parameters.reason",
+			}},
+		}},
+		{"$project": bson.M{
+			"pbehavior_type":   0,
+			"pbehavior_reason": 0,
+		}},
 		{"$addFields": bson.M{
 			"operation": bson.M{"$cond": bson.M{
 				"if":   "$operation.type",
