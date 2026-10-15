@@ -1,40 +1,37 @@
 <template>
-  <v-layout class="gap-3" justify-center column>
+  <c-layout gap="3" justify-center column>
     <c-label :label="$t('common.recurrence')" />
+
     <div v-if="!hasRecurrenceRule">
-      <v-btn
-        color="primary"
-        outlined
-        @click="showCreateRecurrenceRuleModal"
-      >
+      <v-btn color="primary" variant="outlined" @click="showCreateRecurrenceRuleModal">
         {{ $t('pbehavior.buttons.addRRule') }}
       </v-btn>
     </div>
+
     <template v-else>
-      <v-layout>
+      <c-layout>
         <recurrence-rule-information
           :rrule="rruleBodyForInformation"
           :exdates="form.exdates"
           :exceptions="form.exceptions"
           class="mr-2"
         />
+
         <c-action-btn
           :tooltip="$t('pbehavior.buttons.editRrule')"
           type="edit"
           @click="showCreateRecurrenceRuleModal"
         />
-        <c-action-btn
-          type="delete"
-          @click="showConfirmRemoveRecurrenceRuleModal"
-        />
-      </v-layout>
+
+        <c-action-btn type="delete" @click="showConfirmRemoveRecurrenceRuleModal" />
+      </c-layout>
     </template>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
-import { computed } from 'vue';
 import { isEmpty } from 'lodash';
+import { computed } from 'vue';
 
 import { MODALS } from '@/constants';
 
@@ -48,10 +45,7 @@ export default {
   components: {
     RecurrenceRuleInformation,
   },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+
   props: {
     form: {
       type: Object,
@@ -62,6 +56,9 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:form'],
+
   setup(props, { emit }) {
     const modals = useModals();
 
@@ -73,7 +70,7 @@ export default {
       modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => emit('input', { ...props.form, rrule: '' }),
+          action: () => emit('update:form', { ...props.form, rrule: '' }),
         },
       });
     };
@@ -87,12 +84,12 @@ export default {
           exceptions: props.form.exceptions,
           start: props.form.tstart,
           withExdateType: props.withExdateType,
-          action: ({ rrule, exdates, exceptions }) => emit('input', {
-            ...props.form,
-            rrule,
-            exdates,
-            exceptions,
-          }),
+          action: ({ rrule, exdates, exceptions }) => emit('update:form', {
+              ...props.form,
+              rrule,
+              exdates,
+              exceptions,
+            }),
         },
       });
     };

@@ -1,13 +1,13 @@
 <template>
-  <v-layout class="gap-2" justify-end>
+  <c-layout class="flex-grow-1" justify="end" gap="2">
     <v-btn
       :loading="cancelPending"
       :disabled="cancelPending"
       color="error"
-      outlined
+      variant="outlined"
       @click="cancel"
     >
-      {{ $t('remediation.instructionExecute.cancelInstruction') }}
+      {{ t('remediation.instructionExecute.cancelInstruction') }}
     </v-btn>
     <v-btn
       :loading="pausePending"
@@ -15,12 +15,13 @@
       color="secondary"
       @click="pause"
     >
-      {{ $t('remediation.instructionExecute.pauseInstruction') }}
+      {{ t('remediation.instructionExecute.pauseInstruction') }}
     </v-btn>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
+import { useI18n } from '@/hooks/i18n';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useRemediationInstructionExecution } from '@/hooks/store/modules/remediation-instruction-execution';
 
@@ -31,7 +32,11 @@ export default {
       required: true,
     },
   },
+
+  emits: ['close'],
+
   setup(props, { emit }) {
+    const { t } = useI18n();
     const closeModal = () => emit('close');
 
     const {
@@ -48,9 +53,6 @@ export default {
       closeModal();
     });
 
-    /**
-     * Pauses the remediation instruction execution by ID and closes the modal.
-     */
     const {
       pending: pausePending,
       handler: pause,
@@ -61,6 +63,7 @@ export default {
     });
 
     return {
+      t,
       cancelPending,
       cancel,
       pausePending,

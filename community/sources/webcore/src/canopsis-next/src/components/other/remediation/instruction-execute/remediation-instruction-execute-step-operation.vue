@@ -1,29 +1,24 @@
 <template>
-  <v-layout>
-    <v-flex
-      class="mt-3"
-      xs1
-    >
-      <v-layout justify-center>
+  <v-row class="flex-grow-0" no-gutters>
+    <v-col class="mt-3" cols="1">
+      <c-layout class="fill-height" align="center" column>
         <v-avatar
-          class="white--text"
+          class="text-white"
           color="primary"
           size="32"
         >
           {{ operationNumber }}
         </v-avatar>
-      </v-layout>
-    </v-flex>
-    <v-flex xs11>
-      <v-layout>
-        <v-text-field
-          :value="operation.name"
-          :label="$t('common.name')"
-          readonly
-          hide-details
-          filled
-        />
-      </v-layout>
+      </c-layout>
+    </v-col>
+    <v-col cols="11">
+      <c-text-field
+        :model-value="operation.name"
+        :label="t('common.name')"
+        variant="filled"
+        readonly
+        hide-details
+      />
       <remediation-instruction-status
         :completed-at="operation.completed_at"
         :time-to-complete="operation.time_to_complete"
@@ -31,19 +26,19 @@
         :started-at="operation.started_at"
       />
       <v-expand-transition>
-        <v-layout
+        <c-layout
           v-if="isShownDetails"
-          class="gap-4"
+          gap="4"
           column
         >
           <text-editor-blurred
             :value="operation.description"
-            :label="$t('common.description')"
+            :label="t('common.description')"
             hide-details
           />
-          <v-layout column>
+          <c-layout column>
             <span class="text-subtitle-1">
-              {{ $t('remediation.instructionExecute.jobs.title') }}
+              {{ t('remediation.instructionExecute.jobs.title') }}
             </span>
             <remediation-instruction-execute-assigned-jobs-table
               v-if="operation.jobs.length"
@@ -54,35 +49,36 @@
               @execute-job="executeJob"
               @cancel-job-execution="cancelJobExecution"
             />
-          </v-layout>
-          <v-layout
-            class="gap-3"
-            justify-end
-          >
+          </c-layout>
+          <c-layout gap="3" justify="end">
             <v-btn
               :disabled="(isFirstOperation && isFirstStep) || nextPending"
               :loading="previousPending"
-              class="accent"
-              @click="$listeners.previous"
+              color="secondary"
+              @click="$emit('previous')"
             >
-              {{ $t('common.previous') }}
+              {{ t('common.previous') }}
             </v-btn>
             <v-btn
               :disabled="previousPending"
               :loading="nextPending"
-              class="primary"
-              @click="$listeners.next"
+              color="primary"
+              @click="$emit('next')"
             >
-              {{ $t('common.next') }}
+              {{ t('common.next') }}
             </v-btn>
-          </v-layout>
-        </v-layout>
+          </c-layout>
+        </c-layout>
       </v-expand-transition>
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
+
 import TextEditorBlurred from '@/components/common/text-editor/text-editor-blurred.vue';
 
 import RemediationInstructionStatus from './partials/remediation-instruction-status.vue';
@@ -94,6 +90,7 @@ export default {
     RemediationInstructionStatus,
     RemediationInstructionExecuteAssignedJobsTable,
   },
+
   props: {
     isFirstStep: {
       type: Boolean,
@@ -120,31 +117,33 @@ export default {
       default: false,
     },
   },
-  computed: {
-    isShownDetails() {
-      return !this.isCompletedOperation && !this.isFailedOperation && this.isStartedOperation;
-    },
 
-    isStartedOperation() {
-      return !!this.operation.started_at;
-    },
+  emits: ['next', 'previous', 'execute-job', 'cancel-job-execution'],
 
-    isCompletedOperation() {
-      return !!this.operation.completed_at;
-    },
+  setup(props, { emit }) {
+    const { t } = useI18n();
 
-    isFailedOperation() {
-      return !!this.operation.failed_at;
-    },
-  },
-  methods: {
-    executeJob(job) {
-      this.$emit('execute-job', { job, operation: this.operation });
-    },
+    const isStartedOperation = computed(() => !!props.operation.started_at);
+    const isCompletedOperation = computed(() => !!props.operation.completed_at);
+    const isFailedOperation = computed(() => !!props.operation.failed_at);
+    const isShownDetails = computed(
+      () => !isCompletedOperation.value && !isFailedOperation.value && isStartedOperation.value,
+    );
 
-    cancelJobExecution(job) {
-      this.$emit('cancel-job-execution', { job, operation: this.operation });
-    },
+    const executeJob = (job) => {
+      emit('execute-job', { job, operation: props.operation });
+    };
+
+    const cancelJobExecution = (job) => {
+      emit('cancel-job-execution', { job, operation: props.operation });
+    };
+
+    return {
+      t,
+      isShownDetails,
+      executeJob,
+      cancelJobExecution,
+    };
   },
 };
 </script>

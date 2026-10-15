@@ -1,0 +1,70 @@
+import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
+
+export default {
+  isEnabled: 'Is enabled',
+  begins: 'Begins',
+  ends: 'Ends',
+  lastAlarmDate: 'Last alarm date',
+  alarmCount: 'Alarms count',
+  alarmFilteringTime: 'Pattern filtering time',
+  lastFilteringDate: 'Last pattern evaluation date',
+  runAlarmFiltering: 'Evaluate all patterns',
+  alarmFilteringInProgress: 'Evaluation in progress',
+  alarmFilteringError: 'Pattern evaluation error',
+  massRemove: 'Remove pbehaviors',
+  massEnable: 'Enable pbehaviors',
+  massDisable: 'Disable pbehaviors',
+  periodsCalendar: 'Calendar with periods',
+  notEditable: 'Cannot be modified',
+  pbehaviorInfo: 'Pbehavior info',
+  pbehaviorType: 'Pbehavior type',
+  pbehaviorReason: 'Pbehavior reason',
+  pbehaviorName: 'Pbehavior name',
+  pbehaviorCanonicalType: 'Pbehavior canonical type',
+  rruleEnd: 'End of recurrence',
+  visible: 'Show on pbehavior form',
+  massHide: 'Hide on pbehavior form',
+  massUnhide: '@:pbehavior.visible',
+  defaultNameForSingleResourceEntity: '{component} - {name} - From {datetime}',
+  defaultNameForSingleEntity: '{name} - From {datetime}',
+  defaultNameForMultipleEntities: 'Periodical behavior - From {datetime}',
+  buttons: {
+    addFilter: 'Add filter',
+    editFilter: 'Edit filter',
+    addRRule: 'Add recurrence rule',
+    editRrule: 'Edit recurrence rule',
+  },
+  tabs: {
+    type: 'Type',
+    reason: 'Reason',
+    exceptions: 'Exception dates',
+  },
+
+  exceptions: {
+    title: 'Exception dates lists',
+    create: 'Add an exception date',
+    choose: 'Choose list of exceptions',
+    usingException: 'Cannot be deleted since it is in use',
+    emptyExceptions: 'No exceptions added yet',
+  },
+
+  exdates: {
+    title: 'Exception dates',
+  },
+
+  types: {
+    usingType: 'Cannot be deleted since it is in use',
+    defaultType: 'The type is default, you can edit only color field',
+    types: {
+      [PBEHAVIOR_TYPE_TYPES.active]: 'Active',
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
+      [PBEHAVIOR_TYPE_TYPES.pause]: '@:common.pause',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
+    },
+  },
+
+  reasons: {
+    usingReason: 'Cannot be deleted since it is in use',
+    hidden: 'Hide this reason on pbehavior form ?',
+  },
+};

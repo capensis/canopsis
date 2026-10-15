@@ -1,10 +1,4 @@
-import {
-  unref,
-  provide,
-  inject,
-  onMounted,
-  onBeforeUnmount,
-} from 'vue';
+import { unref, provide, inject, onMounted, onBeforeUnmount } from 'vue';
 
 import Observer from '@/services/observer';
 

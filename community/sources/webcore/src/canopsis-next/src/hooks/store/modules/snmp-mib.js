@@ -1,26 +1,15 @@
-import { useStoreModuleHooks } from '@/hooks/store';
+import { useSnmpMibStore } from '@/stores/modules/snmp-mib';
 
 /**
- * Hook to access the SNMP MIB store module.
+ * SNMP MIB store facade.
  *
- * @returns {Object} The store module hooks for the SNMP MIB.
- */
-const useSnmpMibStoreModule = () => useStoreModuleHooks('snmpMib');
-
-/**
- * Custom hook to use SNMP MIB actions.
- *
- * @returns {Object} An object containing SNMP MIB actions.
- * @property {Function} fetchSnmpMibList - Action to fetch the list of SNMP MIBs.
+ * @returns {Object}
  */
 export const useSnmpMib = () => {
-  const { useActions } = useSnmpMibStoreModule();
-
-  const actions = useActions({
-    fetchSnmpMibList: 'fetchList',
-  });
+  const snmpMibStore = useSnmpMibStore();
 
   return {
-    ...actions,
+    fetchSnmpMibsList: snmpMibStore.fetchList,
+    uploadSnmpMib: snmpMibStore.upload,
   };
 };

@@ -1,149 +1,119 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper
-      text-class="position-relative pa-0"
-      close
-    >
-      <template #title="">
-        <span>{{ $t('userInterface.title') }}</span>
+    <c-modal-wrapper text-class="pa-0" close>
+      <template #title>
+        <span>{{ t('userInterface.title') }}</span>
       </template>
-      <template #text="">
+
+      <template #text>
         <c-progress-overlay :pending="pending" />
-        <user-interface-form
-          v-model="form"
-          ref="userForm"
-          :disabled="!hasUpdateAccess"
-          class="pa-3"
-        />
+
+        <user-interface-form :disabled="!hasUpdateAccess" class="pa-3" />
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="close">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
           v-if="hasUpdateAccess"
-          :disabled="submitting"
-          :loading="submitting"
-          class="primary white--text"
+          :disabled="isSubmitting"
+          :loading="isSubmitting"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.save') }}
+          {{ t('common.save') }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed, ref, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
-import { MODALS, USER_PERMISSIONS, VALIDATION_DELAY } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
 import { userInterfaceToForm } from '@/helpers/entities/user-interface/form';
-import { notificationsSettingsToForm } from '@/helpers/entities/notification/form';
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
 
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
+import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useInfo } from '@/hooks/store/modules/info';
-import { useStoreModuleHooks } from '@/hooks/store';
+import { useTemplateVars } from '@/hooks/store/modules/template-vars';
 
 import UserInterfaceForm from '@/components/other/user-interface/form/user-interface-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
-  name: MODALS.userInterface,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
   components: {
     UserInterfaceForm,
-    ModalWrapper,
   },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
-  setup(props) {
-    const userForm = ref(null);
-    const isFormLoading = ref(true);
-    const form = ref({
-      ...userInterfaceToForm(),
-      ...notificationsSettingsToForm(),
-    });
 
+  setup(props) {
     const { t } = useI18n();
+    const modals = useModals();
     const popups = usePopups();
-    const { close } = useInnerModal(props);
+    const isFormLoading = ref(true);
 
     const { hasUpdateAccess } = useCRUDPermissions(USER_PERMISSIONS.technical.parameters);
 
-    const {
-      appInfo,
-      appInfoPending,
-      fetchAppInfo,
-      updateUserInterface,
-      setTitle,
-    } = useInfo();
+    const { appInfo, appInfoPending, fetchAppInfo, updateUserInterface, setTitle } = useInfo();
+    const { fetchTemplateVarsList } = useTemplateVars();
 
-    const { useActions } = useStoreModuleHooks('notificationSettings');
-    const {
-      fetchNotificationSettings,
-      updateNotificationSettings,
-    } = useActions({
-      fetchNotificationSettings: 'fetchItemWithoutStore',
-      updateNotificationSettings: 'update',
+    const buildForm = appInfoValue => ({
+      ...userInterfaceToForm(appInfoValue),
+      version_description:
+        appInfoValue?.version_description || t('userInterface.defaultVersionDescription'),
     });
+
+    const form = useForm({
+      initialValues: buildForm(),
+    });
+    const { values, handleSubmit, isSubmitting } = form;
 
     const pending = computed(() => appInfoPending.value || isFormLoading.value);
+    const close = () => modals.hide({ id: props.modal.id });
 
-    const { submitting, submit } = useSubmittableForm({
-      form,
-      method: async () => {
-        const { instruction, ...userInterfaceFormData } = form.value;
-        const data = { ...userInterfaceFormData };
+    const submit = handleSubmit(async () => {
+      const { logo, ...userInterfaceData } = values.value;
+      const data = { ...userInterfaceData };
 
-        if (form.value.logo) {
-          data.logo = await getFileDataUrlContent(form.value.logo);
-        }
+      if (logo) {
+        data.logo = await getFileDataUrlContent(logo);
+      }
 
-        await updateUserInterface({ data });
-        await updateNotificationSettings({ data: { instruction } });
-        await fetchAppInfo();
+      await updateUserInterface({ data });
+      await fetchAppInfo();
+      await setTitle();
 
-        await setTitle();
+      popups.success({ text: t('success.default') });
 
-        popups.success({ text: t('success.default') });
-
-        close();
-      },
+      close();
     });
 
-    const { updateOriginalForm } = useFormConfirmableCloseModal({ form, submit, close });
+    const { updateOriginalForm } = useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close,
+    });
 
     const loadForm = async () => {
       isFormLoading.value = true;
 
       try {
-        const notificationsSettings = await fetchNotificationSettings();
-
-        form.value = {
-          ...userInterfaceToForm(appInfo.value),
-          ...notificationsSettingsToForm(notificationsSettings),
-        };
-
+        form.reset(buildForm(appInfo.value));
         updateOriginalForm();
       } finally {
         isFormLoading.value = false;
@@ -151,16 +121,16 @@ export default {
     };
 
     onMounted(async () => {
-      await fetchAppInfo();
+      await Promise.all([fetchAppInfo(), fetchTemplateVarsList()]);
       await loadForm();
     });
 
     return {
-      userForm,
-      form,
+      t,
       pending,
       hasUpdateAccess,
-      submitting,
+      isSubmitting,
+
       submit,
       close,
     };

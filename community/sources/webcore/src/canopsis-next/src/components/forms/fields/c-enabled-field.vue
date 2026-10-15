@@ -1,20 +1,21 @@
 <template>
   <div :class="wrapperClass" class="c-enabled-field">
     <v-switch
-      v-field="value"
-      :class="{ 'ma-0': withBackground || noMargin, 'pa-0': noMargin }"
-      :label="label || $t('common.enabled')"
+      :model-value="currentValue"
+      :class="{ 'ma-0': withBackground || noMargin || inline, 'pa-0': noMargin || inline }"
+      :label="switchLabel"
       :color="color"
       :disabled="disabled"
       :readonly="readonly"
-      :hide-details="hideDetails || withBackground"
-      v-bind="$attrs"
-      v-on="listenersWithoutInput"
+      :hide-details="hideDetails || withBackground || inline"
+      v-bind="switchAttrs"
+      @update:model-value="updateModel"
     >
-      <template #label="">
+      <template v-if="$slots.label" #label>
         <slot name="label" />
       </template>
-      <template #append="">
+
+      <template v-if="$slots.append" #append>
         <slot name="append" />
       </template>
     </v-switch>
@@ -22,19 +23,21 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
 import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   inheritAttrs: false,
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+
   props: {
-    value: {
+    modelValue: {
       type: Boolean,
       default: true,
+    },
+    value: {
+      type: Boolean,
+      default: undefined,
     },
     label: {
       type: String,
@@ -64,21 +67,57 @@ export default {
       type: Boolean,
       default: false,
     },
+    inline: {
+      type: Boolean,
+      default: false,
+    },
+    hideLabel: {
+      type: Boolean,
+      default: false,
+    },
+    confirmDisable: {
+      type: Function,
+      default: undefined,
+    },
   },
-  setup(props, { listeners }) {
-    const listenersWithoutInput = computed(() => (listeners ? omit(listeners, ['input']) : {}));
-    const wrapperClass = computed(() => (
-      props.withBackground
-        ? {
-          'c-enabled-field--with-background': true,
-          'c-enabled-field--with-background--disabled': !props.value,
+
+  emits: ['update:modelValue'],
+
+  setup(props, { emit, attrs }) {
+    const { t } = useI18n();
+
+    const currentValue = computed(() => props.modelValue ?? props.value);
+    const switchLabel = computed(() => (props.hideLabel ? undefined : (props.label || t('common.enabled'))));
+    const switchAttrs = computed(() => ({
+      ...attrs,
+      density: attrs.density ?? (props.inline ? 'compact' : undefined),
+    }));
+
+    const wrapperClass = computed(() => ({
+        'c-enabled-field--with-background': props.withBackground,
+        'c-enabled-field--with-background--disabled': props.withBackground && !currentValue.value,
+      }),
+    );
+
+    const updateModel = async (value) => {
+      if (!value && props.confirmDisable) {
+        const confirmed = await props.confirmDisable();
+
+        if (!confirmed) {
+          return;
         }
-        : {}
-    ));
+      }
+
+      emit('update:modelValue', value);
+    };
 
     return {
-      listenersWithoutInput,
+      t,
+      currentValue,
+      switchLabel,
+      switchAttrs,
       wrapperClass,
+      updateModel,
     };
   },
 };
@@ -90,19 +129,19 @@ export default {
 }
 
 .c-enabled-field--with-background {
-  padding: 8px;
+  padding: 0 8px;
   border-radius: 5px;
-  border: 1px solid var(--v-success-base);
-  background-color: var(--v-success-lighten3);
+  border: 1px solid rgb(var(--v-theme-success));
+  background-color: rgba(var(--v-theme-success), 0.12);
 
-  ::v-deep .v-input {
+  :deep(.v-input) {
     margin: 0;
     padding: 0;
   }
 
   &--disabled {
-    border-color: var(--v-error-base);
-    background-color: var(--v-error-lighten4);
+    border-color: rgb(var(--v-theme-error));
+    background-color: rgba(var(--v-theme-error), 0.12);
   }
 }
 </style>

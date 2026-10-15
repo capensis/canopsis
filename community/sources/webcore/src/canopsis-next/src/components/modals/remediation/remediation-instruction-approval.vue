@@ -1,124 +1,97 @@
 <template>
-  <modal-wrapper close>
-    <template #title="">
+  <c-modal-wrapper close>
+    <template #title>
       {{ $t('modals.remediationInstructionApproval.title') }}
     </template>
-    <template #text="">
+
+    <template #text>
       <v-fade-transition>
-        <v-layout
-          v-if="!remediationInstructionApproval"
-          justify-center
-        >
-          <v-progress-circular
-            color="primary"
-            indeterminate
-          />
-        </v-layout>
-        <v-layout
-          v-else
-          column
-        >
+        <c-layout v-if="pending || !approval" justify="center">
+          <v-progress-circular color="primary" indeterminate />
+        </c-layout>
+        <c-layout v-else column>
           <remediation-instruction-approval-alert
-            :user-name="remediationInstructionApproval.approval.requested_by.name"
-            :comment="remediationInstructionApproval.approval.comment"
+            :user-name="userName"
+            :comment="approval.approval.comment"
           >
             <remediation-instruction-approval-form
-              :disabled="!remediationInstructionApproval"
+              :disabled="submitting"
               :submitting="submitting"
               @approve="approve"
               @dismiss="dismiss"
             />
           </remediation-instruction-approval-alert>
+
           <remediation-instruction-approval-tabs
-            :original="remediationInstructionApproval.original"
-            :updated="remediationInstructionApproval.updated"
+            :original="approval.original"
+            :updated="approval.updated"
           />
-        </v-layout>
+        </c-layout>
       </v-fade-transition>
     </template>
-    <template #actions="">
-      <v-btn
-        depressed
-        text
-        @click="$modals.hide"
-      >
+
+    <template #actions>
+      <v-btn :disabled="submitting" variant="text" @click="close">
         {{ $t('common.close') }}
       </v-btn>
     </template>
-  </modal-wrapper>
+  </c-modal-wrapper>
 </template>
 
-<script>
-import { createNamespacedHelpers } from 'vuex';
+<script setup>
+import { computed, onMounted, ref } from 'vue';
 
 import { MODALS } from '@/constants';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
+import { useInnerModal } from '@/hooks/modals';
+import { usePendingHandler } from '@/hooks/query/pending';
+import { useRemediationInstruction } from '@/hooks/store/modules/remediation-instruction';
 
 import RemediationInstructionApprovalAlert from '@/components/other/remediation/instructions/partials/approval-alert.vue';
 import RemediationInstructionApprovalForm from '@/components/other/remediation/instructions/partials/approval-form.vue';
 import RemediationInstructionApprovalTabs from '@/components/other/remediation/instructions/partials/approval-tabs.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
+defineOptions({ name: MODALS.remediationInstructionApproval });
 
-const { mapActions } = createNamespacedHelpers('remediationInstruction');
-
-export default {
-  name: MODALS.remediationInstructionApproval,
-  components: {
-    RemediationInstructionApprovalAlert,
-    RemediationInstructionApprovalForm,
-    RemediationInstructionApprovalTabs,
-    ModalWrapper,
+const props = defineProps({
+  modal: {
+    type: Object,
+    required: true,
   },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-  ],
-  data() {
-    return {
-      remediationInstructionApproval: null,
-    };
-  },
-  mounted() {
-    this.fetchItem();
-  },
-  methods: {
-    ...mapActions({
-      fetchRemediationInstructionApprovalWithoutStore: 'fetchItemApprovalWithoutStore',
-      updateRemediationInstructionApproval: 'updateApproval',
-    }),
+});
 
-    async fetchItem() {
-      this.remediationInstructionApproval = await this.fetchRemediationInstructionApprovalWithoutStore({
-        id: this.config.remediationInstructionId,
-      });
-    },
+const { config, close } = useInnerModal(props);
+const {
+  fetchRemediationInstructionApprovalWithoutStore,
+  updateRemediationInstructionApproval,
+} = useRemediationInstruction();
 
-    approve() {
-      return this.submit({ approve: true });
-    },
+const approval = ref(null);
+const instructionId = computed(() => config.value.remediationInstructionId);
+const userName = computed(() => approval.value?.approval?.requested_by?.name);
 
-    dismiss(comment) {
-      return this.submit({
-        approve: false,
-        comment,
-      });
-    },
+const { pending, handler: fetchItem } = usePendingHandler(async () => {
+  approval.value = await fetchRemediationInstructionApprovalWithoutStore({
+    id: instructionId.value,
+  });
+}, true);
 
-    async submit(data) {
-      await this.updateRemediationInstructionApproval({
-        id: this.config.remediationInstructionId,
-        data,
-      });
+const { pending: submitting, handler: submit } = usePendingHandler(async (data) => {
+  await updateRemediationInstructionApproval({
+    id: instructionId.value,
+    data,
+  });
 
-      if (this.config.afterSubmit) {
-        await this.config.afterSubmit();
-      }
+  await config.value.afterSubmit?.();
 
-      this.$modals.hide();
-    },
-  },
-};
+  close();
+});
+
+const approve = () => submit({ approve: true });
+const dismiss = comment => submit({
+    approve: false,
+    comment,
+  });
+
+onMounted(fetchItem);
 </script>

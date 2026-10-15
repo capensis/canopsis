@@ -1,24 +1,30 @@
-import { useStoreModuleHooks } from '@/hooks/store';
+import { storeToRefs } from 'pinia';
 
-const usePbehaviorReasonStoreModule = () => useStoreModuleHooks('pbehaviorReasons');
+import { usePbehaviorReasonStore } from '@/stores/modules/pbehavior-reason';
 
-// TODO: add comments
+/**
+ * Pbehavior reason store hook.
+ *
+ * @returns {Object}
+ */
 export const usePbehaviorReason = () => {
-  const { useActions } = usePbehaviorReasonStoreModule();
-
-  const actions = useActions({
-    fetchPbehaviorReasonsList: 'fetchList',
-    fetchPbehaviorReasonsListWithPreviousParams: 'fetchListWithPreviousParams',
-    fetchPbehaviorReasonsListWithoutStore: 'fetchListWithoutStore',
-    createPbehaviorReason: 'create',
-    updatePbehaviorReason: 'update',
-    removePbehaviorReason: 'remove',
-    bulkHidePbehaviorReasons: 'bulkHide',
-    bulkUnhidePbehaviorReasons: 'bulkUnhide',
-    bulkRemovePbehaviorReasons: 'bulkRemove',
-  });
+  const pbehaviorReasonStore = usePbehaviorReasonStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(pbehaviorReasonStore);
 
   return {
-    ...actions,
+    pbehaviorReasons: items,
+    pbehaviorReasonsMeta: meta,
+    pbehaviorReasonsPending: pending,
+    pbehaviorReasonsFetchingParams: fetchingParams,
+
+    fetchPbehaviorReasonsList: pbehaviorReasonStore.fetchList,
+    fetchPbehaviorReasonsListWithPreviousParams: pbehaviorReasonStore.fetchListWithPreviousParams,
+    fetchPbehaviorReasonsListWithoutStore: pbehaviorReasonStore.fetchListWithoutStore,
+    createPbehaviorReason: pbehaviorReasonStore.create,
+    updatePbehaviorReason: pbehaviorReasonStore.update,
+    removePbehaviorReason: pbehaviorReasonStore.remove,
+    bulkHidePbehaviorReasons: pbehaviorReasonStore.bulkHide,
+    bulkUnhidePbehaviorReasons: pbehaviorReasonStore.bulkUnhide,
+    bulkRemovePbehaviorReasons: pbehaviorReasonStore.bulkRemove,
   };
 };

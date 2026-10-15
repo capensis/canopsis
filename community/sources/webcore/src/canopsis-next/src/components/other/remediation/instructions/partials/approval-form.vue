@@ -1,116 +1,100 @@
 <template>
-  <v-layout column="column">
-    <c-description-field
-      v-if="dismissing"
-      v-model="form.comment"
-      :label="$tc('common.comment')"
-      name="dismiss_comment"
-      required
-    />
-    <v-layout justify-end>
-      <template v-if="!dismissing">
-        <v-btn
-          class="warning mr-2"
-          depressed
-          text
-          @click="showDismissComment"
-        >
-          {{ $t('common.dismiss') }}
-        </v-btn>
-        <v-btn
-          :loading="submitting"
-          :disabled="disabled"
-          color="primary"
-          @click="approve"
-        >
-          {{ $t('common.approve') }}
-        </v-btn>
-      </template>
-      <template v-else>
-        <v-btn
-          class="mr-2"
-          depressed
-          text
-          @click="cancelDismiss"
-        >
-          {{ $t('common.cancel') }}
-        </v-btn>
-        <v-btn
-          :loading="submitting"
-          :disabled="disabled || errors.any()"
-          depressed
-          text
-          @click="dismiss"
-        >
-          {{ $t('common.dismiss') }}
-          <v-icon
-            color="error"
-            right
+  <v-form @submit.prevent="submitDismiss">
+    <v-row>
+      <v-col v-if="dismissing" cols="12">
+        <c-description-field
+          v-model="comment"
+          :label="$t('common.comment')"
+          name="dismiss_comment"
+          required
+        />
+      </v-col>
+
+      <v-col class="d-flex justify-end" cols="12">
+        <template v-if="!dismissing">
+          <v-btn
+            :disabled="disabled || submitting"
+            class="mr-2"
+            color="warning"
+            @click="showDismissComment"
           >
-            cancel
-          </v-icon>
-        </v-btn>
-      </template>
-    </v-layout>
-  </v-layout>
+            {{ $t('common.dismiss') }}
+          </v-btn>
+          <v-btn
+            :disabled="disabled || submitting"
+            :loading="submitting"
+            color="primary"
+            @click="$emit('approve')"
+          >
+            {{ $t('common.approve') }}
+          </v-btn>
+        </template>
+        <template v-else>
+          <v-btn
+            :disabled="submitting"
+            class="mr-2"
+            variant="text"
+            @click="cancelDismiss"
+          >
+            {{ $t('common.cancel') }}
+          </v-btn>
+          <v-btn
+            :disabled="disabled || submitting"
+            :loading="submitting"
+            color="warning"
+            type="submit"
+          >
+            {{ $t('common.dismiss') }}
+            <v-icon color="error" end>
+              cancel
+            </v-icon>
+          </v-btn>
+        </template>
+      </v-col>
+    </v-row>
+  </v-form>
 </template>
 
-<script>
-import { VALIDATION_DELAY } from '@/constants';
+<script setup>
+import { ref, watch } from 'vue';
 
-export default {
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
+import { useForm } from '@/hooks/form';
+
+defineProps({
+  submitting: {
+    type: Boolean,
+    default: false,
   },
-  props: {
-    submitting: {
-      type: Boolean,
-      default: false,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
+  disabled: {
+    type: Boolean,
+    default: false,
   },
-  data() {
-    return {
-      form: {
-        comment: '',
-      },
-      dismissing: false,
-    };
+});
+
+const emit = defineEmits(['approve', 'dismiss']);
+
+const dismissing = ref(false);
+const form = useForm({
+  initialValues: {
+    comment: '',
   },
-  watch: {
-    dismissing() {
-      this.errors.clear();
-    },
-  },
-  methods: {
-    closeDismissComment() {
-      this.dismissing = false;
-    },
+});
+const comment = form.model('comment');
 
-    showDismissComment() {
-      this.dismissing = true;
-    },
+const closeDismissComment = () => dismissing.value = false;
 
-    cancelDismiss() {
-      this.form.comment = '';
-      this.closeDismissComment();
-    },
+const showDismissComment = () => dismissing.value = true;
 
-    async dismiss() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        this.$emit('dismiss', this.form.comment);
-      }
-    },
-
-    approve() {
-      this.$emit('approve');
-    },
-  },
+const cancelDismiss = () => {
+  comment.value = '';
+  closeDismissComment();
 };
+
+const submitDismiss = form.handleSubmit(() => {
+  emit('dismiss', comment.value);
+});
+
+watch(dismissing, () => {
+  form.resetErrors();
+});
 </script>

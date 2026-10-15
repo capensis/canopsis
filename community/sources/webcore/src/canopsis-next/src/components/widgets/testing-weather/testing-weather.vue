@@ -1,34 +1,27 @@
 <template>
   <div class="pa-2">
-    <v-fade-transition
-      v-if="testSuitesPending"
-      key="progress"
-      mode="out-in"
-    >
+    <v-fade-transition v-if="testSuitesPending" mode="out-in">
       <v-progress-linear
+        key="progress"
         class="progress-linear-absolute--top"
         height="2"
         indeterminate
       />
     </v-fade-transition>
-    <v-layout
-      key="content"
-      class="fill-height"
-      wrap
-    >
+    <v-row key="content" class="fill-height">
       <template v-if="testSuites.length">
-        <v-flex
+        <v-col
           v-for="testSuite in testSuites"
           :key="testSuite._id"
-          xs6
-          md4
-          lg3
+          cols="6"
+          md="4"
+          lg="3"
         >
           <testing-weather-item
             :test-suite="testSuite"
             :widget="widget"
           />
-        </v-flex>
+        </v-col>
       </template>
       <v-alert
         v-else
@@ -36,16 +29,16 @@
       >
         {{ $t('common.noData') }}
       </v-alert>
-    </v-layout>
+    </v-row>
   </div>
 </template>
 
 <script>
 import { MAX_LIMIT } from '@/constants';
 
-import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
-import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { entitiesTestSuitesMixin } from '@/mixins/entities/test-suite';
+import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
+import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 
 import TestingWeatherItem from './testing-weather-item.vue';
 

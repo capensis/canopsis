@@ -1,10 +1,6 @@
 <template>
   <div class="flowchart-preview">
-    <flowchart
-      :shapes="shapes"
-      :background-color="map.parameters.background_color"
-      readonly
-    >
+    <flowchart :shapes="shapes" :background-color="map.parameters.background_color" readonly>
       <template #layers="{ data }">
         <flowchart-points-preview
           :points="map.parameters.points"
@@ -12,8 +8,9 @@
           :popup-actions="popupActions"
           :color-indicator="colorIndicator"
           :pbehavior-enabled="pbehaviorEnabled"
+          :pause-enabled="pauseEnabled"
           :shapes="data"
-          v-on="$listeners"
+          v-bind="$attrs"
         />
       </template>
     </flowchart>
@@ -23,7 +20,7 @@
       icon-class="map-preview__help-icon"
       color="secondary"
       icon="help"
-      top
+      location="top"
     />
   </div>
 </template>
@@ -31,7 +28,14 @@
 <script>
 import { keyBy } from 'lodash';
 
-import { getCSSVariableColor, getCSSVariableName, getDarkenColor, isCSSVariable } from '@/helpers/color';
+import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
+
+import {
+  getCSSVariableColor,
+  getCSSVariableName,
+  getDarkenColor,
+  isCSSVariable,
+} from '@/helpers/color';
 import { getEntityColor } from '@/helpers/entities/entity/color';
 import { isNotActivePbehaviorType } from '@/helpers/entities/pbehavior/form';
 
@@ -62,6 +66,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    pauseEnabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     pointsByShape() {
@@ -69,13 +77,11 @@ export default {
     },
 
     shapes() {
-      if (this.colorIndicator || this.pbehaviorEnabled) {
+      if (this.colorIndicator || this.pbehaviorEnabled || this.pauseEnabled) {
         return this.map.parameters.shapes.reduce((acc, shape) => {
           const point = this.pointsByShape[shape._id];
 
-          acc[shape._id] = point
-            ? this.getShapeByPoint(shape, point)
-            : shape;
+          acc[shape._id] = point ? this.getShapeByPoint(shape, point) : shape;
 
           return acc;
         }, {});
@@ -107,7 +113,15 @@ export default {
     },
 
     getShapeByPoint(shape, point) {
-      if (this.pbehaviorEnabled && isNotActivePbehaviorType(point.entity?.pbehavior_info?.canonical_type)) {
+      if (
+        this.pbehaviorEnabled &&
+        isNotActivePbehaviorType(point.entity?.pbehavior_info?.canonical_type) &&
+        (
+          point.entity?.pbehavior_info?.canonical_type !== PBEHAVIOR_TYPE_TYPES.pause ||
+          !this.pauseEnabled ||
+          !point.entity?.pause
+        )
+      ) {
         return shape;
       }
 

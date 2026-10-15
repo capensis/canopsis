@@ -21,18 +21,21 @@ import {
   DYNAMIC_INFO_FIELDS,
 } from '@/constants';
 
-import { addPrefixToAttributesMap, getNumberMinValueAttributes } from '@/helpers/search/advanced-search';
+import {
+  addPrefixToAttributesMap,
+  getNumberMinValueAttributes,
+} from '@/helpers/search/advanced-search';
 
 import { useI18n } from '@/hooks/i18n';
 import { useAlarmTag } from '@/hooks/store/modules/alarm-tag';
 import { useAlarmTagLabel } from '@/hooks/store/modules/alarm-tag-label';
-import { useMetaAlarmRule } from '@/hooks/store/modules/meta-alarm-rule';
-import { useUser } from '@/hooks/store/modules/user';
+import { useDynamicInfo } from '@/hooks/store/modules/dynamic-info';
 import { useEntityCategory } from '@/hooks/store/modules/entity-category';
+import { useMetaAlarmRule } from '@/hooks/store/modules/meta-alarm-rule';
 import { usePbehavior } from '@/hooks/store/modules/pbehavior';
 import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
-import { useDynamicInfo } from '@/hooks/store/modules/dynamic-info';
+import { useUser } from '@/hooks/store/modules/user';
 
 import { useGetEntityOptions } from './basic';
 
@@ -67,7 +70,10 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
 
   const INITIATOR_OPTIONS = {
     operators: ADVANCED_SEARCH_USER_OPERATORS,
-    values: Object.values(ALARM_EVENT_INITIATORS).map(initiator => ({ value: initiator, text: initiator })),
+    values: Object.values(ALARM_EVENT_INITIATORS).map(initiator => ({
+      value: initiator,
+      text: initiator,
+    })),
   };
 
   const attributesMap = computed(() => ({
@@ -101,16 +107,19 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
     },
     [ALARM_PATTERN_FIELDS.state]: {
       operators: PATTERN_NUMBER_OPERATORS,
-      values: Object.values(ALARM_STATES).map(value => ({ value, text: t(`common.stateTypes.${value}`) })),
+      values: Object.values(ALARM_STATES).map(value => ({
+        value,
+        text: t(`common.stateTypes.${value}`),
+      })),
       itemText: 'text',
       itemValue: 'value',
     },
     [ALARM_PATTERN_FIELDS.status]: {
-      operators: [
-        PATTERN_OPERATORS.equal,
-        PATTERN_OPERATORS.notEqual,
-      ],
-      values: Object.values(ALARM_STATUSES).map(value => ({ value, text: t(`common.statusTypes.${value}`) })),
+      operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+      values: Object.values(ALARM_STATUSES).map(value => ({
+        value,
+        text: t(`common.statusTypes.${value}`),
+      })),
       itemText: 'text',
       itemValue: 'value',
     },
@@ -122,21 +131,14 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
         PATTERN_OPERATORS.withLabel,
         PATTERN_OPERATORS.withoutLabel,
       ],
-      fetchValues: ({ params }, { operator } = {}) => (
+      fetchValues: ({ params }, { operator } = {}) =>
         PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(operator)
           ? fetchAlarmTagsLabelsListWithoutStore({ params })
-          : fetchAlarmTagsListWithoutStore({ params })
-      ),
-      itemText: ({ operator } = {}) => (
-        PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(operator)
-          ? '_id'
-          : 'value'
-      ),
-      itemValue: ({ operator } = {}) => (
-        PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(operator)
-          ? '_id'
-          : 'value'
-      ),
+          : fetchAlarmTagsListWithoutStore({ params }),
+      itemText: ({ operator } = {}) =>
+        PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(operator) ? '_id' : 'value',
+      itemValue: ({ operator } = {}) =>
+        PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(operator) ? '_id' : 'value',
     },
     [ALARM_PATTERN_FIELDS.infos]: {
       items: unref(infosItems),
@@ -221,10 +223,7 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
      * Actions
      */
     [ALARM_PATTERN_FIELDS.ack]: {
-      operators: [
-        PATTERN_OPERATORS.acked,
-        PATTERN_OPERATORS.notAcked,
-      ],
+      operators: [PATTERN_OPERATORS.acked, PATTERN_OPERATORS.notAcked],
     },
     [ALARM_PATTERN_FIELDS.ackBy]: {
       operators: ADVANCED_SEARCH_USER_OPERATORS,
@@ -237,23 +236,14 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
     },
     [ALARM_PATTERN_FIELDS.ackInitiator]: INITIATOR_OPTIONS,
     [ALARM_PATTERN_FIELDS.canceled]: {
-      operators: [
-        PATTERN_OPERATORS.canceled,
-        PATTERN_OPERATORS.notCanceled,
-      ],
+      operators: [PATTERN_OPERATORS.canceled, PATTERN_OPERATORS.notCanceled],
     },
     [ALARM_PATTERN_FIELDS.canceledInitiator]: INITIATOR_OPTIONS,
     [ALARM_PATTERN_FIELDS.activated]: {
-      operators: [
-        PATTERN_OPERATORS.activated,
-        PATTERN_OPERATORS.inactive,
-      ],
+      operators: [PATTERN_OPERATORS.activated, PATTERN_OPERATORS.inactive],
     },
     [ALARM_PATTERN_FIELDS.snooze]: {
-      operators: [
-        PATTERN_OPERATORS.snoozed,
-        PATTERN_OPERATORS.notSnoozed,
-      ],
+      operators: [PATTERN_OPERATORS.snoozed, PATTERN_OPERATORS.notSnoozed],
     },
   }));
 
@@ -308,7 +298,10 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems, prefix = '' } = 
         PATTERN_OPERATORS.isOneOf,
         PATTERN_OPERATORS.isNotOneOf,
       ],
-      values: Object.values(ENTITY_TYPES).map(type => ({ value: type, text: t(`entity.types.${type}`) })),
+      values: Object.values(ENTITY_TYPES).map(type => ({
+        value: type,
+        text: t(`entity.types.${type}`),
+      })),
       itemText: 'text',
       itemValue: 'value',
     },
@@ -322,16 +315,19 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems, prefix = '' } = 
     },
     [ENTITY_PATTERN_FIELDS.state]: {
       operators: PATTERN_NUMBER_OPERATORS,
-      values: Object.values(ALARM_STATES).map(value => ({ value, text: t(`common.stateTypes.${value}`) })),
+      values: Object.values(ALARM_STATES).map(value => ({
+        value,
+        text: t(`common.stateTypes.${value}`),
+      })),
       itemText: 'text',
       itemValue: 'value',
     },
     [ENTITY_PATTERN_FIELDS.status]: {
-      operators: [
-        PATTERN_OPERATORS.equal,
-        PATTERN_OPERATORS.notEqual,
-      ],
-      values: Object.values(ALARM_STATUSES).map(value => ({ value, text: t(`common.statusTypes.${value}`) })),
+      operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+      values: Object.values(ALARM_STATUSES).map(value => ({
+        value,
+        text: t(`common.statusTypes.${value}`),
+      })),
       itemText: 'text',
       itemValue: 'value',
     },
@@ -341,11 +337,17 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems, prefix = '' } = 
     [ENTITY_PATTERN_FIELDS.componentInfos]: {
       items: unref(infosItems) ?? [],
     },
+    [ENTITY_PATTERN_FIELDS.pause]: {
+      operators: PATTERN_EXISTS_OPERATORS,
+    },
+    [ENTITY_PATTERN_FIELDS.pauseAuthor]: {
+      operators: ADVANCED_SEARCH_STRING_WITH_ONE_OF_OPERATORS,
+    },
+    [ENTITY_PATTERN_FIELDS.pauseInitiator]: {
+      operators: ADVANCED_SEARCH_STRING_WITH_ONE_OF_OPERATORS,
+    },
     [ENTITY_PATTERN_FIELDS.enabled]: {
-      operators: [
-        PATTERN_OPERATORS.enabled,
-        PATTERN_OPERATORS.disabled,
-      ],
+      operators: [PATTERN_OPERATORS.enabled, PATTERN_OPERATORS.disabled],
     },
 
     /**
@@ -380,7 +382,9 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems, prefix = '' } = 
   const attributesMapWithPrefix = computed(() => {
     const unwrappedPrefix = unref(prefix);
 
-    return unwrappedPrefix ? addPrefixToAttributesMap(attributesMap.value, unwrappedPrefix) : attributesMap.value;
+    return unwrappedPrefix
+      ? addPrefixToAttributesMap(attributesMap.value, unwrappedPrefix)
+      : attributesMap.value;
   });
 
   return {
@@ -438,10 +442,7 @@ export const useAdvancedSearchPbehaviorAttributes = ({ prefix = '' } = {}) => {
       itemText: 'display_name',
     },
     [PBEHAVIOR_FIELDS.enabled]: {
-      operators: [
-        PATTERN_OPERATORS.enabled,
-        PATTERN_OPERATORS.disabled,
-      ],
+      operators: [PATTERN_OPERATORS.enabled, PATTERN_OPERATORS.disabled],
     },
     [PBEHAVIOR_FIELDS.rrule]: {
       operators: ADVANCED_SEARCH_STRING_WITH_ONE_OF_OPERATORS,
@@ -488,7 +489,9 @@ export const useAdvancedSearchPbehaviorAttributes = ({ prefix = '' } = {}) => {
   const attributesMapWithPrefix = computed(() => {
     const unwrappedPrefix = unref(prefix);
 
-    return unwrappedPrefix ? addPrefixToAttributesMap(attributesMap.value, unwrappedPrefix) : attributesMap.value;
+    return unwrappedPrefix
+      ? addPrefixToAttributesMap(attributesMap.value, unwrappedPrefix)
+      : attributesMap.value;
   });
 
   return {
@@ -524,10 +527,7 @@ export const useAdvancedSearchDynamicInfoAttributes = () => {
       itemText: 'display_name',
     },
     [DYNAMIC_INFO_FIELDS.enabled]: {
-      operators: [
-        PATTERN_OPERATORS.enabled,
-        PATTERN_OPERATORS.disabled,
-      ],
+      operators: [PATTERN_OPERATORS.enabled, PATTERN_OPERATORS.disabled],
     },
     [DYNAMIC_INFO_FIELDS.created]: {
       operators: PATTERN_DATE_OPERATORS,

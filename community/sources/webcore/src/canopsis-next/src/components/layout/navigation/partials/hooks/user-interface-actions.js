@@ -3,14 +3,17 @@ import { MODALS } from '@/constants';
 import { useModals } from '@/hooks/modals';
 
 /**
- * Hook for user interface settings modal actions
+ * Provides actions for the user interface settings menu entry.
  *
- * @returns {Object} An object containing method to show user interface modal
+ * @returns {{ showUserInterfaceModal: Function }}
  */
 export const useUserInterfaceActions = () => {
   const modals = useModals();
 
-  const showUserInterfaceModal = () => modals.show({ name: MODALS.userInterface });
+  const showUserInterfaceModal = () =>
+    modals.show({
+      name: MODALS.userInterface,
+    });
 
   return {
     showUserInterfaceModal,

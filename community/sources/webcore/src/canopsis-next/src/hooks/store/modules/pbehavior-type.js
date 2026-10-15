@@ -1,26 +1,32 @@
-import { useStoreModuleHooks } from '@/hooks/store';
+import { storeToRefs } from 'pinia';
 
-const usePbehaviorTypeStoreModule = () => useStoreModuleHooks('pbehaviorTypes');
+import { usePbehaviorTypeStore } from '@/stores/modules/pbehavior-type';
 
-// TODO: add comments
+/**
+ * Pbehavior type store hook.
+ *
+ * @returns {Object}
+ */
 export const usePbehaviorType = () => {
-  const { useActions } = usePbehaviorTypeStoreModule();
-
-  const actions = useActions({
-    fetchPbehaviorTypesList: 'fetchList',
-    fetchPbehaviorTypesListWithPreviousParams: 'fetchListWithPreviousParams',
-    fetchPbehaviorTypesListWithoutStore: 'fetchListWithoutStore',
-    createPbehaviorType: 'create',
-    updatePbehaviorType: 'update',
-    removePbehaviorType: 'remove',
-    fetchNextPbehaviorTypePriority: 'fetchNextPriority',
-    fetchPbehaviorTypesFieldList: 'fetchFieldList',
-    bulkHidePbehaviorTypes: 'bulkHide',
-    bulkUnhidePbehaviorTypes: 'bulkUnhide',
-    bulkRemovePbehaviorTypes: 'bulkRemove',
-  });
+  const pbehaviorTypeStore = usePbehaviorTypeStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(pbehaviorTypeStore);
 
   return {
-    ...actions,
+    pbehaviorTypes: items,
+    pbehaviorTypesMeta: meta,
+    pbehaviorTypesPending: pending,
+    pbehaviorTypesFetchingParams: fetchingParams,
+
+    fetchPbehaviorTypesList: pbehaviorTypeStore.fetchList,
+    fetchPbehaviorTypesListWithPreviousParams: pbehaviorTypeStore.fetchListWithPreviousParams,
+    fetchPbehaviorTypesListWithoutStore: pbehaviorTypeStore.fetchListWithoutStore,
+    fetchPbehaviorTypesFieldList: pbehaviorTypeStore.fetchListWithoutStore,
+    fetchNextPbehaviorTypePriority: pbehaviorTypeStore.fetchNextPriority,
+    createPbehaviorType: pbehaviorTypeStore.create,
+    updatePbehaviorType: pbehaviorTypeStore.update,
+    removePbehaviorType: pbehaviorTypeStore.remove,
+    bulkHidePbehaviorTypes: pbehaviorTypeStore.bulkHide,
+    bulkUnhidePbehaviorTypes: pbehaviorTypeStore.bulkUnhide,
+    bulkRemovePbehaviorTypes: pbehaviorTypeStore.bulkRemove,
   };
 };

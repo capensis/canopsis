@@ -1,61 +1,76 @@
 <template>
-  <widget-settings-item :title="$t('settings.counters')">
-    <v-layout column>
+  <widget-settings-item :title="t('settings.counters')">
+    <c-layout column>
       <c-enabled-field
-        v-field="value.pbehavior_enabled"
-        :label="$t('settings.pbehaviorCounters')"
+        :model-value="modelValue.pbehavior_enabled"
+        :label="t('settings.pbehaviorCounters')"
         hide-details
+        @update:model-value="updateField('pbehavior_enabled', $event)"
       />
       <c-pbehavior-type-field
-        v-field="value.pbehavior_types"
-        :required="value.pbehavior_enabled"
-        :disabled="!value.pbehavior_enabled"
-        :max="$constants.PBEHAVIOR_COUNTERS_LIMIT"
+        :model-value="modelValue.pbehavior_types"
+        :required="modelValue.pbehavior_enabled"
+        :disabled="!modelValue.pbehavior_enabled"
         chips
         multiple
+        @update:model-value="updateField('pbehavior_types', $event)"
       />
       <c-enabled-field
-        v-field="value.state_enabled"
-        :label="$t('settings.entityStateCounters')"
+        :model-value="modelValue.state_enabled"
+        :label="t('settings.entityStateCounters')"
         hide-details
+        @update:model-value="updateField('state_enabled', $event)"
       />
       <c-service-weather-state-counter-field
-        v-field="value.state_types"
-        :required="value.state_enabled"
-        :disabled="!value.state_enabled"
+        :model-value="modelValue.state_types"
+        :required="modelValue.state_enabled"
+        :disabled="!modelValue.state_enabled"
+        @update:model-value="updateField('state_types', $event)"
       />
-    </v-layout>
+    </c-layout>
   </widget-settings-item>
 </template>
 
-<script>
+<script setup>
+import { onMounted } from 'vue';
+
 import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
-import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
+import { useI18n } from '@/hooks/i18n';
+import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
-export default {
-  components: { WidgetSettingsItem },
-  mixins: [entitiesFieldPbehaviorFieldTypeMixin],
-  props: {
-    value: {
-      type: Object,
-      required: false,
-    },
+const props = defineProps({
+  modelValue: {
+    type: Object,
+    required: true,
   },
-  mounted() {
-    this.fetchFieldPbehaviorTypesList({
-      params: {
-        paginate: false,
-        with_hidden: true,
-        types: [
-          PBEHAVIOR_TYPE_TYPES.inactive,
-          PBEHAVIOR_TYPE_TYPES.maintenance,
-          PBEHAVIOR_TYPE_TYPES.pause,
-        ],
-      },
-    });
-  },
+});
+
+const emit = defineEmits(['update:modelValue']);
+
+const { t } = useI18n();
+const { fetchPbehaviorTypesFieldList } = usePbehaviorType();
+
+const updateField = (field, value) => {
+  emit('update:modelValue', {
+    ...props.modelValue,
+    [field]: value,
+  });
 };
+
+onMounted(() => {
+  fetchPbehaviorTypesFieldList({
+    params: {
+      paginate: false,
+      with_hidden: true,
+      types: [
+        PBEHAVIOR_TYPE_TYPES.inactive,
+        PBEHAVIOR_TYPE_TYPES.maintenance,
+        PBEHAVIOR_TYPE_TYPES.pause,
+      ],
+    },
+  });
+});
 </script>

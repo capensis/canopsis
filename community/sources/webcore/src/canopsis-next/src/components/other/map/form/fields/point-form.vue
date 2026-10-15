@@ -1,5 +1,5 @@
 <template>
-  <v-layout column>
+  <c-layout column>
     <c-entity-field
       :value="form.entity"
       :label="$t('map.defineEntity')"
@@ -8,38 +8,36 @@
       :entity-types="entityTypes"
       :item-disabled="isEntityExist"
       :item-text="getItemText"
+      name="entity"
       return-object
       autocomplete
       @input="updateEntity"
     >
-      <template
-        v-if="coordinates"
-        #icon="{ item }"
-      >
-        <v-icon
-          v-if="item.coordinates"
-          class="mr-2"
-        >
+      <template v-if="coordinates" #icon="{ item }">
+        <v-icon v-if="item.coordinates" class="mr-2">
           pin_drop
         </v-icon>
       </template>
     </c-entity-field>
     <c-coordinates-field
       v-if="coordinates"
-      v-field="form.coordinates"
+      :value="form.coordinates"
       :disabled="form.is_entity_coordinates"
+      @update:value="updateField('coordinates', $event)"
     />
     <c-enabled-field
-      v-model="isLinked"
+      :model-value="isLinked"
       :label="$t('map.addLink')"
+      @update:model-value="isLinked = $event"
     />
     <c-map-field
       v-show="isLinked"
-      v-field="form.map"
+      :value="form.map"
       :required="isLinked"
       hide-details
+      @update:value="updateField('map', $event)"
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -51,10 +49,6 @@ import { formMixin } from '@/mixins/form';
 
 export default {
   mixins: [formMixin],
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
   props: {
     form: {
       type: Object,
@@ -69,6 +63,7 @@ export default {
       default: () => [],
     },
   },
+  emits: ['update:form', 'fly:coordinates'],
   computed: {
     entityTypes() {
       return Object.values(ENTITY_TYPES);
@@ -114,6 +109,10 @@ export default {
     },
 
     isEntityExist(entity) {
+      if (!entity?._id) {
+        return false;
+      }
+
       return this.existsEntities.some(id => id === entity._id);
     },
   },

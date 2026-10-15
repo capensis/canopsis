@@ -1,33 +1,35 @@
 <template>
-  <v-tooltip left>
-    <template #activator="{ on }">
+  <c-tooltip location="left">
+    <template #activator="{ props }">
       <v-btn
-        color="secondary lighten-2"
-        fab
-        dark
-        small
-        v-on="on"
+        v-bind="props"
+        color="secondary-lighten-2"
+        class="text-white"
+        size="default"
+        icon
         @click.stop="showCreateShareTokenModal"
       >
-        <v-icon small>
-          share
-        </v-icon>
+        <v-icon icon="share" size="small" />
       </v-btn>
     </template>
-    <span>{{ $t('common.shareLink') }}</span>
-  </v-tooltip>
+
+    <span>{{ t('common.shareLink') }}</span>
+  </c-tooltip>
 </template>
 
 <script>
+import { useRouter } from 'vue-router';
+
 import { APP_HOST, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
 import { MODALS, ROUTES_NAMES } from '@/constants';
 
 import { removeTrailingSlashes } from '@/helpers/url';
 
-import { entitiesShareTokenMixin } from '@/mixins/entities/share-token';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { useShareToken } from '@/hooks/store/modules/share-token';
 
 export default {
-  mixins: [entitiesShareTokenMixin],
   props: {
     view: {
       type: Object,
@@ -38,39 +40,50 @@ export default {
       required: true,
     },
   },
-  methods: {
-    showCreateShareTokenModal() {
-      this.$modals.show({
+
+  setup(props) {
+    const { t } = useI18n();
+    const modals = useModals();
+    const router = useRouter();
+    const { createShareToken } = useShareToken();
+
+    const showCreateShareTokenModal = () => {
+      modals.show({
         name: MODALS.createShareToken,
         config: {
           action: async (data) => {
-            const shareToken = await this.createShareToken({ data });
+            const shareToken = await createShareToken({ data });
 
-            const { href } = this.$router.resolve(
-              {
-                name: ROUTES_NAMES.viewKiosk,
-                params: {
-                  id: this.view._id,
-                  tabId: this.tab._id,
-                },
-                query: { [ROUTER_ACCESS_TOKEN_KEY]: shareToken.value },
+            const { href } = router.resolve({
+              name: ROUTES_NAMES.viewKiosk,
+              params: {
+                id: props.view._id,
+                tabId: props.tab._id,
               },
-              this.$route,
-            );
+              query: { [ROUTER_ACCESS_TOKEN_KEY]: shareToken.value },
+            });
 
             const url = removeTrailingSlashes(`${APP_HOST}${href}`);
 
-            this.$modals.show({
-              name: MODALS.shareView,
+            modals.show({
+              name: MODALS.copyValue,
               config: {
-                title: this.$t('view.shareView', { name: this.view.title }),
-                url,
+                title: t('view.shareView', { name: props.view.title }),
+                label: t('view.sharedViewUrl'),
+                value: url,
+                copyTooltip: t('common.copyLink'),
+                copySuccessText: t('success.linkCopied'),
               },
             });
           },
         },
       });
-    },
+    };
+
+    return {
+      t,
+      showCreateShareTokenModal,
+    };
   },
 };
 </script>

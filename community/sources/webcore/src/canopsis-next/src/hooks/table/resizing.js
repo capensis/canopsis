@@ -1,11 +1,5 @@
 import { throttle, sum } from 'lodash';
-import {
-  computed,
-  set,
-  ref,
-  unref,
-  onBeforeUnmount,
-} from 'vue';
+import { computed, ref, unref, onBeforeUnmount } from 'vue';
 
 import { useHTMLElements } from '@/hooks/html-elements';
 
@@ -45,20 +39,20 @@ export const useTableResizing = ({
   /**
    * HEADERS WITH ACTUAL WIDTHS
    */
-  const headersWithWidth = computed(() => (
+  const headersWithWidth = computed(() =>
     !unref(resizableColumn)
       ? unref(headers)
       : unref(headers).map((header) => {
-        const width = columnsWidthByFields.value[header.value];
+          const width = columnsWidthByFields.value[header.value];
+          const columnWidth = width ? `${width}px` : header.width;
 
-        return {
-          ...header,
-          width: header.width
-            ? header.width
-            : width && `${width}px`,
-        };
-      })
-  ));
+          return {
+            ...header,
+            width: columnWidth,
+            minWidth: columnWidth,
+          };
+        }),
+  );
 
   /**
    * Function to get normalized width
@@ -87,7 +81,7 @@ export const useTableResizing = ({
    *
    * @param {Object<string, number>} columnsWidth
    */
-  const setColumnsWidth = columnsWidth => columnsWidthByFields.value = { ...columnsWidth };
+  const setColumnsWidth = columnsWidth => (columnsWidthByFields.value = { ...columnsWidth });
 
   /**
    * Function to set column width by key
@@ -95,22 +89,23 @@ export const useTableResizing = ({
    * @param {string} itemKey
    * @param {number} width
    */
-  const setColumnsWidthItem = (itemKey, width) => set(columnsWidthByFields.value, itemKey, width);
+  const setColumnsWidthItem = (itemKey, width) => (columnsWidthByFields.value[itemKey] = width);
 
   /**
    * Function to calculate all table columns widths
    */
-  const calculateColumnsWidths = () => (
-    setColumnsWidth([...tableHeaderCells.value].reduce((acc, headerElement) => {
-      if (headerElement.dataset?.value) {
-        const { value } = headerElement.dataset;
+  const calculateColumnsWidths = () =>
+    setColumnsWidth(
+      [...tableHeaderCells.value].reduce((acc, headerElement) => {
+        if (headerElement.dataset?.value) {
+          const { value } = headerElement.dataset;
 
-        acc[value] = calculateElementNormalizedWidth(headerElement, value);
-      }
+          acc[value] = calculateElementNormalizedWidth(headerElement, value);
+        }
 
-      return acc;
-    }, {}))
-  );
+        return acc;
+      }, {}),
+    );
 
   /**
    * Function to get column width by field
@@ -132,12 +127,13 @@ export const useTableResizing = ({
   /**
    * Function to disable resizing mode
    */
-  const disableResizingMode = () => resizingMode.value = false;
+  const disableResizingMode = () => (resizingMode.value = false);
 
   /**
    * Function to toggle resizing mode
    */
-  const toggleResizingMode = () => (resizingMode.value ? disableResizingMode() : enableResizingMode());
+  const toggleResizingMode = () =>
+    resizingMode.value ? disableResizingMode() : enableResizingMode();
 
   /**
    * Function to resize column by difference
@@ -178,20 +174,44 @@ export const useTableResizing = ({
   };
 
   /**
-   * Function to finish column resize
+   * Swallow the click that browsers fire after mouseup on the same header.
+   * Vuetify 4 sorts on `th` click, so that leftover click would change sort and refetch.
    */
-  const finishColumnResize = () => {
+  const suppressNextClickAfterResize = () => {
+    const suppressNextClick = (clickEvent) => {
+      clickEvent.preventDefault();
+      clickEvent.stopPropagation();
+      clickEvent.stopImmediatePropagation();
+      document.removeEventListener('click', suppressNextClick, true);
+    };
+
+    document.addEventListener('click', suppressNextClick, true);
+    window.setTimeout(() => {
+      document.removeEventListener('click', suppressNextClick, true);
+    }, 0);
+  };
+
+  /**
+   * Function to finish column resize
+   *
+   * @param {Event|{ suppressClick?: boolean }} [event]
+   */
+  const finishColumnResize = (event) => {
     aggregatedMovementDiff = 0;
 
     const body = document.querySelector('body');
 
-    if (!body) {
+    if (body) {
+      body.removeEventListener('mousemove', handleColumnResize);
+      body.removeEventListener('mouseup', finishColumnResize);
+      body.removeEventListener('mouseleave', finishColumnResize);
+    }
+
+    if (event?.suppressClick === false) {
       return;
     }
 
-    body.removeEventListener('mousemove', handleColumnResize);
-    body.removeEventListener('mouseup', finishColumnResize);
-    body.removeEventListener('mouseleave', finishColumnResize);
+    suppressNextClickAfterResize();
   };
 
   /**
@@ -213,7 +233,7 @@ export const useTableResizing = ({
     body.addEventListener('mouseleave', finishColumnResize);
   };
 
-  onBeforeUnmount(finishColumnResize);
+  onBeforeUnmount(() => finishColumnResize({ suppressClick: false }));
 
   return {
     resizingMode,

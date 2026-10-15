@@ -1,118 +1,112 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper text-class="position-relative" close>
-      <template #title="">
+    <c-modal-wrapper text-class="position-relative" close>
+      <template #title>
         <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <state-setting-form v-model="form" />
-        <ai-chat-sidebar
-          v-if="chatShown"
-          v-bind="chatOptions.bind"
-          v-on="chatOptions.on"
-        />
+
+      <template #text>
+        <state-setting-form />
+        <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
       </template>
-      <template #actions="">
-        <v-btn
-          :disabled="submitting"
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn :disabled="submitting" variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="submitting || chatOptions.bind.pending"
+          :disabled="submitting || chatPending"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
           {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { computed, ref, toRef } from 'vue';
+import { computed, toRef } from 'vue';
 
-import { LLM_SOCKET_CONTEXTS, MODALS, VALIDATION_DELAY } from '@/constants';
+import { LLM_SOCKET_CONTEXTS } from '@/constants';
 
-import { stateSettingToForm, formToStateSetting } from '@/helpers/entities/state-setting/form';
+import { formToStateSetting, stateSettingToForm } from '@/helpers/entities/state-setting/form';
 
 import { useAiChatForm } from '@/hooks/ai/ai-chat-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useModals } from '@/hooks/modals';
 
 import AiChatSidebar from '@/components/other/llm/chat/ai-chat-sidebar.vue';
 import StateSettingForm from '@/components/other/state-setting/form/state-setting-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
-  name: MODALS.createStateSetting,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
   components: {
-    StateSettingForm,
-    ModalWrapper,
     AiChatSidebar,
+    StateSettingForm,
   },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
     const { t } = useI18n();
-    const { config, close } = useInnerModal(props);
-
-    const form = ref(stateSettingToForm(config.value.stateSetting));
-
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const stateSetting = computed(() => config.value.stateSetting);
     const title = computed(() => config.value.title || t('modals.createStateSetting.create.title'));
 
-    const {
-      shown: chatShown,
-      options: chatOptions,
-    } = useAiChatForm({
-      form,
+    const form = useForm({
+      initialValues: stateSettingToForm(stateSetting.value),
+    });
 
+    const { values, handleSubmit, isSubmitting: submitting } = form;
+
+    const { shown: chatShown, options: chatOptions } = useAiChatForm({
+      form: values,
       modal: toRef(props, 'modal'),
-      ruleId: props.modal.config?.stateSetting?._id,
+      ruleId: stateSetting.value?._id,
       context: LLM_SOCKET_CONTEXTS.stateSettings,
     });
+    const chatPending = computed(() => chatOptions.value.attrs.pending);
 
-    const { submit, submitting, submitLabel } = useSubmittableForm({
-      form,
-      item: config.value.stateSetting,
-      method: async () => {
-        const result = await config.value.action?.(formToStateSetting(form.value));
+    const closeModal = () => modals.hide({ id: props.modal.id });
+    const submitLabel = computed(() => t(stateSetting.value?._id ? 'common.save' : 'common.create'));
 
-        await config.value.afterSubmit?.(result);
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToStateSetting(values.value));
 
-        close();
+      await config.value.afterSubmit?.(result);
 
-        return result;
-      },
+      closeModal();
+
+      return result;
     });
 
-    useFormConfirmableCloseModal({ form, submit, close });
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
+    });
 
     return {
-      form,
+      t,
       title,
       submitting,
       chatShown,
       chatOptions,
+      chatPending,
       submitLabel,
       submit,
-      close,
+      closeModal,
     };
   },
 };

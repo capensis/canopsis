@@ -1,83 +1,94 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
+    <c-modal-wrapper close>
+      <template #title>
         <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <theme-form v-model="form" />
+
+      <template #text>
+        <theme-form />
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn :disabled="submitting" variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.submit') }}
+          {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { computed } from 'vue';
 
-import { themeToForm, formToTheme } from '@/helpers/entities/theme/form';
+import { MODALS } from '@/constants';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { formToTheme, themeToForm } from '@/helpers/entities/theme/form';
+
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import ThemeForm from '@/components/other/theme/form/theme-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
   name: MODALS.createTheme,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
+
+  components: { ThemeForm },
+
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
   },
-  components: {
-    ThemeForm,
-    ModalWrapper,
-  },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
+
+  setup(props) {
+    const { t } = useI18n();
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const form = useForm({
+      initialValues: themeToForm(config.value.theme),
+    });
+    const { values, handleSubmit, isSubmitting: submitting } = form;
+
+    const title = computed(() => config.value.title ?? t('modals.createTheme.create.title'));
+    const closeModal = () => modals.hide({ id: props.modal.id });
+    const submitLabel = computed(() => t(config.value.theme?._id ? 'common.save' : 'common.create'));
+
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToTheme(values.value));
+
+      await config.value.afterSubmit?.(result);
+
+      closeModal();
+
+      return result;
+    });
+
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
+    });
+
     return {
-      form: themeToForm(this.modal.config.theme),
+      t,
+      title,
+      submitting,
+      closeModal,
+      submitLabel,
+      submit,
     };
-  },
-  computed: {
-    title() {
-      return this.config.title || this.$t('modals.createTheme.create.title');
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(formToTheme(this.form));
-        }
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>

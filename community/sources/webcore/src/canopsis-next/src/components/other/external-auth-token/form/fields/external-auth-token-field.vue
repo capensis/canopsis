@@ -10,7 +10,7 @@
     item-text="name"
     item-value="_id"
     return-object
-    @input="changeSelectedItems"
+    @update:value="changeSelectedItems"
     @fetch="fetchItems"
     @fetch:more="fetchMoreItems"
     @update:search="updateSearch"
@@ -23,10 +23,7 @@ import { useLazySearch } from '@/hooks/form/lazy-search';
 import { useWebhookTokenRule } from '@/hooks/store/modules/webhook-token-rule';
 
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
+  emits: ['update:value', 'update:selected-items'],
   props: {
     value: {
       type: String,
@@ -58,13 +55,16 @@ export default {
       changeSelectedItems,
       removeItemFromSelectedItemsByIndex,
       updateSearch,
-    } = useLazySearch({
-      value: toRef(props, 'value'),
-      idKey: '_id',
-      idParamsKey: 'ids',
-      fetchHandler: fetchWebhookTokenRulesListWithoutStore,
-      attachValue: true,
-    }, emit);
+    } = useLazySearch(
+      {
+        value: toRef(props, 'value'),
+        idKey: '_id',
+        idParamsKey: 'ids',
+        fetchHandler: fetchWebhookTokenRulesListWithoutStore,
+        attachValue: true,
+      },
+      emit,
+    );
 
     return {
       selectedItem,
