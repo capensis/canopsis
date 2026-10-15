@@ -1,5 +1,5 @@
 <template>
-  <c-layout gap="3" column>
+  <c-layout :class="$attrs.class" gap="3" column>
     <slot name="header" />
     <c-alert v-if="required && isEmpty && emptyMessage" type="info">
       {{ emptyMessage }}
@@ -7,7 +7,7 @@
     <c-card-iterator-field
       :data="value"
       :disabled="disabled"
-      v-bind="$attrs"
+      v-bind="iteratorAttrs"
       :class="iteratorClass"
       @update:data="$emit('update:value', $event)"
     >
@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { computed, nextTick, onBeforeUnmount, onMounted, toRef, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, toRef, useAttrs, watch } from 'vue';
 
 import { useFieldError, useFormContext } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
@@ -116,6 +116,7 @@ export default {
   },
   setup(props) {
     const { t } = useI18n();
+    const attrs = useAttrs();
     const fieldName = toRef(props, 'name');
     useFormContext();
     const fieldError = useFieldError(fieldName);
@@ -129,6 +130,13 @@ export default {
         : '',
     );
     const addButtonError = computed(() => requiredAddButtonError.value || fieldError.value);
+    const iteratorAttrs = computed(() => {
+      const preparedAttrs = { ...attrs };
+
+      delete preparedAttrs.class;
+
+      return preparedAttrs;
+    });
 
     /**
      * Attaches min_value:1 validation rule to require at least one item when required prop is true
@@ -156,6 +164,7 @@ export default {
       isEmpty,
       hasErrors,
       addButtonError,
+      iteratorAttrs,
     };
   },
 };

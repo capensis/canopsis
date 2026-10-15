@@ -45,3 +45,5 @@ playwright-report/
 # Local AI/cursor context
 docs/ai/
 .cursor/rules/
+
+.yarn
