@@ -13,7 +13,7 @@
     <v-layout class="widget-settings__submit-btn-wrapper pa-4">
       <v-btn
         :loading="submitting"
-        :disabled="submitting || !validatorDirty"
+        :disabled="submitting"
         type="submit"
         color="primary"
       >
@@ -25,24 +25,15 @@
 
 <script>
 export default {
-  inject: ['$validator', '$sidebar'],
+  inject: ['$sidebar'],
   props: {
     submitting: {
-      type: Boolean,
-      default: false,
-    },
-    dirty: {
       type: Boolean,
       default: false,
     },
     divider: {
       type: Boolean,
       default: false,
-    },
-  },
-  computed: {
-    validatorDirty() {
-      return !this.$sidebar?.config?.widget?._id || this.dirty;
     },
   },
 };

@@ -28,7 +28,6 @@ exports[`availability-settings Renders \`availability-settings\` widget settings
 
 exports[`availability-settings Renders \`availability-settings\` widget settings with default props with changed title 1`] = `
 <widget-settings-stub
-  dirty="true"
   divider="true"
 >
   <availability-form-stub
