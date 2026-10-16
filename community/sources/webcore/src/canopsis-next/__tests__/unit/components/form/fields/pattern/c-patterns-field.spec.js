@@ -225,7 +225,7 @@ describe('c-patterns-field', () => {
       ],
     });
 
-    selectEntityPatternsField(wrapper).triggerCustomEvent('update:value', entityPattern);
+    selectEntityPatternsField(wrapper).triggerCustomEvent('update:patterns', entityPattern);
 
     expect(wrapper).toEmitInput({
       ...patterns,
@@ -358,7 +358,7 @@ describe('c-patterns-field', () => {
       ],
     });
 
-    selectPbehaviorPatternsField(wrapper).triggerCustomEvent('update:value', pbehaviorPattern);
+    selectPbehaviorPatternsField(wrapper).triggerCustomEvent('update:patterns', pbehaviorPattern);
 
     expect(wrapper).toEmitInput({
       ...patterns,

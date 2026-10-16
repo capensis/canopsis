@@ -108,4 +108,28 @@ describe('prepareIdleRuleNumbers', () => {
       },
     });
   });
+
+  it('converts pause operation parameters with pause_type', () => {
+    const form = idleRuleToForm({
+      operation: {
+        type: ACTION_TYPES.pause,
+        parameters: {
+          output: 'Pause {{ .Entity.ID }}',
+          pause_type: 'maintenance',
+          inherited: true,
+        },
+      },
+    });
+
+    expect(form.operation.parameters[ACTION_TYPES.pause]).toMatchObject({
+      output: 'Pause {{ .Entity.ID }}',
+      pause_type: 'maintenance',
+      inherited: true,
+    });
+    expect(formToIdleRule(form).operation.parameters).toMatchObject({
+      output: 'Pause {{ .Entity.ID }}',
+      pause_type: 'maintenance',
+      inherited: true,
+    });
+  });
 });

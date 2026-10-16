@@ -70,7 +70,7 @@ import { uid } from '@/helpers/uid';
 /**
  * @typedef {Object} ActionPauseParameters
  * @property {string} output
- * @property {string} type
+ * @property {string} pause_type
  * @property {boolean} inherited
  */
 
@@ -221,7 +221,7 @@ export const defaultActionParametersToForm = (parameters = {}) => ({
 export const pauseActionParametersToForm = (parameters = {}) => ({
   ...defaultActionForwardAuthorToForm(parameters),
   output: parameters.output ?? '',
-  type: parameters.type ?? '',
+  pause_type: parameters.pause_type ?? '',
   inherited: parameters.inherited ?? false,
 });
 
