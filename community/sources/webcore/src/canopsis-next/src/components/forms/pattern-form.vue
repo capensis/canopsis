@@ -16,21 +16,21 @@
     />
     <c-entity-patterns-field
       v-else-if="isEntityPattern"
-      v-model:value="formModel"
+      v-model:patterns="formModel"
       :name="PATTERNS_FIELDS.entity"
       :check-count-name="PATTERNS_FIELDS.entity"
       required
     />
     <c-pbehavior-patterns-field
       v-else-if="isPbehaviorPattern"
-      v-model:value="formModel"
+      v-model:patterns="formModel"
       :name="PATTERNS_FIELDS.pbehavior"
       :check-count-name="PATTERNS_FIELDS.pbehavior"
       required
     />
     <c-service-weather-patterns-field
       v-else-if="isServiceWeatherPattern"
-      v-model:value="formModel"
+      v-model:patterns="formModel"
       :name="PATTERNS_FIELDS.serviceWeather"
       :check-count-name="PATTERNS_FIELDS.serviceWeather"
       required
