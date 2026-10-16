@@ -1,7 +1,7 @@
 <template>
   <c-advanced-data-table
     :headers="headers"
-    :items="preparedBroadcastMessages"
+    :items="broadcastMessages"
     :loading="pending"
     :total-items="totalItems"
     :options="options"
@@ -46,7 +46,7 @@ import { computed } from 'vue';
 
 import { BROADCAST_MESSAGES_STATUSES } from '@/constants';
 
-import { convertDateToString, getNowTimestamp } from '@/helpers/date/date';
+import { convertDateToString } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -86,7 +86,7 @@ export default {
 
   emits: ['update:options', 'edit', 'remove'],
 
-  setup(props) {
+  setup() {
     const { t } = useI18n();
     const activeStatus = BROADCAST_MESSAGES_STATUSES.active;
 
@@ -99,7 +99,6 @@ export default {
       {
         text: t('common.status'),
         value: 'status',
-        sortable: false,
       },
       {
         text: t('common.start'),
@@ -116,29 +115,10 @@ export default {
       },
     ]);
 
-    const preparedBroadcastMessages = computed(() => props.broadcastMessages.map((message) => {
-        const now = getNowTimestamp();
-        let status = BROADCAST_MESSAGES_STATUSES.pending;
-
-        if (now >= message.start) {
-          status =
-            now <= message.end
-              ? BROADCAST_MESSAGES_STATUSES.active
-              : BROADCAST_MESSAGES_STATUSES.expired;
-        }
-
-        return {
-          ...message,
-          status,
-        };
-      }),
-    );
-
     return {
       t,
       activeStatus,
       headers,
-      preparedBroadcastMessages,
       convertDateToString,
     };
   },
