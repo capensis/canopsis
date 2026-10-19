@@ -21,6 +21,7 @@
       :max-length="FORM_MAX_STRING_LENGTH"
       name="reason"
       required
+      autofocus
       @update:model-value="updateField('comment', $event)"
     />
   </c-layout>

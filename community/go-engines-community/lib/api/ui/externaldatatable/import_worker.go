@@ -1371,10 +1371,18 @@ func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns [
 		return nil
 	case externaldata.TypePostgreSQL:
 		var sql strings.Builder
-		sql.WriteString("CREATE TABLE IF NOT EXISTS " + job.getDBTableName() + " ( " +
-			externaldata.IDColumnName + " VARCHAR(" + MaxIDLenStr + ") PRIMARY KEY, ")
+		sql.WriteString("CREATE TABLE IF NOT EXISTS ")
+		sql.WriteString(job.getDBTableName())
+		sql.WriteString(" ( ")
+		sql.WriteString(externaldata.IDColumnName)
+		sql.WriteString(" VARCHAR(")
+		sql.WriteString(MaxIDLenStr)
+		sql.WriteString(") PRIMARY KEY, ")
 		for i, field := range columns {
-			sql.WriteString(pgx.Identifier{field}.Sanitize() + " VARCHAR(" + MaxStringLenStr + ") ")
+			sql.WriteString(pgx.Identifier{field}.Sanitize())
+			sql.WriteString(" VARCHAR(")
+			sql.WriteString(MaxStringLenStr)
+			sql.WriteString(") ")
 			if i != len(columns)-1 {
 				sql.WriteString(",")
 			}

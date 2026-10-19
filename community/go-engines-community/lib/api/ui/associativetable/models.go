@@ -21,14 +21,15 @@ type Content struct {
 	value any
 }
 
+// The field is reset before decoding so maps and slices from a previous value are not merged into the new one.
 func (c *Content) UnmarshalJSON(b []byte) error {
-	var v any
-	err := json.Unmarshal(b, &v)
-	if err != nil {
+	prev := c.value
+	c.value = nil
+	if err := json.Unmarshal(b, &c.value); err != nil {
+		c.value = prev
 		return err
 	}
 
-	c.value = v
 	return nil
 }
 
