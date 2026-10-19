@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex align-center ga-4 pt-2">
     <div :style="labelStyles">
-      <div class="c-information-block-row__label text-body-2">
+      <div class="font-weight-bold text-label-large">
         {{ label }}
       </div>
     </div>
@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 export default {
   props: {
     label: {
@@ -27,19 +29,10 @@ export default {
       default: 200,
     },
   },
-  computed: {
-    labelStyles() {
-      return {
-        minWidth: `${this.width}px`,
-        maxWidth: `${this.width}px`,
-      };
-    },
+  setup(props) {
+    const labelStyles = computed(() => ({ minWidth: `${props.width}px`, maxWidth: `${props.width}px` }));
+
+    return { labelStyles };
   },
 };
 </script>
-
-<style scoped>
-.c-information-block-row__label {
-  font-weight: 700 !important;
-}
-</style>
