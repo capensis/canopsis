@@ -1,12 +1,14 @@
 <template>
-  <v-select
-    v-field="value"
+  <c-select
+    :model-value="value"
     :items="items"
     :label="$t('common.criteria')"
-    item-text="label"
+    :loading="pending"
+    item-title="label"
     item-value="id"
     hide-details
     return-object
+    @update:model-value="$emit('update:value', $event)"
   />
 </template>
 
@@ -15,15 +17,9 @@ import { isUndefined } from 'lodash';
 
 import { MAX_LIMIT } from '@/constants';
 
-import { formMixin } from '@/mixins/form';
-import { entitiesRatingSettingsMixin } from '@/mixins/entities/rating-settings';
+import { useRatingSettings } from '@/hooks/store/modules/rating-settings';
 
 export default {
-  mixins: [formMixin, entitiesRatingSettingsMixin],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
     value: {
       type: Object,
@@ -34,45 +30,62 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:value'],
+
+  setup() {
+    const { ratingSettingsUpdatedAt, fetchRatingSettingsListWithoutStore } = useRatingSettings();
+
+    return {
+      ratingSettingsUpdatedAt,
+      fetchRatingSettingsListWithoutStore,
+    };
+  },
+
   data() {
     return {
       pending: false,
       items: [],
     };
   },
+
   watch: {
     ratingSettingsUpdatedAt: 'fetchList',
   },
+
   mounted() {
     this.fetchList();
   },
+
   methods: {
     async fetchList() {
-      this.pending = true;
+      try {
+        this.pending = true;
 
-      const { data: items } = await this.fetchRatingSettingsListWithoutStore({
-        params: {
-          limit: MAX_LIMIT,
-          enabled: true,
-        },
-      });
+        const { data: items } = await this.fetchRatingSettingsListWithoutStore({
+          params: {
+            limit: MAX_LIMIT,
+            enabled: true,
+          },
+        });
 
-      this.items = items;
+        this.items = items;
 
-      if (this.mandatory) {
-        this.setAvailableValue();
+        if (this.mandatory) {
+          this.setAvailableValue();
+        }
+      } finally {
+        this.pending = false;
       }
-
-      this.pending = true;
     },
 
     setAvailableValue() {
       const [firstRatingSetting] = this.items;
 
       if (!this.items.length) {
-        this.updateModel(undefined);
+        this.$emit('update:value', undefined);
       } else if (isUndefined(this.value) || !this.items.some(({ id }) => id === this.value.id)) {
-        this.updateModel(firstRatingSetting);
+        this.$emit('update:value', firstRatingSetting);
       }
     },
   },

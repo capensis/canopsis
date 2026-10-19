@@ -15,23 +15,24 @@ import { metricPresetsToForm } from '@/helpers/entities/metric/form';
 import { getDefaultAggregateFunctionByMetric } from '@/helpers/entities/metric/list';
 
 /**
- * Get chart preset types by widget type
+ * Get chart preset types by widget type.
  *
  * @param {WidgetType} type
  * @returns {string[]}
  */
 export const getWidgetChartPresetTypesByWidgetType = (type) => {
-  const keys = {
-    [WIDGET_TYPES.barChart]: BAR_CHART_WIDGET_PRESET_TYPES,
-    [WIDGET_TYPES.pieChart]: PIE_CHART_WIDGET_PRESET_TYPES,
-    [WIDGET_TYPES.numbers]: NUMBERS_CHART_WIDGET_PRESET_TYPES,
-  }[type] ?? [];
+  const keys =
+    {
+      [WIDGET_TYPES.barChart]: BAR_CHART_WIDGET_PRESET_TYPES,
+      [WIDGET_TYPES.pieChart]: PIE_CHART_WIDGET_PRESET_TYPES,
+      [WIDGET_TYPES.numbers]: NUMBERS_CHART_WIDGET_PRESET_TYPES,
+    }[type] ?? [];
 
   return Object.values(pick(CHART_WIDGET_PRESET_TYPES, keys));
 };
 
 /**
- * Get chart preset parameters by preset and widget id
+ * Get chart preset parameters by preset and widget type.
  *
  * @param {WidgetType} type
  * @param {string} preset
@@ -44,7 +45,7 @@ export const getWidgetChartPresetParameters = (type, preset) => {
     [WIDGET_TYPES.numbers]: NUMBERS_CHART_WIDGET_PRESET_PARAMETERS_BY_TYPE,
   }[type];
 
-  const { metrics, ...parameters } = parametersByPreset[preset] ?? {};
+  const { metrics, ...parameters } = parametersByPreset?.[preset] ?? {};
 
   if (metrics) {
     parameters.metrics = metricPresetsToForm(metrics);

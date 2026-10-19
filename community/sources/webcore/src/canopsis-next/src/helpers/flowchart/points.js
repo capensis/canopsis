@@ -16,10 +16,7 @@ import { uid } from '@/helpers/uid';
  * @param {number} y
  * @returns {Point}
  */
-export const generatePoint = ({
-  x,
-  y,
-}) => ({
+export const generatePoint = ({ x, y }) => ({
   x,
   y,
   _id: uid(),
@@ -45,10 +42,8 @@ export const calculateCenterBetweenPoint = (firstPoint, secondPoint) => ({
  * @param {Point} point
  * @returns {boolean}
  */
-export const isAreaIncludePoint = (start, end, point) => point.x > start.x
-    && point.x < end.x
-    && point.y > start.y
-    && point.y < end.y;
+export const isAreaIncludePoint = (start, end, point) =>
+  point.x > start.x && point.x < end.x && point.y > start.y && point.y < end.y;
 
 /**
  * Check is area include point
@@ -75,15 +70,15 @@ export const isAreaIncludeShape = (start, end, shape) => {
         y: shape.y + (shape.height ?? shape.diameter),
       };
 
-      return isAreaIncludePoint(start, end, leftTopCorner)
-        && isAreaIncludePoint(start, end, bottomRightCorner);
+      return (
+        isAreaIncludePoint(start, end, leftTopCorner) &&
+        isAreaIncludePoint(start, end, bottomRightCorner)
+      );
     }
     case SHAPES.arrowLine:
     case SHAPES.bidirectionalArrowLine:
     case SHAPES.line:
-      return shape.points.every(
-        point => isAreaIncludePoint(start, end, point),
-      );
+      return shape.points.every(point => isAreaIncludePoint(start, end, point));
   }
 
   return false;

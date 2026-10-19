@@ -1,0 +1,70 @@
+import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
+
+export default {
+  isEnabled: 'Est actif',
+  begins: 'Débute',
+  ends: 'Se termine',
+  lastAlarmDate: 'Date de la dernière alarme',
+  alarmCount: 'Nombre d\'alarmes',
+  alarmFilteringTime: 'Temps de filtrage des patterns',
+  lastFilteringDate: 'Date de la dernière évaluation des patterns',
+  runAlarmFiltering: 'Évaluer tous les patterns',
+  alarmFilteringInProgress: 'Évaluation en cours',
+  alarmFilteringError: 'Erreur d\'évaluation des patterns',
+  massRemove: 'Supprimer les comportements périodiques',
+  massEnable: 'Activer les comportements périodiques',
+  massDisable: 'Désactiver les comportements périodiques',
+  periodsCalendar: 'Calendrier avec périodes',
+  notEditable: 'Ne peut pas être modifié',
+  pbehaviorInfo: 'Infos de comportement périodique',
+  pbehaviorType: 'Type de comportement périodique',
+  pbehaviorReason: 'Raison de comportement périodique',
+  pbehaviorName: 'Nom de comportement périodique',
+  pbehaviorCanonicalType: 'Type canonique de comportement périodique',
+  rruleEnd: 'Fin de récurrence',
+  visible: 'Afficher sur le formulaire de comportement périodique',
+  massHide: 'Masquer dans le formulaire de comportement',
+  massUnhide: '@:pbehavior.visible',
+  defaultNameForSingleResourceEntity: '{component} - {name} - Le {datetime}',
+  defaultNameForSingleEntity: '{name} - Le {datetime}',
+  defaultNameForMultipleEntities: 'Comportement périodique - Le {datetime}',
+  buttons: {
+    addFilter: 'Ajouter un filtre',
+    editFilter: 'Modifier le filtre',
+    addRRule: 'Ajouter une règle de récurrence',
+    editRrule: 'Modifier la règle de récurrence',
+  },
+  tabs: {
+    type: 'Type',
+    reason: 'Raison',
+    exceptions: 'Dates d\'exception',
+  },
+
+  exceptions: {
+    title: 'Listes de dates d\'exception',
+    create: 'Ajouter une date d\'exception',
+    choose: 'Sélectionnez la liste d\'exclusion',
+    usingException: 'Ne peut pas être supprimé car il est en cours d\'utilisation.',
+    emptyExceptions: 'Aucune exception ajoutée pour le moment.',
+  },
+
+  exdates: {
+    title: 'Dates d\'exception',
+  },
+
+  types: {
+    usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation.',
+    defaultType: 'Le type est par défaut, vous ne pouvez modifier que le champ de couleur.',
+    types: {
+      [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
+      [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
+      [PBEHAVIOR_TYPE_TYPES.pause]: '@:common.pause',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
+    },
+  },
+
+  reasons: {
+    usingReason: 'La raison ne peut pas être supprimée car elle est en cours d\'utilisation.',
+    hidden: 'Masquez cette raison sur le formulaire de comportement ?',
+  },
+};

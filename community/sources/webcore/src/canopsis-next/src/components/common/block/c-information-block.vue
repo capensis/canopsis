@@ -1,9 +1,6 @@
 <template>
-  <v-layout
-    class="c-information-block"
-    column
-  >
-    <v-layout v-if="title || helpText">
+  <c-layout class="c-information-block" column>
+    <c-layout v-if="title || helpText">
       <div class="text-subtitle-1 font-weight-bold">
         {{ title }}
       </div>
@@ -16,21 +13,18 @@
         max-width="300"
         top
       />
-    </v-layout>
-    <v-layout
-      v-if="$slots.subtitle"
-      class="mt-2"
-    >
-      <span class="text--secondary">
+    </c-layout>
+    <c-layout v-if="$slots.subtitle" class="mt-2">
+      <span class="text-medium-emphasis">
         <slot name="subtitle" />
       </span>
-    </v-layout>
+    </c-layout>
     <slot />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
-// TODO: remove this component
+// TODO: remove this component after legacy views are fully migrated.
 export default {
   props: {
     title: {

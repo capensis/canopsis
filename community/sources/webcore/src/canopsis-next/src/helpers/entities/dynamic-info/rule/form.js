@@ -1,8 +1,10 @@
 import { DYNAMIC_INFO_INFORMATION_TYPES, PATTERNS_FIELDS } from '@/constants';
 
+import {
+  dynamicInfoInformationToForm,
+  formToDynamicInfoInformation,
+} from '@/helpers/entities/dynamic-info/information/form';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
-
-import { dynamicInfoInformationToForm, formToDynamicInfoInformation } from '../information/form';
 
 /**
  * @typedef { 'maintenance' | 'pause' } DisableDuringPeriods
@@ -26,7 +28,7 @@ import { dynamicInfoInformationToForm, formToDynamicInfoInformation } from '../i
 /**
  * Convert a dynamic information's object to a dynamic information's form object
  *
- * @param {DynamicInfo} dynamicInfo
+ * @param {DynamicInfo} [dynamicInfo={}]
  * @returns {DynamicInfoForm}
  */
 export const dynamicInfoToForm = (dynamicInfo = {}) => {

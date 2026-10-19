@@ -1,33 +1,28 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
-        <span>{{ $t('modals.createSnoozeEvent.title') }}</span>
+    <c-modal-wrapper close>
+      <template #title>
+        <span>{{ t('modals.createSnoozeEvent.title') }}</span>
       </template>
-      <template #text="">
-        <snooze-event-form
-          v-model="form"
-          :is-note-required="config.isNoteRequired"
-        />
+
+      <template #text>
+        <snooze-event-form :is-note-required="config.isNoteRequired" />
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn :disabled="submitting" variant="text" @click="close">
+          {{ t('common.cancel') }}
         </v-btn>
         <v-btn
           :loading="submitting"
-          :disabled="isDisabled"
-          class="primary"
+          :disabled="submitting"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.saveChanges') }}
+          {{ t('common.saveChanges') }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
@@ -36,46 +31,56 @@ import { MODALS } from '@/constants';
 
 import { snoozeToForm } from '@/helpers/entities/alarm/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
 
 import SnoozeEventForm from '@/components/widgets/alarm/forms/snooze-event-form.vue';
-
-import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Modal to put a snooze on an alarm
  */
 export default {
   name: MODALS.createSnoozeEvent,
-  $_veeValidate: {
-    validator: 'new',
-  },
-  components: {
-    ModalWrapper,
-    SnoozeEventForm,
-  },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    return {
-      form: snoozeToForm(),
-    };
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
 
-      if (isFormValid) {
-        await this.config?.action?.(this.form);
+  components: { SnoozeEventForm },
 
-        this.$modals.hide();
-      }
+  props: {
+    modal: {
+      type: Object,
+      required: true,
     },
+  },
+
+  setup(props) {
+    const { t } = useI18n();
+    const { config, close } = useInnerModal(props);
+
+    const form = useForm({
+      initialValues: snoozeToForm(),
+    });
+    const { handleSubmit, isSubmitting: submitting } = form;
+
+    const submit = handleSubmit(async () => {
+      await config.value?.action?.(form.values.value);
+
+      close();
+    });
+
+    useFormConfirmableCloseModal({
+      form: form.values,
+      submit,
+      close,
+    });
+
+    return {
+      t,
+      config,
+      submitting,
+      submit,
+      close,
+    };
   },
 };
 </script>

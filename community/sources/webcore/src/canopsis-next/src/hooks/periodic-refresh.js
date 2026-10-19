@@ -1,11 +1,4 @@
-import {
-  unref,
-  inject,
-  onBeforeMount,
-  onBeforeUnmount,
-  watch,
-  onMounted,
-} from 'vue';
+import { inject, onBeforeMount, onBeforeUnmount, onMounted, unref, watch } from 'vue';
 
 import { VIEW_PERIODIC_REFRESH_KEY } from '@/constants';
 
@@ -37,7 +30,7 @@ export const usePeriodicRefreshParent = ({ handler, key = VIEW_PERIODIC_REFRESH_
  *
  * @param {Object} options - Options for the hook.
  * @param {Function} options.handler - The handler function to register.
- * @param {string} [options.key = '$periodicRefresh'] - The key to use for injection.
+ * @param {string} [options.key = VIEW_PERIODIC_REFRESH_KEY] - The key to use for injection.
  * @returns {Object} An object containing the view periodic refresh instance.
  */
 export const usePeriodicRefreshChild = ({ handler, key = VIEW_PERIODIC_REFRESH_KEY }) => {

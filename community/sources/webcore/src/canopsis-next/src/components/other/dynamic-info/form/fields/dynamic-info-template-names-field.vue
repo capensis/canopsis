@@ -1,72 +1,51 @@
 <template>
-  <v-layout class="gap-2" column>
-    <c-label
-      :label="$t('modals.createDynamicInfoTemplate.fields.names')"
-      required
-    />
-    <v-layout
-      v-for="(name, index) in names"
+  <c-layout gap="2" column>
+    <slot v-if="!namesField.length" name="no-data" />
+
+    <c-layout
+      v-for="(name, index) in namesField"
       :key="name.key"
-      align-center
-      justify-space-between
+      align="center"
+      gap="2"
     >
-      <v-flex :xs11="names.length > 1" :xs12="names.length <= 1">
-        <c-name-field
-          v-field="names[index].value"
-          :label="$t('common.name')"
-          :name="`names[${name.key}]`"
-          required
-        />
-      </v-flex>
-      <v-flex
-        v-if="names.length > 1"
-        shrink
-      >
-        <v-btn
-          color="error"
-          icon
-          @click="removeName(index)"
-        >
-          <v-icon>delete</v-icon>
-        </v-btn>
-      </v-flex>
-    </v-layout>
-    <div>
-      <v-btn
-        color="primary"
-        outlined
-        @click="addName"
-      >
+      <c-name-field v-model="name.value" :name="`names[${name.key}].value`" required />
+
+      <c-action-btn type="delete" @click="remove(index)" />
+    </c-layout>
+
+    <c-layout>
+      <v-btn color="primary" variant="outlined" @click="addName">
         {{ $t('modals.createDynamicInfoTemplate.buttons.addName') }}
       </v-btn>
-    </div>
-  </v-layout>
+    </c-layout>
+
+    <v-alert v-if="hasNamesError" type="error">
+      {{ $t('modals.createDynamicInfoTemplate.errors.noNames') }}
+    </v-alert>
+  </c-layout>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { generateTemplateFormName } from '@/helpers/entities/dynamic-info/template/form';
 
-import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useFormContext } from '@/hooks/form';
 
 export default {
-  model: {
-    prop: 'names',
-    event: 'input',
-  },
-  props: {
-    names: {
-      type: Array,
-      default: () => [],
-    },
-  },
-  setup(props, { emit }) {
-    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
+  setup() {
+    const form = useFormContext();
+    const namesField = form.array('names');
+    const hasNamesError = computed(() => form.submitCount.value > 0 && !namesField.value.length);
 
-    const addName = () => addItemIntoArray(generateTemplateFormName());
+    const addName = () => namesField.value.push(generateTemplateFormName());
+    const remove = index => namesField.value.splice(index, 1);
 
     return {
+      namesField,
+      hasNamesError,
       addName,
-      removeName: removeItemFromArray,
+      remove,
     };
   },
 };

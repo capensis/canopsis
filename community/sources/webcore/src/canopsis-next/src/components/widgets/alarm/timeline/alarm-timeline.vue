@@ -1,25 +1,25 @@
 <template>
-  <v-layout column>
-    <v-layout class="gap-5">
+  <c-layout column>
+    <c-layout gap="5">
       <c-enabled-field
-        :value="query.group"
+        :model-value="query.group"
         :label="$t('alarm.timeline.groupItems')"
-        @input="updateGroup"
+        @update:model-value="updateGroup"
       />
       <c-enabled-field
-        :value="isCommentType"
+        :model-value="isCommentType"
         :label="$t('alarm.timeline.onlyComments')"
-        @input="updateOnlyComments"
+        @update:model-value="updateOnlyComments"
       />
-    </v-layout>
+    </c-layout>
     <alarm-timeline-days :days="days" :is-html-enabled="isHtmlEnabled" />
     <c-pagination
       :total="meta.total_count"
       :limit="meta.per_page"
       :page="meta.page"
-      @input="updatePage"
+      @update:page="updatePage"
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -33,6 +33,7 @@ import AlarmTimelineDays from './alarm-timeline-days.vue';
 
 export default {
   components: { AlarmTimelineDays },
+
   props: {
     steps: {
       type: Array,
@@ -51,6 +52,9 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:query'],
+
   setup(props, { emit }) {
     const days = computed(() => groupAlarmSteps(props.steps));
     const isCommentType = computed(() => props.query.type === ALARM_STEPS_TYPES.comment);
@@ -73,7 +77,6 @@ export default {
     return {
       days,
       isCommentType,
-
       updateGroup,
       updateOnlyComments,
       updatePage,

@@ -1,10 +1,13 @@
 <template>
-  <v-select
-    v-field="value"
+  <c-select
+    :model-value="modelValue"
     :items="typeItems"
     :label="$t('common.actionType')"
-    name="type"
+    :name="name"
+    item-title="title"
+    item-value="value"
     required
+    @update:model-value="$emit('update:modelValue', $event)"
   />
 </template>
 
@@ -16,23 +19,27 @@ import { DYNAMIC_INFO_INFORMATION_TYPES } from '@/constants';
 import { useI18n } from '@/hooks/i18n';
 
 export default {
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: String,
-      default: DYNAMIC_INFO_INFORMATION_TYPES.setConstantValue,
+      default: DYNAMIC_INFO_INFORMATION_TYPES.setToInfo,
+    },
+    name: {
+      type: String,
+      default: 'type',
     },
   },
+
+  emits: ['update:modelValue'],
+
   setup() {
     const { t } = useI18n();
 
     const typeItems = computed(() => Object.values(DYNAMIC_INFO_INFORMATION_TYPES).map(type => ({
-      text: t(`dynamicInfo.informationTypes.${type}`),
-      value: type,
-    })));
+        title: t(`dynamicInfo.informationTypes.${type}`),
+        value: type,
+      })),
+    );
 
     return {
       typeItems,

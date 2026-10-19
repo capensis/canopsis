@@ -1,18 +1,14 @@
 <template>
   <v-card class="text-subtitle-1">
     <v-card-text>
-      <v-layout wrap>
-        <v-flex class="pt-2" xs1>
-          <v-avatar
-            class="white--text mr-2"
-            color="primary"
-            size="32"
-          >
+      <v-row class="flex-grow-0" no-gutters>
+        <v-col class="pt-2" cols="1">
+          <v-avatar class="text-white mr-2" color="primary" size="32">
             {{ actionNumber }}
           </v-avatar>
           <c-expand-btn v-model="expanded" />
-        </v-flex>
-        <v-flex xs11>
+        </v-col>
+        <v-col cols="11">
           <scenario-info-item
             :label="$t('common.type')"
             :value="action.type"
@@ -20,41 +16,38 @@
             hide-icon
           />
           <v-expand-transition mode="out-in">
-            <v-layout
-              v-if="expanded"
-              class="px-2"
-              column
-            >
+            <c-layout v-if="expanded" class="px-2" column>
               <v-tabs
                 v-model="activeTab"
-                slider-color="primary"
-                centered
+                color="primary"
+                align-tabs="center"
                 fixed-tabs
               >
-                <v-tab>{{ $t('common.general') }}</v-tab>
-                <v-tab>{{ $t('scenario.tabs.pattern') }}</v-tab>
+                <v-tab :value="0">
+                  {{ $t('common.general') }}
+                </v-tab>
+                <v-tab :value="1">
+                  {{ $t('scenario.tabs.pattern') }}
+                </v-tab>
               </v-tabs>
               <v-divider />
-              <v-tabs-items
-                v-model="activeTab"
-                class="pt-2"
-              >
-                <v-tab-item>
+              <v-window v-model="activeTab" class="pt-2">
+                <v-window-item :value="0">
                   <scenario-action-card-general-tab :action="action" />
-                </v-tab-item>
-                <v-tab-item>
+                </v-window-item>
+                <v-window-item :value="1">
                   <c-patterns-field
                     :value="patterns"
                     with-alarm
                     with-entity
                     readonly
                   />
-                </v-tab-item>
-              </v-tabs-items>
-            </v-layout>
+                </v-window-item>
+              </v-window>
+            </c-layout>
           </v-expand-transition>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>
@@ -64,11 +57,12 @@ import { PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 
-import ScenarioInfoItem from './scenario-info-item.vue';
 import ScenarioActionCardGeneralTab from './scenario-action-card-general-tab.vue';
+import ScenarioInfoItem from './scenario-info-item.vue';
 
 export default {
   components: { ScenarioInfoItem, ScenarioActionCardGeneralTab },
+
   props: {
     action: {
       type: Object,
@@ -79,12 +73,14 @@ export default {
       default: 0,
     },
   },
+
   data() {
     return {
       activeTab: 0,
       expanded: false,
     };
   },
+
   computed: {
     patterns() {
       return filterPatternsToForm(this.action, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]);
@@ -94,7 +90,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.scenario-info-type ::v-deep .v-list-item {
-  height: 30px;
+.scenario-info-type :deep(.v-list-item) {
+  min-height: 30px;
 }
 </style>

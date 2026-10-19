@@ -1,52 +1,40 @@
 <template>
   <c-speed-dial
     class="d-inline-block"
-    direction="bottom"
+    location="bottom center"
     transition="scale-transition"
   >
-    <template #activator="{ bind: speedDialBind }">
-      <v-tooltip top>
-        <template #activator="{ on: tooltipOn }">
+    <template #activator="{ props: activatorProps, isActive }">
+      <c-tooltip location="top">
+        <template #activator="{ props: tooltipProps }">
           <v-btn
-            v-bind="speedDialBind"
-            class="primary"
-            dark
-            fab
-            small
-            v-on="tooltipOn"
+            v-bind="{ ...tooltipProps, ...activatorProps }"
+            :class="{ 'c-speed-dial__btn--active': isActive }"
+            class="c-speed-dial__btn context-fab__btn"
+            color="primary"
+            size="x-small"
           >
-            <v-icon>add</v-icon>
-            <v-icon>close</v-icon>
+            <v-icon icon="add" />
+            <v-icon icon="close" />
           </v-btn>
         </template>
         <span>{{ $t('context.fab.common') }}</span>
-      </v-tooltip>
+      </c-tooltip>
     </template>
-    <v-tooltip bottom>
-      <template #activator="{ on }">
-        <v-btn
-          color="indigo"
-          fab
-          dark
-          small
-          v-on="on"
-          @click.prevent.stop="showCreateServiceModal"
-        >
-          <v-icon size="24">
-            engineering
-          </v-icon>
-        </v-btn>
-      </template>
-      <span>{{ $t('context.fab.addService') }}</span>
-    </v-tooltip>
+    <c-action-fab-btn
+      :tooltip="$t('context.fab.addService')"
+      color="indigo"
+      icon="engineering"
+      @click="showCreateServiceModal"
+    />
   </c-speed-dial>
 </template>
 
 <script>
 import { MODALS } from '@/constants';
 
-import { entitiesServiceMixin } from '@/mixins/entities/service';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
+import { entitiesServiceMixin } from '@/mixins/entities/service';
 
 /**
  * Buttons to open the modal to add entities
@@ -58,11 +46,7 @@ export default {
     entitiesServiceMixin,
     entitiesContextEntityMixin,
   ],
-  data() {
-    return {
-      isVSpeedDialOpen: false,
-    };
-  },
+
   methods: {
     showCreateServiceModal() {
       this.$modals.show({
@@ -74,6 +58,8 @@ export default {
 
             this.$popups.success({ text: this.$t('modals.createService.success.create') });
 
+            await this.fetchContextEntitiesListWithPreviousParams();
+
             return result;
           },
         },
@@ -82,3 +68,13 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.context-fab__btn {
+  --v-btn-height: 40px;
+
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+</style>

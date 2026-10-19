@@ -20,7 +20,8 @@ type Adapter interface {
 }
 
 type DataStorage struct {
-	Config  Config                      `bson:"config" json:"config"`
+	Config Config `bson:"config" json:"config"`
+	// History stores cleaner history. For health_check, Time is the latest observed TimescaleDB retention-job start; a newer persisted value is retained when the live observation is absent or older.
 	History map[string]HistoryWithCount `bson:"history" json:"history"`
 }
 
@@ -72,7 +73,8 @@ type Config struct {
 		DeleteAfter *datetime.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
 	} `bson:"connector_anomalies" json:"connector_anomalies"`
 	LLMChat struct {
-		DeleteAfter *datetime.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
+		DeleteAfter           *datetime.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
+		DeleteTokenUsageAfter *datetime.DurationWithEnabled `bson:"delete_token_usage_after,omitempty" json:"delete_token_usage_after"`
 	} `bson:"llm_chat" json:"llm_chat"`
 }
 

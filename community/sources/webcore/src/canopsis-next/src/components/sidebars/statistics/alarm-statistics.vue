@@ -16,26 +16,52 @@
 </template>
 
 <script>
+import { toRef } from 'vue';
+
 import { SIDE_BARS } from '@/constants';
 
-import { widgetSettingsMixin } from '@/mixins/widget/settings';
-import { permissionsWidgetsAlarmStatisticsInterval } from '@/mixins/permissions/widgets/statistics/alarm/interval';
-import { permissionsWidgetsAlarmStatisticsFilters } from '@/mixins/permissions/widgets/statistics/alarm/filters';
+import {
+  useAlarmStatisticsFiltersPermissions,
+  useAlarmStatisticsIntervalPermissions,
+} from '@/hooks/permissions/widgets/statistics/filters';
+import { useWidgetSettings } from '@/hooks/widget/settings';
 
-import WidgetSettings from '../partials/widget-settings.vue';
+import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
 
 import StatisticsForm from './form/statistics-form.vue';
 
 export default {
   name: SIDE_BARS.alarmStatisticsSettings,
+
   components: {
     WidgetSettings,
     StatisticsForm,
   },
-  mixins: [
-    widgetSettingsMixin,
-    permissionsWidgetsAlarmStatisticsInterval,
-    permissionsWidgetsAlarmStatisticsFilters,
-  ],
+
+  props: {
+    sidebar: {
+      type: Object,
+      required: true,
+    },
+  },
+
+  setup(props) {
+    const sidebar = toRef(props, 'sidebar');
+    const { form, widget, hasChanges, submitting, close, submit } = useWidgetSettings({ sidebar });
+    const { hasAccessToFilter } = useAlarmStatisticsFiltersPermissions();
+    const { hasAccessToInterval } = useAlarmStatisticsIntervalPermissions();
+
+    return {
+      form,
+      widget,
+      hasChanges,
+      submitting,
+      hasAccessToFilter,
+      hasAccessToInterval,
+
+      close,
+      submit,
+    };
+  },
 };
 </script>

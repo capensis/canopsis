@@ -4,11 +4,13 @@
     optional
   >
     <c-storages-field
-      v-field="storages"
+      :model-value="modelValue"
       :label="$t('settings.serverStorage')"
       :disabled="disabled"
       :help-text="helpText"
-      v-on="$listeners"
+      @add="$emit('add')"
+      @edit="(...args) => $emit('edit', ...args)"
+      @update:model-value="$emit('update:modelValue', $event)"
     />
   </widget-settings-item>
 </template>
@@ -18,12 +20,9 @@ import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-i
 
 export default {
   components: { WidgetSettingsItem },
-  model: {
-    prop: 'storages',
-    event: 'input',
-  },
+
   props: {
-    storages: {
+    modelValue: {
       type: Array,
       default: () => [],
     },
@@ -40,5 +39,7 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:modelValue', 'add', 'edit'],
 };
 </script>

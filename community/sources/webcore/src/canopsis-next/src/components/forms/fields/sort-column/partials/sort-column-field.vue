@@ -1,32 +1,29 @@
 <template>
   <c-card-iterator-item
     :drag-handle-class="dragHandleClass"
+    class="sort-column-field"
     small
     @remove="$emit('remove')"
   >
     <template #header>
-      <v-layout class="gap-2" column>
-        <v-select
-          v-validate="'required'"
-          :value="sortColumn.sort_by"
+      <c-layout class="sort-column-field__inputs" gap="2" column>
+        <c-select
+          :model-value="currentSortColumn.sort_by"
           :items="availableColumns"
           :label="$t('settings.columnName')"
-          :error-messages="errors.collect(sortByName)"
           :name="sortByName"
-          :menu-props="selectMenuProps"
-          @change="changeSortBy"
+          item-title="text"
+          item-value="value"
+          @update:model-value="changeSortBy"
         />
-        <v-select
-          v-validate="'required'"
-          :value="sortColumn.sort"
+        <c-select
+          :model-value="currentSortColumn.sort"
           :items="sortOrderItems"
           :label="$t('common.sort')"
-          :error-messages="errors.collect(sortName)"
           :name="sortName"
-          :menu-props="selectMenuProps"
-          @change="changeSort"
+          @update:model-value="changeSort"
         />
-      </v-layout>
+      </c-layout>
     </template>
   </c-card-iterator-item>
 </template>
@@ -36,19 +33,18 @@ import { computed, toRef } from 'vue';
 
 import { ENTITIES_TYPES, SORT_ORDERS } from '@/constants';
 
-import { useModelField } from '@/hooks/form/model-field';
 import { useAvailableColumns } from '@/hooks/form/available-columns';
+import { useModelField } from '@/hooks/form/model-field';
 
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'sortColumn',
-    event: 'input',
-  },
   props: {
-    sortColumn: {
+    modelValue: {
       type: Object,
       default: () => ({}),
+    },
+    sortColumn: {
+      type: Object,
+      default: undefined,
     },
     name: {
       type: String,
@@ -63,12 +59,11 @@ export default {
       required: false,
     },
   },
+
+  emits: ['update:modelValue', 'remove'],
+
   setup(props, { emit }) {
     const { updateField } = useModelField(props, emit);
-
-    const selectMenuProps = {
-      contentClass: 'sort-column-field-menu',
-    };
 
     const { availableColumns } = useAvailableColumns({
       type: ENTITIES_TYPES.alarm,
@@ -76,9 +71,9 @@ export default {
     });
 
     const sortOrderItems = Object.values(SORT_ORDERS);
-
     const sortByName = computed(() => `${props.name}.sort_by`);
     const sortName = computed(() => `${props.name}.sort`);
+    const currentSortColumn = computed(() => props.sortColumn ?? props.modelValue);
 
     const changeSortBy = sortBy => updateField('sort_by', sortBy);
     const changeSort = sort => updateField('sort', sort);
@@ -86,12 +81,35 @@ export default {
     return {
       availableColumns,
       sortOrderItems,
-      selectMenuProps,
       sortByName,
       sortName,
+      currentSortColumn,
       changeSortBy,
       changeSort,
     };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.sort-column-field {
+  :deep(.c-card-iterator-item__row) {
+    align-items: center;
+  }
+
+  :deep(.c-card-iterator-item__actions) {
+    align-items: center;
+    align-self: stretch;
+  }
+
+  &__inputs {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+
+    :deep(.v-input) {
+      width: 100%;
+    }
+  }
+}
+</style>

@@ -1,183 +1,198 @@
 <template>
-  <v-layout
-    justify-center
-    column
-  >
-    <v-text-field
+  <c-layout justify="center" column>
+    <c-text-field
       v-if="withField"
-      v-validate="'required'"
-      v-field="column.column"
+      :model-value="formValue.column"
       :label="$t('common.field')"
-      :error-messages="columnValueErrorMessages"
       :name="columnValueFieldName"
+      required
+      @update:model-value="updateField('column', $event)"
     />
-    <v-text-field
+
+    <c-text-field
       v-if="isAlarmTicketData"
-      v-validate="'required'"
-      v-field="column.dictionary"
+      :model-value="formValue.dictionary"
       :label="$t('common.dictionary')"
-      :error-messages="columnDictionaryErrorMessages"
       :name="columnDictionaryName"
+      required
+      @update:model-value="updateField('dictionary', $event)"
     />
+
     <template v-if="!withoutInfosAttributes">
       <c-alarm-infos-attribute-field
         v-if="isAlarmInfos"
-        v-field="column"
+        :value="formValue"
         :rules="alarmInfosRules"
         :pending="infosPending"
         :name="`${name}.column`"
         :required="!optionalInfosAttributes"
+        @update:value="updateModel"
       />
       <c-infos-attribute-field
         v-else-if="isInfos"
-        v-field="column"
+        :value="formValue"
         :items="infosItems"
         :pending="infosPending"
         :name="`${name}.column`"
         combobox
         column
+        @update:value="updateModel"
       />
     </template>
+
     <template v-if="isLinks">
-      <column-links-category-field v-field="column.field" />
+      <column-links-category-field
+        :model-value="formValue.field"
+        @update:model-value="updateField('field', $event)"
+      />
       <c-number-field
-        v-field="column.inlineLinksCount"
+        :value="formValue.inlineLinksCount"
         :label="$t('settings.columns.inlineLinksCount')"
+        @update:value="updateField('inlineLinksCount', $event)"
       />
       <v-switch
-        v-field="column.onlyIcon"
+        :model-value="formValue.onlyIcon"
         :label="$t('settings.columns.onlyIcon')"
-        class="pa-0 my-2"
+        class="pa-0 my-0"
         color="primary"
+        density="compact"
         hide-details
+        @update:model-value="updateField('onlyIcon', $event)"
       />
       <c-number-field
-        v-if="column.onlyIcon"
-        v-field="column.linksInRowCount"
+        v-if="formValue.onlyIcon"
+        :value="formValue.linksInRowCount"
         :label="$t('settings.columns.linksInRowCount')"
+        @update:value="updateField('linksInRowCount', $event)"
       >
-        <template #append="">
-          <c-help-icon
-            :text="$t('settings.columns.linksInRowCountTooltip')"
-            left
-          />
+        <template #append-inner>
+          <c-help-icon :text="$t('settings.columns.linksInRowCountTooltip')" />
         </template>
       </c-number-field>
     </template>
+
     <template v-if="withLabel">
       <v-switch
         v-model="customLabel"
         :label="$t('settings.columns.customLabel')"
-        class="pa-0 my-2"
+        class="pa-0 my-0"
         color="primary"
+        density="compact"
         hide-details
-        @change="updateCustomLabel"
+        @update:model-value="updateCustomLabel"
       />
-      <v-text-field
+      <c-text-field
         v-if="customLabel"
-        v-field="column.label"
-        v-validate="'required'"
+        :model-value="formValue.label"
         :label="$t('common.label')"
-        :error-messages="errors.collect(`${name}.label`)"
         :name="`${name}.label`"
+        required
+        @update:model-value="updateField('label', $event)"
       />
     </template>
-    <v-layout
-      v-if="withTemplate || withSimpleTemplate"
-      align-center
-      justify-space-between
-    >
+
+    <c-layout v-if="withTemplate || withSimpleTemplate" align="center" justify="space-between">
       <v-switch
-        :label="$t('settings.columns.withTemplate')"
-        :input-value="!!column.template"
-        :true-value="true"
-        :false-value="false"
-        :value-comparator="isCustomTemplate"
-        class="pa-0 my-2"
+        :model-value="!!formValue.template"
+        class="pa-0 my-0"
         color="primary"
+        density="compact"
         hide-details
-        @change="switchChangeTemplate($event)"
-      />
+        @update:model-value="switchChangeTemplate"
+      >
+        <template #label>
+          <span @click.prevent.stop="switchChangeTemplate(!formValue.template)">
+            {{ $t('settings.columns.withTemplate') }}
+          </span>
+        </template>
+      </v-switch>
       <v-btn
-        v-if="column.template"
-        class="primary"
-        small
+        v-if="formValue.template"
+        color="primary"
+        size="small"
         @click="showEditTemplateModal"
       >
         <span>{{ $t('common.edit') }}</span>
       </v-btn>
-    </v-layout>
+    </c-layout>
+
     <v-switch
       v-if="withHtml"
-      :input-value="column.isHtml"
+      :model-value="formValue.isHtml"
       :label="$t('settings.columns.isHtml')"
-      :disabled="!!column.template"
-      class="pa-0 my-2"
+      :disabled="!!formValue.template"
+      class="pa-0 my-0"
       color="primary"
+      density="compact"
       hide-details
-      @change="switchChangeIsHtml($event)"
+      @update:model-value="switchChangeIsHtml"
     />
+
     <v-switch
       v-if="withColorIndicator"
       :label="$t('settings.colorIndicator.title')"
-      :input-value="!!column.colorIndicator"
-      :disabled="!!column.template"
-      class="pa-0 my-2"
+      :model-value="!!formValue.colorIndicator"
+      :disabled="!!formValue.template"
+      class="pa-0 my-0"
       color="primary"
+      density="compact"
       hide-details
-      @change="switchChangeColorIndicator($event)"
+      @update:model-value="switchChangeColorIndicator"
     />
-    <v-layout v-if="column.colorIndicator">
-      <c-color-indicator-field
-        v-field="column.colorIndicator"
-        :disabled="!!column.template"
-      />
-    </v-layout>
+
+    <c-color-indicator-field
+      v-if="formValue.colorIndicator"
+      :model-value="formValue.colorIndicator"
+      :disabled="!!formValue.template"
+      @update:model-value="updateField('colorIndicator', $event)"
+    />
+
     <v-switch
       v-if="filterOnClickAvailable"
-      v-field="column.isFilter"
+      :model-value="formValue.isFilter"
       :label="$t('settings.columns.filterOnClick')"
-      :disabled="!!column.template || !!column.isHtml"
-      class="pa-0 my-2"
+      :disabled="!!formValue.template || !!formValue.isHtml"
+      class="pa-0 my-0"
+      color="primary"
+      density="compact"
+      hide-details
+      @update:model-value="updateField('isFilter', $event)"
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
 import {
-  MODALS,
-  COLOR_INDICATOR_TYPES,
-  DEFAULT_COLUMN_TEMPLATE_VALUE,
-  ALARM_INFOS_FIELDS,
-  ENTITY_INFOS_FIELDS,
-  ALARM_LIST_WIDGET_COLUMNS,
-  CONTEXT_WIDGET_COLUMNS,
   ALARM_FIELDS,
   ALARM_FIELDS_WITHOUT_FILTER_ON_CLICK,
+  ALARM_INFOS_FIELDS,
+  ALARM_LIST_WIDGET_COLUMNS,
+  COLOR_INDICATOR_TYPES,
+  CONTEXT_WIDGET_COLUMNS,
+  DEFAULT_COLUMN_TEMPLATE_VALUE,
+  ENTITY_INFOS_FIELDS,
+  MODALS,
 } from '@/constants';
 
 import { isLinksWidgetColumn } from '@/helpers/entities/widget/column/form';
 
+import { useInfos } from '@/hooks/store/modules/infos';
 import { formMixin } from '@/mixins/form';
-import { entitiesInfosMixin } from '@/mixins/entities/infos';
 
 import ColumnLinksCategoryField from './column-links-category-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: { ColumnLinksCategoryField },
-  mixins: [
-    formMixin,
-    entitiesInfosMixin,
-  ],
-  model: {
-    prop: 'column',
-    event: 'input',
-  },
+  mixins: [formMixin],
+
   props: {
-    column: {
+    value: {
       type: Object,
       default: () => ({}),
+    },
+    column: {
+      type: Object,
+      default: undefined,
     },
     name: {
       type: String,
@@ -196,10 +211,6 @@ export default {
       default: false,
     },
     withColorIndicator: {
-      type: Boolean,
-      default: false,
-    },
-    withInstructions: {
       type: Boolean,
       default: false,
     },
@@ -228,33 +239,49 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:value'],
+
+  setup() {
+    const { alarmInfos, alarmInfosRules, entityInfos, infosPending } = useInfos();
+
+    return {
+      alarmInfos,
+      alarmInfosRules,
+      entityInfos,
+      infosPending,
+    };
+  },
+
   data() {
     return {
       customLabel: false,
     };
   },
+
   computed: {
+    formValue() {
+      return this.column ?? this.value;
+    },
+
     infosFields() {
-      return [
-        ...ALARM_INFOS_FIELDS,
-        ...ENTITY_INFOS_FIELDS,
-      ];
+      return [...ALARM_INFOS_FIELDS, ...ENTITY_INFOS_FIELDS];
     },
 
     isLinks() {
-      return isLinksWidgetColumn(this.column?.column);
+      return isLinksWidgetColumn(this.formValue?.column);
     },
 
     isAlarmInfos() {
-      return ALARM_FIELDS.infos === this.column?.column;
+      return ALARM_FIELDS.infos === this.formValue?.column;
     },
 
     isInfos() {
-      return this.infosFields.includes(this.column?.column);
+      return this.infosFields.includes(this.formValue?.column);
     },
 
     isAlarmTicketData() {
-      return ALARM_FIELDS.ticketData === this.column?.column;
+      return ALARM_FIELDS.ticketData === this.formValue?.column;
     },
 
     infosItems() {
@@ -263,14 +290,16 @@ export default {
         ALARM_LIST_WIDGET_COLUMNS.entityComponentInfos,
         CONTEXT_WIDGET_COLUMNS.infos,
         CONTEXT_WIDGET_COLUMNS.componentInfos,
-      ].includes(this.column?.column) ? this.entityInfos : this.alarmInfos;
+      ].includes(this.formValue?.column)
+        ? this.entityInfos
+        : this.alarmInfos;
     },
 
     templateModalConfig() {
       return {
-        text: this.column?.template ?? '',
+        text: this.formValue?.template ?? '',
         title: this.$t('settings.columns.withTemplate'),
-        label: this.$tc('common.template', 1),
+        label: this.$t('common.template', 1),
         variables: this.variables,
         rules: {
           required: true,
@@ -286,31 +315,34 @@ export default {
       return `${this.name}.column`;
     },
 
-    columnValueErrorMessages() {
-      return this.errors.collect(this.columnValueFieldName);
-    },
-
     columnDictionaryName() {
       return `${this.name}.dictionary`;
     },
 
-    columnDictionaryErrorMessages() {
-      return this.errors.collect(this.columnDictionaryName);
-    },
-
     filterOnClickAvailable() {
-      return this.withFilterOnClick && !ALARM_FIELDS_WITHOUT_FILTER_ON_CLICK.includes(this.column?.column);
+      return (
+        this.withFilterOnClick &&
+        !ALARM_FIELDS_WITHOUT_FILTER_ON_CLICK.includes(this.formValue?.column)
+      );
     },
   },
+
   watch: {
     withLabel: {
       immediate: true,
       handler() {
-        this.customLabel = !!this.column.label;
+        this.customLabel = !!this.formValue.label;
       },
     },
   },
+
   methods: {
+    updateModel(model) {
+      this.$emit('update:value', model);
+
+      return model;
+    },
+
     updateCustomLabel(checked) {
       if (checked) {
         return;
@@ -321,12 +353,12 @@ export default {
 
     updateModelByTemplate(checked, template) {
       return this.updateModel({
-        ...this.column,
-
+        ...this.formValue,
         template,
-        isHtml: checked && this.column.isHtml ? false : this.column.isHtml,
-        colorIndicator: checked && this.column.colorIndicator ? null : this.column.colorIndicator,
-        isFilter: checked && this.column.isFilter ? false : this.column.isFilter,
+        isHtml: checked && this.formValue.isHtml ? false : this.formValue.isHtml,
+        colorIndicator:
+          checked && this.formValue.colorIndicator ? null : this.formValue.colorIndicator,
+        isFilter: checked && this.formValue.isFilter ? false : this.formValue.isFilter,
       });
     },
 
@@ -348,15 +380,10 @@ export default {
     },
 
     switchChangeColorIndicator(colorIndicator) {
-      const value = colorIndicator
-        ? COLOR_INDICATOR_TYPES.state
-        : null;
-
-      return this.updateField('colorIndicator', value);
-    },
-
-    isCustomTemplate() {
-      return !!this.column.template;
+      return this.updateField(
+        'colorIndicator',
+        colorIndicator ? COLOR_INDICATOR_TYPES.state : null,
+      );
     },
 
     showEditTemplateModal() {
@@ -371,10 +398,9 @@ export default {
 
     switchChangeIsHtml(isHtml) {
       this.updateModel({
-        ...this.column,
-
+        ...this.formValue,
         isHtml,
-        isFilter: isHtml ? false : this.column.isFilter,
+        isFilter: isHtml ? false : this.formValue.isFilter,
       });
     },
   },
