@@ -45,17 +45,22 @@ func (s *store) Get(ctx context.Context) (datastorage.DataStorage, error) {
 		return data, err
 	}
 
+	s.mergeHealthCheckHistory(&data, s.getHealthCheckHistory(ctx))
+
 	return data, nil
 }
 
 func (s *store) Update(ctx context.Context, conf datastorage.Config) (datastorage.DataStorage, error) {
+	healthCheckHistory := s.getHealthCheckHistory(ctx)
 	data := datastorage.DataStorage{}
+	var update any = bson.M{"$set": bson.M{"config": conf}}
+	if healthCheckHistory != nil {
+		update = s.updateConfigWithHealthCheckHistory(conf, *healthCheckHistory)
+	}
 	err := s.collection.FindOneAndUpdate(
 		ctx,
 		bson.M{"_id": datastorage.ID},
-		bson.M{"$set": bson.M{
-			"config": conf,
-		}},
+		update,
 		options.FindOneAndUpdate().SetUpsert(true).SetReturnDocument(options.After),
 	).Decode(&data)
 	if err != nil {
@@ -66,6 +71,7 @@ func (s *store) Update(ctx context.Context, conf datastorage.Config) (datastorag
 	if err != nil {
 		s.logger.Err(err).Msg("cannot update retention policy for remediation metrics")
 	}
+	s.mergeHealthCheckHistory(&data, s.getHealthCheckHistory(ctx))
 
 	return data, nil
 }
@@ -208,12 +214,20 @@ func (s *store) updatePerfDataRetentionPolicy(ctx context.Context, data datastor
 }
 
 func (s *store) updateMessageRateRetentionPolicy(ctx context.Context, data datastorage.DataStorage, pgPool postgres.Pool) error {
-	err := s.deleteRetentionPolicy(ctx, pgPool, metrics.MessageRateHourly)
+	deleteAfter := data.Config.HealthCheck.DeleteAfter
+	current, err := healthCheckRetentionPolicyMatches(ctx, pgPool, deleteAfter)
+	if err != nil {
+		return err
+	}
+	if current {
+		return nil
+	}
+
+	err = s.deleteRetentionPolicy(ctx, pgPool, metrics.MessageRateHourly)
 	if err != nil {
 		return err
 	}
 
-	deleteAfter := data.Config.HealthCheck.DeleteAfter
 	if datetime.IsDurationEnabledAndValid(deleteAfter) {
 		err = s.addRetentionPolicy(ctx, pgPool, metrics.MessageRateHourly, deleteAfter.String())
 		if err != nil {
