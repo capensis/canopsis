@@ -1,41 +1,36 @@
 <template>
-  <c-select-field
-    v-field="value"
+  <c-select
+    :model-value="modelValue"
     :items="items"
     :label="$t('llm.model')"
     :name="name"
     :disabled="disabled"
     :loading="loading"
     :required="required"
-    item-text="name"
+    item-title="name"
     item-value="name"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template #item="{ item, attrs, on }">
-      <v-list-item
-        v-bind="attrs"
-        v-on="on"
-      >
-        <v-list-item-content>{{ item.name }}</v-list-item-content>
-        <span
-          v-if="item.recommended"
-          class="ml-4 grey--text"
-        >
-          {{ $t('llm.recommendedBadge') }}
-        </span>
+    <template #item="{ props: itemProps, item }">
+      <v-list-item v-bind="itemProps">
+        <template #title>
+          {{ item.name }}
+        </template>
+
+        <template v-if="item.recommended" #append>
+          <span class="ml-4 text-medium-emphasis">
+            {{ $t('llm.recommendedBadge') }}
+          </span>
+        </template>
       </v-list-item>
     </template>
-  </c-select-field>
+  </c-select>
 </template>
 
 <script>
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: '',
     },
@@ -60,5 +55,7 @@ export default {
       default: false,
     },
   },
+
+  emits: ['update:modelValue'],
 };
 </script>

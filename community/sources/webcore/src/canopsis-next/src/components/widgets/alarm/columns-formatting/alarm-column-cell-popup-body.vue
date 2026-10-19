@@ -1,26 +1,23 @@
 <template>
-  <v-card>
-    <v-card-title class="primary pa-2 white--text">
-      <v-layout
-        class="gap-3"
-        justify-space-between
-        align-center
-      >
-        <h4>{{ $t('alarm.infoPopup') }}</h4>
+  <v-card class="alarm-column-cell-popup-body">
+    <v-card-title class="alarm-column-cell-popup-body__title bg-primary pa-2 text-white">
+      <c-layout class="gap-3" justify="space-between" align="center">
+        <span class="alarm-column-cell-popup-body__title-text">
+          {{ $t('alarm.infoPopup') }}
+        </span>
         <v-btn
-          color="white"
+          color="error"
+          density="compact"
+          size="x-small"
+          variant="text"
           icon
-          small
           @click="$emit('close')"
         >
-          <v-icon
-            color="error"
-            small
-          >
+          <v-icon color="error" size="small">
             close
           </v-icon>
         </v-btn>
-      </v-layout>
+      </c-layout>
     </v-card-title>
     <v-card-text class="pa-2">
       <c-compiled-template
@@ -36,8 +33,9 @@
 </template>
 
 <script>
-
 export default {
+  emits: ['close', 'select:tag', 'remove:tag'],
+
   props: {
     alarm: {
       type: Object,
@@ -56,6 +54,7 @@ export default {
       default: () => [],
     },
   },
+
   computed: {
     templateProps() {
       return {
@@ -73,3 +72,17 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.alarm-column-cell-popup-body {
+  &__title {
+    min-height: 32px;
+  }
+
+  &__title-text {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+}
+</style>

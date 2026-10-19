@@ -1,27 +1,20 @@
 <template>
-  <v-layout
-    :class="{ 'text-pairs__disabled': disabled }"
-    class="text-pairs"
-    column
-  >
-    <slot
-      v-if="!items.length"
-      name="no-data"
-    />
+  <c-layout :class="{ 'text-pairs__disabled': disabled }" class="text-pairs" column>
+    <slot v-if="!items.length" name="no-data" />
     <c-form-block-array-field
-      v-field="items"
+      :form="items"
       :add-button-label="addButtonLabel"
       :disabled="disabled"
-      :form="items"
       :item-key="itemKey"
       :item-to-form="textPairToForm"
-      :error-messages="errors.collect(name)"
+      :error-messages="collectErrors(name)"
       :required-error-message="requiredErrorMessage"
       :label="title || ''"
+      @update:form="updateModel"
     >
       <template #item="{ index, remove }">
         <c-text-pair-field
-          v-field="items[index]"
+          :item="items[index]"
           :disabled="disabled"
           :value-required="valueRequired"
           :text-required="textRequired"
@@ -32,29 +25,26 @@
           :name="items[index][itemKey]"
           :variables="variables"
           :items="valueItems"
+          @update:item="updateItemInArray(index, $event)"
           @remove="remove"
         >
           <template #append-value="">
-            <slot
-              :item="items[index]"
-              name="append-value"
-            />
+            <slot :item="items[index]" name="append-value" />
           </template>
         </c-text-pair-field>
       </template>
     </c-form-block-array-field>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
 import { textPairToForm } from '@/helpers/text-pairs';
 
+import { useFormErrorsMap } from '@/hooks/form';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
+
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'items',
-    event: 'input',
-  },
+  emits: ['update:items'],
   props: {
     title: {
       type: String,
@@ -117,9 +107,15 @@ export default {
       default: () => [],
     },
   },
-  setup() {
+  setup(props, { emit }) {
+    const { updateModel, updateItemInArray } = useArrayModelField(props, emit);
+    const { collectErrors } = useFormErrorsMap();
+
     return {
+      collectErrors,
       textPairToForm,
+      updateModel,
+      updateItemInArray,
     };
   },
 };

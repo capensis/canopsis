@@ -1,20 +1,21 @@
 <template>
-  <modal-wrapper close>
-    <template #title="">
+  <c-modal-wrapper close>
+    <template #title>
       <span>{{ title }}</span>
     </template>
-    <template #text="">
+    <template #text>
       <entities-list-table-with-pagination
         :widget="widget"
         :columns="widget.parameters.widgetColumns"
         :entities="entities"
         :meta="meta"
-        :loading="pending"
-        :query.sync="query"
+        :pending="pending"
+        :query="query"
         selectable
+        @update:query="updateQuery"
       />
     </template>
-  </modal-wrapper>
+  </c-modal-wrapper>
 </template>
 
 <script>
@@ -22,23 +23,25 @@ import { isEqual } from 'lodash';
 
 import { MODALS } from '@/constants';
 
+import { convertContextWidgetToQuery } from '@/helpers/entities/entity/query';
 import { convertWidgetQueryToRequest } from '@/helpers/entities/shared/query';
-import { convertAlarmWidgetToQuery } from '@/helpers/entities/alarm/query';
-
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns';
 
 import EntitiesListTableWithPagination from '@/components/widgets/context/partials/entities-list-table-with-pagination.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
   name: MODALS.entitiesList,
-  components: { EntitiesListTableWithPagination, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    widgetColumnsAlarmMixin,
-  ],
+
+  components: {
+    EntitiesListTableWithPagination,
+  },
+
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+
   data() {
     const { config = {} } = this.modal;
 
@@ -46,10 +49,15 @@ export default {
       pending: false,
       entities: [],
       meta: {},
-      query: convertAlarmWidgetToQuery(config.widget),
+      query: convertContextWidgetToQuery(config.widget),
     };
   },
+
   computed: {
+    config() {
+      return this.modal.config ?? {};
+    },
+
     title() {
       return this.config.title ?? this.$t('modals.alarmsList.title');
     },
@@ -58,6 +66,7 @@ export default {
       return this.config.widget;
     },
   },
+
   watch: {
     query(query, prevQuery) {
       if (!isEqual(query, prevQuery)) {
@@ -65,10 +74,16 @@ export default {
       }
     },
   },
+
   mounted() {
     this.fetchList();
   },
+
   methods: {
+    updateQuery(query) {
+      this.query = query;
+    },
+
     async fetchList() {
       try {
         this.pending = true;

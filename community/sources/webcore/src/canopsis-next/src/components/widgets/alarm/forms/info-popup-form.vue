@@ -1,34 +1,34 @@
 <template>
-  <v-layout column>
-    <v-select
-      v-field="form.column"
-      v-validate="'required'"
+  <c-layout column>
+    <c-select
+      :model-value="form.column"
       :items="columns"
-      :label="$tc('common.column', 1)"
-      :error-messages="errors.collect('column')"
+      :label="$t('common.column', 1)"
       name="column"
+      item-title="text"
+      item-value="value"
       autofocus
+      required
+      @update:model-value="updateField('column', $event)"
     />
     <text-editor-field
-      v-field="form.template"
-      v-validate="'required'"
-      :error-messages="errors.collect('template')"
+      :model-value="form.template"
       :variables="variables"
       name="template"
+      required
+      @update:model-value="updateField('template', $event)"
     />
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
+import { useModelField } from '@/hooks/form/model-field';
+
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: { TextEditorField },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+
   props: {
     form: {
       type: Object,
@@ -42,6 +42,16 @@ export default {
       type: Array,
       default: () => [],
     },
+  },
+
+  emits: ['update:form'],
+
+  setup(props, { emit }) {
+    const { updateField } = useModelField(props, emit);
+
+    return {
+      updateField,
+    };
   },
 };
 </script>

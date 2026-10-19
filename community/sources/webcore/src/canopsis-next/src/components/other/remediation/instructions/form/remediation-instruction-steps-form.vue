@@ -1,22 +1,25 @@
 <template>
   <c-card-iterator-form
-    v-field="steps"
+    :value="stepsField"
     :disabled="disabled"
     :draggable-group="draggableGroup"
-    :required-error-message="$t('remediation.instruction.errors.stepRequired')"
-    :add-button-label="$t('remediation.instruction.addStep')"
+    :required-error-message="t('remediation.instruction.errors.stepRequired')"
+    :add-button-label="t('remediation.instruction.addStep')"
     :name="name"
     item-key="key"
     iterator-class="mb-2"
     required
     @add="addStep"
+    @update:value="stepsField = $event"
   >
-    <template #item="{ index }">
+    <template #item="{ index, item: step }">
       <remediation-instruction-step-field
-        v-field="steps[index]"
+        :step="stepsField[index]"
+        :name="`${name}.${step.key}`"
         :step-number="index + 1"
         :disabled="disabled"
         :template-vars="templateVars"
+        @update:step="updateStep(index, $event)"
         @remove="removeStep(index)"
       />
     </template>
@@ -26,7 +29,8 @@
 <script>
 import { remediationInstructionStepToForm } from '@/helpers/entities/remediation/instruction/form';
 
-import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useFormArray } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
 
 import RemediationInstructionStepField from './fields/remediation-instruction-step-field.vue';
 
@@ -34,15 +38,7 @@ export default {
   components: {
     RemediationInstructionStepField,
   },
-  model: {
-    prop: 'steps',
-    event: 'input',
-  },
   props: {
-    steps: {
-      type: Array,
-      default: () => ([]),
-    },
     name: {
       type: String,
       default: 'steps',
@@ -56,19 +52,34 @@ export default {
       default: () => ({}),
     },
   },
-  setup(props, { emit }) {
-    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
+  setup() {
+    const { t } = useI18n();
+    const stepsField = useFormArray('steps');
 
     const draggableGroup = {
       name: 'remediation-instruction-steps',
     };
 
-    const addStep = () => addItemIntoArray(remediationInstructionStepToForm());
+    const addStep = () => {
+      stepsField.value = [...stepsField.value, remediationInstructionStepToForm()];
+    };
+    const updateStep = (index, value) => {
+      const steps = [...stepsField.value];
+
+      steps[index] = value;
+      stepsField.value = steps;
+    };
+    const removeStep = (index) => {
+      stepsField.value = stepsField.value.filter((step, stepIndex) => stepIndex !== index);
+    };
 
     return {
+      t,
+      stepsField,
       draggableGroup,
+      updateStep,
       addStep,
-      removeStep: removeItemFromArray,
+      removeStep,
     };
   },
 };

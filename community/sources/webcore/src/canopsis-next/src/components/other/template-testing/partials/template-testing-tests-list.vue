@@ -10,28 +10,23 @@
     @update:options="updateOptions"
   >
     <template #toolbar>
-      <div>
+      <div class="c-advanced-data-table__toolbar-field">
         <template-testing-test-type-field
           :value="options.type"
+          hide-details
           clearable
-          @input="updateType"
+          @update:value="updateType"
         />
       </div>
     </template>
+
     <template #type="{ item }">
-      <span>{{ $tc(`templateTesting.testTypes.${item.type}`) }}</span>
+      <span>{{ t(`templateTesting.testTypes.${item.type}`) }}</span>
     </template>
+
     <template #actions="{ item }">
-      <c-action-btn
-        v-if="updatable"
-        type="edit"
-        @click="edit(item)"
-      />
-      <c-action-btn
-        v-if="removable"
-        type="delete"
-        @click="remove(item)"
-      />
+      <c-action-btn v-if="updatable" type="edit" @click="edit(item)" />
+      <c-action-btn v-if="removable" type="delete" @click="remove(item)" />
     </template>
   </c-advanced-data-table>
 </template>
@@ -71,6 +66,7 @@ export default {
       default: false,
     },
   },
+  emits: ['edit', 'remove', 'update:options'],
   setup(props, { emit }) {
     const { t } = useI18n();
 
@@ -98,37 +94,14 @@ export default {
       },
     ]);
 
-    /**
-     * Emits an edit event for the specified item
-     *
-     * @param {Object} item - The item object to be edited
-     */
     const edit = item => emit('edit', item);
-
-    /**
-     * Emits a remove event for the specified item
-     *
-     * @param {Object} item - The item object to be removed
-     */
     const remove = item => emit('remove', item);
-
-    /**
-     * Updates the table options and emits the changes to the parent component
-     *
-     * @param {Object} options - The updated options object
-     */
     const updateOptions = options => emit('update:options', options);
-
-    /**
-     * Updates the type filter and emits the changes to the parent component
-     *
-     * @param {string} type - The new type filter value
-     */
     const updateType = type => updateOptions({ ...props.options, type });
 
     return {
+      t,
       headers,
-
       edit,
       remove,
       updateOptions,

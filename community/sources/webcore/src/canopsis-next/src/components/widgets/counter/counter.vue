@@ -1,84 +1,100 @@
 <template>
   <div class="pa-2">
-    <v-fade-transition
-      v-if="countersPending"
-      key="progress"
-      mode="out-in"
-    >
+    <v-fade-transition>
       <v-progress-linear
+        v-if="countersPending"
         class="progress-linear-absolute--top"
         height="2"
         indeterminate
       />
     </v-fade-transition>
-    <v-layout
-      key="content"
-      class="fill-height"
-      wrap
-    >
-      <v-alert
-        v-if="hasNoData"
-        type="info"
-      >
-        {{ $t('common.noData') }}
-      </v-alert>
+
+    <v-row class="fill-height" density="compact">
+      <v-col v-if="hasNoData" cols="12">
+        <v-alert type="info">
+          {{ $t('common.noData') }}
+        </v-alert>
+      </v-col>
+
       <template v-else>
-        <v-flex
+        <v-col
           v-for="counter in countersWithFilters"
           :key="counter.filter.title"
-          :class="flexSize"
+          :cols="columnSize"
         >
           <counter-item
             :counter="counter"
-            :widget="widget"
-            :query="queryWithoutFilters"
             :hide-actions="hideActions"
+            :query="queryWithoutFilters"
+            :widget="widget"
             class="weatherItem"
           />
-        </v-flex>
+        </v-col>
       </template>
-    </v-layout>
+    </v-row>
   </div>
 </template>
 
 <script>
 import { omit } from 'lodash';
+import { mapActions, mapState } from 'pinia';
 
-import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
-import entitiesCounterMixin from '@/mixins/entities/counter';
-import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
+import { useCounterStore } from '@/stores/modules/counter';
 
 import CounterItem from './counter-item.vue';
 
 export default {
+  inject: ['$periodicRefresh'],
+
   components: {
     CounterItem,
   },
-  mixins: [
-    widgetPeriodicRefreshMixin,
-    entitiesCounterMixin,
-    widgetFetchQueryMixin,
-  ],
+
   props: {
     widget: {
       type: Object,
       required: true,
     },
+    visible: {
+      type: Boolean,
+      default: false,
+    },
     hideActions: {
       type: Boolean,
-      required: false,
+      default: false,
     },
   },
-  computed: {
-    flexSize() {
-      const columnsCount = {
-        m: this.widget.parameters.columnMobile,
-        t: this.widget.parameters.columnTablet,
-        l: this.widget.parameters.columnDesktop,
-        xl: this.widget.parameters.columnDesktop,
-      }[this.$mq];
 
-      return `xs${12 / columnsCount}`;
+  computed: {
+    ...mapState(useCounterStore, {
+      getCountersListByWidgetId: 'getListByWidgetId',
+      getCountersPendingByWidgetId: 'getPendingByWidgetId',
+    }),
+
+    columnsCount() {
+      const displayName = this.$vuetify.display.name;
+
+      if (['xs', 'sm'].includes(displayName)) {
+        return this.widget.parameters.columnMobile;
+      }
+
+      if (displayName === 'md') {
+        return this.widget.parameters.columnTablet;
+      }
+
+      return this.widget.parameters.columnDesktop;
+    },
+
+    columnSize() {
+      return 12 / this.columnsCount;
+    },
+
+    counters() {
+      return this.getCountersListByWidgetId(this.widget._id);
+    },
+
+    countersPending() {
+      return this.getCountersPendingByWidgetId(this.widget._id);
     },
 
     hasNoData() {
@@ -86,20 +102,68 @@ export default {
     },
 
     countersWithFilters() {
-      const { filters } = this.widget;
+      const { filters = [] } = this.widget;
 
       return this.counters
         .filter((counter, index) => filters[index])
         .map((counter, index) => ({ ...counter, filter: filters[index] }));
     },
 
+    query() {
+      const { filters = [], parameters = {} } = this.widget;
+
+      return {
+        opened: parameters.opened,
+        correlation: parameters.isCorrelationEnabled,
+        filters: filters.map(({ _id: id }) => id),
+      };
+    },
+
     queryWithoutFilters() {
       return omit(this.query, ['filters']);
     },
   },
+
+  watch: {
+    visible: {
+      immediate: true,
+      handler(visible) {
+        if (visible) {
+          this.fetchList();
+        }
+      },
+    },
+
+    query() {
+      if (this.visible) {
+        this.fetchList();
+      }
+    },
+  },
+
+  created() {
+    this.$periodicRefresh.registerChild(this.refresh);
+  },
+
+  beforeUnmount() {
+    this.$periodicRefresh.unregisterChild(this.refresh);
+  },
+
   methods: {
+    ...mapActions(useCounterStore, {
+      fetchCountersList: 'fetchList',
+    }),
+
+    refresh() {
+      if (this.visible) {
+        return this.fetchList();
+      }
+
+      return Promise.resolve();
+    },
+
     fetchList() {
-      this.fetchCountersList({
+      return this.fetchCountersList({
         widgetId: this.widget._id,
         filters: this.query.filters,
         params: this.queryWithoutFilters,
@@ -110,7 +174,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .weatherItem {
-    height: 100%;
-  }
+.weatherItem {
+  height: 100%;
+}
 </style>

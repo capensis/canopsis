@@ -1,32 +1,28 @@
 <template>
-  <c-select-field
-    v-field="value"
-    v-validate="rules"
+  <c-select
+    :model-value="selectValue"
     :items="itemsWithCustom"
-    :label="label || $tc('common.pattern')"
+    :label="label || $t('common.pattern')"
     :loading="pending"
     :disabled="disabled"
     :name="name"
-    :return-object="returnObject"
-    item-text="title"
+    :required="required"
+    item-title="title"
     item-value="_id"
     hide-details
+    @update:model-value="updateValue"
   >
-    <template #item="{ item, attrs, on }">
-      <v-list-item
-        v-bind="attrs"
-        v-on="on"
-      >
-        <v-list-item-content>{{ item.title }}</v-list-item-content>
-        <v-icon
-          v-if="item.is_corporate"
-          size="20"
-        >
-          share
-        </v-icon>
+    <template #item="{ props: itemProps, item }">
+      <v-list-item v-bind="itemProps">
+        <v-list-item-title>{{ item.title }}</v-list-item-title>
+        <template v-if="item.is_corporate" #append>
+          <v-icon size="20">
+            share
+          </v-icon>
+        </template>
       </v-list-item>
     </template>
-  </c-select-field>
+  </c-select>
 </template>
 
 <script>
@@ -35,7 +31,7 @@ import { MAX_LIMIT, PATTERN_CUSTOM_ITEM_VALUE } from '@/constants';
 import { entitiesPatternsMixin } from '@/mixins/entities/pattern';
 
 export default {
-  inject: ['$validator'],
+  emits: ['update:value'],
   mixins: [entitiesPatternsMixin],
   props: {
     value: {
@@ -74,12 +70,6 @@ export default {
     };
   },
   computed: {
-    rules() {
-      return {
-        required: this.required,
-      };
-    },
-
     itemsWithCustom() {
       return [
         ...this.items,
@@ -89,11 +79,28 @@ export default {
         },
       ];
     },
+
+    selectValue() {
+      return this.value?._id ?? this.value;
+    },
   },
   mounted() {
     this.fetchList();
   },
   methods: {
+    updateValue(id) {
+      if (!this.returnObject) {
+        this.$emit('update:value', id);
+
+        return;
+      }
+
+      this.$emit(
+        'update:value',
+        this.itemsWithCustom.find(({ _id }) => _id === id) ?? id,
+      );
+    },
+
     getQuery() {
       const params = { limit: MAX_LIMIT };
 

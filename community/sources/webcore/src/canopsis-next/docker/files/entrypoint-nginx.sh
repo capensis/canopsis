@@ -44,7 +44,8 @@ then
     sed -i -e "s,{{ NGINX_URL }},$NGINX_URL,g" "${NGINX_CONFIGURATION_DIRECTORY}"/rundeck.inc
 fi
 
-sed -i -e "s,http://127.0.0.1:8082,$CPS_API_URL,g" "${NGINX_CONFIGURATION_DIRECTORY}"/conf.d/canopsis.conf
+sed -i -e "s,http://127.0.0.1:8082,$CPS_INTERNAL_API_URL,g" "${NGINX_CONFIGURATION_DIRECTORY}"/conf.d/canopsis.conf
+sed -i -e "s,http://127.0.0.1:8083,$CPS_PUBLIC_API_URL,g" "${NGINX_CONFIGURATION_DIRECTORY}"/conf.d/canopsis.conf
 sed -i -e "s,\$canopsis_server_name localhost,\$canopsis_server_name $CPS_SERVER_NAME,g" "${NGINX_CONFIGURATION_DIRECTORY}"/conf.d/canopsis.conf
 echo "resolver $(awk 'BEGIN{ORS=" "} $1=="nameserver" {print $2}' /etc/resolv.conf) valid=20s;" > "${NGINX_CONFIGURATION_DIRECTORY}"/resolvers.inc
 

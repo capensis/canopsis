@@ -1,13 +1,7 @@
 <template>
   <div class="alarm-webhook-execution-timeline-steps">
-    <ul
-      v-for="(groupSteps, day) in groupedSteps"
-      :key="day"
-    >
-      <li
-        v-for="(step, index) in groupSteps"
-        :key="index"
-      >
+    <ul v-for="(groupSteps, day) in groupedSteps" :key="day">
+      <li v-for="(step, index) in groupSteps" :key="index">
         <div
           v-show="index === 0"
           class="alarm-webhook-execution-timeline-steps-date text--disabled"
@@ -18,16 +12,10 @@
         </div>
         <div class="alarm-webhook-execution-timeline-steps-card">
           <div class="time text--disabled">
-            {{ step.t | date('time') }}
+            {{ dateToString(step.t, 'time') }}
           </div>
-          <alarm-webhook-execution-timeline-flag
-            :step="step"
-            class="flag"
-          />
-          <slot
-            :step="step"
-            name="card"
-          />
+          <alarm-webhook-execution-timeline-flag :step="step" class="flag" />
+          <slot :step="step" name="card" />
         </div>
       </li>
     </ul>
@@ -35,6 +23,7 @@
 </template>
 
 <script>
+import { convertDateToString } from '@/helpers/date/date';
 import { groupAlarmSteps } from '@/helpers/entities/alarm/step/list';
 
 import AlarmWebhookExecutionTimelineFlag from './alarm-webhook-execution-timeline-flag.vue';
@@ -52,11 +41,16 @@ export default {
       return groupAlarmSteps(this.steps);
     },
   },
+  methods: {
+    dateToString(timestamp, format) {
+      return convertDateToString(timestamp, format);
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-$borderLine: #DDDDE0;
+$borderLine: #dddde0;
 
 .alarm-webhook-execution-timeline-steps {
   ul {
@@ -73,7 +67,8 @@ $borderLine: #DDDDE0;
       position: absolute;
     }
 
-    &:before, &:after {
+    &:before,
+    &:after {
       content: '';
       position: absolute;
       left: -2px;
@@ -113,7 +108,8 @@ $borderLine: #DDDDE0;
       align-items: center;
     }
 
-    &:before, &:after {
+    &:before,
+    &:after {
       content: '';
       position: absolute;
       left: -2px;
@@ -129,11 +125,7 @@ $borderLine: #DDDDE0;
 
   ul:last-of-type li:last-child &-card:after {
     background-color: unset;
-    background-image: linear-gradient(
-        to bottom,
-        $borderLine 60%,
-        transparent
-    );
+    background-image: linear-gradient(to bottom, $borderLine 60%, transparent);
   }
 }
 </style>

@@ -1,38 +1,30 @@
 <template>
-  <v-layout
-    class="col-gap-6 row-gap-3"
-    justify-end
-    wrap
-  >
+  <c-layout class="col-gap-6 row-gap-3" justify="end" wrap>
     <v-btn
       v-if="!hideCsv"
       :loading="downloading"
+      :disabled="!chart"
       color="primary"
-      small
+      size="small"
       @click="$emit('export:csv')"
     >
-      <v-icon
-        small
-        left
-      >
+      <v-icon class="mr-1" size="small">
         file_download
       </v-icon>
       <span>{{ $t('common.exportAsCsv') }}</span>
     </v-btn>
     <v-btn
+      :disabled="!chart"
       color="primary"
-      small
+      size="small"
       @click="exportChartAsPng"
     >
-      <v-icon
-        small
-        left
-      >
+      <v-icon class="mr-1" size="small">
         file_download
       </v-icon>
       <span>{{ $t('common.downloadAsPng') }}</span>
     </v-btn>
-  </v-layout>
+  </c-layout>
 </template>
 
 <script>
@@ -42,7 +34,7 @@ export default {
   props: {
     chart: {
       type: Object,
-      required: true,
+      required: false,
     },
     downloading: {
       type: Boolean,
@@ -53,8 +45,15 @@ export default {
       default: false,
     },
   },
+
+  emits: ['export:csv', 'export:png'],
+
   methods: {
     async exportChartAsPng() {
+      if (!this.chart) {
+        return;
+      }
+
       this.$emit('export:png', await canvasToBlob(this.chart.canvas));
     },
   },

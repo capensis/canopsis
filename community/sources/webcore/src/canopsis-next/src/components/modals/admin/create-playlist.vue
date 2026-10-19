@@ -1,116 +1,137 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
+    <c-modal-wrapper close>
+      <template #title>
         <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <playlist-form
-          v-model="form"
-          :groups="playlistGroups"
-          :tabs-pending="tabsPending"
-        />
+
+      <template #text>
+        <playlist-form :groups="playlistGroups" :tabs-pending="tabsPending" />
       </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
-          :disabled="isDisabled"
+          :disabled="submitting"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
-          {{ $t('common.saveChanges') }}
+          {{ t('common.saveChanges') }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { computed, onMounted, ref } from 'vue';
 
-import { MAX_LIMIT, MODALS } from '@/constants';
+import { MAX_LIMIT } from '@/constants';
 
-import { playlistToForm, formToPlaylist } from '@/helpers/entities/playlist/form';
+import {
+  formToPlaylist,
+  getTabsFromGroupsByIds,
+  playlistToForm,
+} from '@/helpers/entities/playlist/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
-import { permissionsEntitiesPlaylistTabMixin } from '@/mixins/permissions/entities/playlist-tab';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { useView } from '@/hooks/store/modules/view';
 
 import PlaylistForm from '@/components/other/playlists/form/playlist-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
-const { mapGetters: mapEntitiesGetters } = createNamespacedHelpers('entities');
-
 export default {
-  name: MODALS.createPlaylist,
-  $_veeValidate: {
-    validator: 'new',
-  },
-  components: { PlaylistForm, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    entitiesViewGroupMixin,
-    permissionsEntitiesPlaylistTabMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    return {
-      playlistGroups: [],
-      tabsPending: true,
-      form: playlistToForm(this.modal.config.playlist),
-    };
-  },
-  computed: {
-    ...mapEntitiesGetters(['getList']),
+  components: { PlaylistForm },
 
-    title() {
-      return this.config.title || this.$t('modals.createPlaylist.create.title');
+  props: {
+    modal: {
+      type: Object,
+      required: true,
     },
   },
-  mounted() {
-    this.fetchGroups();
-  },
-  methods: {
-    async fetchGroups() {
-      const { playlist } = this.config;
 
-      this.tabsPending = true;
+  setup(props) {
+    const { t } = useI18n();
+    const modals = useModals();
+    const { fetchViewGroupsListWithoutStore } = useView();
+    const config = computed(() => props.modal.config ?? {});
+    const playlist = computed(() => config.value.playlist);
+    const isNew = computed(() => !playlist.value?._id || config.value.duplicating);
+    const title = computed(() => {
+      const mode = config.value.duplicating ? 'duplicate' : isNew.value ? 'create' : 'edit';
 
-      const { data: groups } = await this.fetchGroupsListWithoutStore({
-        params: { limit: MAX_LIMIT, with_views: true, with_tabs: true },
-      });
+      return config.value.title || t(`modals.createPlaylist.${mode}.title`);
+    });
+    const playlistGroups = ref([]);
+    const tabsPending = ref(false);
 
-      this.playlistGroups = groups;
+    const form = useForm({
+      initialValues: playlistToForm(playlist.value),
+    });
+    const { values, handleSubmit, submitting, reset } = form;
 
-      if (playlist && playlist.tabs_list.length) {
-        this.form.tabs_list = this.getAvailableTabsByIds(playlist.tabs_list);
-      }
+    const closeModal = () => modals.hide({ id: props.modal.id });
 
-      this.tabsPending = false;
-    },
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToPlaylist(values.value));
 
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
+      await config.value.afterSubmit?.(result);
 
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(formToPlaylist(this.form));
+      closeModal();
+
+      return result;
+    });
+
+    const { updateOriginalForm } = useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
+    });
+
+    const fetchGroups = async () => {
+      try {
+        tabsPending.value = true;
+
+        const { data = [] } = await fetchViewGroupsListWithoutStore({
+          params: {
+            limit: MAX_LIMIT,
+            with_views: true,
+            with_tabs: true,
+          },
+        });
+
+        playlistGroups.value = data;
+
+        if (playlist.value?.tabs_list?.length) {
+          reset({
+            ...values.value,
+
+            tabs_list: getTabsFromGroupsByIds(data, playlist.value.tabs_list),
+          });
+          updateOriginalForm();
         }
-
-        this.$modals.hide();
+      } finally {
+        tabsPending.value = false;
       }
-    },
+    };
+
+    onMounted(fetchGroups);
+
+    return {
+      t,
+      title,
+      playlistGroups,
+      tabsPending,
+      submitting,
+      closeModal,
+      submit,
+    };
   },
 };
 </script>

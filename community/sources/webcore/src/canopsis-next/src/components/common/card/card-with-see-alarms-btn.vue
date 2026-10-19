@@ -2,15 +2,16 @@
   <v-card
     :class="itemClasses"
     class="card-with-see-alarms-btn"
+    theme="dark"
     tile
-    dark
-    v-on="$listeners"
+    v-bind="$attrs"
   >
     <slot />
+
     <v-btn
       v-if="showButton"
       class="card-with-see-alarms-btn__btn"
-      text
+      variant="text"
       @click.stop="$emit('show:alarms')"
     >
       {{ $t('common.seeAlarms') }}
@@ -20,12 +21,17 @@
 
 <script>
 export default {
+  inheritAttrs: false,
+
+  emits: ['show:alarms'],
+
   props: {
     showButton: {
       type: Boolean,
       default: false,
     },
   },
+
   computed: {
     itemClasses() {
       return {
@@ -54,17 +60,22 @@ export default {
     position: absolute;
     bottom: 0;
     width: 100%;
-    font-size: .6em;
+    min-width: 0;
     height: var(--see-alarms-btn-height) !important;
     margin: 0;
-    background-color: rgba(0, 0, 0, .2);
+    color: white;
+    background-color: rgba(0, 0, 0, 0.2);
 
-    span {
+    .v-btn__content {
       color: white;
     }
 
-    &.v-btn--active:before, &.v-btn:focus:before, &.v-btn:hover:before {
-      background-color: rgba(0, 0, 0, .5);
+    &.v-btn--active,
+    &:focus,
+    &:hover {
+      .v-btn__overlay {
+        background-color: rgba(0, 0, 0, 0.5);
+      }
     }
   }
 }

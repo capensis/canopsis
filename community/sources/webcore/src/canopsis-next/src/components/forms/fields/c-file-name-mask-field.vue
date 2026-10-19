@@ -1,11 +1,8 @@
 <template>
-  <v-layout wrap>
-    <v-flex
-      v-show="title"
-      xs12
-    >
-      <v-layout>
-        <h4 class="text-subtitle-1 grey--text text--darken-2">
+  <v-row>
+    <v-col v-show="title" cols="12">
+      <c-layout>
+        <h4 class="text-subtitle-1 text-grey-darken-2">
           {{ title }}
         </h4>
         <c-help-icon
@@ -15,34 +12,28 @@
           max-width="250"
           top
         />
-      </v-layout>
-    </v-flex>
-    <v-flex xs12>
-      <v-layout column>
-        <v-text-field
-          v-field="value"
-          v-validate="rules"
-          :value="value"
+      </c-layout>
+    </v-col>
+    <v-col cols="12">
+      <c-layout column>
+        <c-text-field
+          :model-value="modelValue"
           :label="label"
           :placeholder="placeholder"
-          :error-messages="errors.collect(name)"
           :disabled="disabled"
           :name="name"
+          :required="required"
+          @update:model-value="$emit('update:modelValue', $event)"
         />
-      </v-layout>
-    </v-flex>
-  </v-layout>
+      </c-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
 export default {
-  inject: ['$validator'],
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: '',
     },
@@ -75,12 +66,7 @@ export default {
       required: false,
     },
   },
-  computed: {
-    rules() {
-      return {
-        required: this.required,
-      };
-    },
-  },
+
+  emits: ['update:modelValue'],
 };
 </script>

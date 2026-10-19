@@ -1,25 +1,24 @@
 <template>
   <c-expand-btn
     :class="expandButtonClass"
-    :expanded="expanded"
+    :model-value="expanded"
     :loading="pending"
     class="alarms-expand-panel-btn"
-    @expand="showExpandPanel"
+    @update:model-value="showExpandPanel"
   />
 </template>
 
 <script>
-import { prepareAlarmDetailsQuery, convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
+import { mapActions } from 'pinia';
 
-import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
+import { useAlarmStore } from '@/stores/modules/alarm';
+
+import {
+  convertAlarmDetailsQueryToRequest,
+  prepareAlarmDetailsQuery,
+} from '@/helpers/entities/alarm/query';
 
 export default {
-  inject: ['$system'],
-  mixins: [widgetExpandPanelAlarmDetails],
-  model: {
-    prop: 'expanded',
-    event: 'input',
-  },
   props: {
     expanded: {
       type: Boolean,
@@ -42,6 +41,15 @@ export default {
       default: '',
     },
   },
+
+  emits: ['update:expanded'],
+
+  data() {
+    return {
+      pending: false,
+    };
+  },
+
   computed: {
     expandButtonClass() {
       return {
@@ -49,19 +57,30 @@ export default {
       };
     },
   },
-  methods: {
-    async showExpandPanel() {
-      if (!this.expanded) {
-        this.query = prepareAlarmDetailsQuery(this.alarm, this.widget, this.search);
 
-        await this.fetchAlarmDetails({
-          widgetId: this.widget._id,
-          id: this.alarm._id,
-          query: convertAlarmDetailsQueryToRequest(this.query),
-        });
+  methods: {
+    ...mapActions(useAlarmStore, ['fetchAlarmDetails']),
+
+    async showExpandPanel(expanded) {
+      if (expanded) {
+        this.pending = true;
+
+        try {
+          const query = prepareAlarmDetailsQuery(this.alarm, this.widget, this.search);
+
+          await this.fetchAlarmDetails({
+            widgetId: this.widget._id,
+            id: this.alarm._id,
+            query: convertAlarmDetailsQueryToRequest(query),
+          });
+        } catch (err) {
+          console.error(err);
+        } finally {
+          this.pending = false;
+        }
       }
 
-      this.$emit('input', !this.expanded);
+      this.$emit('update:expanded', expanded);
     },
   },
 };
@@ -71,8 +90,8 @@ export default {
 .alarms-expand-panel-btn {
   &--small {
     width: 22px;
-    height: 22px;
     max-width: 22px;
+    height: 22px;
     max-height: 22px;
   }
 }

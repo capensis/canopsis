@@ -1,151 +1,80 @@
-import { kebabCase, merge, pick } from 'lodash';
+import { DEFAULT_THEME_COLORS } from '@/config';
 
-import { DEFAULT_THEME_COLORS, COLORS } from '@/config';
-import { THEME_FONT_PIXEL_SIZES, THEME_FONT_SIZES } from '@/constants';
+import { CANOPSIS_THEME_NAME, vuetify } from '@/plugins/vuetify';
 
-import { colorToRgba, getDarkenColor, isDarkColor, getMostReadableTextColor } from '@/helpers/color';
-import { themePropertiesToCSSVariables } from '@/helpers/entities/theme/entity';
-import { convertTypeColors } from '@/helpers/entities/theme/form';
+import { createCanopsisVuetifyTheme } from '@/helpers/entities/theme/vuetify';
+
+const DEFAULT_CANOPSIS_THEME = createCanopsisVuetifyTheme(DEFAULT_THEME_COLORS);
 
 export const systemThemeMixin = {
   data() {
     return {
-      otherVariables: {
-        fontSizeRoot: `${THEME_FONT_PIXEL_SIZES[THEME_FONT_SIZES.medium]}px`,
-      },
+      themeCssVariables: DEFAULT_CANOPSIS_THEME.legacyCssVariables,
     };
   },
+
   computed: {
-    cssVariables() {
-      return Object.entries(themePropertiesToCSSVariables(this.otherVariables))
-        .reduce((acc, [key, value]) => `${acc}--v-${kebabCase(key)}:${value};`, '');
-    },
     css() {
-      return `:root{${this.cssVariables}}`;
+      return `:root{${this.themeCssVariables}}`;
     },
   },
+
   created() {
     this.injectCSS(this.css);
   },
-  beforeDestroy() {
+
+  beforeUnmount() {
     this.ejectCSS();
   },
+
   watch: {
     css(value) {
       this.updateCSS(value);
     },
   },
+
   methods: {
     injectCSS(value) {
       if (!this.styleElement) {
         this.styleElement = document.createElement('style');
+        this.styleElement.id = 'canopsis-theme-legacy-variables';
       }
 
       this.updateCSS(value);
-
       document.head.appendChild(this.styleElement);
     },
 
     updateCSS(value) {
-      this.styleElement.innerHTML = value;
+      if (this.styleElement) {
+        this.styleElement.innerHTML = value;
+      }
     },
 
     ejectCSS() {
-      document.head.removeChild(this.styleElement);
-
+      this.styleElement?.remove();
       delete this.styleElement;
     },
 
-    setTheme(theme) {
-      const { colors, font_size: fontSize } = theme;
-      const { main, table, state } = colors;
+    setTheme(theme = DEFAULT_THEME_COLORS) {
+      const {
+        definition,
+        isDark,
+        legacyCssVariables,
+        theme: preparedTheme,
+      } = createCanopsisVuetifyTheme(theme);
 
-      const white = '#fff';
-      const black = '#000';
-      const isDark = isDarkColor(main.background);
-
-      const stateText = Object.entries(state).reduce((acc, [key, color]) => {
-        acc[`${key}-text`] = getMostReadableTextColor(color);
-
-        return acc;
-      }, {});
-
-      const vuetifyVariables = merge({}, DEFAULT_THEME_COLORS, {
-        table,
-        'impact-state': COLORS.impactStateGrouped,
-
-        state: {
-          ...state,
-          ...stateText,
-        },
-        applicationBackground: getDarkenColor(main.background, isDark ? 7 : 2),
-
-        ...main,
-        ...convertTypeColors(main),
-      });
-
-      const variables = themePropertiesToCSSVariables(vuetifyVariables);
-
-      this.$vuetify.theme.dark = isDark;
-      this.$vuetify.theme.themes.dark = variables;
-      this.$vuetify.theme.themes.light = variables;
-
-      const lightBaseColor = isDark ? black : main.active_color;
-      const darkBaseColor = isDark ? main.active_color : white;
-
-      const typeBackgroundColors = pick(vuetifyVariables, [
-        'error-background',
-        'warning-background',
-        'success-background',
-        'info-background',
-      ]);
-
-      const textLight = {
-        primary: colorToRgba(lightBaseColor, 0.87),
-        secondary: colorToRgba(lightBaseColor, 0.54),
-        disabled: colorToRgba(lightBaseColor, 0.38),
-      };
-      const textDark = {
-        primary: darkBaseColor,
-        secondary: colorToRgba(darkBaseColor, 0.70),
-        disabled: colorToRgba(darkBaseColor, 0.50),
+      vuetify.theme.themes.value = {
+        ...vuetify.theme.themes.value,
+        [CANOPSIS_THEME_NAME]: definition,
       };
 
-      const buttonsLight = {
-        disabled: colorToRgba(lightBaseColor, 0.26),
-        focused: colorToRgba(lightBaseColor, 0.12),
-      };
-      const buttonsDark = {
-        disabled: colorToRgba(lightBaseColor, 0.3),
-        focused: colorToRgba(lightBaseColor, 0.12),
-      };
+      vuetify.theme.change(CANOPSIS_THEME_NAME);
 
-      const active = isDark ? black : white;
-      const completed = isDark ? white : black;
-
-      const stepper = {
-        active,
-        completed: colorToRgba(completed, 0.87),
-        hover: colorToRgba(completed, isDark ? 0.75 : 0.54),
-      };
-
-      const divider = {
-        borderColor: colorToRgba(isDark ? darkBaseColor : lightBaseColor, 0.12),
-      };
-
-      this.otherVariables = {
-        fontSizeRoot: `${THEME_FONT_PIXEL_SIZES[fontSize]}px`,
-        textLight,
-        textDark,
-        buttonsLight,
-        buttonsDark,
-        stepper,
-        divider,
-
-        ...typeBackgroundColors,
-      };
+      this.themeCssVariables = legacyCssVariables;
       this.system.dark = isDark;
-      this.system.theme = theme;
+      this.system.theme = preparedTheme;
     },
   },
 };
+
+export default systemThemeMixin;

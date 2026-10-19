@@ -1,10 +1,11 @@
 <template>
   <v-card class="test-data-card">
     <v-card-text>
-      <v-layout column>
+      <c-layout gap="3" column>
         <span class="text-subtitle-2">
-          {{ $t('templateTesting.testData') }}
+          {{ t('templateTesting.testData') }}
         </span>
+
         <component
           v-for="field in fields"
           :is="field.is"
@@ -12,7 +13,7 @@
           v-bind="field.bind"
           v-on="field.on"
         />
-      </v-layout>
+      </c-layout>
     </v-card-text>
   </v-card>
 </template>
@@ -27,25 +28,23 @@ import {
   USER_PERMISSIONS,
 } from '@/constants';
 
-import { useI18n } from '@/hooks/i18n';
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useI18n } from '@/hooks/i18n';
 
 import TemplateTestingTestDataField from '../../form/fields/template-testing-data-field.vue';
 
-/**
- * We don't need this constant in another partials, because it's used only here
- */
 const TEMPLATE_TESTING_TEST_VARIABLES_TEST_DATA_TYPES = [
   TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event,
   TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
   TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse,
 ];
 
-const TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_COPONENTS = {
+const TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_COMPONENTS = {
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event]: 'template-testing-test-data-field',
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response]: 'template-testing-test-data-field',
-  [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse]: 'template-testing-test-data-field',
+  [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse]:
+    'template-testing-test-data-field',
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm]: 'c-alarm-field',
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user]: 'c-user-picker-field',
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.entity]: 'c-entity-field',
@@ -53,10 +52,7 @@ const TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_COPONENTS = {
 
 export default {
   components: { TemplateTestingTestDataField },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+
   props: {
     form: {
       type: Array,
@@ -71,11 +67,18 @@ export default {
       default: 'testdata',
     },
   },
+
+  emits: ['update:form'],
+
   setup(props, { emit }) {
     const { t } = useI18n();
 
-    const { hasReadAccess: hasReadAccessForAnyUser } = useCRUDPermissions(USER_PERMISSIONS.technical.user);
-    const { hasReadAccess: hasReadAccessForTemplateData } = useCRUDPermissions(USER_PERMISSIONS.technical.templateData);
+    const { hasReadAccess: hasReadAccessForAnyUser } = useCRUDPermissions(
+      USER_PERMISSIONS.technical.user,
+    );
+    const { hasReadAccess: hasReadAccessForTemplateData } = useCRUDPermissions(
+      USER_PERMISSIONS.technical.templateData,
+    );
     const { updateFieldInArrayItem } = useArrayModelField(props, emit);
 
     /**
@@ -93,39 +96,58 @@ export default {
       }
 
       if (item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse) {
-        return t(`templateTesting.testDataCheckTicketStatusResponseLabels.${props.type}`, { index: item.index + 1 });
+        return t(`templateTesting.testDataCheckTicketStatusResponseLabels.${props.type}`, {
+          index: item.index + 1,
+        });
       }
 
       return t(`templateTesting.testDataResponseLabels.${props.type}`, { index: item.index + 1 });
     };
 
-    const hasFilledSomeRequiredField = computed(() => props.form.some(item => item.someRequired && item.value));
+    const hasFilledSomeRequiredField = computed(() => props.form.some(item => item.someRequired && item.value),
+    );
+
+    const getFieldName = (item) => {
+      if (!isUndefined(item.index)) {
+        const indexedField = {
+          [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response]: 'responses',
+          [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.ticketStatusResponse]:
+            'ticket_status_responses',
+        }[item.type];
+
+        if (indexedField) {
+          return `${props.name}.${indexedField}.${item.index}`;
+        }
+      }
+
+      return `${props.name}.${item.type}`;
+    };
 
     const fields = computed(() => props.form.map((item, index) => ({
-      is: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_COPONENTS[item.type],
-      key: item.key,
-      bind: {
-        value: item.value,
-        label: getLabel(item),
-        params: item.params,
-        name: `${props.name}.${item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response ? `responses.${index}` : item.type}`,
-        required: item.required || (item.someRequired && !hasFilledSomeRequiredField.value),
-        disabled: (
-          (item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user && !hasReadAccessForAnyUser.value)
-          || (
-            TEMPLATE_TESTING_TEST_VARIABLES_TEST_DATA_TYPES.includes(item.type)
-            && !hasReadAccessForTemplateData.value
-          )
-        ),
-        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_DATA_TYPE[item.type],
-        clearable: true,
-      },
-      on: {
-        input: value => updateFieldInArrayItem(index, 'value', value),
-      },
-    })));
+        is: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_COMPONENTS[item.type],
+        key: item.key,
+        bind: {
+          value: item.value,
+          label: getLabel(item),
+          params: item.params,
+          name: getFieldName(item),
+          required: item.required || (item.someRequired && !hasFilledSomeRequiredField.value),
+          disabled:
+            (item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user &&
+              !hasReadAccessForAnyUser.value) ||
+            (TEMPLATE_TESTING_TEST_VARIABLES_TEST_DATA_TYPES.includes(item.type) &&
+              !hasReadAccessForTemplateData.value),
+          type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_DATA_TYPE[item.type],
+          clearable: true,
+        },
+        on: {
+          'update:value': value => updateFieldInArrayItem(index, 'value', value),
+        },
+      })),
+    );
 
     return {
+      t,
       fields,
     };
   },
@@ -134,10 +156,10 @@ export default {
 
 <style lang="scss" scoped>
 .theme--light .test-data-card {
-  background-color: var(--v-application-background-darken1);
+  background-color: rgb(var(--v-theme-secondary-lighten-2));
 }
 
 .theme--dark .test-data-card {
-  background-color: var(--v-application-background-lighten2);
+  background-color: rgb(var(--v-theme-secondary-lighten-1));
 }
 </style>

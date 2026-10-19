@@ -1,0 +1,45 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "unicorn", "oxc", "vue", "vitest"],
+  "ignorePatterns": ["public/scripts/**"],
+  "env": {
+    "browser": true
+  },
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "eslint/no-unused-vars": "off",
+    "vitest/expect-expect": [
+      "error",
+      {
+        "assertFunctionNames": [
+          "expect",
+          "expectTypeOf",
+          "assert",
+          "assertType",
+          "expect*",
+          "submitWithExpects",
+          "check*"
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "__tests__/setup.js",
+        "__tests__/unit/utils/**",
+        "__tests__/unit/stubs/**",
+        "__tests__/unit/mocks/**",
+        "__tests__/unit/data/**"
+      ],
+      "rules": {
+        "jest/no-export": "off",
+        "jest/valid-title": "off",
+        "jest/no-conditional-expect": "off",
+        "vitest/no-conditional-tests": "off"
+      }
+    }
+  ]
+}

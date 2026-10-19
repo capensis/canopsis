@@ -1,55 +1,54 @@
 <template>
-  <c-select-field
-    v-field="value"
-    v-validate="rules"
+  <c-autocomplete
+    :model-value="itemValue"
     :items="items"
     :disabled="disabled"
-    :error-messages="errors.collect(name)"
-    :label="label || $tc('common.searchBy')"
-    :return-object="returnObject"
+    :label="label || t('common.searchBy')"
     :name="name"
-    item-disabled="options.disabled"
-    ellipsis
-    autocomplete
+    :required="required"
+    :item-props="getItemProps"
+    :item-title="getItemTitle"
+    item-value="value"
+    @update:model-value="updateValue"
   >
-    <template #item="{ item }">
-      <span>{{ item.text }}</span>
-      <c-simple-tooltip
-        v-if="item.alias"
-        :content="`infos.${item.originalValue}.value`"
-        offset-y
-        top
-      >
-        <template #activator="{ on }">
-          <v-icon
-            class="ml-1"
-            color="primary"
-            small
-            v-on="on"
-          >
-            alternate_email
-          </v-icon>
+    <template #item="{ props: itemProps, item }">
+      <v-list-item v-bind="itemProps">
+        <v-list-item-title>
+          {{ getItemTitle(item) }}
+        </v-list-item-title>
+
+        <template v-if="item?.alias" #append>
+          <c-tooltip :content="`infos.${item.originalValue}.value`" top>
+            <template #activator="{ props: activatorProps }">
+              <v-icon
+                class="ml-1"
+                color="primary"
+                size="small"
+                v-bind="activatorProps"
+              >
+                alternate_email
+              </v-icon>
+            </template>
+          </c-tooltip>
         </template>
-      </c-simple-tooltip>
+      </v-list-item>
     </template>
-    <template #selection="{ item }">
-      <v-icon
-        v-if="item.alias"
-        class="mr-1"
-        small
-      >
+    <template v-if="selectedItem?.alias" #prepend-inner>
+      <v-icon class="mt-1" color="primary" size="small">
         alternate_email
       </v-icon>
-      <span>{{ item.text }}</span>
     </template>
-  </c-select-field>
+  </c-autocomplete>
 </template>
 
 <script>
+import { isNil } from 'lodash';
 import { computed } from 'vue';
 
+import { useI18n } from '@/hooks/i18n';
+
 export default {
-  inject: ['$validator'],
+  emits: ['update:value'],
   props: {
     value: {
       type: [String, Object],
@@ -80,13 +79,54 @@ export default {
       default: false,
     },
   },
-  setup(props) {
-    const rules = computed(() => ({
-      required: props.required,
-    }));
+  setup(props, { emit }) {
+    const { t } = useI18n();
+
+    const itemsByValue = computed(() => Object.fromEntries(props.items.map(item => [item.value, item])));
+
+    const itemValue = computed(() => {
+      const value = props.value?.value ?? props.value;
+
+      if (isNil(value) || value === '') {
+        return null;
+      }
+
+      return itemsByValue.value[value]?.value ?? value;
+    });
+
+    const selectedItem = computed(() => {
+      if (isNil(itemValue.value) || itemValue.value === '') {
+        return null;
+      }
+
+      return itemsByValue.value[itemValue.value] ?? null;
+    });
+
+    const getItemTitle = item => item?.text ?? '';
+
+    const getItemProps = item => ({
+      disabled: item?.options?.disabled,
+    });
+
+    const updateValue = (value) => {
+      const selected = itemsByValue.value[value?.value ?? value] ?? value;
+
+      if (!props.returnObject) {
+        emit('update:value', selected?.value ?? selected);
+
+        return;
+      }
+
+      emit('update:value', selected);
+    };
 
     return {
-      rules,
+      t,
+      itemValue,
+      selectedItem,
+      getItemTitle,
+      getItemProps,
+      updateValue,
     };
   },
 };

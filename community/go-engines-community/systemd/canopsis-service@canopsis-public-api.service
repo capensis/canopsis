@@ -1,0 +1,22 @@
+[Unit]
+Description=Canopsis Public API daemon
+PartOf=canopsis.service
+After=canopsis.service
+ReloadPropagatedFrom=canopsis.service
+After=network.target
+Documentation=https://doc.canopsis.net/guide-developpement/swagger/
+
+[Service]
+User=canopsis
+Group=canopsis
+WorkingDirectory=/opt/canopsis
+Environment=HOME=/opt/canopsis
+EnvironmentFile=/opt/canopsis/etc/go-engines-vars.conf
+Restart=always
+Type=simple
+RestartSec=1
+StartLimitBurst=300
+ExecStart=/opt/canopsis/bin/canopsis-public-api -port 8083
+
+[Install]
+WantedBy=canopsis.service

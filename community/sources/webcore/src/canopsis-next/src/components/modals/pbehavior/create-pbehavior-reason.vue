@@ -1,100 +1,98 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
+    <c-modal-wrapper text-class="position-relative" close>
+      <template #title>
         <span>{{ title }}</span>
       </template>
-      <template #text="">
-        <pbehavior-reason-form v-model="form" />
+
+      <template #text>
+        <pbehavior-reason-form />
       </template>
-      <template #actions="">
-        <v-btn
-          :disabled="submitting"
-          depressed
-          text
-          @click="close"
-        >
-          {{ $t('common.cancel') }}
+
+      <template #actions>
+        <v-btn variant="text" @click="closeModal">
+          {{ t('common.cancel') }}
         </v-btn>
+
         <v-btn
           :disabled="submitting"
           :loading="submitting"
-          class="primary"
+          color="primary"
           type="submit"
         >
           {{ submitLabel }}
         </v-btn>
       </template>
-    </modal-wrapper>
+    </c-modal-wrapper>
   </v-form>
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import {
+  formToPbehaviorReason,
+  pbehaviorReasonToForm,
+} from '@/helpers/entities/pbehavior/reason/form';
 
-import { pbehaviorReasonToForm, formToPbehaviorReason } from '@/helpers/entities/pbehavior/reason/form';
-
-import { useI18n } from '@/hooks/i18n';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useForm } from '@/hooks/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
 
 import PbehaviorReasonForm from '@/components/other/pbehavior/reasons/form/pbehavior-reason-form.vue';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 export default {
-  name: MODALS.createPbehaviorReason,
-  $_veeValidate: {
-    validator: 'new',
-    delay: VALIDATION_DELAY,
-  },
-  components: {
-    PbehaviorReasonForm,
-    ModalWrapper,
-  },
+  components: { PbehaviorReasonForm },
+
   props: {
     modal: {
       type: Object,
       required: true,
     },
   },
+
   setup(props) {
     const { t } = useI18n();
-    const { config, close } = useInnerModal(props);
+    const modals = useModals();
+    const config = computed(() => props.modal.config ?? {});
+    const reason = computed(() => config.value.pbehaviorReason ?? config.value.reason);
+    const isNew = computed(() => !reason.value?._id);
+    const title = computed(
+      () => config.value.title ||
+        t(`modals.createPbehaviorReason.${isNew.value ? 'create' : 'edit'}.title`),
+    );
+    const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
 
-    const form = ref(pbehaviorReasonToForm(config.value.pbehaviorReason));
+    const form = useForm({
+      initialValues: pbehaviorReasonToForm(reason.value),
+    });
+    const { values, handleSubmit, submitting } = form;
 
-    const isNew = computed(() => !config.value.pbehaviorReason?._id);
+    const closeModal = () => modals.hide({ id: props.modal.id });
 
-    const title = computed(() => (
-      config.value.title || t(isNew.value
-        ? 'modals.createPbehaviorReason.create.title'
-        : 'modals.createPbehaviorReason.edit.title')
-    ));
+    const submit = handleSubmit(async () => {
+      const result = await config.value.action?.(formToPbehaviorReason(values.value));
 
-    const { submit, submitting, submitLabel } = useSubmittableForm({
-      form,
-      item: config.value.pbehaviorReason,
-      method: async () => {
-        if (config.value.action) {
-          await config.value.action(formToPbehaviorReason(form.value));
-        }
+      await config.value.afterSubmit?.(result);
 
-        close();
-      },
+      closeModal();
+
+      return result;
     });
 
-    useFormConfirmableCloseModal({ form, submit, close });
+    useFormConfirmableCloseModal({
+      form: values,
+      submit,
+      close: closeModal,
+    });
 
     return {
-      form,
+      t,
       title,
-      submitting,
-      close,
       submitLabel,
+      submitting,
+      closeModal,
       submit,
     };
   },

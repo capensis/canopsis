@@ -158,19 +158,20 @@ export const externalDataTableColumnConfigsToForm = (columnsConfigs = [], isImpo
  * @param {Object<string, ExternalDataTableColumnConfig>} form
  * @returns {ExternalDataTableColumnConfig[]}
  */
-export const formToExternalDataTableColumnConfigs = (form = {}) => Object.values(form).reduce((acc, columnConfig) => {
-  if (columnConfig.name === EXTERNAL_DATA_TABLE_PRIORITY_COLUMN) {
+export const formToExternalDataTableColumnConfigs = (form = {}) =>
+  Object.values(form).reduce((acc, columnConfig) => {
+    if (columnConfig.name === EXTERNAL_DATA_TABLE_PRIORITY_COLUMN) {
+      return acc;
+    }
+
+    acc.push({
+      ...omit(columnConfig, ['rows', 'messages']),
+
+      type: columnConfig.type ?? EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.string,
+    });
+
     return acc;
-  }
-
-  acc.push({
-    ...omit(columnConfig, ['rows', 'messages']),
-
-    type: columnConfig.type ?? EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.string,
-  });
-
-  return acc;
-}, []);
+  }, []);
 
 /**
  * Converts a form representation of external data table columns to a tags representation.
@@ -178,23 +179,24 @@ export const formToExternalDataTableColumnConfigs = (form = {}) => Object.values
  * @param {Object<string, ExternalDataTableColumnConfig>} form
  * @returns {number[]}
  */
-export const formToExternalDataTableColumnTags = (form = {}) => Object.values(form).reduce((acc, columnConfig) => {
-  if (columnConfig.name === EXTERNAL_DATA_TABLE_PRIORITY_COLUMN) {
+export const formToExternalDataTableColumnTags = (form = {}) =>
+  Object.values(form).reduce((acc, columnConfig) => {
+    if (columnConfig.name === EXTERNAL_DATA_TABLE_PRIORITY_COLUMN) {
+      return acc;
+    }
+
+    acc.push(columnConfig.tag);
+
     return acc;
-  }
-
-  acc.push(columnConfig.tag);
-
-  return acc;
-}, []);
+  }, []);
 
 /**
  * Checks if a separator is a predefined standard separator
  * @param {string} separator - The separator to check
  * @returns {boolean} True if the separator is predefined, false otherwise
  */
-const isStandardSeparator = separator => Object.values(EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_SEPARATORS)
-  .includes(separator);
+const isStandardSeparator = separator =>
+  Object.values(EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_SEPARATORS).includes(separator);
 
 /**
  * Gets the fallback separator when no separator is defined
@@ -242,7 +244,9 @@ export const getDefaultSeparator = (value, tableSeparator) => {
  * @returns {Array} Columns array with priority column added if needed
  */
 export const addPriorityColumnToColumnsArray = (columns = []) => {
-  const hasRegexpColumns = columns.some(column => column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp);
+  const hasRegexpColumns = columns.some(
+    column => column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp,
+  );
 
   if (!hasRegexpColumns) {
     return columns;
@@ -265,8 +269,9 @@ export const addPriorityColumnToColumnsArray = (columns = []) => {
  * @returns {Object<string, ExternalDataTableColumnConfig>} Form with priority column added if needed
  */
 export const addPriorityColumnForRegexpTypes = (form) => {
-  const hasRegexpColumns = Object.values(form)
-    .some(column => column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp);
+  const hasRegexpColumns = Object.values(form).some(
+    column => column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp,
+  );
 
   if (!hasRegexpColumns) {
     return form;

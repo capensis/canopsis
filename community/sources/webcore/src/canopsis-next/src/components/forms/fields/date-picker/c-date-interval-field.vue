@@ -1,40 +1,43 @@
 <template>
-  <div
-    :class="{ 'c-date-interval--column': column }"
-    class="c-date-interval"
-  >
+  <div :class="{ 'c-date-interval--column': column }" class="c-date-interval">
     <c-date-picker-field
-      v-field="value.from"
+      :value="value.from"
       :label="$t('common.from')"
       :disabled="disabled"
       :allowed-dates="isAllowedFromDate"
       hide-details
+      @update:value="updateField('from', $event)"
     >
-      <template #append="">
-        <v-icon>calendar_today</v-icon>
+      <template #append-inner>
+        <v-icon size="18">
+          calendar_today
+        </v-icon>
       </template>
     </c-date-picker-field>
     <c-date-picker-field
-      v-field="value.to"
+      :value="value.to"
       :label="$t('common.to')"
       :disabled="disabled"
       :allowed-dates="isAllowedToDate"
       :content-class="{ 'ml-4': !column }"
       hide-details
+      @update:value="updateField('to', $event)"
     >
-      <template #append="">
-        <v-icon>calendar_today</v-icon>
+      <template #append-inner>
+        <v-icon size="18">
+          calendar_today
+        </v-icon>
       </template>
     </c-date-picker-field>
   </div>
 </template>
 
 <script>
+import { formMixin } from '@/mixins/form';
+
 export default {
-  model: {
-    event: 'input',
-    prop: 'value',
-  },
+  emits: ['update:value'],
+  mixins: [formMixin],
   props: {
     value: {
       type: Object,

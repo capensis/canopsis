@@ -1,35 +1,35 @@
 <template>
   <v-card>
     <v-card-text>
-      <v-layout class="gap-2" column>
-        <v-layout align-center>
-          <v-text-field
-            v-field="form.reference"
-            v-validate="'required'"
+      <c-layout gap="2" column>
+        <c-layout align="center" gap="2">
+          <c-text-field
+            :model-value="form.reference"
             :label="$t('externalData.fields.reference')"
-            :error-messages="errors.collect(referenceFieldName)"
             :name="referenceFieldName"
             :disabled="disabled"
-            class="mr-2"
+            required
+            @update:model-value="updateField('reference', $event)"
           >
-            <template #append="">
-              <c-help-icon
-                :text="$t('externalData.tooltips.reference')"
-                icon="help"
-                left
-              />
+            <template #append-inner="">
+              <c-help-icon :text="$t('externalData.tooltips.reference')" icon="help" left />
             </template>
-          </v-text-field>
-          <v-select
-            v-field="form.type"
+          </c-text-field>
+          <c-select
+            :model-value="form.type"
             :items="availableTypes"
             :label="$t('common.type')"
             :disabled="disabled"
-            class="ml-2"
+            item-title="text"
+            item-value="value"
+            @update:model-value="updateField('type', $event)"
           />
           <v-btn
             v-if="!disabled"
             class="mr-0"
+            density="compact"
+            size="small"
+            variant="text"
             icon
             @click="remove"
           >
@@ -37,52 +37,52 @@
               delete
             </v-icon>
           </v-btn>
-        </v-layout>
+        </c-layout>
         <external-data-table-form
           v-if="isTableType"
-          v-field="form"
+          :form="form"
           :name="name"
           :disabled="disabled"
           :variables="variables"
           :optionally="optionally"
+          @update:form="updateModel"
         />
-        <request-form
+        <request-with-token-form
           v-else
-          v-field="form.request"
+          :form="form"
           :name="`${name}.request`"
           :disabled="disabled"
           :payload-variables="variables"
           :url-variables="variables"
+          @update:form="updateModel"
         />
         <c-alert v-if="serverErrorMessages.length" type="error">
           {{ serverErrorMessages.join('\n') }}
         </c-alert>
-      </v-layout>
+      </c-layout>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
-import { computed, onMounted } from 'vue';
+import { computed, onBeforeUnmount, onMounted } from 'vue';
 
 import { EXTERNAL_DATA_TYPES } from '@/constants';
 
 import { isTableExternalDataType } from '@/helpers/entities/shared/external-data/entity';
 
+import { useFormContext, useFormErrorsMap } from '@/hooks/form';
+import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
-import { useValidator } from '@/hooks/validator/validator';
+import { useComponentInstance } from '@/hooks/vue';
 
-import RequestForm from '@/components/forms/request/request-form.vue';
+import RequestWithTokenForm from '@/components/forms/request/request-with-token-form.vue';
 
 import ExternalDataTableForm from './external-data-table-form.vue';
 
 export default {
-  inject: ['$validator'],
-  components: { RequestForm, ExternalDataTableForm },
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
+  emits: ['update:form'],
+  components: { RequestWithTokenForm, ExternalDataTableForm },
   props: {
     form: {
       type: Object,
@@ -106,7 +106,7 @@ export default {
     },
     variables: {
       type: Array,
-      default: () => ([]),
+      default: () => [],
     },
     optionally: {
       type: Boolean,
@@ -115,24 +115,33 @@ export default {
   },
   setup(props, { emit }) {
     const { t } = useI18n();
-    const validator = useValidator();
+    const formContext = useFormContext();
+    const instance = useComponentInstance();
+    const { collectErrors } = useFormErrorsMap();
+    const { updateField, updateModel } = useModelField(props, emit);
 
-    const availableTypes = computed(() => (
-      props.types.length
+    const availableTypes = computed(() => props.types.length
         ? props.types
-        : Object.values(EXTERNAL_DATA_TYPES)
-          .map(type => ({ text: t(`externalData.types.${type}`), value: type }))
-    ));
+        : Object.values(EXTERNAL_DATA_TYPES).map(type => ({
+            text: t(`externalData.types.${type}`),
+            value: type,
+          })),
+    );
 
     const isTableType = computed(() => isTableExternalDataType(props.form.type));
     const referenceFieldName = computed(() => `${props.name}.reference`);
-    const serverErrorMessages = computed(() => validator.errors.collect(props.serverErrorName));
-
+    const serverErrorMessages = computed(() => collectErrors(props.serverErrorName));
     const remove = () => emit('remove', props.form);
 
     onMounted(() => {
       if (props.serverErrorName) {
-        validator.attach({ name: props.serverErrorName });
+        formContext.addFieldInstance(props.serverErrorName, instance);
+      }
+    });
+
+    onBeforeUnmount(() => {
+      if (props.serverErrorName) {
+        formContext.removeFieldInstance(props.serverErrorName);
       }
     });
 
@@ -142,6 +151,8 @@ export default {
       referenceFieldName,
       serverErrorMessages,
 
+      updateField,
+      updateModel,
       remove,
     };
   },

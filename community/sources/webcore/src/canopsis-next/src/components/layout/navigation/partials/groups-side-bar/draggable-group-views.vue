@@ -1,16 +1,14 @@
 <template>
   <c-draggable-list-field
-    v-field="views"
+    :model-value="views"
     :class="{ empty: isViewsEmpty }"
     :group="draggableGroup"
-    class="views-panel secondary lighten-1"
+    class="views-panel"
+    @update:model-value="$emit('change', $event)"
   >
-    <group-view-panel
-      v-for="view in views"
-      :key="view._id"
-      :view="view"
-      class="theme--dark"
-    />
+    <template #item="{ element: view }">
+      <group-view-panel :view="view" />
+    </template>
   </c-draggable-list-field>
 </template>
 
@@ -19,10 +17,6 @@ import GroupViewPanel from './group-view-panel.vue';
 
 export default {
   components: { GroupViewPanel },
-  model: {
-    prop: 'views',
-    event: 'change',
-  },
   props: {
     views: {
       type: Array,
@@ -37,6 +31,9 @@ export default {
       default: false,
     },
   },
+
+  emits: ['change'],
+
   computed: {
     isViewsEmpty() {
       return this.views.length === 0;
@@ -58,20 +55,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .views-panel {
-    & ::v-deep .panel-item-content {
-      cursor: move;
-    }
+.views-panel {
+  background-color: var(--v-secondary-lighten1);
 
-    &.empty {
-      &:after {
-        content: '';
-        display: block;
-        height: 48px;
-        border: 4px dashed #4f6479;
-        border-radius: 5px;
-        position: relative;
-      }
+  :deep(.panel-item-content) {
+    cursor: move;
+  }
+
+  &.empty {
+    &:after {
+      content: '';
+      display: block;
+      height: 48px;
+      border: 4px dashed #4f6479;
+      border-radius: 5px;
+      position: relative;
     }
   }
+}
 </style>

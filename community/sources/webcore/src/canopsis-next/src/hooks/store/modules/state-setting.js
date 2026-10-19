@@ -1,37 +1,26 @@
-import { useStoreModuleHooks } from '@/hooks/store';
+import { storeToRefs } from 'pinia';
+
+import { useStateSettingStore } from '@/stores/modules/state-setting';
 
 /**
- * Creates hooks for accessing the state setting Vuex store module.
+ * State setting store facade.
  *
- * @returns {Object} An object containing store module utilities
- */
-const useStateSettingStoreModule = () => useStoreModuleHooks('stateSetting');
-
-/**
- * Hook for state setting operations and state access.
- *
- * @returns {Object} State setting getters and actions
+ * @returns {Object}
  */
 export const useStateSetting = () => {
-  const { useGetters, useActions } = useStateSettingStoreModule();
-
-  const getters = useGetters({
-    stateSettings: 'items',
-    stateSettingsPending: 'pending',
-    stateSettingsMeta: 'meta',
-  });
-
-  const actions = useActions({
-    fetchStateSettingsList: 'fetchList',
-    fetchStateSettingsListWithPreviousParams: 'fetchListWithPreviousParams',
-    fetchStateSettingsListWithoutStore: 'fetchListWithoutStore',
-    createStateSetting: 'create',
-    updateStateSetting: 'update',
-    removeStateSetting: 'remove',
-  });
+  const stateSettingStore = useStateSettingStore();
+  const { items, meta, pending, fetchingParams } = storeToRefs(stateSettingStore);
 
   return {
-    ...getters,
-    ...actions,
+    stateSettings: items,
+    stateSettingsMeta: meta,
+    stateSettingsPending: pending,
+    stateSettingsFetchingParams: fetchingParams,
+
+    fetchStateSettingsList: stateSettingStore.fetchList,
+    fetchStateSettingsListWithPreviousParams: stateSettingStore.fetchListWithPreviousParams,
+    createStateSetting: stateSettingStore.create,
+    updateStateSetting: stateSettingStore.update,
+    removeStateSetting: stateSettingStore.remove,
   };
 };

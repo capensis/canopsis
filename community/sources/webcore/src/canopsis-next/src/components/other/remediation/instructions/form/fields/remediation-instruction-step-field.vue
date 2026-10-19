@@ -1,60 +1,64 @@
 <template>
   <c-card-iterator-item
     :item-number="stepNumber"
+    :disabled="disabled"
+    :removable="!disabled"
     class="remediation-instruction-step-field"
+    static-delete
     @remove="remove"
   >
-    <template #header="">
-      <v-layout class="mt-3">
-        <v-flex xs9>
-          <v-text-field
-            v-field="step.name"
-            v-validate="'required'"
-            :label="$t('common.name')"
-            :error-messages="errors.collect(nameFieldName)"
-            :name="nameFieldName"
+    <template #header>
+      <v-row align="center">
+        <v-col>
+          <c-name-field
+            :model-value="step.name"
+            :name="`${name}.name`"
             :disabled="disabled"
-            filled
+            variant="filled"
+            density="comfortable"
+            required
+            @update:model-value="updateField('name', $event)"
           />
-        </v-flex>
-        <v-flex
-          class="pl-2"
-          xs3
-        >
-          <v-text-field
-            :value="timeToComplete | duration('refreshFieldFormat')"
-            :label="$t('remediation.instruction.timeToComplete')"
-            class="remediation-instruction-step-field__time-to-complete"
+        </v-col>
+        <v-col cols="3">
+          <c-text-field
+            :model-value="formattedTimeToComplete"
+            :label="t('remediation.instruction.timeToComplete')"
+            variant="plain"
             readonly
           />
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </template>
     <c-form-block>
-      <c-form-block-row :label="$t('common.workflow')" indented>
+      <c-form-block-row :label="t('common.workflow')">
         <c-workflow-field
-          v-field="step.stop_on_fail"
-          :label="$t('remediation.instruction.workflow')"
-          :continue-label="$t('remediation.instruction.remainingStep')"
+          :model-value="step.stop_on_fail"
+          :label="t('remediation.instruction.workflow')"
+          :continue-label="t('remediation.instruction.remainingStep')"
           :disabled="disabled"
+          :name="`${name}.stop_on_fail`"
+          @update:model-value="updateField('stop_on_fail', $event)"
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="$t('remediation.instruction.endpoint')">
+      <c-form-block-row :label="t('remediation.instruction.endpoint')">
         <remediation-instruction-step-endpoint-field
-          v-field="step.endpoint"
-          :name="endpointFieldName"
+          :model-value="step.endpoint"
+          :name="`${name}.endpoint`"
           :disabled="disabled"
+          @update:model-value="updateField('endpoint', $event)"
         />
       </c-form-block-row>
 
-      <c-form-block-row :label="$t('remediation.instruction.operations')" indented>
+      <c-form-block-row :label="t('remediation.instruction.operations')" indented>
         <remediation-instruction-operations-form
-          v-field="step.operations"
-          :name="operationFieldName"
+          :operations="step.operations"
+          :name="`${name}.operations`"
           :step-number="stepNumber"
           :disabled="disabled"
           :template-vars="templateVars"
+          @update:operations="updateField('operations', $event)"
         />
       </c-form-block-row>
     </c-form-block>
@@ -64,25 +68,24 @@
 <script>
 import { computed, toRef } from 'vue';
 
-import { remediationInstructionStepToForm } from '@/helpers/entities/remediation/instruction/form';
+import { DATETIME_FORMATS } from '@/constants';
+
 import { isOmitEqual } from '@/helpers/collection';
-import { toSeconds } from '@/helpers/date/duration';
+import { convertDurationToString, toSeconds } from '@/helpers/date/duration';
+import { remediationInstructionStepToForm } from '@/helpers/entities/remediation/instruction/form';
 
 import { useConfirmableForm } from '@/hooks/confirmable-form';
+import { useModelField } from '@/hooks/form/model-field';
+import { useI18n } from '@/hooks/i18n';
 
 import RemediationInstructionOperationsForm from '../remediation-instruction-operations-form.vue';
 
 import RemediationInstructionStepEndpointField from './remediation-instruction-step-endpoint-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     RemediationInstructionOperationsForm,
     RemediationInstructionStepEndpointField,
-  },
-  model: {
-    prop: 'step',
-    event: 'input',
   },
   props: {
     step: {
@@ -91,6 +94,10 @@ export default {
     },
     stepNumber: {
       type: [Number, String],
+      required: true,
+    },
+    name: {
+      type: String,
       required: true,
     },
     disabled: {
@@ -102,48 +109,48 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['update:step', 'remove'],
   setup(props, { emit }) {
-    const fieldSuffix = computed(() => (props.step.key ? `-${props.step.key}` : ''));
-    const nameFieldName = computed(() => `name${fieldSuffix.value}`);
-    const endpointFieldName = computed(() => `endpoint${fieldSuffix.value}`);
-    const operationFieldName = computed(() => `operations${fieldSuffix.value}`);
-    const timeToComplete = computed(() => props.step.operations.reduce((acc, operation) => {
-      const { time_to_complete: { value, unit } } = operation;
+    const { t } = useI18n();
+    const { updateField } = useModelField(props, emit);
 
-      return acc + toSeconds(value, unit);
-    }, 0));
+    const timeToComplete = computed(() => props.step.operations.reduce((acc, operation) => {
+        const {
+          time_to_complete: { value, unit },
+        } = operation;
+
+        return acc + toSeconds(value, unit);
+      }, 0),
+    );
+    const formattedTimeToComplete = computed(
+      () => convertDurationToString(timeToComplete.value, DATETIME_FORMATS.refreshFieldFormat),
+    );
 
     const { confirmAction: remove } = useConfirmableForm({
       form: toRef(props, 'step'),
       action: () => emit('remove'),
       comparator: (step) => {
         const emptyStep = remediationInstructionStepToForm();
-        const paths = [
-          'key',
-          step.operations.length ? ['operations', 0, 'key'] : 'operations',
-        ];
+        const paths = ['key', step.operations.length ? ['operations', 0, 'key'] : 'operations'];
 
         return isOmitEqual(step, emptyStep, paths);
       },
     });
 
     return {
-      nameFieldName,
-      endpointFieldName,
-      operationFieldName,
-      timeToComplete,
+      t,
+      formattedTimeToComplete,
+      updateField,
       remove,
     };
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .remediation-instruction-step-field {
-  &__time-to-complete .v-input__slot {
-    &:before, &:after {
-      content: none !important;
-    }
+  :deep(.c-card-iterator-item__row) {
+    align-items: center;
   }
 }
 </style>

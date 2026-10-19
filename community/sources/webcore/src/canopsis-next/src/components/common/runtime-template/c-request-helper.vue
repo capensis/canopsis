@@ -3,9 +3,9 @@
 </template>
 
 <script>
-import { get, unescape } from 'lodash';
-import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 import axios from 'axios';
+import { get, unescape } from 'lodash';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { RESPONSE_STATUSES } from '@/constants';
 
@@ -26,7 +26,7 @@ export default {
 
     const { t } = useI18n();
     const template = ref('');
-    const helperData = computed(() => window._handlebarsRequestHelper[props.helperId]);
+    const helperData = computed(() => window._handlebarsRequestHelper?.[props.helperId]);
 
     const { pending, handler: sendRequest } = usePendingHandler(async () => {
       if (!helperData.value) {
@@ -127,7 +127,7 @@ export default {
         cancelTokenSource = null;
       }
 
-      delete window._handlebarsRequestHelper[props.helperId];
+      delete window._handlebarsRequestHelper?.[props.helperId];
     });
 
     return {

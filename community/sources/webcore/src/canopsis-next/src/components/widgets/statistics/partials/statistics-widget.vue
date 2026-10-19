@@ -1,11 +1,8 @@
 <template>
-  <v-layout
-    class="py-2"
-    column
-  >
+  <c-layout class="py-2" column>
     <kpi-widget-filters
       :widget-id="widget._id"
-      :user-filters="userPreference.filters"
+      :user-filters="userPreferenceFilters"
       :widget-filters="widget.filters"
       :locked-filters="query.lockedFilter"
       :filters="query.filter"
@@ -18,18 +15,11 @@
       @update:filters="updateSelectedFilter"
       @update:interval="updateInterval"
     />
-    <v-layout
-      class="kpi-widget pa-3"
-      column
-      align-center
-    >
+    <c-layout class="kpi-widget pa-3" align="center" column>
       <h4 class="kpi-widget__title">
         {{ widget.parameters.table_title }}
       </h4>
-      <c-progress-overlay
-        :pending="mainRatingSettingsPending"
-        transition
-      />
+      <c-progress-overlay :pending="mainRatingSettingsPending" transition />
       <c-advanced-data-table
         :items="preparedGroupMetrics"
         :loading="groupMetricsPending"
@@ -37,48 +27,44 @@
         class="kpi-widget__table pre-line"
         no-pagination
       />
-    </v-layout>
-  </v-layout>
+    </c-layout>
+  </c-layout>
 </template>
 
 <script>
-import { pick, find } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
+import { find, pick } from 'lodash';
+import { mapActions, mapState } from 'pinia';
 
 import { DATETIME_FORMATS, KPI_RATING_CRITERIA } from '@/constants';
 
-import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
-import { convertFiltersToQuery } from '@/helpers/entities/shared/query';
-import { convertMetricValueToString } from '@/helpers/entities/metric/list';
-import { isCustomCriteria } from '@/helpers/entities/metric/form';
+import { useMetricsStore } from '@/stores/modules/metrics';
+import { useRatingSettingsStore } from '@/stores/modules/rating-settings';
 
+import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
+import { convertMetricValueToString } from '@/helpers/entities/metric/list';
+import { convertFiltersToQuery } from '@/helpers/entities/shared/query';
+
+import { queryIntervalFilterMixin } from '@/mixins/query/interval';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
-import { queryIntervalFilterMixin } from '@/mixins/query/interval';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
-import { entitiesGroupMetricsMixin } from '@/mixins/entities/group-metrics';
 
-import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
-import CProgressOverlay from '@/components/common/overlay/c-progress-overlay.vue';
-
-import KpiWidgetFilters from '../../partials/kpi-widget-filters.vue';
-
-const { mapActions } = createNamespacedHelpers('ratingSettings');
+import KpiWidgetFilters from '@/components/widgets/partials/kpi-widget-filters.vue';
 
 export default {
   inject: ['$system'],
+
   components: {
-    CProgressOverlay,
-    CAdvancedDataTable,
     KpiWidgetFilters,
   },
+
   mixins: [
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
     queryIntervalFilterMixin,
     widgetPeriodicRefreshMixin,
-    entitiesGroupMetricsMixin,
   ],
+
   props: {
     widget: {
       type: Object,
@@ -87,6 +73,10 @@ export default {
     tabId: {
       type: String,
       default: '',
+    },
+    type: {
+      type: Number,
+      required: true,
     },
     showInterval: {
       type: Boolean,
@@ -97,19 +87,35 @@ export default {
       default: false,
     },
   },
+
   data() {
     return {
       mainRatingSettingsPending: false,
       mainRatingSettings: [],
     };
   },
+
   computed: {
-    mainParameter() {
-      return this.widget.parameters?.mainParameter ?? {};
+    ...mapState(useMetricsStore, {
+      getGroupMetricsListByWidgetId: 'getGroupMetricsListByWidgetId',
+      getGroupMetricsPendingByWidgetId: 'getGroupMetricsPendingByWidgetId',
+      getGroupMetricsMetaByWidgetId: 'getGroupMetricsMetaByWidgetId',
+    }),
+
+    groupMetrics() {
+      return this.getGroupMetricsListByWidgetId(this.widget._id);
     },
 
-    isCustomCriteria() {
-      return isCustomCriteria(this.mainParameter.criteria);
+    groupMetricsPending() {
+      return this.getGroupMetricsPendingByWidgetId(this.widget._id);
+    },
+
+    groupMetricsMeta() {
+      return this.getGroupMetricsMetaByWidgetId(this.widget._id);
+    },
+
+    mainParameter() {
+      return this.widget.parameters?.mainParameter ?? {};
     },
 
     firstColumnText() {
@@ -119,7 +125,7 @@ export default {
 
       const labelsMap = {
         [KPI_RATING_CRITERIA.user]: this.$t('common.username'),
-        [KPI_RATING_CRITERIA.role]: this.$tc('common.role'),
+        [KPI_RATING_CRITERIA.role]: this.$t('common.role'),
         [KPI_RATING_CRITERIA.category]: this.$t('common.category'),
         [KPI_RATING_CRITERIA.impactLevel]: this.$t('common.impactLevel'),
       };
@@ -139,7 +145,7 @@ export default {
           sortable: false,
         },
 
-        ...this.widget.parameters.widgetColumns.map(({ metric, label }) => {
+        ...(this.widget.parameters.widgetColumns ?? []).map(({ metric, label }) => {
           const kpiKey = `kpi.statisticsWidgets.metrics.${metric}`;
           const alarmKey = `alarm.metrics.${metric}`;
 
@@ -168,22 +174,21 @@ export default {
       }
 
       return this.groupMetrics.map(({ title, data = [] }) => {
-        const preparedMetrics = Object.values(data)
-          .reduce((acc, value, index) => {
-            const { metric } = this.query.parameters[index];
+        const preparedMetrics = Object.values(data).reduce((acc, value, index) => {
+          const { metric } = this.query.parameters[index];
 
-            acc[metric] = value.reduce((secondAcc, item) => {
-              const preparedValue = convertMetricValueToString({
-                value: item.value,
-                metric,
-                format: DATETIME_FORMATS.refreshFieldFormat,
-              });
+          acc[metric] = value.reduce((secondAcc, item) => {
+            const preparedValue = convertMetricValueToString({
+              value: item.value,
+              metric,
+              format: DATETIME_FORMATS.refreshFieldFormat,
+            });
 
-              return secondAcc + (item.title ? `${item.title}: ${preparedValue}\n` : preparedValue);
-            }, '');
+            return secondAcc + (item.title ? `${item.title}: ${preparedValue}\n` : preparedValue);
+          }, '');
 
-            return acc;
-          }, {});
+          return acc;
+        }, {});
 
         return {
           title,
@@ -200,12 +205,17 @@ export default {
         ? convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone)
         : null;
     },
+
+    userPreferenceFilters() {
+      return this.userPreference?.filters ?? [];
+    },
   },
+
   watch: {
     minAvailableDate() {
       const { from } = this.getIntervalQuery();
 
-      if (from < this.minAvailableDate) {
+      if (this.minAvailableDate && from < this.minAvailableDate) {
         this.query = {
           ...this.query,
           interval: {
@@ -216,11 +226,18 @@ export default {
       }
     },
   },
+
   mounted() {
     this.fetchMainRatingSettingsList();
   },
+
   methods: {
-    ...mapActions({ fetchRatingSettingsWithoutStore: 'fetchListWithoutStore' }),
+    ...mapActions(useMetricsStore, {
+      fetchGroupMetricsList: 'fetchGroupMetricsList',
+    }),
+    ...mapActions(useRatingSettingsStore, {
+      fetchRatingSettingsWithoutStore: 'fetchListWithoutStore',
+    }),
 
     getQuery() {
       const { filter, lockedFilter } = this.query;

@@ -10,7 +10,7 @@ $(error This makefile requires GNU Make >= $(REQUIRED_MAKE_VERSION))
 endif
 
 # Either community or pro
-CANOPSIS_EDITION = community
+CANOPSIS_EDITION ?= community
 
 COMMUNITY_ROOT_DIR = $(realpath $(dir $(COMMUNITY_MAKEFILE)))
 COMMUNITY_BUILD_OUTPUT_DIR = $(COMMUNITY_ROOT_DIR)/build
@@ -25,7 +25,9 @@ CURRENT_BUILD_OUTPUT_DIR = $(CURRENT_ROOT_DIR)/build
 MONOREPO_ROOT := $(realpath $(dir $(COMMUNITY_MAKEFILE))/../..)
 
 # List of cmds/engines to build and install (eg: engine-che connector-junit...)
-CMDS = $(notdir $(wildcard $(CURRENT_ROOT_DIR)/cmd/*))
+# cmd/internal-api and cmd/public-api are built as canopsis-internal-api-$(CANOPSIS_EDITION)
+# and canopsis-public-api-$(CANOPSIS_EDITION)
+CMDS = $(patsubst internal-api,canopsis-internal-api-$(CANOPSIS_EDITION),$(patsubst public-api,canopsis-public-api-$(CANOPSIS_EDITION),$(notdir $(wildcard $(CURRENT_ROOT_DIR)/cmd/*))))
 # List of cmd binary paths (eg: build/cmd/engine-che build/cmd/connector-junit...)
 CMDS_BINARY_TARGETS = $(addprefix $(CURRENT_BUILD_OUTPUT_DIR)/cmd/,$(CMDS))
 
@@ -43,7 +45,7 @@ SCRIPT_SUPPORT_TOOLS_TARGETS=$(addprefix $(CURRENT_BUILD_OUTPUT_DIR)/support/,$(
 #
 
 SOURCE_DATE_EPOCH:=$(shell date -u +%s)
-LINKPKG=git.canopsis.net/canopsis/canopsis-$(CANOPSIS_EDITION)/$(CANOPSIS_EDITION)/go-engines-$(CANOPSIS_EDITION)/lib/canopsis
+LINKPKG=git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis
 VERSION ?= $(shell (git -C "$(MONOREPO_ROOT)" tag --list --sort=-taggerdate --merged 2>/dev/null || echo "0.0.0") | head -1)
 # Metadata for the binaries
 CUSTOM_LDFLAGS=
@@ -92,11 +94,24 @@ $(CMDS_BINARY_TARGETS):
 # Tell make where to find the binaries
 
 # Build job template
+define GO_BUILD_RECIPE
+@echo "==> Building $@ for $(CANOPSIS_EDITION)"
+cd -- "$(CURRENT_ROOT_DIR)" && \
+go build $(GO_BUILD_FLAGS) $(GO_BUILD_CUSTOM_FLAGS) $(LDFLAGS) \
+	-o "$(abspath $@)" "$(abspath $<)"
+endef
+
 $(CURRENT_BUILD_OUTPUT_DIR)/cmd/%: $(CURRENT_ROOT_DIR)/cmd/% $(CURRENT_ROOT_DIR)/cmd/%/*
-	@echo "==> Building $@ for $(CANOPSIS_EDITION)"
-	cd -- "$(CURRENT_ROOT_DIR)" && \
-	go build $(GO_BUILD_FLAGS) $(GO_BUILD_CUSTOM_FLAGS) $(LDFLAGS) \
-		-o "$(abspath $@)" "$(abspath $<)"
+	$(GO_BUILD_RECIPE)
+
+# cmd/internal-api is built as canopsis-internal-api-$(CANOPSIS_EDITION)
+# (the shorter stem makes make prefer this rule over the generic one)
+$(CURRENT_BUILD_OUTPUT_DIR)/cmd/canopsis-internal-api-%: $(CURRENT_ROOT_DIR)/cmd/internal-api $(CURRENT_ROOT_DIR)/cmd/internal-api/*
+	$(GO_BUILD_RECIPE)
+
+# cmd/public-api is built as canopsis-public-api-$(CANOPSIS_EDITION)
+$(CURRENT_BUILD_OUTPUT_DIR)/cmd/canopsis-public-api-%: $(CURRENT_ROOT_DIR)/cmd/public-api $(CURRENT_ROOT_DIR)/cmd/public-api/*
+	$(GO_BUILD_RECIPE)
 
 # To add a custom project-specific build flag
 #engine-action: GO_BUILD_CUSTOM_FLAGS=--your-custom-flag
@@ -157,8 +172,8 @@ $(DOCKER_CMD_TARGETS): $(MONOREPO_ROOT)/.dockerignore docker-go-builder
 		"$(MONOREPO_ROOT)"
 
 # Targets having some extra content on top of the generic final-container
-docker-cmd-canopsis-api-community: TARGET=canopsis-api-community
-docker-cmd-canopsis-api-pro: TARGET=canopsis-api-pro
+docker-cmd-canopsis-internal-api-community: TARGET=canopsis-internal-api-community
+docker-cmd-canopsis-internal-api-pro: TARGET=canopsis-internal-api-pro
 docker-cmd-canopsis-reconfigure: TARGET=canopsis-reconfigure
 docker-cmd-engine-webhook: TARGET=engine-webhook
 docker-cmd-import-context-graph: TARGET=import-context-graph
@@ -198,7 +213,7 @@ install-common: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPS
 	# Install cmds
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/bin"
 	install -c -m 755 -p -- $(foreach cmd,$(CMDS),"$(CURRENT_BUILD_OUTPUT_DIR)/cmd/$(cmd)") "$(DESTDIR)/opt/canopsis/bin/"
-	( cd -- "$(DESTDIR)/opt/canopsis/bin" && ln -sf "canopsis-api-$(CANOPSIS_EDITION)" canopsis-api )
+	( cd -- "$(DESTDIR)/opt/canopsis/bin" && ln -sf "canopsis-internal-api-$(CANOPSIS_EDITION)" canopsis-internal-api && ln -sf "canopsis-public-api-$(CANOPSIS_EDITION)" canopsis-public-api )
 	
 	# Create configuration directories
 	@echo "==> Creating configuration directories"
@@ -217,7 +232,8 @@ install-common: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPS
 	@echo "==> Installing systemd configurations"
 	# Install systemd configuration
 	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/systemd/canopsis-engine-go@.service" "$(DESTDIR)/usr/lib/systemd/system/canopsis-engine-go@.service"
-	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/systemd/canopsis-service@canopsis-api.service" "$(DESTDIR)/usr/lib/systemd/system/canopsis-service@canopsis-api.service"
+	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/systemd/canopsis-service@canopsis-internal-api.service" "$(DESTDIR)/usr/lib/systemd/system/canopsis-service@canopsis-internal-api.service"
+	install -c -m 644 -p -- "$(COMMUNITY_ROOT_DIR)/systemd/canopsis-service@canopsis-public-api.service" "$(DESTDIR)/usr/lib/systemd/system/canopsis-service@canopsis-public-api.service"
 
 install: install-common
 	# Create configuration directories
