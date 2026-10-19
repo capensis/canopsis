@@ -216,3 +216,59 @@ func TestMetaAlarmState_RemoveChildrenBefore(t *testing.T) {
 		t.Fatalf("children open time should be %d, but got %d", now.Add(time.Second*20).Unix(), state.GetChildrenOpenTime())
 	}
 }
+
+func TestMetaAlarmState_IsOutdated(t *testing.T) {
+	tests := []struct {
+		name            string
+		state           correlation.MetaAlarmState
+		alarmLastUpdate int64
+		timeInterval    int64
+		want            bool
+	}{
+		{
+			name: "ready at window boundary is current",
+			state: correlation.MetaAlarmState{
+				ID: "state", State: correlation.Ready,
+				ParentsTimestamps: []int64{100}, ChildrenTimestamps: []int64{101},
+			},
+			alarmLastUpdate: 103, timeInterval: 3, want: false,
+		},
+		{
+			name: "ready after window is outdated",
+			state: correlation.MetaAlarmState{
+				ID: "state", State: correlation.Ready,
+				ParentsTimestamps: []int64{100}, ChildrenTimestamps: []int64{101},
+			},
+			alarmLastUpdate: 104, timeInterval: 3, want: true,
+		},
+		{
+			name: "earlier child defines window start",
+			state: correlation.MetaAlarmState{
+				ID: "state", State: correlation.Ready,
+				ParentsTimestamps: []int64{100}, ChildrenTimestamps: []int64{99},
+			},
+			alarmLastUpdate: 103, timeInterval: 3, want: true,
+		},
+		{
+			name: "opened group does not expire",
+			state: correlation.MetaAlarmState{
+				ID: "state", State: correlation.Opened,
+				ParentsTimestamps: []int64{100}, ChildrenTimestamps: []int64{101},
+			},
+			alarmLastUpdate: 1000, timeInterval: 3, want: false,
+		},
+		{
+			name:            "missing state is outdated",
+			state:           correlation.MetaAlarmState{State: correlation.Ready},
+			alarmLastUpdate: 103, timeInterval: 3, want: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.state.IsOutdated(tt.alarmLastUpdate, tt.timeInterval); got != tt.want {
+				t.Errorf("IsOutdated(%d, %d) = %t, want %t", tt.alarmLastUpdate, tt.timeInterval, got, tt.want)
+			}
+		})
+	}
+}

@@ -521,7 +521,11 @@ func (s *store) FindOneData(ctx context.Context, tableID, id string) (map[string
 			}
 		}
 
-		sql.WriteString(" FROM " + table.getDBTableName() + " WHERE " + externaldata.IDColumnName + " = $1")
+		sql.WriteString(" FROM ")
+		sql.WriteString(table.getDBTableName())
+		sql.WriteString(" WHERE ")
+		sql.WriteString(externaldata.IDColumnName)
+		sql.WriteString(" = $1")
 		rows, err := pgPool.Query(ctx, sql.String(), id)
 		if err != nil {
 			return nil, err
@@ -638,7 +642,9 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 
 	doc := make(map[string]any, len(table.ColumnConfigs)+1)
 	var querySql strings.Builder
-	querySql.WriteString("UPDATE " + table.getDBTableName() + " SET ")
+	querySql.WriteString("UPDATE ")
+	querySql.WriteString(table.getDBTableName())
+	querySql.WriteString(" SET ")
 	queryArgs := make([]any, len(table.ColumnConfigs)+1)
 
 	valErrs := make(validator.ValidationErrors, 0)
@@ -670,7 +676,9 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 		addPriorityColumn = addPriorityColumn || res.addPriorityColumn
 
 		queryArgs[i] = res.val
-		querySql.WriteString(pgx.Identifier{columnName}.Sanitize() + " = $" + strconv.Itoa(i+1))
+		querySql.WriteString(pgx.Identifier{columnName}.Sanitize())
+		querySql.WriteString(" = $")
+		querySql.WriteString(strconv.Itoa(i + 1))
 		if i < len(table.ColumnConfigs)-1 {
 			querySql.WriteString(", ")
 		}
@@ -701,7 +709,10 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 
 		if addPriorityColumn {
 			queryArgs = append(queryArgs, priority)
-			querySql.WriteString(", " + pgx.Identifier{priorityColumnName}.Sanitize() + " = $" + strconv.Itoa(len(queryArgs)))
+			querySql.WriteString(", ")
+			querySql.WriteString(pgx.Identifier{priorityColumnName}.Sanitize())
+			querySql.WriteString(" = $")
+			querySql.WriteString(strconv.Itoa(len(queryArgs)))
 		}
 
 		execRes, err := pgPool.Exec(ctx, querySql.String()+whereSql, queryArgs...)
@@ -811,20 +822,24 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 			}
 		}
 
-		sql.WriteString(" FROM " + table.getDBTableName())
+		sql.WriteString(" FROM ")
+		sql.WriteString(table.getDBTableName())
 		queryArgs := make([]any, 0)
 		if r.Search != "" {
 			sql.WriteString(" WHERE ")
 			queryArgs = append(queryArgs, r.Search)
 			for i, col := range searchBy {
-				sql.WriteString(pgx.Identifier{col}.Sanitize() + " ~ $" + strconv.Itoa(len(queryArgs)))
+				sql.WriteString(pgx.Identifier{col}.Sanitize())
+				sql.WriteString(" ~ $")
+				sql.WriteString(strconv.Itoa(len(queryArgs)))
 				if i < len(searchBy)-1 {
 					sql.WriteString(" OR ")
 				}
 			}
 		}
 
-		sql.WriteString(" ORDER BY " + externaldata.IDColumnName)
+		sql.WriteString(" ORDER BY ")
+		sql.WriteString(externaldata.IDColumnName)
 
 		rows, err := pgPool.Query(ctx, sql.String(), queryArgs...)
 		if err != nil {
@@ -1004,7 +1019,9 @@ func (s *store) findPreviewDataFromPostgres(ctx context.Context, job ImportJob, 
 	var priorityColumns []string
 
 	var sql strings.Builder
-	sql.WriteString("SELECT " + pgx.Identifier{externaldata.IDColumnName}.Sanitize() + ", ")
+	sql.WriteString("SELECT ")
+	sql.WriteString(pgx.Identifier{externaldata.IDColumnName}.Sanitize())
+	sql.WriteString(", ")
 	for i, cfg := range job.ColumnConfigs {
 		initialName := cfg.Name + "_initial_value"
 		transformedName := cfg.Name + "_transformed_value"
@@ -1014,9 +1031,11 @@ func (s *store) findPreviewDataFromPostgres(ctx context.Context, job ImportJob, 
 		columnsWithID[i*sqlColumnsForCsvColumn+2] = transformedName
 		columnsWithID[i*sqlColumnsForCsvColumn+3] = errorsName
 
-		sql.WriteString(pgx.Identifier{initialName}.Sanitize() + ", " +
-			pgx.Identifier{transformedName}.Sanitize() + ", " +
-			pgx.Identifier{errorsName}.Sanitize())
+		sql.WriteString(pgx.Identifier{initialName}.Sanitize())
+		sql.WriteString(", ")
+		sql.WriteString(pgx.Identifier{transformedName}.Sanitize())
+		sql.WriteString(", ")
+		sql.WriteString(pgx.Identifier{errorsName}.Sanitize())
 		if i < len(job.ColumnConfigs)-1 {
 			sql.WriteString(", ")
 		}
@@ -1027,7 +1046,8 @@ func (s *store) findPreviewDataFromPostgres(ctx context.Context, job ImportJob, 
 	}
 
 	if len(priorityColumns) > 0 {
-		sql.WriteString(", " + strings.Join(priorityColumns, " + "))
+		sql.WriteString(", ")
+		sql.WriteString(strings.Join(priorityColumns, " + "))
 	}
 
 	tableName := job.getDBTableName()
@@ -1036,7 +1056,13 @@ func (s *store) findPreviewDataFromPostgres(ctx context.Context, job ImportJob, 
 	// Adding a comment forces Postgres to execute the query without using a cached plan.
 	comment := "/*" + strconv.Itoa(int(time.Now().UnixMicro())) + "*/"
 
-	sql.WriteString(" FROM " + tableName + " " + "ORDER BY " + pgx.Identifier{externaldata.IDColumnName}.Sanitize() + " " + limitStmt + comment)
+	sql.WriteString(" FROM ")
+	sql.WriteString(tableName)
+	sql.WriteString(" ORDER BY ")
+	sql.WriteString(pgx.Identifier{externaldata.IDColumnName}.Sanitize())
+	sql.WriteString(" ")
+	sql.WriteString(limitStmt)
+	sql.WriteString(comment)
 	countSql := "SELECT count(*) FROM " + tableName
 	result := &AggregationDataResult{
 		Data: make([]map[string]any, 0, r.Limit),
@@ -1128,7 +1154,15 @@ func (s *store) findDataFromPostgres(ctx context.Context, tableName string, colu
 	// Adding a comment forces Postgres to execute the query without using a cached plan.
 	comment := "/*" + strconv.Itoa(int(time.Now().UnixMicro())) + "*/"
 
-	sql.WriteString(" FROM " + tableName + " " + whereStmt + " " + orderStmt + " " + limitStmt + comment)
+	sql.WriteString(" FROM ")
+	sql.WriteString(tableName)
+	sql.WriteString(" ")
+	sql.WriteString(whereStmt)
+	sql.WriteString(" ")
+	sql.WriteString(orderStmt)
+	sql.WriteString(" ")
+	sql.WriteString(limitStmt)
+	sql.WriteString(comment)
 	countSql := "SELECT count(*) FROM " + tableName + " " + whereStmt
 	result := &AggregationDataResult{
 		Data: make([]map[string]any, 0, r.Limit),
