@@ -40,7 +40,7 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, data)
 }
 
-// Update
+// Update preserves existing retention history while saving configuration.
 // @Param body body datastorage.Config true "body"
 // @Success 200 {object} DataStorage
 func (a *api) Update(c *gin.Context) {

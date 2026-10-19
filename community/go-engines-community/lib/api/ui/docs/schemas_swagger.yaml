@@ -1782,6 +1782,9 @@ definitions:
       history:
         additionalProperties:
           $ref: '#/definitions/datastorage.HistoryWithCount'
+        description: History stores cleaner history. For health_check, Time is the
+          latest observed TimescaleDB retention-job start; a newer persisted value
+          is retained when the live observation is absent or older.
         type: object
     type: object
   datastorage.HistoryWithCount:
