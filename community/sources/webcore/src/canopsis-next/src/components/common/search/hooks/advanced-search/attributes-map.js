@@ -3,7 +3,7 @@ import { computed, unref } from 'vue';
 import {
   ADVANCED_SEARCH_USER_OPERATORS,
   ADVANCED_SEARCH_STRING_WITH_ONE_OF_OPERATORS,
-  ALARM_EVENT_INITIATORS,
+  EVENT_INITIATORS,
   ALARM_PATTERN_FIELDS,
   ALARM_STATES,
   ALARM_STATUSES,
@@ -70,7 +70,7 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
 
   const INITIATOR_OPTIONS = {
     operators: ADVANCED_SEARCH_USER_OPERATORS,
-    values: Object.values(ALARM_EVENT_INITIATORS).map(initiator => ({
+    values: Object.values(EVENT_INITIATORS).map(initiator => ({
       value: initiator,
       text: initiator,
     })),

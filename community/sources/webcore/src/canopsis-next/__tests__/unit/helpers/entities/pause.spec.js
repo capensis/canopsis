@@ -12,13 +12,22 @@ import {
 describe('entity pause helpers', () => {
   test('detects own and inherited pauses', () => {
     const ownPauseEntity = { pause: { timestamp: 123 } };
-    const inheritedPauseEntity = { pause: { timestamp: 123, inherited: true } };
+    const propagatedOwnPauseEntity = { pause: { timestamp: 123, inherited: true } };
+    const inheritedPauseEntity = {
+      pause: {
+        timestamp: 123,
+        inherited: true,
+        source: 'parent-id',
+      },
+    };
 
     expect(isEntityPaused()).toBe(false);
     expect(isEntityPaused(ownPauseEntity)).toBe(true);
     expect(isEntityPauseInherited(ownPauseEntity)).toBe(false);
+    expect(isEntityPauseInherited(propagatedOwnPauseEntity)).toBe(false);
     expect(isEntityPauseInherited(inheritedPauseEntity)).toBe(true);
     expect(isResumeAvailableForEntity(ownPauseEntity)).toBe(true);
+    expect(isResumeAvailableForEntity(propagatedOwnPauseEntity)).toBe(true);
     expect(isResumeAvailableForEntity(inheritedPauseEntity)).toBe(false);
   });
 
@@ -36,6 +45,9 @@ describe('entity pause helpers', () => {
   test('allows pause propagation only for components and services', () => {
     expect(isPausePropagationAvailableForEntity({ type: ENTITY_TYPES.component })).toBe(true);
     expect(isPausePropagationAvailableForEntity({ type: ENTITY_TYPES.service })).toBe(true);
+    expect(isPausePropagationAvailableForEntity({
+      source_type: ENTITY_TYPES.component,
+    })).toBe(true);
     expect(isPausePropagationAvailableForEntity({ type: ENTITY_TYPES.connector })).toBe(false);
     expect(isPausePropagationAvailableForEntity({ type: ENTITY_TYPES.resource })).toBe(false);
   });

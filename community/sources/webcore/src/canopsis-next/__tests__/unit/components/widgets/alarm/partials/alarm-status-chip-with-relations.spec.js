@@ -45,7 +45,8 @@ describe('alarm-status-chip-with-relations', () => {
 
     await flushPromises();
 
-    wrapper.vm.showRelationsModal();
+    wrapper.find('.alarm-status-chip-with-relations')
+      .triggerCustomEvent('click', new Event('click'));
 
     expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.entityUpstream,
@@ -80,7 +81,8 @@ describe('alarm-status-chip-with-relations', () => {
 
     await flushPromises();
 
-    wrapper.vm.showRelationsModal();
+    wrapper.find('.alarm-status-chip-with-relations')
+      .triggerCustomEvent('click', new Event('click'));
 
     expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.entityUpstream,

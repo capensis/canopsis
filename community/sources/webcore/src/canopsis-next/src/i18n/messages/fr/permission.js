@@ -111,7 +111,7 @@ export default {
     [USER_PERMISSIONS.business.alarmsList.actions.pbehaviorAdd]:
       'Définir un comportement périodique',
     [USER_PERMISSIONS.business.alarmsList.actions.fastPbehaviorAdd]:
-      'Mettre en pause / reprendre les alarmes',
+      'Mettre en pause / sortir les alarmes de pause',
     [USER_PERMISSIONS.business.alarmsList.actions.snooze]: 'Mettre en veille',
     [USER_PERMISSIONS.business.alarmsList.actions.declareTicket]: 'Déclarer un ticket',
     [USER_PERMISSIONS.business.alarmsList.actions.associateTicket]: 'Associer un ticket',
@@ -158,7 +158,8 @@ export default {
     [USER_PERMISSIONS.business.context.actions.massDisable]:
       'Désactiver les entités sélectionnées en masse',
     [USER_PERMISSIONS.business.context.actions.pbehavior]: 'Gérer les comportements périodiques',
-    [USER_PERMISSIONS.business.context.actions.pause]: 'Mettre en pause / reprendre les entités',
+    [USER_PERMISSIONS.business.context.actions.pause]:
+      'Mettre en pause / sortir les entités de pause',
     [USER_PERMISSIONS.business.context.actions.filter]: 'Définir les filtres des entités',
     [USER_PERMISSIONS.business.context.actions.userFilter]: 'Filtrer les entités',
     [USER_PERMISSIONS.business.context.actions.category]: 'Filtrer les entités par catégorie',
@@ -176,7 +177,7 @@ export default {
     [USER_PERMISSIONS.business.serviceWeather.actions.entityInvalidate]:
       'Invalider les alarmes et les annuler',
     [USER_PERMISSIONS.business.serviceWeather.actions.entityPause]: 'Mettre les entités en pause',
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityPlay]: 'Reprendre les entités en pause',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityPlay]: 'Sortir les entités de pause',
     [USER_PERMISSIONS.business.serviceWeather.actions.entityCancel]:
       'Accéder à la liste des comportements périodiques associés aux services (dans l\'onglet des fenêtres modales des services)',
     [USER_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors]:

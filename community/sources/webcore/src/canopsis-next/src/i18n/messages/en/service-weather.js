@@ -13,7 +13,7 @@ export default {
     [WEATHER_ACTIONS_TYPES.entityValidate]: 'Validate',
     [WEATHER_ACTIONS_TYPES.entityInvalidate]: 'Invalidate',
     [WEATHER_ACTIONS_TYPES.entityPause]: '@:common.pause',
-    [WEATHER_ACTIONS_TYPES.entityPlay]: 'Resume',
+    [WEATHER_ACTIONS_TYPES.entityPlay]: 'Unpause',
     [WEATHER_ACTIONS_TYPES.entityCancel]: 'Cancel',
     [WEATHER_ACTIONS_TYPES.entityAssocTicket]: 'Associate ticket',
     [WEATHER_ACTIONS_TYPES.entityComment]: 'Comment',

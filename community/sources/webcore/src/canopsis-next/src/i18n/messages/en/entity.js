@@ -34,7 +34,7 @@ export default {
   },
   popups: {
     pauseOperation: 'Pause operation may take up to 60 seconds to appear in the interface',
-    resumeOperation: 'Resume operation may take up to 60 seconds to appear in the interface',
+    resumeOperation: 'Unpause operation may take up to 60 seconds to appear in the interface',
   },
   treeOfDependenciesShowTypes: {
     [TREE_OF_DEPENDENCIES_SHOW_TYPES.allDependencies]: 'Show all dependencies',

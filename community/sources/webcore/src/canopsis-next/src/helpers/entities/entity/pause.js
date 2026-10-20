@@ -15,7 +15,7 @@ export const isEntityPaused = entity => Boolean(entity?.pause);
  * @param {Object} [entity]
  * @returns {boolean}
  */
-export const isEntityPauseInherited = entity => Boolean(entity?.pause?.inherited);
+export const isEntityPauseInherited = entity => Boolean(entity?.pause?.source);
 
 /**
  * Only a pause owned by the entity can be resumed directly.
@@ -33,7 +33,7 @@ export const isResumeAvailableForEntity = entity =>
  * @returns {boolean}
  */
 export const isPausePropagationAvailableForEntity = entity =>
-  [ENTITY_TYPES.component, ENTITY_TYPES.service].includes(entity?.type);
+  [ENTITY_TYPES.component, ENTITY_TYPES.service].includes(entity?.type ?? entity?.source_type);
 
 /**
  * Converts a pause form to the entity pause API request shape.

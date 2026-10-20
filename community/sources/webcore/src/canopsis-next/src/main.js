@@ -222,6 +222,7 @@ app.use(modalsPlugin, {
     [MODALS.createEntity]: { maxWidth: 1000 },
     [MODALS.createEntityInfo]: { autoHeight: true },
     [MODALS.createEntityInfoProperty]: { autoHeight: true },
+    [MODALS.createEntityPauseEvent]: { autoHeight: true },
     [MODALS.createEvent]: { autoHeight: true },
     [MODALS.createEventFilter]: { maxWidth: 1280 },
     [MODALS.createExternalAuthToken]: { maxWidth: 1100 },
