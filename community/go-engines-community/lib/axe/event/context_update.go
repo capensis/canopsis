@@ -42,15 +42,16 @@ func NewContextUpdateProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &contextUpdateProcessor{
-		dbClient:           dbClient,
-		alarmCollection:    dbClient.Collection(mongo.AlarmMongoCollection),
-		entityCollection:   dbClient.Collection(mongo.EntityMongoCollection),
-		alarmStatusService: alarmStatusService,
-		eventGenerator:     eventGenerator,
-		publisher:          amqpPublisher,
-		encoder:            encoder,
-		logger:             logger,
-		countersHelper:     newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
+		dbClient:             dbClient,
+		alarmCollection:      dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:     dbClient.Collection(mongo.EntityMongoCollection),
+		alarmStatusService:   alarmStatusService,
+		eventGenerator:       eventGenerator,
+		publisher:            amqpPublisher,
+		remediationRpcClient: remediationRpcClient,
+		encoder:              encoder,
+		logger:               logger,
+		countersHelper:       newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 		upstreamHelper: newUpstreamHelper(
 			dbClient,
 			alarmConfigProvider,
@@ -73,16 +74,17 @@ func NewContextUpdateProcessor(
 }
 
 type contextUpdateProcessor struct {
-	dbClient           mongo.DbClient
-	alarmCollection    mongo.DbCollection
-	entityCollection   mongo.DbCollection
-	alarmStatusService alarmstatus.Service
-	eventGenerator     libevent.Generator
-	publisher          amqp.Publisher
-	encoder            encoding.Encoder
-	logger             zerolog.Logger
-	countersHelper     *countersHelper
-	upstreamHelper     *upstreamHelper
+	dbClient             mongo.DbClient
+	alarmCollection      mongo.DbCollection
+	entityCollection     mongo.DbCollection
+	alarmStatusService   alarmstatus.Service
+	eventGenerator       libevent.Generator
+	publisher            amqp.Publisher
+	remediationRpcClient engine.RPCClient
+	encoder              encoding.Encoder
+	logger               zerolog.Logger
+	countersHelper       *countersHelper
+	upstreamHelper       *upstreamHelper
 }
 
 func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -137,10 +139,13 @@ func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		go p.countersHelper.UpdateStates(context.WithoutCancel(ctx), countersRes)
 	}
 
-	err = publishPauseChange(ctx, p.entityCollection, p.publisher, p.encoder, p.eventGenerator,
-		entity, alarm.ID, result.PauseChange, event.Parameters.Timestamp)
-	if err != nil {
-		p.logger.Err(err).Msg("cannot publish pause change")
+	// Upstream processing has already published the pause change.
+	if !entity.IsUpstreamChanged {
+		err = publishPauseChange(ctx, p.entityCollection, p.publisher, p.remediationRpcClient, p.encoder, p.eventGenerator,
+			entity, alarm, result.PauseChange, event.Parameters.Timestamp, p.logger)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot publish pause change")
+		}
 	}
 
 	// to dynamic-infos
@@ -262,8 +267,13 @@ func (p *contextUpdateProcessor) processOnUpstreamChange(ctx context.Context, ev
 		go p.upstreamHelper.PostProcess(context.WithoutCancel(ctx), event, result, countersRes)
 	}
 
-	err = publishPauseChange(ctx, p.entityCollection, p.publisher, p.encoder, p.eventGenerator,
-		entity, alarm.ID, result.PauseChange, event.Parameters.Timestamp)
+	pauseChangeAlarm := alarm
+	if result.Alarm.ID != "" {
+		pauseChangeAlarm = result.Alarm
+	}
+
+	err = publishPauseChange(ctx, p.entityCollection, p.publisher, p.remediationRpcClient, p.encoder, p.eventGenerator,
+		entity, pauseChangeAlarm, result.PauseChange, event.Parameters.Timestamp, p.logger)
 	if err != nil {
 		p.logger.Err(err).Msg("cannot publish pause change")
 	}

@@ -26,7 +26,6 @@ const (
 	OutputCommentPrefix    = "Comment: "
 	OutputTitlePrefix      = "Title: "
 	OutputComponentPrefix  = "Component: "
-	OutputServicePrefix    = "Service: "
 	OutputStepPrefix       = "Step: "
 	OutputJobPrefix        = "Job: "
 	OutputFailReasonPrefix = "Fail reason: "

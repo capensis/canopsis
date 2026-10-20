@@ -256,9 +256,7 @@ func (p *serviceProcessor) sendPauseChanges(ctx context.Context, event *types.Ev
 
 		resumeEvent.EventType = types.EventTypeResume
 		resumeEvent.Timestamp = event.Timestamp
-		if changes.ServiceName != "" {
-			resumeEvent.Output = types.OutputServicePrefix + changes.ServiceName
-		}
+		resumeEvent.Output = entity.Pause.Message
 
 		resumeEvent.Initiator = types.InitiatorSystem
 		resumeEvent.PauseSource = entity.Pause.Source

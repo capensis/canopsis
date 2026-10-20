@@ -10,7 +10,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -237,34 +239,9 @@ func resumeInheritedPause(
 		return nil
 	}
 
-	parentID := ended.Source
-	if len(ended.Path) > 0 {
-		parentID = ended.Path[len(ended.Path)-1]
-	}
-
-	output := ""
-	if parentID != "" {
-		parent := types.Entity{}
-		err = entityCollection.
-			FindOne(ctx, bson.M{"_id": parentID}, options.FindOne().SetProjection(bson.M{"name": 1})).
-			Decode(&parent)
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return fmt.Errorf("cannot find parent entity: %w", err)
-		}
-
-		switch ended.SourceType {
-		case types.EntityTypeComponent:
-			output = types.OutputComponentPrefix
-		case types.EntityTypeService:
-			output = types.OutputServicePrefix
-		}
-
-		output += parent.Name
-	}
-
 	now := datetime.NewCpsTime()
 	newStepQuery := stepUpdateQueryWithInPbhIntervalByStep(types.NewAlarmStep(types.AlarmStepResume, now,
-		"", output, "", "", types.InitiatorSystem, false))
+		"", ended.Message, "", "", types.InitiatorSystem, false))
 	update := []bson.M{
 		{"$set": bson.M{
 			"v.steps": addStepUpdateQuery(newStepQuery),
@@ -292,19 +269,21 @@ func resumeInheritedPause(
 	return nil
 }
 
-// publishPauseChange sends the trigger event of the entity alarm and, if the entity is a service
-// or a component, a pause or resume event to each of its dependencies, so they apply the change
-// and propagate it to their own dependencies.
+// publishPauseChange sends the trigger event and remediation event of the entity alarm and,
+// if the entity is a service or a component, a pause or resume event to each of its dependencies,
+// so they apply the change and propagate it to their own dependencies.
 func publishPauseChange(
 	ctx context.Context,
 	entityCollection mongo.DbCollection,
 	publisher libamqp.Publisher,
+	remediationRpcClient engine.RPCClient,
 	encoder encoding.Encoder,
 	eventGenerator libevent.Generator,
 	entity types.Entity,
-	alarmID string,
+	alarm types.Alarm,
 	change pauseChange,
 	ts datetime.CpsTime,
+	logger zerolog.Logger,
 ) error {
 	if change.alarmChange == "" && change.pause == nil {
 		return nil
@@ -312,7 +291,7 @@ func publishPauseChange(
 
 	// A pause which only replaces the previous pause of the entity is not an alarm change,
 	// but it's still propagated to its dependencies.
-	if change.alarmChange != "" && alarmID != "" {
+	if change.alarmChange != "" && alarm.ID != "" {
 		triggerEvent, err := eventGenerator.Generate(entity)
 		if err != nil {
 			return fmt.Errorf("cannot generate event: %w", err)
@@ -321,10 +300,20 @@ func publishPauseChange(
 		triggerEvent.Timestamp = ts
 		triggerEvent.AlarmChange = &types.AlarmChange{Type: change.alarmChange}
 		triggerEvent.EventType = types.EventTypeTrigger
-		triggerEvent.AlarmID = alarmID
+		triggerEvent.AlarmID = alarm.ID
+
 		err = publishEvent(ctx, publisher, encoder, triggerEvent)
 		if err != nil {
 			return err
+		}
+
+		err = sendRemediationEvent(ctx, rpc.AxeEvent{}, Result{
+			Alarm:       alarm,
+			Entity:      entity,
+			AlarmChange: *triggerEvent.AlarmChange,
+		}, remediationRpcClient, encoder)
+		if err != nil {
+			logger.Err(err).Str("alarm", alarm.ID).Msg("cannot send event to engine-remediation")
 		}
 	}
 
@@ -388,6 +377,7 @@ func publishPauseChange(
 			depEvent.Timestamp = ts
 			depEvent.Initiator = types.InitiatorSystem
 			if entity.LatestPause != nil {
+				depEvent.Output = entity.LatestPause.Message
 				depEvent.PauseSource = entity.LatestPause.Source
 				depEvent.PauseSourceType = entity.LatestPause.SourceType
 			}

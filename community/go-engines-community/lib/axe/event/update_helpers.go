@@ -122,6 +122,8 @@ func sendRemediationEvent(
 		types.AlarmChangeTypeChangeState,
 		types.AlarmChangeTypeUnsnooze,
 		types.AlarmChangeTypeActivate,
+		types.AlarmChangeTypePause,
+		types.AlarmChangeTypeResume,
 		types.AlarmChangeTypePbhEnter,
 		types.AlarmChangeTypePbhLeave,
 		types.AlarmChangeTypePbhLeaveAndEnter,

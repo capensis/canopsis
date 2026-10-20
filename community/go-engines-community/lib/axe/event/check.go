@@ -206,6 +206,10 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 			entity = result.Entity
 		}
 
+		// TODO: review and rework all this chaos in all event processor regarding entity, event.Entity and result.Entity, the same for Alarm
+		// add it to result to cover case when entity changed after updatePauseOnServicesChange we should put updated entity to the result to send updated entity to the postProcess
+		result.Entity = entity
+
 		if !event.Healthcheck {
 			result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCountersWithPauseChange(
 				ctx,
@@ -906,8 +910,8 @@ func (p *checkProcessor) postProcess(
 		}
 	}
 
-	err = publishPauseChange(ctx, p.entityCollection, p.publisher, p.encoder, p.eventGenerator,
-		entity, result.Alarm.ID, result.PauseChange, event.Parameters.Timestamp)
+	err = publishPauseChange(ctx, p.entityCollection, p.publisher, p.remediationRpcClient, p.encoder, p.eventGenerator,
+		entity, result.Alarm, result.PauseChange, event.Parameters.Timestamp, p.logger)
 	if err != nil {
 		p.logger.Err(err).Msg("cannot publish pause change")
 	}
@@ -985,17 +989,9 @@ func (p *checkProcessor) resolvePause(ctx context.Context, entity types.Entity) 
 	pause := types.LatestPause{Pause: parent.Pause}
 	if pause.Source == "" {
 		// The parent is paused by itself, the entity inherits the parent's pause.
-		pause.Source = parent.ID
-		pause.SourceType = parent.Type
-		pause.Message += "\n"
-		switch parent.Type {
-		case types.EntityTypeComponent:
-			pause.Message += types.OutputComponentPrefix
-		case types.EntityTypeService:
-			pause.Message += types.OutputServicePrefix
-		}
-
-		pause.Message += parent.Name
+		parentEntity := types.Entity{ID: parent.ID, Type: parent.Type, Name: parent.Name, Pause: &parent.Pause}
+		inheritedPause, err := parentEntity.InheritedPause()
+		return inheritedPause, true, err
 	}
 
 	return &pause, true, nil

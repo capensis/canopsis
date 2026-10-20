@@ -280,7 +280,6 @@ func (p *resumeProcessor) processDepends(ctx context.Context, event rpc.AxeEvent
 		entity = result.Entity
 	}
 
-	label := ""
 	var filter bson.M
 	// Dependents are not filtered by pause.source: they may not have received the pause yet
 	// and must keep the ended pause to ignore it when it arrives.
@@ -291,13 +290,11 @@ func (p *resumeProcessor) processDepends(ctx context.Context, event rpc.AxeEvent
 			"type":      types.EntityTypeResource,
 			"enabled":   true,
 		}
-		label = types.OutputComponentPrefix
 	case types.EntityTypeService:
 		filter = bson.M{
 			"services": entity.ID,
 			"enabled":  true,
 		}
-		label = types.OutputServicePrefix
 	default:
 		return
 	}
@@ -311,7 +308,9 @@ func (p *resumeProcessor) processDepends(ctx context.Context, event rpc.AxeEvent
 	if pauseSource == "" {
 		pauseSource = entity.ID
 		pauseSourceType = entity.Type
-		output += "\n" + label + entity.Name
+		if entity.LatestPause != nil {
+			output = entity.LatestPause.GetInheritedMessage(entity.Type, entity.Name)
+		}
 	} else {
 		if len(pausePath) >= types.MaxPausePathLength {
 			p.logger.Error().Str("entity", entity.ID).Int("path_length", len(pausePath)).
