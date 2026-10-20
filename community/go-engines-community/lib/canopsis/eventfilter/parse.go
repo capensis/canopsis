@@ -78,11 +78,7 @@ func ParseRule(rule Rule, tplExecutor libtemplate.Executor) ParsedRule {
 		case ActionSetFieldFromTemplate, ActionSetEntityInfoFromTemplate, ActionSetTagsFromTemplate:
 			if str, ok := action.Value.(string); ok {
 				parsedValue = tplExecutor.Parse(str)
-				for _, ref := range refs {
-					if parsedValue.ContainsField("ExternalData." + ref) {
-						externalDataRefs = append(externalDataRefs, ref)
-					}
-				}
+				externalDataRefs = templateExternalDataRefs(parsedValue, refs)
 			}
 		case ActionCopy, ActionCopyToEntityInfo, ActionSetTags, ActionSetEntityInfoFromDictionary:
 			if str, ok := action.Value.(string); ok {

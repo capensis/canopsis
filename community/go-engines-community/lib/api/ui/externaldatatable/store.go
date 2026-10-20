@@ -235,7 +235,7 @@ func (s *store) Create(ctx context.Context, r EditRequest) (Table, error) {
 	case externaldata.TypePostgreSQL:
 		err = s.createPostgresTable(ctx, r.Name, r)
 	default:
-		err = fmt.Errorf("unknown external data type %d", r.Type)
+		err = fmt.Errorf("unknown external data type %d", *r.Type)
 	}
 
 	if err != nil {
