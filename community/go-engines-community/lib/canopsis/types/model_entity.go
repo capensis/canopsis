@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 	"slices"
+	"strings"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -171,14 +172,43 @@ func (e Entity) InheritedPause() (*LatestPause, error) {
 	// The entity is the source of its own pause, so it's not in the path.
 	pause.Source = e.ID
 	pause.SourceType = e.Type
-	switch e.Type {
-	case EntityTypeComponent:
-		pause.Message += "\n" + OutputComponentPrefix + e.Name
-	case EntityTypeService:
-		pause.Message += "\n" + OutputServicePrefix + e.Name
-	}
+	pause.Message = pause.GetInheritedMessage(e.Type, e.Name)
 
 	return &pause, nil
+}
+
+// GetInheritedMessage formats the pause message for entities inheriting it from the given source.
+func (p Pause) GetInheritedMessage(entityType, entityName string) string {
+	message := p.Message
+
+	if p.Type != "" {
+		typeOutput := OutputTypePrefix + p.Type
+		switch {
+		case strings.HasSuffix(message, typeOutput+"."):
+			message = strings.TrimSuffix(strings.TrimSuffix(message, typeOutput+"."), ". ")
+		case strings.HasSuffix(message, typeOutput):
+			message = strings.TrimSuffix(strings.TrimSuffix(message, typeOutput), ". ")
+		}
+
+		message = strings.TrimPrefix(message, OutputCommentPrefix)
+	}
+
+	output := fmt.Sprintf("Inherited from: %s %s.", entityType, entityName)
+	if message != "" {
+		output += " " + OutputCommentPrefix + message
+		if !strings.HasSuffix(message, ".") {
+			output += "."
+		}
+	}
+
+	if p.Type != "" {
+		output += " " + OutputTypePrefix + p.Type
+		if !strings.HasSuffix(p.Type, ".") {
+			output += "."
+		}
+	}
+
+	return output
 }
 
 type StateInfo struct {
@@ -261,13 +291,13 @@ func (e *Entity) GetStringField(f string) (string, bool) {
 		return e.Upstream, true
 	case "pause.author":
 		if e.Pause == nil {
-			return "", false
+			return "", true
 		}
 
 		return e.Pause.Author, true
 	case "pause.initiator":
 		if e.Pause == nil {
-			return "", false
+			return "", true
 		}
 
 		return e.Pause.Initiator, true

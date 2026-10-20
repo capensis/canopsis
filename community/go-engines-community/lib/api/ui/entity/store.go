@@ -696,27 +696,7 @@ func (s *store) Pause(ctx context.Context, r PauseRequest, userID, username stri
 		return err
 	}
 
-	output := ""
-	if r.Type == "" {
-		output = r.Comment
-	} else {
-		ob := strings.Builder{}
-		if r.Comment != "" {
-			ob.WriteString(types.OutputCommentPrefix)
-			ob.WriteString(r.Comment)
-			ob.WriteString(". ")
-		}
-
-		ob.WriteString(types.OutputTypePrefix)
-		ob.WriteString(r.Type)
-		if r.Comment != "" {
-			ob.WriteRune('.')
-		}
-
-		output = ob.String()
-	}
-
-	event, err := s.genEvent(types.EventTypePause, entity, output, username, userID)
+	event, err := s.genEvent(types.EventTypePause, entity, r.Comment, username, userID)
 	if err != nil {
 		return err
 	}

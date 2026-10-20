@@ -94,6 +94,22 @@ func (p *pauseProcessor) processEvent(ctx context.Context, event rpc.AxeEvent) (
 		}
 	}()
 
+	if event.Parameters.PauseSource == "" && event.Parameters.PauseType != "" &&
+		event.Parameters.RuleName == "" && event.Parameters.IdleRuleApply == "" {
+		// API and external events carry the comment; rule and inherited pauses already carry a step message.
+		output := ""
+		if event.Parameters.Output != "" {
+			output = types.OutputCommentPrefix + event.Parameters.Output + ". "
+		}
+
+		output += types.OutputTypePrefix + event.Parameters.PauseType
+		if event.Parameters.Output != "" {
+			output += "."
+		}
+
+		event.Parameters.Output = output
+	}
+
 	newPause := types.Pause{
 		Timestamp:  event.Parameters.Timestamp,
 		Message:    event.Parameters.Output,
@@ -275,7 +291,6 @@ func (p *pauseProcessor) processDepends(ctx context.Context, event rpc.AxeEvent,
 		entity = result.Entity
 	}
 
-	label := ""
 	var filter bson.M
 	switch entity.Type {
 	case types.EntityTypeComponent:
@@ -284,13 +299,11 @@ func (p *pauseProcessor) processDepends(ctx context.Context, event rpc.AxeEvent,
 			"type":      types.EntityTypeResource,
 			"enabled":   true,
 		}
-		label = types.OutputComponentPrefix
 	case types.EntityTypeService:
 		filter = bson.M{
 			"services": entity.ID,
 			"enabled":  true,
 		}
-		label = types.OutputServicePrefix
 	default:
 		return
 	}
@@ -304,7 +317,18 @@ func (p *pauseProcessor) processDepends(ctx context.Context, event rpc.AxeEvent,
 	if pauseSource == "" {
 		pauseSource = entity.ID
 		pauseSourceType = entity.Type
-		output += "\n" + label + entity.Name
+
+		inheritedPause, err := entity.InheritedPause()
+		if err != nil {
+			p.logger.Err(err).Str("entity", entity.ID).Msg("cannot inherit pause")
+			return
+		}
+
+		if inheritedPause == nil {
+			return
+		}
+
+		output = inheritedPause.Message
 	} else {
 		if len(pausePath) >= types.MaxPausePathLength {
 			p.logger.Error().Str("entity", entity.ID).Int("path_length", len(pausePath)).

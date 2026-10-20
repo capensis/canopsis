@@ -215,8 +215,13 @@ func (h *upstreamHelper) Process(ctx context.Context, event rpc.AxeEvent, forceC
 		return result, alarm, err
 	}
 
-	pauseChangeErr := publishPauseChange(ctx, h.entityCollection, h.amqpPublisher, h.encoder, h.eventGenerator,
-		entity, alarm.ID, result.PauseChange, event.Parameters.Timestamp)
+	pauseChangeAlarm := alarm
+	if result.Alarm.ID != "" {
+		pauseChangeAlarm = result.Alarm
+	}
+
+	pauseChangeErr := publishPauseChange(ctx, h.entityCollection, h.amqpPublisher, h.remediationRpcClient, h.encoder, h.eventGenerator,
+		entity, pauseChangeAlarm, result.PauseChange, event.Parameters.Timestamp, h.logger)
 	if pauseChangeErr != nil {
 		h.logger.Err(pauseChangeErr).Msg("cannot publish pause change")
 	}

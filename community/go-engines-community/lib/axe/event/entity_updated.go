@@ -48,6 +48,7 @@ func NewEntityUpdatedProcessor(
 		entityCollection:            dbClient.Collection(mongo.EntityMongoCollection),
 		eventGenerator:              eventGenerator,
 		publisher:                   amqpPublisher,
+		remediationRpcClient:        remediationRpcClient,
 		encoder:                     encoder,
 		componentCountersCalculator: componentCountersCalculator,
 		externalTagUpdater:          externalTagUpdater,
@@ -81,6 +82,7 @@ type entityUpdatedProcessor struct {
 	entityCollection            mongo.DbCollection
 	eventGenerator              libevent.Generator
 	publisher                   amqp.Publisher
+	remediationRpcClient        engine.RPCClient
 	encoder                     encoding.Encoder
 	componentCountersCalculator calculator.ComponentCountersCalculator
 	externalTagUpdater          alarmtag.ExternalUpdater
@@ -216,8 +218,12 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		return result, err
 	}
 
-	err = publishPauseChange(ctx, p.entityCollection, p.publisher, p.encoder, p.eventGenerator,
-		entity, alarm.ID, result.PauseChange, event.Parameters.Timestamp)
+	if result.Alarm.ID != "" {
+		alarm = result.Alarm
+	}
+
+	err = publishPauseChange(ctx, p.entityCollection, p.publisher, p.remediationRpcClient, p.encoder, p.eventGenerator,
+		entity, alarm, result.PauseChange, event.Parameters.Timestamp, p.logger)
 	if err != nil {
 		p.logger.Err(err).Msg("cannot publish pause change")
 	}
