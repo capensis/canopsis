@@ -32,8 +32,8 @@ type Rule struct {
 	ID           string
 	Name         string
 	ExternalData []ParsedRefParameters
-	// OnMismatch overrides the default error outcome for missing table references.
-	OnMismatch    map[string]int
+	// OnMismatch overrides the default error outcome for each entry in ExternalData, in the same order.
+	OnMismatch    []int
 	TriggerUserID string
 	TriggerAuthor string
 }

@@ -352,10 +352,10 @@ func (s *ruleService) getExternalData(
 	}
 
 	refParameters := make([]externaldata.ParsedRefParameters, len(rule.ExternalData))
-	onMismatch := make(map[string]int, len(rule.ExternalData))
+	onMismatch := make([]int, len(rule.ExternalData))
 	for i, d := range rule.ExternalData {
 		refParameters[i] = d.ParsedRefParameters
-		onMismatch[d.Reference] = d.OnMismatch
+		onMismatch[i] = d.OnMismatch
 	}
 
 	er, err := s.externalDataGetter.Get(ctx, externaldata.Rule{
