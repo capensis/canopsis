@@ -95,7 +95,7 @@ export default {
     [USER_PERMISSIONS.business.alarmsList.actions.fastAck]: 'Fast ack',
     [USER_PERMISSIONS.business.alarmsList.actions.ackRemove]: 'Cancel ack',
     [USER_PERMISSIONS.business.alarmsList.actions.pbehaviorAdd]: 'Edit PBhaviours for alarm',
-    [USER_PERMISSIONS.business.alarmsList.actions.fastPbehaviorAdd]: 'Pause / resume alarms',
+    [USER_PERMISSIONS.business.alarmsList.actions.fastPbehaviorAdd]: 'Pause / unpause alarms',
     [USER_PERMISSIONS.business.alarmsList.actions.snooze]: 'Snooze alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.declareTicket]: 'Declare ticket',
     [USER_PERMISSIONS.business.alarmsList.actions.associateTicket]: 'Associate ticket',
@@ -140,7 +140,7 @@ export default {
     [USER_PERMISSIONS.business.context.actions.massDisable]:
       'Mass action to disable selected entities',
     [USER_PERMISSIONS.business.context.actions.pbehavior]: 'Manage periodic behaviors',
-    [USER_PERMISSIONS.business.context.actions.pause]: 'Pause / resume entities',
+    [USER_PERMISSIONS.business.context.actions.pause]: 'Pause / unpause entities',
     [USER_PERMISSIONS.business.context.actions.filter]: 'Set entities filters',
     [USER_PERMISSIONS.business.context.actions.userFilter]: 'Filter entities',
     [USER_PERMISSIONS.business.context.actions.category]: 'Filter entities by category',
@@ -158,7 +158,7 @@ export default {
     [USER_PERMISSIONS.business.serviceWeather.actions.entityInvalidate]:
       'Invalidate alarms and cancel them',
     [USER_PERMISSIONS.business.serviceWeather.actions.entityPause]: 'Pause entities',
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityPlay]: 'Resume paused entities',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityPlay]: 'Unpause entities',
     [USER_PERMISSIONS.business.serviceWeather.actions.entityCancel]:
       'Access the list of PBehaviors associated to services (in the subtab in the services modal windows)',
     [USER_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors]:

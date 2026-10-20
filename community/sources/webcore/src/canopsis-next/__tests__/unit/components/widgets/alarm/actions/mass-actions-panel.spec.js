@@ -298,6 +298,9 @@ describe('mass-actions-panel', () => {
         ]),
       }),
     );
+    expect($popups.success).toHaveBeenCalledWith({
+      text: 'modals.createPbehavior.success.create',
+    });
     expect(wrapper).toHaveBeenEmit('clear:items');
     expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
   });
@@ -342,6 +345,9 @@ describe('mass-actions-panel', () => {
         { origin: PBEHAVIOR_ORIGINS.alarmList, entity: 'entity-1' },
         { origin: PBEHAVIOR_ORIGINS.alarmList, entity: 'entity-2' },
       ],
+    });
+    expect($popups.success).toHaveBeenCalledWith({
+      text: 'modals.createPbehavior.success.remove',
     });
     expect(wrapper).toHaveBeenEmit('clear:items');
     expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
@@ -401,7 +407,7 @@ describe('mass-actions-panel', () => {
         ...metaAlarm,
         entity: {
           _id: 'inherited-pause',
-          pause: { timestamp: 123, inherited: true },
+          pause: { timestamp: 123, inherited: true, source: 'parent-entity-id' },
         },
       },
     ];

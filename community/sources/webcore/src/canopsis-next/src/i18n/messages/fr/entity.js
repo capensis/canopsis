@@ -36,7 +36,7 @@ export default {
     pauseOperation:
       'La mise en pause peut prendre jusqu’à 60 secondes avant d’apparaître dans l’interface',
     resumeOperation:
-      'La reprise peut prendre jusqu’à 60 secondes avant d’apparaître dans l’interface',
+      'La sortie de pause peut prendre jusqu’à 60 secondes avant d’apparaître dans l’interface',
   },
   treeOfDependenciesShowTypes: {
     [TREE_OF_DEPENDENCIES_SHOW_TYPES.allDependencies]: 'Afficher toutes les dépendances',

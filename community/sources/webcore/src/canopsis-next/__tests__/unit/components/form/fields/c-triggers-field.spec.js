@@ -36,6 +36,18 @@ describe('c-triggers-field', () => {
         text: 'Long output changed',
       }),
     );
+    expect(triggerItems).toContainEqual(
+      expect.objectContaining({
+        type: TRIGGERS_TYPES.pause,
+        text: 'Pause',
+      }),
+    );
+    expect(triggerItems).toContainEqual(
+      expect.objectContaining({
+        type: TRIGGERS_TYPES.resume,
+        text: 'Unpause',
+      }),
+    );
   });
 
   it('Uses the alarm wording for selected chips', () => {
@@ -47,6 +59,12 @@ describe('c-triggers-field', () => {
         text: 'Output changed',
       }),
     ).toBe('Alarm output changed');
+    expect(
+      wrapper.vm.getSelectedText({
+        type: TRIGGERS_TYPES.resume,
+        text: 'Unpause',
+      }),
+    ).toBe('Alarm unpaused');
   });
 
   it('Keeps custom trigger lists ungrouped', () => {

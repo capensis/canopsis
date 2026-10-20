@@ -36,10 +36,7 @@ export const useEntityStore = defineStore('entity', () => {
   const setEntities = (entities = []) => {
     entitiesById.value = entities.reduce(
       (acc, entity) => {
-        acc[entity._id] = {
-          ...acc[entity._id],
-          ...entity,
-        };
+        acc[entity._id] = entity;
 
         return acc;
       },

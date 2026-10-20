@@ -644,8 +644,8 @@ export default {
       selectedText: 'Alarm paused',
     },
     [TRIGGERS_TYPES.resume]: {
-      text: 'Resumed',
-      selectedText: 'Alarm resumed',
+      text: 'Unpaused',
+      selectedText: 'Alarm unpaused',
     },
     [TRIGGERS_TYPES.pbhenter]: {
       text: 'Entered pbehavior',
@@ -696,7 +696,7 @@ export default {
       text: 'Alarm paused',
     },
     [TRIGGERS_TYPES.resume]: {
-      text: 'Alarm resumed',
+      text: 'Alarm unpaused',
     },
     [TRIGGERS_TYPES.eventscount]: {
       text: 'Alarm received new check event',

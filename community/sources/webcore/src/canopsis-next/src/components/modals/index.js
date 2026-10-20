@@ -226,6 +226,7 @@ export default {
   [MODALS.entityDependenciesList]: defineAsyncComponent(
     () => import('./entity/entity-dependencies-list.vue'),
   ),
+  [MODALS.entityUpstream]: defineAsyncComponent(() => import('./entity/entity-upstream.vue')),
   [MODALS.createService]: defineAsyncComponent(() => import('./service/create-service.vue')),
   [MODALS.createIcon]: defineAsyncComponent(() => import('./icon/create-icon.vue')),
   [MODALS.createMap]: defineAsyncComponent(() => import('./map/create-map.vue')),
