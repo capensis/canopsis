@@ -39,13 +39,13 @@ describe('c-triggers-field', () => {
     expect(triggerItems).toContainEqual(
       expect.objectContaining({
         type: TRIGGERS_TYPES.pause,
-        text: 'Pause',
+        text: 'Paused',
       }),
     );
     expect(triggerItems).toContainEqual(
       expect.objectContaining({
         type: TRIGGERS_TYPES.resume,
-        text: 'Unpause',
+        text: 'Unpaused',
       }),
     );
   });

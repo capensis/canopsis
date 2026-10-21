@@ -107,19 +107,13 @@ export default {
       }
 
       const isInherited = isEntityPauseInherited(this.item);
-      const {
-        source,
-        source_name: sourceName,
-        source_type: sourceType,
-      } = this.item.pause;
 
       return {
         type: CONTEXT_ACTIONS_TYPES.resume,
         icon: 'play_arrow',
         title: isInherited
           ? this.$t('context.actions.titles.inheritedPause', {
-            entityType: this.$t(`entity.types.${sourceType}`),
-            entityName: sourceName ?? source,
+            message: String(this.item.pause.message ?? '').trimStart(),
           })
           : this.$t('context.actions.titles.unpause'),
         disabledButton: isInherited,
