@@ -39,6 +39,11 @@ type UserProvider interface {
 	UpdateHashedPassword(ctx context.Context, id, hash string) error
 }
 
+// UserRoleReader returns the current role names assigned to a user.
+type UserRoleReader interface {
+	GetRoleNames(ctx context.Context, userID string) ([]string, error)
+}
+
 type RoleProvider interface {
 	// GetValidRoleIDs checks if potentialRoles slice contains valid role names and returns at least one valid role ID.
 	// If no roles found, then it check if default role is valid and returns its ID. Return ErrDefaultRoleNotFound error if default role not found.
