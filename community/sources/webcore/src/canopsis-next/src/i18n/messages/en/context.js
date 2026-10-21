@@ -19,7 +19,7 @@ export default {
       deleteEntity: 'Delete entity',
       pause: 'Pause',
       unpause: 'Unpause',
-      inheritedPause: 'Pause is inherited from parent {entityType} {entityName}',
+      inheritedPause: 'Pause is inherited from parent {message}',
       inheritedPauses: 'Selected pauses are inherited and cannot be removed',
       pbehavior: 'Periodical behavior',
       variablesHelp: 'List of available variables',

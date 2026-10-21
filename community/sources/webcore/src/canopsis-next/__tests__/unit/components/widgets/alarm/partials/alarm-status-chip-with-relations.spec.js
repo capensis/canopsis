@@ -10,7 +10,12 @@ import AlarmStatusChipWithRelations from '@/components/widgets/alarm/partials/al
 
 const stubs = {
   'c-tooltip': createActivatorElementStub('c-tooltip'),
+  'v-chip': {
+    template: '<div><slot /></div>',
+  },
 };
+
+const selectRelationsButton = wrapper => wrapper.find('v-btn-stub');
 
 describe('alarm-status-chip-with-relations', () => {
   const $modals = mockModals();
@@ -45,8 +50,7 @@ describe('alarm-status-chip-with-relations', () => {
 
     await flushPromises();
 
-    wrapper.find('.alarm-status-chip-with-relations')
-      .triggerCustomEvent('click', new Event('click'));
+    selectRelationsButton(wrapper).triggerCustomEvent('click', new Event('click'));
 
     expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.entityUpstream,
@@ -81,8 +85,7 @@ describe('alarm-status-chip-with-relations', () => {
 
     await flushPromises();
 
-    wrapper.find('.alarm-status-chip-with-relations')
-      .triggerCustomEvent('click', new Event('click'));
+    selectRelationsButton(wrapper).triggerCustomEvent('click', new Event('click'));
 
     expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.entityUpstream,

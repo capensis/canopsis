@@ -7,8 +7,8 @@ const translate = (key, parameters = {}) => {
     return key.split('.').at(-1).replace(/^./u, character => character.toUpperCase());
   }
 
-  if (parameters.entityType || parameters.entityName) {
-    return `${key}:${parameters.entityType}:${parameters.entityName}`;
+  if (parameters.message) {
+    return `${key}:${parameters.message}`;
   }
 
   return `${key}:`;
@@ -65,8 +65,7 @@ describe('context actions-panel', () => {
       pause: {
         inherited: true,
         source: 'parent-component-id',
-        source_name: 'Parent component',
-        source_type: ENTITY_TYPES.component,
+        message: '\nParent component',
       },
     });
 
@@ -74,25 +73,8 @@ describe('context actions-panel', () => {
       expect.objectContaining({
         type: CONTEXT_ACTIONS_TYPES.resume,
         icon: 'play_arrow',
-        title: 'context.actions.titles.inheritedPause:Component:Parent component',
+        title: 'context.actions.titles.inheritedPause:Parent component',
         disabledButton: true,
-      }),
-    );
-  });
-
-  test('uses the pause source id when the source name is missing', () => {
-    const context = createActionsContext({
-      _id: 'resource-id',
-      type: ENTITY_TYPES.resource,
-      pause: {
-        source: 'parent-component-id',
-        source_type: ENTITY_TYPES.component,
-      },
-    });
-
-    expect(ActionsPanel.computed.pauseAction.call(context)).toEqual(
-      expect.objectContaining({
-        title: 'context.actions.titles.inheritedPause:Component:parent-component-id',
       }),
     );
   });
