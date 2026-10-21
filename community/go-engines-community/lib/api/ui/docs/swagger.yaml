@@ -15465,6 +15465,8 @@ paths:
       description: |
         Get available template variables for action scenarios.
 
+        Webhook actions include `userRoles` in the `first_webhook` and `webhook` template contexts. Iterate role names with `{{ range .AdditionalData.UserRoles }}{{ . }}{{ end }}`. The value contains the current role names of the represented event user when `forward_author` is enabled, and is empty when no event user is forwarded or that user no longer exists. It is not added to output, message, author, or event-filter contexts.
+
         -  PERMISSIONS: `api_action:read`
       operationId: scenarios-tpl-vars
       responses:
@@ -15481,6 +15483,8 @@ paths:
       summary: Validate action scenario templates
       description: |
         Validate action scenario templates.
+
+        Webhook action request URLs, headers, and payloads can use `.AdditionalData.UserRoles` for the current role names of the represented event user when `forward_author` is enabled. Iterate the names with `{{ range .AdditionalData.UserRoles }}{{ . }}{{ end }}`. The value is empty when no event user is forwarded or that user no longer exists; output, message, author, event-filter, and response-only contexts do not receive it.
 
         -  PERMISSIONS: `api_action:read`
       operationId: scenarios-tpl-validate

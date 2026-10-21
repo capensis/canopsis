@@ -1,0 +1,68 @@
+package userprovider
+
+import (
+	"context"
+	"errors"
+	"testing"
+
+	mockmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
+	"go.uber.org/mock/gomock"
+)
+
+func TestRoleNamesReaderGetRoleNames(t *testing.T) {
+	t.Run("empty user ID skips the database", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		collection := mockmongo.NewMockDbCollection(ctrl)
+		got, err := (&roleNamesReader{collection: collection}).GetRoleNames(context.Background(), "")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got == nil || len(got) != 0 {
+			t.Fatalf("expected a non-nil empty slice, got %#v", got)
+		}
+	})
+
+	t.Run("reports aggregate and cursor errors", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		collection := mockmongo.NewMockDbCollection(ctrl)
+		wantErr := errors.New("mongo unavailable")
+		collection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(nil, wantErr)
+		_, err := (&roleNamesReader{collection: collection}).GetRoleNames(context.Background(), "user-1")
+		if !errors.Is(err, wantErr) {
+			t.Fatalf("expected wrapped aggregate error, got %v", err)
+		}
+	})
+
+	t.Run("reports cursor and decode errors", func(t *testing.T) {
+		decodeError := errors.New("invalid document")
+		for _, test := range []struct {
+			name       string
+			decodeErr  error
+			cursorErr  error
+			wantErr    error
+			nextResult bool
+		}{
+			{name: "cursor", cursorErr: context.Canceled, wantErr: context.Canceled},
+			{name: "decode", decodeErr: decodeError, wantErr: decodeError, nextResult: true},
+		} {
+			t.Run(test.name, func(t *testing.T) {
+				ctrl := gomock.NewController(t)
+				collection := mockmongo.NewMockDbCollection(ctrl)
+				cursor := mockmongo.NewMockCursor(ctrl)
+				collection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(cursor, nil)
+				cursor.EXPECT().Next(gomock.Any()).Return(test.nextResult)
+				if test.nextResult {
+					cursor.EXPECT().Decode(gomock.Any()).Return(test.decodeErr)
+				}
+				if test.decodeErr == nil {
+					cursor.EXPECT().Err().Return(test.cursorErr)
+				}
+				cursor.EXPECT().Close(gomock.Any()).Return(nil)
+				_, err := (&roleNamesReader{collection: collection}).GetRoleNames(context.Background(), "user-1")
+				if !errors.Is(err, test.wantErr) {
+					t.Fatalf("expected wrapped %v error, got %v", test.wantErr, err)
+				}
+			})
+		}
+	})
+}

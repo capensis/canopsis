@@ -1,17 +1,20 @@
 package webhook
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"maps"
 	"reflect"
+	"slices"
 	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
@@ -176,6 +179,37 @@ type TplAlarm struct {
 	} `bson:"children" json:"children"`
 }
 
+// TemplateAdditionalData extends persisted execution data only while rendering templates.
+type TemplateAdditionalData struct {
+	types.AdditionalData
+	UserRoles []string `json:"user_roles"`
+}
+
+// PrepareAdditionalData resolves current user role names for template rendering.
+func PrepareAdditionalData(
+	ctx context.Context,
+	reader security.UserRoleReader,
+	additionalData types.AdditionalData,
+) (TemplateAdditionalData, error) {
+	result := TemplateAdditionalData{AdditionalData: additionalData, UserRoles: []string{}}
+	if additionalData.User == "" {
+		return result, nil
+	}
+	if reader == nil {
+		return TemplateAdditionalData{}, errors.New("user role reader is required for a non-empty user ID")
+	}
+
+	roleNames, err := reader.GetRoleNames(ctx, additionalData.User)
+	if err != nil {
+		return TemplateAdditionalData{}, err
+	}
+	if len(roleNames) > 0 {
+		result.UserRoles = slices.Clone(roleNames)
+	}
+
+	return result, nil
+}
+
 func FetchAlarmsForTplPipeline(ids []string) []bson.M {
 	return []bson.M{
 		{"$match": bson.M{"_id": bson.M{"$in": ids}}},
@@ -231,7 +265,7 @@ func FetchAlarmsForTplPipeline(ids []string) []bson.M {
 func NewTplData(
 	forMultiple bool,
 	alarms []TplAlarm,
-	additionalData types.AdditionalData,
+	additionalData TemplateAdditionalData,
 	responseTplVars ResponseTplVars,
 ) map[string]any {
 	res := make(map[string]any)
