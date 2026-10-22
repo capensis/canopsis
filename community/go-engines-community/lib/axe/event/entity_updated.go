@@ -14,7 +14,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pausejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resumejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -46,6 +48,8 @@ func NewEntityUpdatedProcessor(
 		dbClient:                    dbClient,
 		alarmCollection:             dbClient.Collection(mongo.AlarmMongoCollection),
 		entityCollection:            dbClient.Collection(mongo.EntityMongoCollection),
+		resumeJobService:            resumejob.NewService(dbClient, eventGenerator, logger),
+		pauseJobService:             pausejob.NewService(dbClient, eventGenerator, logger),
 		eventGenerator:              eventGenerator,
 		publisher:                   amqpPublisher,
 		remediationRpcClient:        remediationRpcClient,
@@ -80,6 +84,8 @@ type entityUpdatedProcessor struct {
 	dbClient                    mongo.DbClient
 	alarmCollection             mongo.DbCollection
 	entityCollection            mongo.DbCollection
+	resumeJobService            resumejob.Service
+	pauseJobService             pausejob.Service
 	eventGenerator              libevent.Generator
 	publisher                   amqp.Publisher
 	remediationRpcClient        engine.RPCClient
@@ -114,7 +120,7 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 
 		// The entity has been added to or removed from services, so its pause
 		// and its alarm pause are updated.
-		change, err := updatePauseOnServicesChange(ctx, p.entityCollection, p.alarmCollection,
+		change, err := updatePauseOnServicesChange(ctx, p.entityCollection, p.alarmCollection, p.resumeJobService, p.pauseJobService,
 			&entity, &alarm, event.Parameters.Timestamp, p.logger)
 		if err != nil {
 			return err
@@ -222,7 +228,7 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		alarm = result.Alarm
 	}
 
-	err = publishPauseChange(ctx, p.entityCollection, p.publisher, p.remediationRpcClient, p.encoder, p.eventGenerator,
+	err = publishPauseChange(ctx, p.publisher, p.remediationRpcClient, p.encoder, p.eventGenerator,
 		entity, alarm, result.PauseChange, event.Parameters.Timestamp, p.logger)
 	if err != nil {
 		p.logger.Err(err).Msg("cannot publish pause change")

@@ -108,6 +108,12 @@ func (h *countersHelper) CalculateCountersWithPauseChange(
 	pauseAlarmChange.PreviousPbehaviorTypeID = entity.PbehaviorInfo.TypeID
 	pauseAlarmChange.PreviousPbehaviorCannonicalType = entity.PbehaviorInfo.CanonicalType
 
+	if alarmChange.Type == types.AlarmChangeTypeResolve {
+		// The alarm was resolved by the first calculation, so its state must not
+		// contribute again when applying the entity's pause change.
+		alarm = &types.Alarm{}
+	}
+
 	pauseUpdated, pauseRes, err := h.CalculateCounters(ctx, alarm, entity, pauseAlarmChange)
 	if err != nil {
 		return false, res, err

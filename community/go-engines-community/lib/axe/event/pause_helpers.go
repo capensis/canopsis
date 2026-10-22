@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"slices"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -12,6 +11,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pausejob"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resumejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -89,6 +90,8 @@ func resolveInheritedPause(
 func updatePauseOnServicesChange(
 	ctx context.Context,
 	entityCollection, alarmCollection mongo.DbCollection,
+	resumeJobService resumejob.Service,
+	pauseJobService pausejob.Service,
 	entity *types.Entity,
 	alarm *types.Alarm,
 	ts datetime.CpsTime,
@@ -110,7 +113,7 @@ func updatePauseOnServicesChange(
 		}
 
 		// None of the parents has the entity pause anymore.
-		err = resumeInheritedPause(ctx, entityCollection, alarmCollection, entity, alarm, ts)
+		err = resumeInheritedPause(ctx, entityCollection, alarmCollection, resumeJobService, pauseJobService, entity, alarm, ts)
 		if err != nil {
 			return pauseChange{}, err
 		}
@@ -135,7 +138,7 @@ func updatePauseOnServicesChange(
 
 	wasPaused := entity.Pause != nil
 
-	err = applyInheritedPause(ctx, entityCollection, alarmCollection, entity, alarm, *inherited)
+	err = applyInheritedPause(ctx, entityCollection, alarmCollection, pauseJobService, entity, alarm, *inherited)
 	if err != nil {
 		return pauseChange{}, err
 	}
@@ -151,11 +154,17 @@ func updatePauseOnServicesChange(
 func applyInheritedPause(
 	ctx context.Context,
 	entityCollection, alarmCollection mongo.DbCollection,
+	pauseJobService pausejob.Service,
 	entity *types.Entity,
 	alarm *types.Alarm,
 	pause types.LatestPause,
 ) error {
 	wasPaused := entity.Pause != nil
+	if entity.Pause != nil {
+		if err := pauseJobService.Cancel(ctx, *entity, *entity.Pause); err != nil {
+			return err
+		}
+	}
 
 	newEntity, err := updateEntityByID(ctx, entity.ID, bson.M{"$set": bson.M{
 		"pause":        pause.Pause,
@@ -166,6 +175,12 @@ func applyInheritedPause(
 	}
 
 	*entity = newEntity
+	if err := pauseJobService.Create(ctx, *entity, pause, rpc.AxeParameters{
+		Timestamp: pause.Timestamp, Output: pause.Message, Author: pause.Author,
+		User: pause.UserID, Initiator: pause.Initiator,
+	}); err != nil {
+		return err
+	}
 
 	if alarm.ID == "" {
 		return nil
@@ -214,6 +229,8 @@ func applyInheritedPause(
 func resumeInheritedPause(
 	ctx context.Context,
 	entityCollection, alarmCollection mongo.DbCollection,
+	resumeJobService resumejob.Service,
+	pauseJobService pausejob.Service,
 	entity *types.Entity,
 	alarm *types.Alarm,
 	ts datetime.CpsTime,
@@ -221,6 +238,10 @@ func resumeInheritedPause(
 	ended := types.LatestPause{Pause: *entity.Pause}
 	if entity.LatestPause != nil {
 		ended = *entity.LatestPause
+	}
+
+	if err := pauseJobService.Cancel(ctx, *entity, ended.Pause); err != nil {
+		return err
 	}
 
 	ended.End = &ts
@@ -234,6 +255,15 @@ func resumeInheritedPause(
 	}
 
 	*entity = newEntity
+
+	err = resumeJobService.Create(ctx, *entity, ended, rpc.AxeParameters{
+		Timestamp: ts,
+		Output:    ended.Message,
+		Initiator: types.InitiatorSystem,
+	})
+	if err != nil {
+		return err
+	}
 
 	if alarm.ID == "" {
 		return nil
@@ -269,12 +299,10 @@ func resumeInheritedPause(
 	return nil
 }
 
-// publishPauseChange sends the trigger event and remediation event of the entity alarm and,
-// if the entity is a service or a component, a pause or resume event to each of its dependencies,
-// so they apply the change and propagate it to their own dependencies.
+// publishPauseChange sends the trigger and remediation events of the entity alarm.
+// Pause/resume propagation is owned by jobs created in the state transaction.
 func publishPauseChange(
 	ctx context.Context,
-	entityCollection mongo.DbCollection,
 	publisher libamqp.Publisher,
 	remediationRpcClient engine.RPCClient,
 	encoder encoding.Encoder,
@@ -317,79 +345,7 @@ func publishPauseChange(
 		}
 	}
 
-	var filter bson.M
-	switch entity.Type {
-	case types.EntityTypeService:
-		filter = bson.M{"services": entity.ID, "enabled": true}
-	case types.EntityTypeComponent:
-		filter = bson.M{"component": entity.ID, "type": types.EntityTypeResource, "enabled": true}
-	default:
-		return nil
-	}
-
-	// The pause passes through this entity, so it's added to its path, see the path of types.Pause.
-	var pausePath []string
-	if change.pause != nil {
-		pausePath = change.pause.Path
-	} else if entity.LatestPause != nil {
-		pausePath = entity.LatestPause.Path
-	}
-
-	if len(pausePath) >= types.MaxPausePathLength {
-		return fmt.Errorf("the pause path of %s is too long, the change is not propagated to its dependencies", entity.ID)
-	}
-
-	pausePath = append(slices.Clone(pausePath), entity.ID)
-
-	cursor, err := entityCollection.Find(ctx, filter)
-	if err != nil {
-		return err
-	}
-
-	defer cursor.Close(ctx)
-
-	for cursor.Next(ctx) {
-		dep := types.Entity{}
-		err = cursor.Decode(&dep)
-		if err != nil {
-			return err
-		}
-
-		depEvent, err := eventGenerator.Generate(dep)
-		if err != nil {
-			return fmt.Errorf("cannot generate event: %w", err)
-		}
-
-		depEvent.Inherited = true
-		depEvent.PausePath = pausePath
-		if change.pause != nil {
-			depEvent.EventType = types.EventTypePause
-			depEvent.Timestamp = change.pause.Timestamp
-			depEvent.PauseSource = change.pause.Source
-			depEvent.PauseSourceType = change.pause.SourceType
-			depEvent.PauseType = change.pause.Type
-			depEvent.Output = change.pause.Message
-			depEvent.Author = change.pause.Author
-			depEvent.UserID = change.pause.UserID
-			depEvent.Initiator = change.pause.Initiator
-		} else {
-			depEvent.EventType = types.EventTypeResume
-			depEvent.Timestamp = ts
-			depEvent.Initiator = types.InitiatorSystem
-			if entity.LatestPause != nil {
-				depEvent.Output = entity.LatestPause.Message
-				depEvent.PauseSource = entity.LatestPause.Source
-				depEvent.PauseSourceType = entity.LatestPause.SourceType
-			}
-		}
-
-		err = publishEvent(ctx, publisher, encoder, depEvent)
-		if err != nil {
-			return err
-		}
-	}
-
-	return cursor.Err()
+	return nil
 }
 
 func publishEvent(ctx context.Context, publisher libamqp.Publisher, encoder encoding.Encoder, event types.Event) error {

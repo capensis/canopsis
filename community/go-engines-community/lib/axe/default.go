@@ -324,6 +324,12 @@ func NewEngine(
 		return nil
 	})
 
+	resumeWorker := newResumeWorker(dbClient, noTimeoutClient, initRedisLock, amqpPublisher, json.NewEncoder(), eventGenerator, logger)
+	engineAxe.AddRoutine(resumeWorker.Run)
+
+	pauseWorker := newPauseWorker(dbClient, noTimeoutClient, initRedisLock, amqpPublisher, json.NewEncoder(), eventGenerator, logger)
+	engineAxe.AddRoutine(pauseWorker.Run)
+
 	mainMessageProcessor := &MessageProcessor{
 		FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 		EventProcessor:           eventProcessor,

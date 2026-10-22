@@ -608,6 +608,34 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				in.Delim(']')
 			}
+		case "pause_start":
+			if in.IsNull() {
+				in.Skip()
+				out.PauseStart = nil
+			} else {
+				if out.PauseStart == nil {
+					out.PauseStart = new(datetime.CpsTime)
+				}
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					if data := in.Raw(); in.Ok() {
+						in.AddError((*out.PauseStart).UnmarshalJSON(data))
+					}
+				}
+			}
+		case "resume_job":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.ResumeJob = string(in.String())
+			}
+		case "pause_job":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.PauseJob = string(in.String())
+			}
 		case "ticket":
 			if in.IsNull() {
 				in.Skip()
@@ -1133,6 +1161,21 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 			out.RawByte(']')
 		}
+	}
+	if in.PauseStart != nil {
+		const prefix string = ",\"pause_start\":"
+		out.RawString(prefix)
+		out.Raw((*in.PauseStart).MarshalJSON())
+	}
+	if in.ResumeJob != "" {
+		const prefix string = ",\"resume_job\":"
+		out.RawString(prefix)
+		out.String(string(in.ResumeJob))
+	}
+	if in.PauseJob != "" {
+		const prefix string = ",\"pause_job\":"
+		out.RawString(prefix)
+		out.String(string(in.PauseJob))
 	}
 	if in.Ticket != "" {
 		const prefix string = ",\"ticket\":"

@@ -106,6 +106,12 @@ type AxeParameters struct {
 	PauseSource     string   `json:"pause_source,omitempty"`
 	PauseSourceType string   `json:"pause_source_type,omitempty"`
 	PausePath       []string `json:"pause_path,omitempty"`
+	// PauseStart identifies the inherited pause ended by an internal resume event.
+	PauseStart *datetime.CpsTime `json:"pause_start,omitempty"`
+	// ResumeJob identifies the durable internal propagation receipt.
+	ResumeJob string `json:"resume_job,omitempty"`
+	// PauseJob identifies the durable internal pause propagation receipt.
+	PauseJob string `json:"pause_job,omitempty"`
 }
 
 // AxeResultEvent

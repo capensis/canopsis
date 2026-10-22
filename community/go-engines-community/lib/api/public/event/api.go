@@ -212,7 +212,7 @@ func (a *API) processValue(ctx context.Context, value *fastjson.Value, contextUs
 		a.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msgf("Long output field is not a string : %s. Replacing it by \"\"", longOutputValue.Type())
 	}
 
-	for _, field := range []string{"pause_source", "pause_source_type", "pause_path"} {
+	for _, field := range []string{"pause_source", "pause_source_type", "pause_path", "pause_start", "resume_job", "pause_job"} {
 		if value.Exists(field) {
 			value.Del(field)
 			a.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msgf("%s cannot be set in an event, it has been removed", field)

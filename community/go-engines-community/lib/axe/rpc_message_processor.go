@@ -277,6 +277,8 @@ func (p *rpcMessageProcessor) forwardToDynamicInfos(alarmChangeType types.AlarmC
 		types.AlarmChangeTypeTicketRemove,
 		types.AlarmChangeTypeSnooze,
 		types.AlarmChangeTypeUnsnooze,
+		types.AlarmChangeTypePause,
+		types.AlarmChangeTypeResume,
 		types.AlarmChangeTypeComment,
 		types.AlarmChangeTypeChangeState,
 		types.AlarmChangeTypePbhEnter,

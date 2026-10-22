@@ -18,7 +18,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pausejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resumejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -52,6 +54,8 @@ func newUpstreamHelper(
 		dbClient:                dbClient,
 		alarmCollection:         dbClient.Collection(mongo.AlarmMongoCollection),
 		entityCollection:        dbClient.Collection(mongo.EntityMongoCollection),
+		resumeJobService:        resumejob.NewService(dbClient, eventGenerator, logger),
+		pauseJobService:         pausejob.NewService(dbClient, eventGenerator, logger),
 		pbehaviorCollection:     dbClient.Collection(mongo.PbehaviorMongoCollection),
 		alarmConfigProvider:     alarmConfigProvider,
 		alarmStatusService:      alarmStatusService,
@@ -73,6 +77,8 @@ type upstreamHelper struct {
 	dbClient                mongo.DbClient
 	alarmCollection         mongo.DbCollection
 	entityCollection        mongo.DbCollection
+	resumeJobService        resumejob.Service
+	pauseJobService         pausejob.Service
 	pbehaviorCollection     mongo.DbCollection
 	alarmConfigProvider     config.AlarmConfigProvider
 	alarmStatusService      alarmstatus.Service
@@ -185,7 +191,7 @@ func (h *upstreamHelper) Process(ctx context.Context, event rpc.AxeEvent, forceC
 
 		// The entity has been added to or removed from services, so its pause
 		// and its alarm pause are updated.
-		change, err := updatePauseOnServicesChange(ctx, h.entityCollection, h.alarmCollection,
+		change, err := updatePauseOnServicesChange(ctx, h.entityCollection, h.alarmCollection, h.resumeJobService, h.pauseJobService,
 			&entity, &alarm, event.Parameters.Timestamp, h.logger)
 		if err != nil {
 			return err
@@ -220,7 +226,7 @@ func (h *upstreamHelper) Process(ctx context.Context, event rpc.AxeEvent, forceC
 		pauseChangeAlarm = result.Alarm
 	}
 
-	pauseChangeErr := publishPauseChange(ctx, h.entityCollection, h.amqpPublisher, h.remediationRpcClient, h.encoder, h.eventGenerator,
+	pauseChangeErr := publishPauseChange(ctx, h.amqpPublisher, h.remediationRpcClient, h.encoder, h.eventGenerator,
 		entity, pauseChangeAlarm, result.PauseChange, event.Parameters.Timestamp, h.logger)
 	if pauseChangeErr != nil {
 		h.logger.Err(pauseChangeErr).Msg("cannot publish pause change")
