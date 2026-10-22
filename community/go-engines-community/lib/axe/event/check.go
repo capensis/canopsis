@@ -20,7 +20,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pausejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resumejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -56,6 +58,8 @@ func NewCheckProcessor(
 		client:                      client,
 		alarmCollection:             client.Collection(mongo.AlarmMongoCollection),
 		entityCollection:            client.Collection(mongo.EntityMongoCollection),
+		resumeJobService:            resumejob.NewService(client, eventGenerator, logger),
+		pauseJobService:             pausejob.NewService(client, eventGenerator, logger),
 		pbehaviorCollection:         client.Collection(mongo.PbehaviorMongoCollection),
 		closeDelayJobCollection:     client.Collection(mongo.CloseDelayJobCollection),
 		alarmConfigProvider:         alarmConfigProvider,
@@ -99,6 +103,8 @@ type checkProcessor struct {
 	client                      mongo.DbClient
 	alarmCollection             mongo.DbCollection
 	entityCollection            mongo.DbCollection
+	resumeJobService            resumejob.Service
+	pauseJobService             pausejob.Service
 	pbehaviorCollection         mongo.DbCollection
 	closeDelayJobCollection     mongo.DbCollection
 	alarmConfigProvider         config.AlarmConfigProvider
@@ -168,7 +174,7 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 
 		// The entity has been added to or removed from services, so its pause and its alarm pause
 		// are updated before the alarm is updated by the event.
-		change, err := updatePauseOnServicesChange(ctx, p.entityCollection, p.alarmCollection,
+		change, err := updatePauseOnServicesChange(ctx, p.entityCollection, p.alarmCollection, p.resumeJobService, p.pauseJobService,
 			&entity, &alarm, event.Parameters.Timestamp, p.logger)
 		if err != nil {
 			return err
@@ -459,6 +465,19 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 		}
 
 		result.Entity, err = updateEntityByID(ctx, entity.ID, update, p.entityCollection)
+		if err != nil {
+			return result, err
+		}
+	}
+
+	if resolvedFromParents && pause != nil {
+		err = p.pauseJobService.Create(ctx, result.Entity, *pause, rpc.AxeParameters{
+			Timestamp: pause.Timestamp,
+			Output:    pause.Message,
+			Author:    pause.Author,
+			User:      pause.UserID,
+			Initiator: pause.Initiator,
+		})
 		if err != nil {
 			return result, err
 		}
@@ -910,7 +929,7 @@ func (p *checkProcessor) postProcess(
 		}
 	}
 
-	err = publishPauseChange(ctx, p.entityCollection, p.publisher, p.remediationRpcClient, p.encoder, p.eventGenerator,
+	err = publishPauseChange(ctx, p.publisher, p.remediationRpcClient, p.encoder, p.eventGenerator,
 		entity, result.Alarm, result.PauseChange, event.Parameters.Timestamp, p.logger)
 	if err != nil {
 		p.logger.Err(err).Msg("cannot publish pause change")
@@ -986,13 +1005,7 @@ func (p *checkProcessor) resolvePause(ctx context.Context, entity types.Entity) 
 		return nil, true, err
 	}
 
-	pause := types.LatestPause{Pause: parent.Pause}
-	if pause.Source == "" {
-		// The parent is paused by itself, the entity inherits the parent's pause.
-		parentEntity := types.Entity{ID: parent.ID, Type: parent.Type, Name: parent.Name, Pause: &parent.Pause}
-		inheritedPause, err := parentEntity.InheritedPause()
-		return inheritedPause, true, err
-	}
-
-	return &pause, true, nil
+	parentEntity := types.Entity{ID: parent.ID, Type: parent.Type, Name: parent.Name, Pause: &parent.Pause}
+	inheritedPause, err := parentEntity.InheritedPause()
+	return inheritedPause, true, err
 }

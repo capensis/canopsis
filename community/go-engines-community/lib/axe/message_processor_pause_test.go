@@ -27,7 +27,9 @@ import (
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pausejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resumejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -626,7 +628,7 @@ type pauseTest struct {
 	entities mongo.DbCollection
 	alarms   mongo.DbCollection
 	// newProcessor returns a processor which calls beforeEntityRead, if set, before each entity read.
-	newProcessor func(beforeEntityRead func(filter any)) *axe.MessageProcessor
+	newProcessor func(beforeEntityRead func(filter any)) *pauseTestProcessor
 	startTime    time.Time
 }
 
@@ -646,6 +648,20 @@ func newPauseTest(t *testing.T, fixturePath string) *pauseTest {
 			t.Errorf("unexpected error %v", err)
 		}
 	})
+
+	jobFilter := bson.M{"parent": bson.M{"$in": []string{service1, service2, service3, component, resource1, resource2}}}
+	for _, collection := range []string{mongo.ResumeJobCollection, mongo.PauseJobCollection} {
+		_, err = dbClient.Collection(collection).DeleteMany(ctx, jobFilter)
+		if err != nil {
+			t.Fatalf("cannot clear pause test jobs: %v", err)
+		}
+		t.Cleanup(func() {
+			_, err := dbClient.Collection(collection).DeleteMany(context.WithoutCancel(ctx), jobFilter)
+			if err != nil {
+				t.Errorf("cannot clear pause test jobs: %v", err)
+			}
+		})
+	}
 
 	loader := fixtures.NewLoader(dbClient, []string{fixturePath},
 		fixtures.NewParser(fixtures.NewFaker(password.NewBcryptEncoder())), zerolog.Nop())
@@ -688,7 +704,7 @@ func newPauseTest(t *testing.T, fixturePath string) *pauseTest {
 		entities:  dbClient.Collection(mongo.EntityMongoCollection),
 		alarms:    dbClient.Collection(mongo.AlarmMongoCollection),
 		startTime: time.Now().Truncate(time.Second),
-		newProcessor: func(beforeEntityRead func(filter any)) *axe.MessageProcessor {
+		newProcessor: func(beforeEntityRead func(filter any)) *pauseTestProcessor {
 			eventDbClient := dbClient
 			if beforeEntityRead != nil {
 				eventDbClient = depprovidertest.NewMongoClient(dbClient, depprovidertest.MongoClientOptions{
@@ -706,7 +722,7 @@ func newPauseTest(t *testing.T, fixturePath string) *pauseTest {
 				})
 			}
 
-			return &axe.MessageProcessor{
+			return &pauseTestProcessor{client: dbClient, MessageProcessor: &axe.MessageProcessor{
 				EventProcessor: axe.DependencyMaker{}.EventProcessor(
 					eventDbClient,
 					alarmConfigProvider,
@@ -735,9 +751,117 @@ func newPauseTest(t *testing.T, fixturePath string) *pauseTest {
 				TechMetricsSender: techMetricsSender,
 				AlarmCollection:   dbClient.Collection(mongo.AlarmMongoCollection),
 				Logger:            logger,
-			}
+			}}
 		},
 	}
+}
+
+// The production engine starts pause/resume workers separately. These processor-only
+// tests drain its jobs synchronously through the same processor so their existing
+// read barriers continue to control delivery to each dependency.
+type pauseTestProcessor struct {
+	*axe.MessageProcessor
+	client mongo.DbClient
+}
+
+func (p *pauseTestProcessor) Process(ctx context.Context, delivery amqp.Delivery) ([]byte, error) {
+	body, err := p.MessageProcessor.Process(ctx, delivery)
+	if err != nil {
+		return body, err
+	}
+
+	var origin types.Event
+	if err := json.NewDecoder().Decode(delivery.Body, &origin); err != nil {
+		return nil, err
+	}
+
+	source := origin.PauseSource
+	if source == "" && origin.Entity != nil {
+		source = origin.Entity.ID
+		if origin.EventType != types.EventTypePause && origin.Entity.LatestPause != nil {
+			source = origin.Entity.LatestPause.Source
+		}
+	}
+
+	pauseSource := source
+	pauseTimestamp := origin.Timestamp
+	if origin.EventType != types.EventTypePause {
+		var current types.Entity
+		err := p.client.Collection(mongo.EntityMongoCollection).FindOne(ctx, bson.M{"_id": origin.GetEID()}).Decode(&current)
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, err
+		}
+		pauseSource = ""
+		if current.LatestPause != nil && current.Pause != nil {
+			pauseSource = current.LatestPause.Source
+			pauseTimestamp = current.LatestPause.Timestamp
+		}
+	}
+
+	if pauseSource != "" {
+		cursor, err := p.client.Collection(mongo.PauseJobCollection).Find(ctx, bson.M{
+			"parent": origin.GetEID(), "event.timestamp": pauseTimestamp, "event.pause_source": pauseSource,
+		})
+		if err != nil {
+			return nil, err
+		}
+		defer cursor.Close(ctx)
+		for cursor.Next(ctx) {
+			var job pausejob.Job
+			if err := cursor.Decode(&job); err != nil {
+				return nil, err
+			}
+			if err := axe.ProcessPauseJobForTest(ctx, p.client, p, job.ID); err != nil {
+				return nil, err
+			}
+		}
+		if err := cursor.Err(); err != nil {
+			return nil, err
+		}
+	}
+
+	cursor, err := p.client.Collection(mongo.ResumeJobCollection).Find(ctx, bson.M{
+		"parent": origin.GetEID(), "event.timestamp": origin.Timestamp, "event.pause_source": source,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var job resumejob.Job
+		if err := cursor.Decode(&job); err != nil {
+			return nil, err
+		}
+
+		if err := axe.ProcessResumeJobForTest(ctx, p.client, p, job.ID); err != nil {
+			return nil, err
+		}
+	}
+
+	return body, cursor.Err()
+}
+
+func (p *pauseTestProcessor) PublishWithContext(ctx context.Context, _, _ string, _, _ bool, msg amqp.Publishing) error {
+	var event types.Event
+	if err := json.NewDecoder().Decode(msg.Body, &event); err != nil {
+		return err
+	}
+
+	var entity types.Entity
+	if err := p.client.Collection(mongo.EntityMongoCollection).FindOne(ctx, bson.M{"_id": event.GetEID()}).Decode(&entity); err != nil {
+		return err
+	}
+
+	event.Entity = &entity
+	body, err := json.NewEncoder().Encode(event)
+	if err != nil {
+		return err
+	}
+
+	_, err = p.Process(ctx, amqp.Delivery{Body: body})
+	return err
 }
 
 // process processes e completely.

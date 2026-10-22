@@ -102,6 +102,13 @@ func runEventFilters(
 	res *ProcessorResult,
 	partialRes *ProcessorResult,
 ) (eventfilter.ServiceResult, bool, error) {
+	if event.EventType == types.EventTypeResume && event.ResumeJob != "" && event.PauseStart != nil ||
+		event.EventType == types.EventTypePause && event.PauseJob != "" {
+		// The state transition is internal delivery work. Its generated Trigger
+		// returns through the normal filters after AXE commits the transition.
+		return eventfilter.ServiceResult{}, false, nil
+	}
+
 	input := eventfilter.ServiceResult{}
 	var preFilterEvent *types.Event
 	if partialRes != nil {

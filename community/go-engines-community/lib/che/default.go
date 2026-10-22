@@ -20,6 +20,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	communityimport "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pausejob"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resumejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
@@ -335,8 +337,10 @@ func NewEngine(
 	s.EventProcessorContainer.Set(types.SourceTypeResource, event.NewResourceProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder(), logger))
 	s.EventProcessorContainer.Set(types.SourceTypeComponent, event.NewComponentProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder(), logger))
 	s.EventProcessorContainer.Set(types.SourceTypeConnector, event.NewConnectorProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder()))
-	s.EventProcessorContainer.Set(types.SourceTypeService, event.NewServiceProcessor(primaryDbClient, contextGraphManager, eventFilterService, entityInfosUpdateSender,
-		libevent.NewGenerator(canopsis.CheConnector, canopsis.CheConnector), amqpPublisher, json.NewEncoder(), json.NewDecoder()))
+	s.EventProcessorContainer.Set(types.SourceTypeService, event.NewServiceProcessor(primaryDbClient,
+		resumejob.NewService(primaryDbClient, libevent.NewGenerator(canopsis.CheConnector, canopsis.CheConnector), logger),
+		pausejob.NewService(primaryDbClient, libevent.NewGenerator(canopsis.CheConnector, canopsis.CheConnector), logger),
+		contextGraphManager, eventFilterService, entityInfosUpdateSender, json.NewEncoder(), json.NewDecoder()))
 
 	mainMessageProcessor := &messageProcessor{
 		FeaturePrintEventOnError: options.PrintEventOnError,

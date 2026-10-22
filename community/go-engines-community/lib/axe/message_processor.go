@@ -163,6 +163,9 @@ func (p *MessageProcessor) transformEvent(event types.Event) rpc.AxeEvent {
 		PauseSource:         event.PauseSource,
 		PauseSourceType:     event.PauseSourceType,
 		PausePath:           event.PausePath,
+		PauseStart:          event.PauseStart,
+		ResumeJob:           event.ResumeJob,
+		PauseJob:            event.PauseJob,
 	}
 
 	if event.Duration > 0 {

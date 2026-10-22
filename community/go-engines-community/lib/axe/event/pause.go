@@ -15,6 +15,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pausejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -41,6 +42,7 @@ func NewPauseProcessor(
 		client:                 client,
 		alarmCollection:        client.Collection(mongo.AlarmMongoCollection),
 		entityCollection:       client.Collection(mongo.EntityMongoCollection),
+		pauseJobService:        pausejob.NewService(client, eventGenerator, logger),
 		autoInstructionMatcher: autoInstructionMatcher,
 		remediationRpcClient:   remediationRpcClient,
 		eventGenerator:         eventGenerator,
@@ -55,6 +57,7 @@ type pauseProcessor struct {
 	client                 mongo.DbClient
 	alarmCollection        mongo.DbCollection
 	entityCollection       mongo.DbCollection
+	pauseJobService        pausejob.Service
 	autoInstructionMatcher AutoInstructionMatcher
 	remediationRpcClient   engine.RPCClient
 	eventGenerator         event.Generator
@@ -70,23 +73,41 @@ func (p *pauseProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 		return result, nil
 	}
 
-	result, countersRes, processDepends, err := p.processEvent(ctx, event)
+	result, countersRes, err := p.processEvent(ctx, event)
 	if err != nil {
 		return result, err
+	}
+
+	if event.EventType == types.EventTypePause && event.Parameters.PauseJob != "" {
+		// Pause delivery ends here. Its generated Trigger follows the normal filters.
+		result.Forward = false
+		if result.AlarmChange.Type != types.AlarmChangeTypeNone {
+			triggerEvent, err := p.eventGenerator.Generate(*event.Entity)
+			if err != nil {
+				p.logger.Err(err).Str("entity", event.Entity.ID).Msg("cannot generate event for dependency")
+				return result, nil
+			}
+			triggerEvent.Timestamp = event.Parameters.Timestamp
+			triggerEvent.AlarmChange = &result.AlarmChange
+			triggerEvent.EventType = types.EventTypeTrigger
+			triggerEvent.AlarmID = result.Alarm.ID
+			if err := p.sendEvent(ctx, triggerEvent); err != nil {
+				p.logger.Err(err).Str("entity", event.Entity.ID).Msg("cannot send trigger event for dependency")
+				return result, nil
+			}
+			p.postProcess(context.WithoutCancel(ctx), event, result, countersRes)
+		}
+		return result, nil
 	}
 
 	if result.AlarmChange.Type != types.AlarmChangeTypeNone {
 		p.postProcess(context.WithoutCancel(ctx), event, result, countersRes)
 	}
 
-	if processDepends {
-		p.processDepends(ctx, event, result)
-	}
-
 	return result, nil
 }
 
-func (p *pauseProcessor) processEvent(ctx context.Context, event rpc.AxeEvent) (_ Result, _ countersResult, _ bool, resErr error) {
+func (p *pauseProcessor) processEvent(ctx context.Context, event rpc.AxeEvent) (_ Result, _ countersResult, resErr error) {
 	// A panic is returned as an error, so a panic on a dependency doesn't stop the processing of the other ones.
 	defer func() {
 		if r := recover(); r != nil {
@@ -159,11 +180,33 @@ func (p *pauseProcessor) processEvent(ctx context.Context, event rpc.AxeEvent) (
 
 	result := Result{}
 	countersRes := countersResult{}
-	processDepends := false
-	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
+	err := p.client.WithTransaction(ctx, func(ctx context.Context) (txErr error) {
 		result = Result{}
 		countersRes = countersResult{}
-		processDepends = false
+		defer func() {
+			if txErr == nil {
+				txErr = p.pauseJobService.Complete(ctx, event.Parameters.PauseJob, event.Entity.ID)
+			}
+		}()
+		if event.Parameters.PauseJob != "" {
+			pending, err := p.pauseJobService.IsPending(ctx, event.Parameters.PauseJob, event.Entity.ID)
+			if err != nil {
+				return fmt.Errorf("cannot find pause propagation receipt: %w", err)
+			}
+
+			if !pending {
+				return nil
+			}
+
+			current, err := p.pauseJobService.IsCurrent(ctx, event.Parameters)
+			if err != nil {
+				return err
+			}
+
+			if !current {
+				return nil
+			}
+		}
 
 		entity := types.Entity{}
 		err := p.entityCollection.FindOne(ctx, bson.M{"_id": event.Entity.ID}).Decode(&entity)
@@ -173,6 +216,10 @@ func (p *pauseProcessor) processEvent(ctx context.Context, event rpc.AxeEvent) (
 			}
 
 			return err
+		}
+
+		if !entity.Enabled {
+			return nil
 		}
 
 		// The entity may have been removed from the parent which propagates the pause after the parent
@@ -201,7 +248,11 @@ func (p *pauseProcessor) processEvent(ctx context.Context, event rpc.AxeEvent) (
 			return nil
 		}
 
-		processDepends = true
+		if entity.Pause != nil {
+			if err := p.pauseJobService.Cancel(ctx, entity, *entity.Pause); err != nil {
+				return err
+			}
+		}
 		wasPaused := entity.Pause != nil
 		entity.Pause = &newPause
 		entity.LatestPause = &latestPause
@@ -212,6 +263,10 @@ func (p *pauseProcessor) processEvent(ctx context.Context, event rpc.AxeEvent) (
 		}})
 		if err != nil {
 			return fmt.Errorf("cannot update entity: %w", err)
+		}
+
+		if err := p.pauseJobService.Create(ctx, entity, latestPause, event.Parameters); err != nil {
+			return err
 		}
 
 		alarm := types.Alarm{}
@@ -247,14 +302,14 @@ func (p *pauseProcessor) processEvent(ctx context.Context, event rpc.AxeEvent) (
 	})
 
 	if err != nil {
-		return result, countersRes, processDepends, err
+		return result, countersRes, err
 	}
 
 	if result.Alarm.ID != "" {
 		result.IsInstructionMatched = isInstructionMatched(event, result, p.autoInstructionMatcher, p.logger)
 	}
 
-	return result, countersRes, processDepends, err
+	return result, countersRes, err
 }
 
 func (p *pauseProcessor) postProcess(
@@ -278,145 +333,6 @@ func (p *pauseProcessor) postProcess(
 		if err != nil {
 			p.logger.Err(err).Msg("cannot send event to engine-remediation")
 		}
-	}
-}
-
-func (p *pauseProcessor) processDepends(ctx context.Context, event rpc.AxeEvent, result Result) {
-	if !event.Parameters.Inherited {
-		return
-	}
-
-	entity := *event.Entity
-	if result.Entity.ID != "" {
-		entity = result.Entity
-	}
-
-	var filter bson.M
-	switch entity.Type {
-	case types.EntityTypeComponent:
-		filter = bson.M{
-			"component": entity.ID,
-			"type":      types.EntityTypeResource,
-			"enabled":   true,
-		}
-	case types.EntityTypeService:
-		filter = bson.M{
-			"services": entity.ID,
-			"enabled":  true,
-		}
-	default:
-		return
-	}
-
-	output := event.Parameters.Output
-	pauseSource := event.Parameters.PauseSource
-	pauseSourceType := event.Parameters.PauseSourceType
-	// The pause of another entity passes through this one, its own pause starts from it,
-	// so it's not in the path.
-	pausePath := event.Parameters.PausePath
-	if pauseSource == "" {
-		pauseSource = entity.ID
-		pauseSourceType = entity.Type
-
-		inheritedPause, err := entity.InheritedPause()
-		if err != nil {
-			p.logger.Err(err).Str("entity", entity.ID).Msg("cannot inherit pause")
-			return
-		}
-
-		if inheritedPause == nil {
-			return
-		}
-
-		output = inheritedPause.Message
-	} else {
-		if len(pausePath) >= types.MaxPausePathLength {
-			p.logger.Error().Str("entity", entity.ID).Int("path_length", len(pausePath)).
-				Msg("the pause path is too long, the pause is not propagated to the dependencies")
-
-			return
-		}
-
-		pausePath = append(slices.Clone(pausePath), entity.ID)
-	}
-
-	cursor, err := p.entityCollection.Find(ctx, filter)
-	if err != nil {
-		p.logger.Err(err).Str("entity", entity.ID).Msg("cannot find dependencies")
-
-		return
-	}
-
-	defer cursor.Close(ctx)
-
-	depEvent := rpc.AxeEvent{
-		EventType: event.EventType,
-		Parameters: rpc.AxeParameters{
-			Output:          output,
-			Author:          event.Parameters.Author,
-			User:            event.Parameters.User,
-			Role:            event.Parameters.Role,
-			Initiator:       event.Parameters.Initiator,
-			Timestamp:       event.Parameters.Timestamp,
-			Inherited:       true,
-			Connector:       event.Parameters.Connector,
-			ConnectorName:   event.Parameters.ConnectorName,
-			PauseType:       event.Parameters.PauseType,
-			PauseSource:     pauseSource,
-			PauseSourceType: pauseSourceType,
-			PausePath:       pausePath,
-		},
-	}
-
-	for cursor.Next(ctx) {
-		dep := types.Entity{}
-		err = cursor.Decode(&dep)
-		if err != nil {
-			p.logger.Err(err).Msg("cannot decode dependency")
-
-			continue
-		}
-
-		depEvent.Entity = &dep
-		depRes, countersRes, processDepends, err := p.processEvent(ctx, depEvent)
-		if err != nil {
-			p.logger.Err(err).Str("entity", entity.ID).Str("dependency", dep.ID).
-				Msg("cannot process pause for dependency")
-
-			continue
-		}
-
-		if depRes.AlarmChange.Type == types.AlarmChangeTypePause {
-			te, err := p.eventGenerator.Generate(dep)
-			if err != nil {
-				p.logger.Err(err).Str("entity", entity.ID).Str("dependency", dep.ID).
-					Msg("cannot generate event for dependency")
-
-				continue
-			}
-
-			te.Timestamp = depEvent.Parameters.Timestamp
-			te.AlarmChange = &depRes.AlarmChange
-			te.EventType = types.EventTypeTrigger
-			te.AlarmID = depRes.Alarm.ID
-			err = p.sendEvent(ctx, te)
-			if err != nil {
-				p.logger.Err(err).Str("entity", entity.ID).Str("dependency", dep.ID).
-					Msg("cannot send trigger event for dependency")
-
-				continue
-			}
-
-			p.postProcess(context.WithoutCancel(ctx), depEvent, depRes, countersRes)
-		}
-
-		if processDepends {
-			p.processDepends(ctx, depEvent, depRes)
-		}
-	}
-
-	if err = cursor.Err(); err != nil {
-		p.logger.Err(err).Str("entity", entity.ID).Msg("cannot fetch dependencies")
 	}
 }
 
