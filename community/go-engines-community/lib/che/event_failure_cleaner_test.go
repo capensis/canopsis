@@ -232,6 +232,7 @@ func newDSConfig(deletedAfterStr string) datastorage.Config {
 func newTestRule(id string, updated datetime.CpsTime, f, u int64) eventfilter.Rule {
 	return eventfilter.Rule{
 		ID:                  id,
+		Name:                id + "-name",
 		Updated:             &updated,
 		FailuresCount:       f,
 		UnreadFailuresCount: u,

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pagination"
@@ -267,7 +268,10 @@ func (s store) GetActive(ctx context.Context, userID string) ([]Response, error)
 			},
 			bson.M{
 				"$match": bson.M{
-					"status": nil,
+					"$or": bson.A{
+						bson.M{"status": nil},
+						bson.M{"closable": false},
+					},
 				},
 			},
 		)
@@ -275,7 +279,8 @@ func (s store) GetActive(ctx context.Context, userID string) ([]Response, error)
 
 	pipeline = append(pipeline, bson.M{
 		"$sort": bson.D{
-			{Key: "start", Value: -1},
+			{Key: "priority", Value: 1},
+			{Key: "start", Value: 1},
 			{Key: "_id", Value: 1},
 		},
 	})
@@ -308,13 +313,26 @@ func (s store) Read(ctx context.Context, id, userID string) (bool, error) {
 	var ok bool
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		ok = false
-		err := s.dbCollection.FindOne(ctx, bson.M{"_id": id}, options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
+
+		var message struct {
+			Closable *bool `bson:"closable"`
+		}
+
+		err := s.dbCollection.FindOne(
+			ctx,
+			bson.M{"_id": id},
+			options.FindOne().SetProjection(bson.M{"closable": 1}),
+		).Decode(&message)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil
 			}
 
 			return err
+		}
+
+		if message.Closable != nil && !*message.Closable {
+			return httperror.NewForbiddenError("The broadcast message cannot be closed.")
 		}
 
 		_, err = s.dbReadCollection.UpdateOne(ctx,

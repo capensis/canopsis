@@ -297,7 +297,10 @@ func TestIntegration_Channel_GivenBrokerDrop_ShouldResumeMessageFlow(t *testing.
 				select {
 				case <-t.Context().Done():
 					return
-				case <-notifyClose:
+				case err := <-notifyClose:
+					if err != nil {
+						t.Logf("notifyClose error: %+v", err)
+					}
 					break loop
 				case got, ok := <-d:
 					if !ok {

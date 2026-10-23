@@ -1743,6 +1743,12 @@ paths:
       responses:
         '204':
           description: OK
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Not Found
           content:
@@ -2981,7 +2987,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.CreateRequest'
+                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EditRequest'
         required: true
       responses:
         '207':
@@ -2998,7 +3004,7 @@ paths:
                       - type: object
                         properties:
                           item:
-                            $ref: 'schemas_swagger.yaml#/definitions/eventfilter.CreateRequest'
+                            $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EditRequest'
         '400':
           description: Bad Request
           content:
@@ -5114,11 +5120,28 @@ paths:
                       "hover_row": true,
                       "hover_row_color": "#AAAAAA"
                     },
+                    "widget": {
+                      "title_background": "#FFFFFF",
+                      "content_background": "#FFFFFF",
+                      "border": false,
+                      "border_color": "#C7C7C7",
+                      "border_radius": 0
+                    },
                     "state": {
                       "ok": "#AAAAAA",
                       "minor": "#AAAAAA",
                       "major": "#AAAAAA",
                       "critical": "#AAAAAA"
+                    },
+                    "icons": {
+                      "ack": "#AAAAAA",
+                      "canceled": "#AAAAAA",
+                      "children": "#AAAAAA",
+                      "parent": "#AAAAAA",
+                      "comment": "#AAAAAA",
+                      "snooze": "#AAAAAA",
+                      "tickets": "#AAAAAA",
+                      "cancel_delay": "#AAAAAA"
                     }
                   }
                 }
@@ -5209,11 +5232,28 @@ paths:
                       "hover_row": false,
                       "hover_row_color": "#FFFFFF"
                     },
+                    "widget": {
+                      "title_background": "#FFFFFF",
+                      "content_background": "#FFFFFF",
+                      "border": false,
+                      "border_color": "#C7C7C7",
+                      "border_radius": 0
+                    },
                     "state": {
                       "ok": "#FFFFFF",
                       "minor": "#FFFFFF",
                       "major": "#FFFFFF",
                       "critical": "#FFFFFF"
+                    },
+                    "icons": {
+                      "ack": "#FFFFFF",
+                      "canceled": "#FFFFFF",
+                      "children": "#FFFFFF",
+                      "parent": "#FFFFFF",
+                      "comment": "#FFFFFF",
+                      "snooze": "#FFFFFF",
+                      "tickets": "#FFFFFF",
+                      "cancel_delay": "#FFFFFF"
                     }
                   }
                 }
@@ -7792,7 +7832,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.CreateRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EditRequest'
             examples:
               CreateDropRule:
                 summary: Create a drop rule
@@ -7815,6 +7855,7 @@ paths:
                       }
                     }
                   ]],
+                  "name": "drop rule example",
                   "description": "drop rule example",
                   "priority": 1,
                   "enabled": true
@@ -7840,6 +7881,7 @@ paths:
                       }
                     }
                   ]],
+                  "name": "break rule example",
                   "description": "break rule example",
                   "priority": 1,
                   "enabled": true
@@ -7848,6 +7890,7 @@ paths:
                 summary: Create an enrichment rule
                 description: Create an enrichment rule.
                 value: {
+                  "name": "enrichment rule example",
                   "description": "enrichment rule example",
                   "type": "enrichment",
                   "entity_pattern": [
@@ -7879,6 +7922,7 @@ paths:
                 summary: Create an enrichment rule with template
                 description: Create an enrichment rule with template.
                 value: {
+                  "name": "enrichment rule example with template",
                   "description": "enrichment rule example with template",
                   "type": "enrichment",
                   "entity_pattern": [
@@ -7975,6 +8019,7 @@ paths:
                       }
                     ]
                   ],
+                  "name": "enrichment rule with external api data",
                   "description": "enrichment rule with external api data",
                   "priority": 1,
                   "enabled": true,
@@ -7995,6 +8040,7 @@ paths:
                 summary: Create a change_entity rule
                 description: Create a change_entity rule.
                 value: {
+                  "name": "change_entity rule example",
                   "description": "change_entity rule example",
                   "type": "change_entity",
                   "event_pattern": [
@@ -8044,6 +8090,7 @@ paths:
                       }
                     }
                   ]],
+                  "name": "drop rule example",
                   "description": "drop rule example",
                   "priority": 1,
                   "enabled": true
@@ -8072,6 +8119,7 @@ paths:
                       }
                     }
                   ]],
+                  "name": "drop rule example",
                   "description": "drop rule example",
                   "priority": 1,
                   "enabled": true
@@ -8100,6 +8148,7 @@ paths:
                       }
                     }
                   ]],
+                  "name": "drop rule example",
                   "description": "drop rule example",
                   "priority": 1,
                   "enabled": true,
@@ -8134,6 +8183,7 @@ paths:
                       }
                     }
                   ]],
+                  "name": "drop rule example",
                   "description": "drop rule example",
                   "priority": 1,
                   "enabled": true,
