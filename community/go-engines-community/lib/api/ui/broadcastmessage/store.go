@@ -4,7 +4,6 @@ import (
 	"cmp"
 	"context"
 	"errors"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/author"
@@ -92,6 +91,7 @@ func (s store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
 
 func (s store) GetByID(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
+	pipeline = append(pipeline, statusStage(datetime.NewCpsTime()))
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
@@ -114,18 +114,30 @@ func (s store) GetByID(ctx context.Context, id string) (*Response, error) {
 }
 
 func (s store) Find(ctx context.Context, query ListRequest) (*AggregationResult, error) {
+	sortBy := cmp.Or(query.SortBy, s.defaultSortBy)
+	now := datetime.NewCpsTime()
+
 	pipeline := make([]bson.M, 0)
 	filter := mongoquery.GetSearchQuery(query.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
+	// Status must be computed before sorting when sorting by it, otherwise it is computed only for the returned page.
+	afterLimit := make([]bson.M, 0)
+	if sortBy == "status" {
+		pipeline = append(pipeline, statusStage(now))
+	} else {
+		afterLimit = append(afterLimit, statusStage(now))
+	}
+
+	afterLimit = append(afterLimit, s.authorProvider.Pipeline()...)
 
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
-		mongoquery.GetSortQuery(cmp.Or(query.SortBy, s.defaultSortBy), query.Sort),
+		mongoquery.GetSortQuery(sortBy, query.Sort),
+		afterLimit,
 	))
 
 	if err != nil {
@@ -231,24 +243,13 @@ func (s store) Delete(ctx context.Context, id, userID string) (bool, error) {
 }
 
 func (s store) GetActive(ctx context.Context, userID string) ([]Response, error) {
-	now := time.Now().Unix()
+	now := datetime.NewCpsTime()
 	conf, err := s.maintenanceAdapter.GetConfig(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	pipeline := []bson.M{
-		{
-			"$match": bson.M{
-				"start": bson.M{
-					"$lte": now,
-				},
-				"end": bson.M{
-					"$gte": now,
-				},
-			},
-		},
-	}
+	pipeline := []bson.M{{"$match": activeFilter(now)}}
 	if userID != "" {
 		pipeline = append(pipeline,
 			bson.M{
@@ -256,7 +257,7 @@ func (s store) GetActive(ctx context.Context, userID string) ([]Response, error)
 					"from":         mongo.BroadcastMessageReadCollection,
 					"localField":   "_id",
 					"foreignField": "message",
-					"as":           "status",
+					"as":           "read",
 					"pipeline": []bson.M{
 						{"$match": bson.M{"user": userID}},
 						{"$limit": 1},
@@ -264,12 +265,12 @@ func (s store) GetActive(ctx context.Context, userID string) ([]Response, error)
 				},
 			},
 			bson.M{
-				"$unwind": bson.M{"path": "$status", "preserveNullAndEmptyArrays": true},
+				"$unwind": bson.M{"path": "$read", "preserveNullAndEmptyArrays": true},
 			},
 			bson.M{
 				"$match": bson.M{
 					"$or": bson.A{
-						bson.M{"status": nil},
+						bson.M{"read": nil},
 						bson.M{"closable": false},
 					},
 				},
@@ -284,6 +285,7 @@ func (s store) GetActive(ctx context.Context, userID string) ([]Response, error)
 			{Key: "_id", Value: 1},
 		},
 	})
+	pipeline = append(pipeline, statusStage(now))
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
@@ -360,4 +362,26 @@ func (s store) Read(ctx context.Context, id, userID string) (bool, error) {
 	})
 
 	return ok, err
+}
+
+// statusStage sets the computed status of each message relative to now.
+// Pending is checked first so that a message which has not started yet is never reported as active.
+func statusStage(now datetime.CpsTime) bson.M {
+	return bson.M{"$addFields": bson.M{
+		"status": bson.M{"$switch": bson.M{
+			"branches": bson.A{
+				bson.M{"case": bson.M{"$gt": bson.A{"$start", now}}, "then": BroadcastMessageStatusPending},
+				bson.M{"case": bson.M{"$gte": bson.A{"$end", now}}, "then": BroadcastMessageStatusActive},
+			},
+			"default": BroadcastMessageStatusExpired,
+		}},
+	}}
+}
+
+// activeFilter matches messages whose display window contains now, the filter counterpart of BroadcastMessageStatusActive.
+func activeFilter(now datetime.CpsTime) bson.M {
+	return bson.M{
+		"start": bson.M{"$lte": now},
+		"end":   bson.M{"$gte": now},
+	}
 }

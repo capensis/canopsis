@@ -30,9 +30,19 @@ type UpdateRequest struct {
 	ID          string `bson:"_id" json:"-"`
 }
 
+// BroadcastMessageStatus is computed from start and end, it is never stored.
+// 0 is not a valid status and means "not computed".
+type BroadcastMessageStatus int
+
+const (
+	BroadcastMessageStatusActive  BroadcastMessageStatus = 1
+	BroadcastMessageStatusPending BroadcastMessageStatus = 2
+	BroadcastMessageStatusExpired BroadcastMessageStatus = 3
+)
+
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id message"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id message start end status"`
 }
 
 type Response struct {
@@ -49,7 +59,8 @@ type Response struct {
 	Created *datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated *datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 
-	Maintenance bool `bson:"-" json:"maintenance,omitempty"`
+	Status      BroadcastMessageStatus `bson:"status,omitempty" json:"status,omitzero"`
+	Maintenance bool                   `bson:"-" json:"maintenance,omitempty"`
 }
 
 type AggregationResult struct {

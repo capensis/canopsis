@@ -86,7 +86,7 @@ type BulkDeleteRequestItem struct {
 
 type FilteredQuery struct {
 	pagination.FilteredQuery
-	SortBy            string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author.name author.display_name priority created updated on_success on_failure"`
+	SortBy            string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author.name author.display_name priority created updated on_success on_failure type enabled unread_failures_count"`
 	OnlyUnreadFailure bool   `json:"only_unread_failure" form:"only_unread_failure"`
 }
 
