@@ -1,6 +1,7 @@
 package icon
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"mime/multipart"
@@ -24,7 +25,7 @@ type Store interface {
 	Update(context.Context, EditRequest) (*Response, error)
 	Patch(context.Context, PatchRequest) (*Response, error)
 	Delete(ctx context.Context, id, userID string) (bool, error)
-	List(ctx context.Context, query pagination.FilteredQuery) (*AggregationResult, error)
+	List(ctx context.Context, query ListRequest) (*AggregationResult, error)
 	Get(ctx context.Context, id string) (*Response, error)
 	GetFilepath(model Response) string
 }
@@ -211,17 +212,18 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	return err == nil, err
 }
 
-func (s *store) List(ctx context.Context, query pagination.FilteredQuery) (*AggregationResult, error) {
+func (s *store) List(ctx context.Context, query ListRequest) (*AggregationResult, error) {
 	var pipeline []bson.M
 	filter := mongoquery.GetSearchQuery(query.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
+	sort := mongoquery.GetSortQuery(cmp.Or(query.SortBy, s.defaultSortBy), query.Sort)
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
-		mongoquery.GetSortQuery(s.defaultSortBy, pagination.SortAsc),
+		sort,
 	))
 	if err != nil {
 		return nil, err
@@ -240,7 +242,9 @@ func (s *store) List(ctx context.Context, query pagination.FilteredQuery) (*Aggr
 	outputCh := make(chan readWorkerResult)
 	filepaths := make([]string, len(result.Data))
 	for i, v := range result.Data {
-		filepaths[i] = s.GetFilepath(v)
+		if v.Storage != "" {
+			filepaths[i] = s.GetFilepath(v)
+		}
 	}
 
 	g, ctx := errgroup.WithContext(ctx)
@@ -248,6 +252,9 @@ func (s *store) List(ctx context.Context, query pagination.FilteredQuery) (*Aggr
 		defer close(inputCh)
 
 		for i, filepath := range filepaths {
+			if filepath == "" {
+				continue
+			}
 			select {
 			case <-ctx.Done():
 				return nil

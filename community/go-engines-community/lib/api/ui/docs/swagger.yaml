@@ -1599,6 +1599,17 @@ paths:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum:
+              - _id
+              - message
+              - start
+              - end
+              - status
       responses:
         '200':
           description: OK

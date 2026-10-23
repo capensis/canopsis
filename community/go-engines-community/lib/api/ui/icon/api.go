@@ -120,7 +120,7 @@ func (a *api) Get(c *gin.Context) {
 // List
 // @Success 200 {object} pagination.ListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
-	query := pagination.FilteredQuery{
+	query := ListRequest{
 		Query: pagination.GetDefaultQuery(),
 	}
 	if err := binding.Bind(c, &query); err != nil {
