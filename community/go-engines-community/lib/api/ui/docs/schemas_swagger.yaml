@@ -8027,7 +8027,12 @@ definitions:
         additionalProperties: {}
         type: object
       parameters:
-        $ref: '#/definitions/view.Parameters'
+        allOf:
+        - $ref: '#/definitions/view.Parameters'
+        description: |-
+          Parameters may include AlarmsList associateTicket: {formats: []string, formatsTemplate: string, formatsTemplateTitle: string}.
+          A non-empty formatsTemplate must reference an existing ticket_formats template; its formats and derived title take precedence, and supplied custom formats are ignored.
+          An absent or empty reference selects custom mode and clears the derived title. In custom mode, formats are stored exactly; empty strings and lists are allowed, regexp syntax is not checked, and null lists, null elements, or non-string entries are rejected. A present formatsTemplate must be a string.
       title:
         maxLength: 255
         type: string
@@ -8249,6 +8254,15 @@ definitions:
         type: array
       content:
         type: string
+      formats:
+        description: |-
+          Formats preserves ticket format strings verbatim; regexp syntax is not validated by the backend.
+          Empty strings and an empty list are allowed. A null list, null elements, and non-string entries are rejected; omission means an empty list.
+        items:
+          maxLength: 255
+          type: string
+        maxItems: 100
+        type: array
       sort_columns:
         items:
           $ref: '#/definitions/view.WidgetSortColumn'
@@ -8268,6 +8282,7 @@ definitions:
         - weather_item
         - weather_modal
         - weather_entity
+        - ticket_formats
         type: string
     required:
     - title
@@ -8291,6 +8306,12 @@ definitions:
         type: string
       created:
         type: integer
+      formats:
+        description: Formats contains the exact strings stored by a ticket_formats
+          template.
+        items:
+          type: string
+        type: array
       sort_columns:
         items:
           $ref: '#/definitions/view.WidgetSortColumn'

@@ -5,6 +5,11 @@ import (
 	"strings"
 )
 
+const (
+	TicketFormatsMaxCount = 100
+	TicketFormatMaxLength = 255
+)
+
 var columnsByType = map[string][]string{
 	WidgetTemplateTypeAlarmColumns: {
 		"_id",
@@ -144,6 +149,9 @@ func GetWidgetTemplateParameters() map[string]map[string][]string {
 			},
 			WidgetTemplateTypeAlarmSortColumns: {
 				"sort",
+			},
+			WidgetTemplateTypeTicketFormats: {
+				"associateTicket.formats",
 			},
 		},
 		WidgetTypeContextExplorer: {
