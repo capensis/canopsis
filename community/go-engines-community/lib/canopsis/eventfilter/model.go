@@ -65,7 +65,7 @@ const (
 type Rule struct {
 	ID           string                   `bson:"_id" json:"_id" binding:"id"`
 	Author       string                   `bson:"author" json:"author" swaggerignore:"true"`
-	Name         string                       `bson:"name" json:"name" binding:"required,max=255"`
+	Name         string                   `bson:"name" json:"name" binding:"required,max=255"`
 	Description  string                   `bson:"description" json:"description" binding:"required,max=255"`
 	Type         string                   `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
 	Priority     int64                    `bson:"priority" json:"priority"`
