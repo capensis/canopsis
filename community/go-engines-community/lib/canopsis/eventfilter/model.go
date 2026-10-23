@@ -51,18 +51,29 @@ const (
 	ActionSetTagsFromTemplate = "set_tags_from_template"
 )
 
+const (
+	// OnMismatchError fails the rule when no row matches.
+	OnMismatchError = externaldata.OnMismatchError
+	// OnMismatchSkipRule skips the whole rule execution: no action/field is applied.
+	OnMismatchSkipRule = externaldata.OnMismatchSkipRule
+	// OnMismatchSkipActions skips only the actions that rely on the missing external data
+	// reference; other actions still run. It's only valid for enrichment rules, since
+	// change_entity rules have no actions.
+	OnMismatchSkipActions = externaldata.OnMismatchSkipActions
+)
+
 type Rule struct {
-	ID           string                       `bson:"_id" json:"_id" binding:"id"`
-	Author       string                       `bson:"author" json:"author" swaggerignore:"true"`
-	Name         string                       `bson:"name" json:"name" binding:"required,max=255"`
-	Description  string                       `bson:"description" json:"description" binding:"required,max=255"`
-	Type         string                       `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
-	Priority     int64                        `bson:"priority" json:"priority"`
-	Enabled      bool                         `bson:"enabled" json:"enabled"`
-	Config       RuleConfig                   `bson:"config" json:"config"`
-	ExternalData []externaldata.RefParameters `bson:"external_data" json:"external_data,omitempty"`
-	Created      *datetime.CpsTime            `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated      *datetime.CpsTime            `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	ID           string                   `bson:"_id" json:"_id" binding:"id"`
+	Author       string                   `bson:"author" json:"author" swaggerignore:"true"`
+	Name         string                   `bson:"name" json:"name" binding:"required,max=255"`
+	Description  string                   `bson:"description" json:"description" binding:"required,max=255"`
+	Type         string                   `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
+	Priority     int64                    `bson:"priority" json:"priority"`
+	Enabled      bool                     `bson:"enabled" json:"enabled"`
+	Config       RuleConfig               `bson:"config" json:"config"`
+	ExternalData []ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`
+	Created      *datetime.CpsTime        `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated      *datetime.CpsTime        `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 
 	EventsCount         int64 `bson:"events_count,omitempty" json:"events_count,omitempty"`
 	FailuresCount       int64 `bson:"failures_count,omitempty" json:"failures_count,omitempty"`
@@ -111,6 +122,11 @@ type Action struct {
 	Name        string `bson:"name" json:"name"`
 	Description string `bson:"description,omitempty" json:"description,omitempty"`
 	Value       any    `bson:"value" json:"value" binding:"info_value"`
+}
+
+type ExternalDataParameters struct {
+	externaldata.RefParameters `bson:",inline"`
+	OnMismatch                 int `bson:"on_mismatch" json:"on_mismatch"`
 }
 
 type RegexMatch struct {

@@ -3014,7 +3014,7 @@ definitions:
         type: array
       external_data:
         items:
-          $ref: '#/definitions/externaldata.RefParameters'
+          $ref: '#/definitions/eventfilter.ExternalDataParametersRequest'
         type: array
       name:
         maxLength: 255
@@ -3081,7 +3081,7 @@ definitions:
         type: array
       external_data:
         items:
-          $ref: '#/definitions/externaldata.RefParameters'
+          $ref: '#/definitions/eventfilter.ExternalDataParametersRequest'
         type: array
       name:
         maxLength: 255
@@ -3120,6 +3120,90 @@ definitions:
           $ref: '#/definitions/types.Exdate'
         type: array
       name:
+        type: string
+    type: object
+  eventfilter.ExternalDataParametersRequest:
+    properties:
+      on_mismatch:
+        description: |-
+          Possible values.
+            * `0` - Throw error
+            * `1` - Skip rule
+            * `2` - Skip action with external data reference
+        enum:
+        - 0
+        - 1
+        - 2
+        type: integer
+      optional:
+        description: Optional defines will it cause error or not if external data
+          isn't found.
+        type: boolean
+      reference:
+        type: string
+      regexp:
+        additionalProperties:
+          type: string
+        description: |-
+          Regexp defines regexp match conditions.
+          Key contains field name of table with regexp, value contains template.
+        type: object
+      request:
+        allOf:
+        - $ref: '#/definitions/request.Parameters'
+        description: are used in api external data
+      select:
+        additionalProperties:
+          type: string
+        description: |-
+          Select defines equal match conditions.
+          Key contains field name of table, value contains template.
+        type: object
+      sort:
+        type: string
+      sort_by:
+        description: SortBy and Sort define priority of found rows. It's id by default.
+        type: string
+      table:
+        description: |-
+          are used in db external data
+          Table contains id of external table
+        type: string
+      type:
+        type: string
+    required:
+    - reference
+    - type
+    type: object
+  eventfilter.ExternalDataParametersResponse:
+    properties:
+      on_mismatch:
+        type: integer
+      optional:
+        type: boolean
+      reference:
+        type: string
+      regexp:
+        additionalProperties:
+          type: string
+        type: object
+      request:
+        allOf:
+        - $ref: '#/definitions/request.Parameters'
+        description: are used in api external data
+      select:
+        additionalProperties:
+          type: string
+        type: object
+      sort:
+        type: string
+      sort_by:
+        type: string
+      table:
+        allOf:
+        - $ref: '#/definitions/externaldatatable.Table'
+        description: are used in db external data
+      type:
         type: string
     type: object
   eventfilter.FailureResponse:
@@ -3177,7 +3261,7 @@ definitions:
         type: array
       external_data:
         items:
-          $ref: '#/definitions/externaldatatable.RefResponse'
+          $ref: '#/definitions/eventfilter.ExternalDataParametersResponse'
         type: array
       failures_count:
         type: integer
@@ -3329,7 +3413,7 @@ definitions:
         type: array
       external_data:
         items:
-          $ref: '#/definitions/externaldata.RefParameters'
+          $ref: '#/definitions/eventfilter.ExternalDataParametersRequest'
         type: array
       name:
         maxLength: 255
