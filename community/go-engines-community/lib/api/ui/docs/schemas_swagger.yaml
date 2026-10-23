@@ -1180,7 +1180,7 @@ definitions:
       version:
         type: string
       version_description:
-        maxLength: 500
+        maxLength: 10000
         type: string
       version_updated:
         type: integer
@@ -1270,7 +1270,7 @@ definitions:
       show_header_on_kiosk_mode:
         type: boolean
       version_description:
-        maxLength: 500
+        maxLength: 10000
         type: string
     type: object
   associativetable.AssociativeTable:
