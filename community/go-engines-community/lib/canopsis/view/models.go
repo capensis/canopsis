@@ -43,6 +43,7 @@ const (
 	WidgetTemplateTypeServiceWeatherItem    = "weather_item"
 	WidgetTemplateTypeServiceWeatherModal   = "weather_modal"
 	WidgetTemplateTypeServiceWeatherEntity  = "weather_entity"
+	WidgetTemplateTypeTicketFormats         = "ticket_formats"
 )
 
 const PermissionGroupCommonViews = "commonviews"
@@ -107,6 +108,11 @@ type FastPbehavior struct {
 	Type       string `bson:"type" json:"type" binding:"required"`
 }
 
+// Parameters contains common widget settings and dynamic type-specific settings.
+// AlarmsList associateTicket may contain formats []string, formatsTemplate string, and the derived formatsTemplateTitle string.
+// A non-empty formatsTemplate must reference an existing ticket_formats template; its formats and title take precedence over custom values.
+// Without a reference, formats are custom strings preserved exactly; empty strings and lists are allowed, and regexp syntax is not validated by the backend.
+// In custom mode, null lists, null elements, and non-string format entries are rejected. A present formatsTemplate must be a string.
 type Parameters struct {
 	MainFilter string `bson:"mainFilter,omitempty" json:"mainFilter,omitempty"`
 
@@ -220,9 +226,11 @@ type WidgetTemplate struct {
 	Content     string             `bson:"content,omitempty"`
 	Actions     []string           `bson:"actions,omitempty"`
 	SortColumns []WidgetSortColumn `bson:"sort_columns,omitempty"`
-	Author      string             `bson:"author"`
-	Created     datetime.CpsTime   `bson:"created,omitempty"`
-	Updated     datetime.CpsTime   `bson:"updated,omitempty"`
+	// Formats stores ticket_formats strings exactly. Empty strings and lists are allowed; backend regexp validation is not performed.
+	Formats []string         `bson:"formats,omitempty"`
+	Author  string           `bson:"author"`
+	Created datetime.CpsTime `bson:"created,omitempty"`
+	Updated datetime.CpsTime `bson:"updated,omitempty"`
 }
 
 type WidgetColumn struct {

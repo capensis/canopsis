@@ -83,6 +83,9 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		if err != nil {
 			return nil, err
 		}
+		for i := range res.Data {
+			normalizeFormatsResponse(&res.Data[i])
+		}
 	}
 
 	return &res, nil
@@ -104,6 +107,7 @@ func (s *store) GetOneById(ctx context.Context, id string) (*Response, error) {
 		if err != nil {
 			return nil, err
 		}
+		normalizeFormatsResponse(&res)
 
 		return &res, nil
 	}
@@ -122,7 +126,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		_, err := s.collection.InsertOne(ctx, model)
+		_, err := s.collection.InsertOne(ctx, transformModelToDocument(model))
 		if err != nil {
 			return err
 		}
@@ -146,7 +150,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 
 		_, err := s.collection.UpdateOne(ctx,
 			bson.M{"_id": model.ID},
-			bson.M{"$set": model},
+			transformEditRequestToUpdate(model),
 		)
 		if err != nil {
 			return err
@@ -217,6 +221,8 @@ func (s *store) updateLinkedWidgets(ctx context.Context, tpl Response, userID st
 				val = tpl.Actions
 			case view.WidgetTemplateTypeAlarmSortColumns:
 				val = tpl.SortColumns
+			case view.WidgetTemplateTypeTicketFormats:
+				val = tpl.Formats
 			default:
 				return fmt.Errorf("unknown template type: %s", tpl.Type)
 			}
@@ -281,5 +287,32 @@ func transformEditRequestToModel(r EditRequest) view.WidgetTemplate {
 		Actions:     r.Actions,
 		Author:      r.Author,
 		SortColumns: r.SortColumns,
+		Formats:     r.Formats,
 	}
+}
+
+func transformEditRequestToUpdate(model view.WidgetTemplate) bson.M {
+	update := bson.M{"$set": transformModelToDocument(model)}
+	if model.Type != view.WidgetTemplateTypeTicketFormats {
+		update["$unset"] = bson.M{"formats": ""}
+	}
+	return update
+}
+
+type widgetTemplateDocument struct {
+	view.WidgetTemplate `bson:",inline"`
+	Formats             *[]string `bson:"formats,omitempty"`
+}
+
+func transformModelToDocument(model view.WidgetTemplate) widgetTemplateDocument {
+	document := widgetTemplateDocument{WidgetTemplate: model}
+	if model.Type == view.WidgetTemplateTypeTicketFormats {
+		formats := model.Formats
+		if formats == nil {
+			formats = []string{}
+		}
+		document.Formats = &formats
+	}
+
+	return document
 }
