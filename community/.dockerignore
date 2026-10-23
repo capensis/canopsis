@@ -2,3 +2,5 @@
 **/.git
 sources/webcore
 !sources/webcore/src
+build/
+**/build/

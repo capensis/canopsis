@@ -67,11 +67,12 @@ type BulkToggleRequestItem struct {
 	Author string `json:"author" swaggerignore:"true"`
 }
 
-func (r CreateRequest) getBson(passwordEncoder password.Encoder) (bson.M, error) {
+func (r CreateRequest) getBson(passwordEncoder password.Encoder) (bson.M, string, error) {
 	now := datetime.NewCpsTime()
+	id := utils.NewID()
 
 	bsonModel := bson.M{
-		"_id":                       r.Name,
+		"_id":                       id,
 		"name":                      r.Name,
 		"lastname":                  r.Lastname,
 		"firstname":                 r.Firstname,
@@ -92,12 +93,12 @@ func (r CreateRequest) getBson(passwordEncoder password.Encoder) (bson.M, error)
 
 	h, err := passwordEncoder.EncodePassword([]byte(r.Password))
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	bsonModel["password"] = string(h)
 
-	return bsonModel, nil
+	return bsonModel, id, nil
 }
 
 func (r EditRequest) getBson(passwordEncoder password.Encoder) (bson.M, error) {

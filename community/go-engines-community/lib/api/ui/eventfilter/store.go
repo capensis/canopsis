@@ -42,7 +42,7 @@ import (
 const tplValErrNoEntity = "Undefined key or field \".Event.Entity"
 
 type Store interface {
-	Insert(ctx context.Context, request CreateRequest) (*Response, error)
+	Insert(ctx context.Context, request EditRequest) (*Response, error)
 	GetByID(ctx context.Context, id string) (*Response, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
 	Update(ctx context.Context, request UpdateRequest) (*Response, error)
@@ -124,7 +124,7 @@ func NewStore(
 		externalDataGetter:      externalDataGetter,
 		encoder:                 encoder,
 		decoder:                 decoder,
-		defaultSearchByFields:   []string{"_id", "author.name", "description", "type"},
+		defaultSearchByFields:   []string{"_id", "name", "author.name", "description", "type"},
 		defaultSortBy:           "created",
 		exdataTplVars:           exdataTplVars,
 		configTplVars:           configTplVars,
@@ -133,16 +133,13 @@ func NewStore(
 	}
 }
 
-func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, error) {
-	model, err := s.transformRequestToDocument(ctx, request.EditRequest)
+func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, error) {
+	model, err := s.transformRequestToDocument(ctx, request)
 	if err != nil {
 		return nil, err
 	}
 
-	model.ID = request.ID
-	if model.ID == "" {
-		model.ID = utils.NewID()
-	}
+	model.ID = utils.NewID()
 
 	now := datetime.NewCpsTime()
 	model.Created = &now
@@ -312,6 +309,10 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 			update,
 		)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err, model)
+			}
+
 			return err
 		}
 
@@ -321,7 +322,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 		}
 
 		_, err = s.dbTplTestCollection.UpdateMany(ctx, bson.M{"rule._id": model.ID, "type": template.TypeTestEventFilterRule}, bson.M{
-			"$set": bson.M{"rule.name": model.Description},
+			"$set": bson.M{"rule.name": model.Name},
 		})
 		if err != nil {
 			return err
@@ -559,6 +560,7 @@ func (s *store) transformRequestToDocument(ctx context.Context, r EditRequest) (
 
 	return eventfilter.Rule{
 		Author:        r.Author,
+		Name:          r.Name,
 		Description:   r.Description,
 		Type:          r.Type,
 		Priority:      r.Priority,

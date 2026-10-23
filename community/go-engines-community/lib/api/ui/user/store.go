@@ -62,7 +62,6 @@ func NewStore(
 
 		defaultSearchByFields: []string{"_id", "name", "firstname", "lastname", "roles.name"},
 		defaultSortBy:         "name",
-		dupErrorParser:        validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -89,7 +88,6 @@ type store struct {
 
 	defaultSearchByFields []string
 	defaultSortBy         string
-	dupErrorParser        validation.DuplicateErrorParser
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest, curUserID string, requestRoles []string) (*AggregationResult, error) {
@@ -218,7 +216,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r CreateRequest, requestRoles []string) (*User, error) {
-	insertDoc, err := r.getBson(s.passwordEncoder)
+	insertDoc, id, err := r.getBson(s.passwordEncoder)
 	if err != nil {
 		return nil, err
 	}
@@ -238,14 +236,10 @@ func (s *store) Insert(ctx context.Context, r CreateRequest, requestRoles []stri
 
 		_, err = s.userCollection.InsertOne(ctx, insertDoc)
 		if err != nil {
-			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err, Role{})
-			}
-
 			return err
 		}
 
-		user, err = s.GetOneBy(ctx, r.Name)
+		user, err = s.GetOneBy(ctx, id)
 
 		return err
 	})
@@ -313,10 +307,6 @@ func (s *store) Update(ctx context.Context, r BulkUpdateRequestItem, curUserID s
 			bson.M{"$set": updateDoc},
 		)
 		if err != nil || res.MatchedCount == 0 {
-			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err, Role{})
-			}
-
 			return err
 		}
 
@@ -406,10 +396,6 @@ func (s *store) Patch(ctx context.Context, r BulkPatchRequestItem, curUserID str
 			bson.M{"$set": updateDoc},
 		)
 		if err != nil || res.MatchedCount == 0 {
-			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err, Role{})
-			}
-
 			return err
 		}
 

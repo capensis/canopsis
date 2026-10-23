@@ -39,7 +39,7 @@ type Failure struct {
 
 type FailureService interface {
 	Run(ctx context.Context)
-	Add(ruleID, ruleDesc string, ruleUpdated datetime.CpsTime, failureType int64, message string, event *types.Event)
+	Add(ruleID, ruleName string, ruleUpdated datetime.CpsTime, failureType int64, message string, event *types.Event)
 }
 
 func NewFailureService(
@@ -80,7 +80,7 @@ type failureService struct {
 type failedRule struct {
 	Timestamp   datetime.CpsTime
 	RuleUpdated datetime.CpsTime
-	Description string
+	Name        string
 }
 
 func (s *failureService) Run(ctx context.Context) {
@@ -100,7 +100,7 @@ func (s *failureService) Run(ctx context.Context) {
 	}
 }
 
-func (s *failureService) Add(ruleID, ruleDesc string, ruleUpdated datetime.CpsTime, failureType int64, message string, event *types.Event) {
+func (s *failureService) Add(ruleID, ruleName string, ruleUpdated datetime.CpsTime, failureType int64, message string, event *types.Event) {
 	s.dataMx.Lock()
 	defer s.dataMx.Unlock()
 	now := datetime.NewCpsTime()
@@ -122,7 +122,7 @@ func (s *failureService) Add(ruleID, ruleDesc string, ruleUpdated datetime.CpsTi
 	s.failedRules[ruleID] = failedRule{
 		Timestamp:   now,
 		RuleUpdated: ruleUpdated,
-		Description: ruleDesc,
+		Name:        ruleName,
 	}
 }
 
@@ -208,7 +208,7 @@ func (s *failureService) updateRuleNotifications(ctx context.Context, failedRule
 	}
 
 	for ruleID, r := range failedRules {
-		s.notificationStore.AddForEventFilterFailure(r.Timestamp, ruleID, r.Description, r.RuleUpdated, roleIDs)
+		s.notificationStore.AddForEventFilterFailure(r.Timestamp, ruleID, r.Name, r.RuleUpdated, roleIDs)
 	}
 
 	err = s.notificationStore.Flush(ctx)
