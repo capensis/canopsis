@@ -1743,6 +1743,12 @@ paths:
       responses:
         '204':
           description: OK
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Not Found
           content:
@@ -5114,11 +5120,28 @@ paths:
                       "hover_row": true,
                       "hover_row_color": "#AAAAAA"
                     },
+                    "widget": {
+                      "title_background": "#FFFFFF",
+                      "content_background": "#FFFFFF",
+                      "border": false,
+                      "border_color": "#C7C7C7",
+                      "border_radius": 0
+                    },
                     "state": {
                       "ok": "#AAAAAA",
                       "minor": "#AAAAAA",
                       "major": "#AAAAAA",
                       "critical": "#AAAAAA"
+                    },
+                    "icons": {
+                      "ack": "#AAAAAA",
+                      "canceled": "#AAAAAA",
+                      "children": "#AAAAAA",
+                      "parent": "#AAAAAA",
+                      "comment": "#AAAAAA",
+                      "snooze": "#AAAAAA",
+                      "tickets": "#AAAAAA",
+                      "cancel_delay": "#AAAAAA"
                     }
                   }
                 }
@@ -5209,11 +5232,28 @@ paths:
                       "hover_row": false,
                       "hover_row_color": "#FFFFFF"
                     },
+                    "widget": {
+                      "title_background": "#FFFFFF",
+                      "content_background": "#FFFFFF",
+                      "border": false,
+                      "border_color": "#C7C7C7",
+                      "border_radius": 0
+                    },
                     "state": {
                       "ok": "#FFFFFF",
                       "minor": "#FFFFFF",
                       "major": "#FFFFFF",
                       "critical": "#FFFFFF"
+                    },
+                    "icons": {
+                      "ack": "#FFFFFF",
+                      "canceled": "#FFFFFF",
+                      "children": "#FFFFFF",
+                      "parent": "#FFFFFF",
+                      "comment": "#FFFFFF",
+                      "snooze": "#FFFFFF",
+                      "tickets": "#FFFFFF",
+                      "cancel_delay": "#FFFFFF"
                     }
                   }
                 }
