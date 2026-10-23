@@ -141,6 +141,7 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 		metaAlarm = p.newMetaAlarm(event.Parameters, entity, p.alarmConfigProvider.Get())
 		metaAlarm.Value.Meta = event.Parameters.MetaAlarmRuleID
 		metaAlarm.Value.MetaValuePath = event.Parameters.MetaAlarmValuePath
+		metaAlarm.Value.MetaRuleName = rule.Name
 		metaAlarm.Value.LastEventDate = nil // should be empty
 
 		stateID := rule.GetStateID(event.Parameters.MetaAlarmValuePath)

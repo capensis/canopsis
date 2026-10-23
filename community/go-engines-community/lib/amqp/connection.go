@@ -206,7 +206,10 @@ func (c *connection) handleReconnect() {
 		select {
 		case <-c.done:
 			return
-		case <-notifyClose:
+		case err := <-notifyClose:
+			if err != nil {
+				c.logger.Err(err).Msg("amqp connection closed with error")
+			}
 		}
 
 		c.mx.Lock()

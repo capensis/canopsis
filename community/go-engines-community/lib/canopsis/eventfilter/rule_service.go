@@ -222,7 +222,7 @@ func (s *ruleService) isRuleActive(rule ParsedRule, now datetime.CpsTime) bool {
 func (s *ruleService) matchRule(rule ParsedRule, event *types.Event) (bool, RegexMatch) {
 	if len(rule.EntityPattern) == 0 && len(rule.EventPattern) == 0 {
 		s.logDebug(rule.ID, event, "rule is not matched")
-		s.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeInvalidPattern, "missing entity and event patterns", nil)
+		s.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeInvalidPattern, "missing entity and event patterns", nil)
 
 		return false, RegexMatch{}
 	}
@@ -233,7 +233,7 @@ func (s *ruleService) matchRule(rule ParsedRule, event *types.Event) (bool, Rege
 		matched, eventRegexMatches, err := match.MatchEventPatternWithRegexMatches(rule.EventPattern, event)
 		if err != nil {
 			s.logger.Err(err).Str("rule_id", rule.ID).Msg("Event filter rule service: invalid event pattern")
-			s.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeInvalidPattern, "invalid event pattern: "+err.Error(), nil)
+			s.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeInvalidPattern, "invalid event pattern: "+err.Error(), nil)
 
 			return false, RegexMatch{}
 		}
@@ -257,7 +257,7 @@ func (s *ruleService) matchRule(rule ParsedRule, event *types.Event) (bool, Rege
 		matched, entityRegexMatches, err := match.MatchEntityPatternWithRegexMatches(rule.EntityPattern, event.Entity)
 		if err != nil {
 			s.logger.Err(err).Str("rule_id", rule.ID).Msg("Event filter rule service: invalid entity pattern")
-			s.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeInvalidPattern, "invalid entity pattern: "+err.Error(), nil)
+			s.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeInvalidPattern, "invalid entity pattern: "+err.Error(), nil)
 
 			return false, RegexMatch{}
 		}
@@ -324,7 +324,7 @@ func (s *ruleService) resolveExternalData(
 			externalData[d.Reference] = resp.Result[i]
 		} else if i == resp.ErrIndex {
 			failReason := "external data \"" + d.Reference + "\" cannot be fetched: " + resp.Err.Error()
-			s.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeExternalDataAPI, failReason, event)
+			s.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeExternalDataAPI, failReason, event)
 
 			return externaldata.GetterResult{}, resp.Err
 		}
@@ -346,7 +346,7 @@ func (s *ruleService) getExternalData(
 	}
 
 	if s.externalDataGetter == nil {
-		s.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, "External data is not supported", nil)
+		s.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, "External data is not supported", nil)
 
 		return externaldata.GetterResult{}, errors.New("external data is not supported")
 	}
@@ -360,7 +360,7 @@ func (s *ruleService) getExternalData(
 
 	er, err := s.externalDataGetter.Get(ctx, externaldata.Rule{
 		ID:            rule.ID,
-		Name:          rule.Description,
+		Name:          rule.Name,
 		ExternalData:  refParameters,
 		OnMismatch:    onMismatch,
 		TriggerUserID: event.UserID,
@@ -389,9 +389,9 @@ func (s *ruleService) getExternalData(
 
 		if failReason != "" {
 			if isParamsInvalid {
-				s.failureService.Add(rule.ID, rule.Description, rule.Updated, failureType, failReason, nil)
+				s.failureService.Add(rule.ID, rule.Name, rule.Updated, failureType, failReason, nil)
 			} else {
-				s.failureService.Add(rule.ID, rule.Description, rule.Updated, failureType, failReason, event)
+				s.failureService.Add(rule.ID, rule.Name, rule.Updated, failureType, failReason, event)
 			}
 		}
 
