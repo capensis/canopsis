@@ -1180,7 +1180,7 @@ definitions:
       version:
         type: string
       version_description:
-        maxLength: 500
+        maxLength: 10000
         type: string
       version_updated:
         type: integer
@@ -1270,7 +1270,7 @@ definitions:
       show_header_on_kiosk_mode:
         type: boolean
       version_description:
-        maxLength: 500
+        maxLength: 10000
         type: string
     type: object
   associativetable.AssociativeTable:
@@ -1325,12 +1325,16 @@ definitions:
     properties:
       _id:
         type: string
+      closable:
+        type: boolean
       color:
         type: string
       end:
         type: integer
       message:
         type: string
+      priority:
+        type: integer
       start:
         type: integer
       views:
@@ -1338,9 +1342,11 @@ definitions:
           type: string
         type: array
     required:
+    - closable
     - color
     - end
     - message
+    - priority
     - start
     type: object
   broadcastmessage.Response:
@@ -1349,6 +1355,8 @@ definitions:
         type: string
       author:
         $ref: '#/definitions/author.Author'
+      closable:
+        type: boolean
       color:
         type: string
       created:
@@ -1359,6 +1367,8 @@ definitions:
         type: boolean
       message:
         type: string
+      priority:
+        type: integer
       start:
         type: integer
       updated:
@@ -1370,12 +1380,16 @@ definitions:
     type: object
   broadcastmessage.UpdateRequest:
     properties:
+      closable:
+        type: boolean
       color:
         type: string
       end:
         type: integer
       message:
         type: string
+      priority:
+        type: integer
       start:
         type: integer
       views:
@@ -1383,9 +1397,11 @@ definitions:
           type: string
         type: array
     required:
+    - closable
     - color
     - end
     - message
+    - priority
     - start
     type: object
   colortheme.BulkDeleteRequestItem:
@@ -1456,6 +1472,34 @@ definitions:
         - minor
         - ok
         type: object
+      icons:
+        properties:
+          ack:
+            type: string
+          cancel_delay:
+            type: string
+          canceled:
+            type: string
+          children:
+            type: string
+          comment:
+            type: string
+          parent:
+            type: string
+          snooze:
+            type: string
+          tickets:
+            type: string
+        required:
+        - ack
+        - cancel_delay
+        - canceled
+        - children
+        - comment
+        - parent
+        - snooze
+        - tickets
+        type: object
       table:
         properties:
           background:
@@ -1475,6 +1519,23 @@ definitions:
         - hover_row
         - row_color
         - shift_row
+        type: object
+      widget:
+        properties:
+          border:
+            type: boolean
+          border_color:
+            type: string
+          border_radius:
+            type: integer
+          content_background:
+            type: string
+          title_background:
+            type: string
+        required:
+        - border
+        - content_background
+        - title_background
         type: object
     type: object
   colortheme.EditRequest:
@@ -2946,6 +3007,9 @@ definitions:
         items:
           $ref: '#/definitions/externaldata.RefParameters'
         type: array
+      name:
+        maxLength: 255
+        type: string
       priority:
         minimum: 0
         type: integer
@@ -2965,6 +3029,7 @@ definitions:
     required:
     - _id
     - description
+    - name
     - type
     type: object
   eventfilter.CopyVarsResponse:
@@ -2974,10 +3039,8 @@ definitions:
           $ref: '#/definitions/template.VarResponse'
         type: array
     type: object
-  eventfilter.CreateRequest:
+  eventfilter.EditRequest:
     properties:
-      _id:
-        type: string
       config:
         $ref: '#/definitions/eventfilter.RuleConfig'
       corporate_entity_pattern:
@@ -3011,6 +3074,9 @@ definitions:
         items:
           $ref: '#/definitions/externaldata.RefParameters'
         type: array
+      name:
+        maxLength: 255
+        type: string
       priority:
         minimum: 0
         type: integer
@@ -3029,6 +3095,7 @@ definitions:
         type: string
     required:
     - description
+    - name
     - type
     type: object
   eventfilter.Exception:
@@ -3105,6 +3172,8 @@ definitions:
         type: array
       failures_count:
         type: integer
+      name:
+        type: string
       priority:
         type: integer
       rrule:
@@ -3253,6 +3322,9 @@ definitions:
         items:
           $ref: '#/definitions/externaldata.RefParameters'
         type: array
+      name:
+        maxLength: 255
+        type: string
       priority:
         minimum: 0
         type: integer
@@ -3271,6 +3343,7 @@ definitions:
         type: string
     required:
     - description
+    - name
     - type
     type: object
   exdate.Request:

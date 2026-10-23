@@ -253,7 +253,12 @@ loop:
 		select {
 		case <-gctx.Done():
 			break loop
-		case <-notifyCh:
+
+		case err := <-notifyCh:
+			if err != nil {
+				logger.Err(err).Msg("amqp channel closed with error")
+			}
+
 			deliveries, notifyCh, setupErr = setup(gctx)
 			if setupErr != nil {
 				break loop
