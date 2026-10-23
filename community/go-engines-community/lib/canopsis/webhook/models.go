@@ -100,6 +100,20 @@ type History struct {
 	CmdStopPendingJobs bool   `bson:"cmd_stop_pending_jobs,omitempty"`
 }
 
+func (h History) ShouldStopExecution() bool {
+	switch h.Status {
+	case StatusSucceeded:
+		return h.StopOnSuccess
+	case StatusFailed:
+		return h.StopOnFail
+	case StatusAborted:
+		// Multiple URL webhooks are a single unit, so abort their pending jobs together.
+		return h.CmdStopPendingJobs || h.MultipleURLs
+	}
+
+	return false
+}
+
 func (h History) CloneForURL(url string) History {
 	return History{
 		ID:        utils.NewID(),
@@ -276,6 +290,15 @@ type BaseHistory struct {
 	LaunchedAt  datetime.MicroTime `bson:"launched_at,omitempty" json:"launched_at,omitzero"`
 	CompletedAt datetime.MicroTime `bson:"completed_at,omitempty" json:"completed_at,omitzero"`
 	LastPing    datetime.MicroTime `bson:"last_ping,omitempty" json:"last_ping,omitzero"`
+}
+
+func (b BaseHistory) IsTerminalStatus() bool {
+	switch b.Status {
+	case StatusSucceeded, StatusFailed, StatusAborted:
+		return true
+	}
+
+	return false
 }
 
 type DeclareTicket struct {

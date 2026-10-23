@@ -326,6 +326,8 @@ definitions:
         type: integer
       meta:
         type: string
+      meta_rule_name:
+        type: string
       output:
         type: string
       parents:
@@ -1413,6 +1415,34 @@ definitions:
     type: object
   colortheme.Colors:
     properties:
+      icons:
+        properties:
+          ack:
+            type: string
+          cancel_delay:
+            type: string
+          canceled:
+            type: string
+          children:
+            type: string
+          comment:
+            type: string
+          parent:
+            type: string
+          snooze:
+            type: string
+          tickets:
+            type: string
+        required:
+        - ack
+        - cancel_delay
+        - canceled
+        - children
+        - comment
+        - parent
+        - snooze
+        - tickets
+        type: object
       main:
         properties:
           accent:
@@ -1471,34 +1501,6 @@ definitions:
         - major
         - minor
         - ok
-        type: object
-      icons:
-        properties:
-          ack:
-            type: string
-          cancel_delay:
-            type: string
-          canceled:
-            type: string
-          children:
-            type: string
-          comment:
-            type: string
-          parent:
-            type: string
-          snooze:
-            type: string
-          tickets:
-            type: string
-        required:
-        - ack
-        - cancel_delay
-        - canceled
-        - children
-        - comment
-        - parent
-        - snooze
-        - tickets
         type: object
       table:
         properties:

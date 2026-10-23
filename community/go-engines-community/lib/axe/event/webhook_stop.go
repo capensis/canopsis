@@ -44,6 +44,26 @@ type webhookStopProcessor struct {
 }
 
 func (p *webhookStopProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
+	result, err := processWebhookStop(ctx, event, p.alarmCollection, p.resolvedAlarmCollection,
+		event.Parameters.RuleExecution, types.AlarmChangeTypeWebhookFail, types.AlarmChangeTypeDeclareTicketWebhookFail)
+	if err != nil {
+		return result, err
+	}
+
+	if result.AlarmChange.Type == types.AlarmChangeTypeDeclareTicketWebhookFail {
+		go sendTriggerEvent(context.WithoutCancel(ctx), event, result, p.amqpPublisher, p.encoder, p.eventGenerator, p.logger)
+	}
+
+	return result, nil
+}
+
+func processWebhookStop(
+	ctx context.Context,
+	event rpc.AxeEvent,
+	alarmCollection, resolvedAlarmCollection mongo.DbCollection,
+	displayGroup string,
+	failChangeType, ticketFailChangeType types.AlarmChangeType,
+) (Result, error) {
 	var result Result
 	alarmChange := types.NewAlarmChange()
 
@@ -71,7 +91,7 @@ func (p *webhookStopProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	stopOutputBuilder.WriteString(".")
 
 	if event.Parameters.TicketInfo.TicketRuleID == "" {
-		newStepQuery := execStepUpdateQueryWithInPbhInterval(types.AlarmStepWebhookStop, event.Parameters.RuleExecution,
+		newStepQuery := execStepUpdateQueryWithInPbhInterval(types.AlarmStepWebhookStop, displayGroup,
 			stopOutputBuilder.String(), event.Parameters)
 		update = []bson.M{
 			{"$set": bson.M{
@@ -80,7 +100,7 @@ func (p *webhookStopProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 			}},
 		}
 
-		alarmChange.Type = types.AlarmChangeTypeWebhookFail
+		alarmChange.Type = failChangeType
 	} else {
 		outputBuilder := strings.Builder{}
 		outputBuilder.WriteString(event.Parameters.Output)
@@ -90,10 +110,10 @@ func (p *webhookStopProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 		outputBuilder.WriteString(event.Parameters.Author)
 		outputBuilder.WriteString(".")
 
-		newStepQuery := execStepUpdateQueryWithInPbhInterval(types.AlarmStepWebhookStop, event.Parameters.RuleExecution,
+		newStepQuery := execStepUpdateQueryWithInPbhInterval(types.AlarmStepWebhookStop, displayGroup,
 			stopOutputBuilder.String(), event.Parameters)
 		newTicketStepQuery := ticketStepUpdateQueryWithInPbhInterval(types.AlarmStepDeclareTicketFail,
-			event.Parameters.RuleExecution, outputBuilder.String(), event.Parameters)
+			displayGroup, outputBuilder.String(), event.Parameters)
 		update = []bson.M{
 			{"$set": bson.M{
 				"v.steps":            addStepUpdateQuery(newStepQuery, newTicketStepQuery),
@@ -102,12 +122,12 @@ func (p *webhookStopProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 			}},
 		}
 
-		alarmChange.Type = types.AlarmChangeTypeDeclareTicketWebhookFail
+		alarmChange.Type = ticketFailChangeType
 	}
 
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 	alarm := types.Alarm{}
-	err := p.alarmCollection.FindOneAndUpdate(ctx, match, update, opts).Decode(&alarm)
+	err := alarmCollection.FindOneAndUpdate(ctx, match, update, opts).Decode(&alarm)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return result, nil
@@ -117,7 +137,7 @@ func (p *webhookStopProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	}
 
 	if alarm.IsResolved() {
-		_, err = p.resolvedAlarmCollection.UpdateOne(ctx, match, update)
+		_, err = resolvedAlarmCollection.UpdateOne(ctx, match, update)
 		if err != nil {
 			return result, err
 		}
@@ -126,10 +146,6 @@ func (p *webhookStopProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	result.Forward = true
 	result.Alarm = alarm
 	result.AlarmChange = alarmChange
-
-	if alarmChange.Type == types.AlarmChangeTypeDeclareTicketWebhookFail {
-		go sendTriggerEvent(context.WithoutCancel(ctx), event, result, p.amqpPublisher, p.encoder, p.eventGenerator, p.logger)
-	}
 
 	return result, nil
 }
