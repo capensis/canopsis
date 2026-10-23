@@ -11,7 +11,7 @@
     :alarm-counter="alarmCounter"
     :entity-counter="entityCounter"
     class="c-pbehavior-patterns-field"
-    @update:patterns="$emit('update:value', $event)"
+    @update:patterns="$emit('update:patterns', $event)"
   >
     <template #append-count="">
       <v-btn
@@ -51,7 +51,7 @@ import { useI18n } from '@/hooks/i18n';
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
 export default {
-  emits: ['update:patterns', 'update:value', 'show:alarms', 'show:entities'],
+  emits: ['update:patterns', 'show:alarms', 'show:entities'],
   components: { PatternEditorField },
   props: {
     patterns: {
