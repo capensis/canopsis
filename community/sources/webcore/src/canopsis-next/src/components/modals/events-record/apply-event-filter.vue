@@ -12,11 +12,10 @@
             {{ config.infoAlert }}
           </v-alert>
           <c-event-filter-patterns-field
-            :patterns="values.patterns"
+            v-model:patterns="patterns"
             :attributes="eventPatternAttributes"
             :required="config.required ?? true"
             name="patterns"
-            @update:value="updatePatterns"
           />
         </div>
       </template>
@@ -77,6 +76,7 @@ export default {
       },
     });
     const { values, handleSubmit, isSubmitting } = form;
+    const patterns = form.model('patterns');
 
     const { fetchEventRecordPatternFields } = usePatternsFields();
 
@@ -84,8 +84,6 @@ export default {
       usePatternsFieldsFetching(fetchEventRecordPatternFields);
 
     const closeModal = () => modals.hide({ id: props.modal.id });
-    const updatePatterns = value => form.setValue('patterns', value);
-
     const submit = handleSubmit(async () => {
       const result = await config.value.action?.(
         formGroupsToPatternRules(values.value.patterns?.groups ?? []),
@@ -107,11 +105,11 @@ export default {
     return {
       t,
       config,
+      patterns,
       values,
       isSubmitting,
       eventPatternAttributes,
       eventPatternAttributesPending,
-      updatePatterns,
       submit,
       closeModal,
     };

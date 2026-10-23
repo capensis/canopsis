@@ -59,7 +59,7 @@ export default {
     const widgetId = computed(() => route.query.widgetId);
 
     const alarmItems = computed(() => {
-      const alarm = getAlarmItem.value(props.id);
+      const alarm = getAlarmItem(props.id);
 
       return alarm ? [alarm] : [];
     });
