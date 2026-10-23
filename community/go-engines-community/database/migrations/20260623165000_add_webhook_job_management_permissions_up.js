@@ -10,6 +10,17 @@ if (db.getCollectionNames().includes("webhook_token_history")) {
     db.createCollection("webhook_token_history", {changeStreamPreAndPostImages: {enabled: true}})
 }
 
+var statusIndexExists = false;
+db.webhook_token_history.getIndexes().forEach(function (index) {
+    if (index.name === "status_1") {
+        statusIndexExists = true;
+    }
+});
+
+if (!statusIndexExists) {
+    db.webhook_token_history.createIndex({status: 1}, {name: "status_1"});
+}
+
 if (!db.permission.findOne({_id: "api_webhook_job_management"})) {
     db.permission.insertOne({
         _id: "api_webhook_job_management",
