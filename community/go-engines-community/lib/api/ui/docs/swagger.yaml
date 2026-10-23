@@ -2987,7 +2987,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.CreateRequest'
+                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EditRequest'
         required: true
       responses:
         '207':
@@ -3004,7 +3004,7 @@ paths:
                       - type: object
                         properties:
                           item:
-                            $ref: 'schemas_swagger.yaml#/definitions/eventfilter.CreateRequest'
+                            $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EditRequest'
         '400':
           description: Bad Request
           content:
@@ -7832,7 +7832,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.CreateRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EditRequest'
             examples:
               CreateDropRule:
                 summary: Create a drop rule
@@ -7855,6 +7855,7 @@ paths:
                       }
                     }
                   ]],
+                  "name": "drop rule example",
                   "description": "drop rule example",
                   "priority": 1,
                   "enabled": true
@@ -7880,6 +7881,7 @@ paths:
                       }
                     }
                   ]],
+                  "name": "break rule example",
                   "description": "break rule example",
                   "priority": 1,
                   "enabled": true
@@ -7888,6 +7890,7 @@ paths:
                 summary: Create an enrichment rule
                 description: Create an enrichment rule.
                 value: {
+                  "name": "enrichment rule example",
                   "description": "enrichment rule example",
                   "type": "enrichment",
                   "entity_pattern": [
@@ -7919,6 +7922,7 @@ paths:
                 summary: Create an enrichment rule with template
                 description: Create an enrichment rule with template.
                 value: {
+                  "name": "enrichment rule example with template",
                   "description": "enrichment rule example with template",
                   "type": "enrichment",
                   "entity_pattern": [
@@ -8015,6 +8019,7 @@ paths:
                       }
                     ]
                   ],
+                  "name": "enrichment rule with external api data",
                   "description": "enrichment rule with external api data",
                   "priority": 1,
                   "enabled": true,
@@ -8035,6 +8040,7 @@ paths:
                 summary: Create a change_entity rule
                 description: Create a change_entity rule.
                 value: {
+                  "name": "change_entity rule example",
                   "description": "change_entity rule example",
                   "type": "change_entity",
                   "event_pattern": [
@@ -8084,6 +8090,7 @@ paths:
                       }
                     }
                   ]],
+                  "name": "drop rule example",
                   "description": "drop rule example",
                   "priority": 1,
                   "enabled": true
@@ -8112,6 +8119,7 @@ paths:
                       }
                     }
                   ]],
+                  "name": "drop rule example",
                   "description": "drop rule example",
                   "priority": 1,
                   "enabled": true
@@ -8140,6 +8148,7 @@ paths:
                       }
                     }
                   ]],
+                  "name": "drop rule example",
                   "description": "drop rule example",
                   "priority": 1,
                   "enabled": true,
@@ -8174,6 +8183,7 @@ paths:
                       }
                     }
                   ]],
+                  "name": "drop rule example",
                   "description": "drop rule example",
                   "priority": 1,
                   "enabled": true,

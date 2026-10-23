@@ -3005,6 +3005,9 @@ definitions:
         items:
           $ref: '#/definitions/externaldata.RefParameters'
         type: array
+      name:
+        maxLength: 255
+        type: string
       priority:
         minimum: 0
         type: integer
@@ -3024,6 +3027,7 @@ definitions:
     required:
     - _id
     - description
+    - name
     - type
     type: object
   eventfilter.CopyVarsResponse:
@@ -3033,10 +3037,8 @@ definitions:
           $ref: '#/definitions/template.VarResponse'
         type: array
     type: object
-  eventfilter.CreateRequest:
+  eventfilter.EditRequest:
     properties:
-      _id:
-        type: string
       config:
         $ref: '#/definitions/eventfilter.RuleConfig'
       corporate_entity_pattern:
@@ -3070,6 +3072,9 @@ definitions:
         items:
           $ref: '#/definitions/externaldata.RefParameters'
         type: array
+      name:
+        maxLength: 255
+        type: string
       priority:
         minimum: 0
         type: integer
@@ -3088,6 +3093,7 @@ definitions:
         type: string
     required:
     - description
+    - name
     - type
     type: object
   eventfilter.Exception:
@@ -3164,6 +3170,8 @@ definitions:
         type: array
       failures_count:
         type: integer
+      name:
+        type: string
       priority:
         type: integer
       rrule:
@@ -3312,6 +3320,9 @@ definitions:
         items:
           $ref: '#/definitions/externaldata.RefParameters'
         type: array
+      name:
+        maxLength: 255
+        type: string
       priority:
         minimum: 0
         type: integer
@@ -3330,6 +3341,7 @@ definitions:
         type: string
     required:
     - description
+    - name
     - type
     type: object
   exdate.Request:
