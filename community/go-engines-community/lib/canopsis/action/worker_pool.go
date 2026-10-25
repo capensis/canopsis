@@ -55,6 +55,7 @@ type TaskResult struct {
 	AlarmChangeType   types.AlarmChangeType
 	Status            int
 	Err               error
+	Stop              bool
 }
 
 type WorkerPool interface {
@@ -339,6 +340,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		Alarms:    []string{task.Alarm.ID},
 		Rule:      task.ScenarioID,
 		RuleType:  libwebhook.RuleTypeScenario,
+		RuleName:  task.ScenarioName,
 		Name:      types.RuleNameScenarioPrefix + task.ScenarioName,
 
 		Index:         int64(task.Step),

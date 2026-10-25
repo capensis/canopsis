@@ -333,6 +333,8 @@ definitions:
         type: integer
       meta:
         type: string
+      meta_rule_name:
+        type: string
       output:
         type: string
       parents:
@@ -1193,7 +1195,7 @@ definitions:
       version:
         type: string
       version_description:
-        maxLength: 500
+        maxLength: 10000
         type: string
       version_updated:
         type: integer
@@ -1283,7 +1285,7 @@ definitions:
       show_header_on_kiosk_mode:
         type: boolean
       version_description:
-        maxLength: 500
+        maxLength: 10000
         type: string
     type: object
   associativetable.AssociativeTable:
@@ -1338,12 +1340,16 @@ definitions:
     properties:
       _id:
         type: string
+      closable:
+        type: boolean
       color:
         type: string
       end:
         type: integer
       message:
         type: string
+      priority:
+        type: integer
       start:
         type: integer
       views:
@@ -1351,9 +1357,11 @@ definitions:
           type: string
         type: array
     required:
+    - closable
     - color
     - end
     - message
+    - priority
     - start
     type: object
   broadcastmessage.Response:
@@ -1362,6 +1370,8 @@ definitions:
         type: string
       author:
         $ref: '#/definitions/author.Author'
+      closable:
+        type: boolean
       color:
         type: string
       created:
@@ -1372,8 +1382,17 @@ definitions:
         type: boolean
       message:
         type: string
+      priority:
+        type: integer
       start:
         type: integer
+      status:
+        description: Computed status (1 Active, 2 Pending, 3 Expired).
+        type: integer
+        enum:
+        - 1
+        - 2
+        - 3
       updated:
         type: integer
       views:
@@ -1383,12 +1402,16 @@ definitions:
     type: object
   broadcastmessage.UpdateRequest:
     properties:
+      closable:
+        type: boolean
       color:
         type: string
       end:
         type: integer
       message:
         type: string
+      priority:
+        type: integer
       start:
         type: integer
       views:
@@ -1396,9 +1419,11 @@ definitions:
           type: string
         type: array
     required:
+    - closable
     - color
     - end
     - message
+    - priority
     - start
     type: object
   colortheme.BulkDeleteRequestItem:
@@ -1410,6 +1435,34 @@ definitions:
     type: object
   colortheme.Colors:
     properties:
+      icons:
+        properties:
+          ack:
+            type: string
+          cancel_delay:
+            type: string
+          canceled:
+            type: string
+          children:
+            type: string
+          comment:
+            type: string
+          parent:
+            type: string
+          snooze:
+            type: string
+          tickets:
+            type: string
+        required:
+        - ack
+        - cancel_delay
+        - canceled
+        - children
+        - comment
+        - parent
+        - snooze
+        - tickets
+        type: object
       main:
         properties:
           accent:
@@ -1488,6 +1541,23 @@ definitions:
         - hover_row
         - row_color
         - shift_row
+        type: object
+      widget:
+        properties:
+          border:
+            type: boolean
+          border_color:
+            type: string
+          border_radius:
+            type: integer
+          content_background:
+            type: string
+          title_background:
+            type: string
+        required:
+        - border
+        - content_background
+        - title_background
         type: object
     type: object
   colortheme.EditRequest:
@@ -1777,6 +1847,8 @@ definitions:
             $ref: '#/definitions/datetime.DurationWithEnabled'
           delete_stats_after:
             $ref: '#/definitions/datetime.DurationWithEnabled'
+          log_credentials:
+            type: boolean
         type: object
       webhook:
         properties:
@@ -1793,6 +1865,9 @@ definitions:
       history:
         additionalProperties:
           $ref: '#/definitions/datastorage.HistoryWithCount'
+        description: History stores cleaner history. For health_check, Time is the
+          latest observed TimescaleDB retention-job start; a newer persisted value
+          is retained when the live observation is absent or older.
         type: object
     type: object
   datastorage.HistoryWithCount:
@@ -2987,8 +3062,11 @@ definitions:
         type: array
       external_data:
         items:
-          $ref: '#/definitions/externaldata.RefParameters'
+          $ref: '#/definitions/eventfilter.ExternalDataParametersRequest'
         type: array
+      name:
+        maxLength: 255
+        type: string
       priority:
         minimum: 0
         type: integer
@@ -3008,6 +3086,7 @@ definitions:
     required:
     - _id
     - description
+    - name
     - type
     type: object
   eventfilter.CopyVarsResponse:
@@ -3017,10 +3096,8 @@ definitions:
           $ref: '#/definitions/template.VarResponse'
         type: array
     type: object
-  eventfilter.CreateRequest:
+  eventfilter.EditRequest:
     properties:
-      _id:
-        type: string
       config:
         $ref: '#/definitions/eventfilter.RuleConfig'
       corporate_entity_pattern:
@@ -3052,8 +3129,11 @@ definitions:
         type: array
       external_data:
         items:
-          $ref: '#/definitions/externaldata.RefParameters'
+          $ref: '#/definitions/eventfilter.ExternalDataParametersRequest'
         type: array
+      name:
+        maxLength: 255
+        type: string
       priority:
         minimum: 0
         type: integer
@@ -3072,6 +3152,7 @@ definitions:
         type: string
     required:
     - description
+    - name
     - type
     type: object
   eventfilter.Exception:
@@ -3087,6 +3168,90 @@ definitions:
           $ref: '#/definitions/types.Exdate'
         type: array
       name:
+        type: string
+    type: object
+  eventfilter.ExternalDataParametersRequest:
+    properties:
+      on_mismatch:
+        description: |-
+          Possible values.
+            * `0` - Throw error
+            * `1` - Skip rule
+            * `2` - Skip action with external data reference
+        enum:
+        - 0
+        - 1
+        - 2
+        type: integer
+      optional:
+        description: Optional defines will it cause error or not if external data
+          isn't found.
+        type: boolean
+      reference:
+        type: string
+      regexp:
+        additionalProperties:
+          type: string
+        description: |-
+          Regexp defines regexp match conditions.
+          Key contains field name of table with regexp, value contains template.
+        type: object
+      request:
+        allOf:
+        - $ref: '#/definitions/request.Parameters'
+        description: are used in api external data
+      select:
+        additionalProperties:
+          type: string
+        description: |-
+          Select defines equal match conditions.
+          Key contains field name of table, value contains template.
+        type: object
+      sort:
+        type: string
+      sort_by:
+        description: SortBy and Sort define priority of found rows. It's id by default.
+        type: string
+      table:
+        description: |-
+          are used in db external data
+          Table contains id of external table
+        type: string
+      type:
+        type: string
+    required:
+    - reference
+    - type
+    type: object
+  eventfilter.ExternalDataParametersResponse:
+    properties:
+      on_mismatch:
+        type: integer
+      optional:
+        type: boolean
+      reference:
+        type: string
+      regexp:
+        additionalProperties:
+          type: string
+        type: object
+      request:
+        allOf:
+        - $ref: '#/definitions/request.Parameters'
+        description: are used in api external data
+      select:
+        additionalProperties:
+          type: string
+        type: object
+      sort:
+        type: string
+      sort_by:
+        type: string
+      table:
+        allOf:
+        - $ref: '#/definitions/externaldatatable.Table'
+        description: are used in db external data
+      type:
         type: string
     type: object
   eventfilter.FailureResponse:
@@ -3144,10 +3309,12 @@ definitions:
         type: array
       external_data:
         items:
-          $ref: '#/definitions/externaldatatable.RefResponse'
+          $ref: '#/definitions/eventfilter.ExternalDataParametersResponse'
         type: array
       failures_count:
         type: integer
+      name:
+        type: string
       priority:
         type: integer
       rrule:
@@ -3294,8 +3461,11 @@ definitions:
         type: array
       external_data:
         items:
-          $ref: '#/definitions/externaldata.RefParameters'
+          $ref: '#/definitions/eventfilter.ExternalDataParametersRequest'
         type: array
+      name:
+        maxLength: 255
+        type: string
       priority:
         minimum: 0
         type: integer
@@ -3314,6 +3484,7 @@ definitions:
         type: string
     required:
     - description
+    - name
     - type
     type: object
   exdate.Request:
@@ -3376,6 +3547,10 @@ definitions:
             * `link_rule` - export link_rule collection
             * `map` - export map collection
             * `entity_infos_property` - export entity_infos_property collection
+            * `template_data` - export template_data collection
+            * `template_test` - export template_test collection
+            * `webhook_token_rule` - export webhook_token_rule collection
+            * `icon` - export icon collection
         items:
           type: string
         type: array
@@ -8062,7 +8237,12 @@ definitions:
         additionalProperties: {}
         type: object
       parameters:
-        $ref: '#/definitions/view.Parameters'
+        allOf:
+        - $ref: '#/definitions/view.Parameters'
+        description: |-
+          Parameters may include AlarmsList associateTicket: {formats: []string, formatsTemplate: string, formatsTemplateTitle: string}.
+          A non-empty formatsTemplate must reference an existing ticket_formats template; its formats and derived title take precedence, and supplied custom formats are ignored.
+          An absent or empty reference selects custom mode and clears the derived title. In custom mode, formats are stored exactly; empty strings and lists are allowed, regexp syntax is not checked, and null lists, null elements, or non-string entries are rejected. A present formatsTemplate must be a string.
       title:
         maxLength: 255
         type: string
@@ -8284,6 +8464,15 @@ definitions:
         type: array
       content:
         type: string
+      formats:
+        description: |-
+          Formats preserves ticket format strings verbatim; regexp syntax is not validated by the backend.
+          Empty strings and an empty list are allowed. A null list, null elements, and non-string entries are rejected; omission means an empty list.
+        items:
+          maxLength: 255
+          type: string
+        maxItems: 100
+        type: array
       sort_columns:
         items:
           $ref: '#/definitions/view.WidgetSortColumn'
@@ -8303,6 +8492,7 @@ definitions:
         - weather_item
         - weather_modal
         - weather_entity
+        - ticket_formats
         type: string
     required:
     - title
@@ -8326,6 +8516,12 @@ definitions:
         type: string
       created:
         type: integer
+      formats:
+        description: Formats contains the exact strings stored by a ticket_formats
+          template.
+        items:
+          type: string
+        type: array
       sort_columns:
         items:
           $ref: '#/definitions/view.WidgetSortColumn'

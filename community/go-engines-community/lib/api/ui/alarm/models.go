@@ -363,6 +363,7 @@ type AlarmValue struct {
 	Resolved                    *datetime.CpsTime     `bson:"resolved,omitempty" json:"resolved,omitempty" swaggertype:"integer"`
 	PbehaviorInfo               *entity.PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
 	Meta                        string                `bson:"meta,omitempty" json:"meta,omitempty"`
+	MetaRuleName                string                `bson:"meta_rule_name,omitempty" json:"meta_rule_name,omitempty"`
 	Parents                     []string              `bson:"parents" json:"parents"`
 	Children                    []string              `bson:"children" json:"children"`
 

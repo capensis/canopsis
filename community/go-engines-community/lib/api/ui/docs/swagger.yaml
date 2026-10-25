@@ -1599,6 +1599,17 @@ paths:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum:
+              - _id
+              - message
+              - start
+              - end
+              - status
       responses:
         '200':
           description: OK
@@ -1743,6 +1754,12 @@ paths:
       responses:
         '204':
           description: OK
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Not Found
           content:
@@ -3092,7 +3109,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.CreateRequest'
+                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EditRequest'
         required: true
       responses:
         '207':
@@ -3109,7 +3126,7 @@ paths:
                       - type: object
                         properties:
                           item:
-                            $ref: 'schemas_swagger.yaml#/definitions/eventfilter.CreateRequest'
+                            $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EditRequest'
         '400':
           description: Bad Request
           content:
@@ -5225,11 +5242,28 @@ paths:
                       "hover_row": true,
                       "hover_row_color": "#AAAAAA"
                     },
+                    "widget": {
+                      "title_background": "#FFFFFF",
+                      "content_background": "#FFFFFF",
+                      "border": false,
+                      "border_color": "#C7C7C7",
+                      "border_radius": 0
+                    },
                     "state": {
                       "ok": "#AAAAAA",
                       "minor": "#AAAAAA",
                       "major": "#AAAAAA",
                       "critical": "#AAAAAA"
+                    },
+                    "icons": {
+                      "ack": "#AAAAAA",
+                      "canceled": "#AAAAAA",
+                      "children": "#AAAAAA",
+                      "parent": "#AAAAAA",
+                      "comment": "#AAAAAA",
+                      "snooze": "#AAAAAA",
+                      "tickets": "#AAAAAA",
+                      "cancel_delay": "#AAAAAA"
                     }
                   }
                 }
@@ -5320,11 +5354,28 @@ paths:
                       "hover_row": false,
                       "hover_row_color": "#FFFFFF"
                     },
+                    "widget": {
+                      "title_background": "#FFFFFF",
+                      "content_background": "#FFFFFF",
+                      "border": false,
+                      "border_color": "#C7C7C7",
+                      "border_radius": 0
+                    },
                     "state": {
                       "ok": "#FFFFFF",
                       "minor": "#FFFFFF",
                       "major": "#FFFFFF",
                       "critical": "#FFFFFF"
+                    },
+                    "icons": {
+                      "ack": "#FFFFFF",
+                      "canceled": "#FFFFFF",
+                      "children": "#FFFFFF",
+                      "parent": "#FFFFFF",
+                      "comment": "#FFFFFF",
+                      "snooze": "#FFFFFF",
+                      "tickets": "#FFFFFF",
+                      "cancel_delay": "#FFFFFF"
                     }
                   }
                 }
@@ -5965,7 +6016,7 @@ paths:
         - datastorage
       summary: Update conf
       description: |
-        Update conf.
+        Update conf and preserve existing retention history.
         
         -  PERMISSIONS: `api_datastorage_update`
       operationId: datastorage-update
@@ -7992,7 +8043,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.CreateRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.EditRequest'
             examples:
               CreateDropRule:
                 summary: Create a drop rule
@@ -8015,6 +8066,7 @@ paths:
                       }
                     }
                   ]],
+                  "name": "drop rule example",
                   "description": "drop rule example",
                   "priority": 1,
                   "enabled": true
@@ -8040,6 +8092,7 @@ paths:
                       }
                     }
                   ]],
+                  "name": "break rule example",
                   "description": "break rule example",
                   "priority": 1,
                   "enabled": true
@@ -8048,6 +8101,7 @@ paths:
                 summary: Create an enrichment rule
                 description: Create an enrichment rule.
                 value: {
+                  "name": "enrichment rule example",
                   "description": "enrichment rule example",
                   "type": "enrichment",
                   "entity_pattern": [
@@ -8079,6 +8133,7 @@ paths:
                 summary: Create an enrichment rule with template
                 description: Create an enrichment rule with template.
                 value: {
+                  "name": "enrichment rule example with template",
                   "description": "enrichment rule example with template",
                   "type": "enrichment",
                   "entity_pattern": [
@@ -8175,6 +8230,7 @@ paths:
                       }
                     ]
                   ],
+                  "name": "enrichment rule with external api data",
                   "description": "enrichment rule with external api data",
                   "priority": 1,
                   "enabled": true,
@@ -8195,6 +8251,7 @@ paths:
                 summary: Create a change_entity rule
                 description: Create a change_entity rule.
                 value: {
+                  "name": "change_entity rule example",
                   "description": "change_entity rule example",
                   "type": "change_entity",
                   "event_pattern": [
@@ -8244,6 +8301,7 @@ paths:
                       }
                     }
                   ]],
+                  "name": "drop rule example",
                   "description": "drop rule example",
                   "priority": 1,
                   "enabled": true
@@ -8272,6 +8330,7 @@ paths:
                       }
                     }
                   ]],
+                  "name": "drop rule example",
                   "description": "drop rule example",
                   "priority": 1,
                   "enabled": true
@@ -8300,6 +8359,7 @@ paths:
                       }
                     }
                   ]],
+                  "name": "drop rule example",
                   "description": "drop rule example",
                   "priority": 1,
                   "enabled": true,
@@ -8334,6 +8394,7 @@ paths:
                       }
                     }
                   ]],
+                  "name": "drop rule example",
                   "description": "drop rule example",
                   "priority": 1,
                   "enabled": true,
@@ -17049,6 +17110,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /users/top/active-connects:
+    get:
+      tags:
+        - users
+      summary: Get user with the most active connections
+      description: |
+        Get the enabled user with the highest active connection count. The count represents distinct websocket tokens observed within the websocket store's freshness window, so multiple sockets sharing one token count once. Equal counts are ordered by user ID ascending. Disabled users and users with no matching user document are excluded before selecting the winner. The response contains the existing enriched user representation, including active_connects and deletable. If no enabled user has an active token, the response is `204` with no body.
+
+        -  PERMISSIONS: `api_acl:read`
+      operationId: users-get-top-active-connects
+      responses:
+        '200':
+          description: User with the highest active connection count
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/user.User'
+        '204':
+          description: No enabled user has an active connection
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
   /users:
     get:
       tags:
@@ -18787,7 +18871,8 @@ paths:
       tags:
         - widgettemplates
       summary: Create widget template
-      description: Create widget template
+      description: |
+        Create widget template. A ticket_formats template stores its formats strings exactly, including empty strings and an empty list. A null list, null elements, and non-string entries are rejected; omission means an empty list. A list may contain at most 100 strings, each at most 255 Unicode characters. Regexp syntax is not checked by the backend. Example strings are illustrative and are not proposed defaults.
       operationId: widgettemplates-create
       requestBody:
         description: body
@@ -18862,6 +18947,14 @@ paths:
                     }
                   ]
                 }
+              ticket_formats:
+                summary: Ticket formats template
+                description: Create a template with illustrative ticket format strings. The backend stores strings as supplied and does not validate regexp syntax.
+                value: {
+                  "title": "Illustrative ticket formats",
+                  "type": "ticket_formats",
+                  "formats": ["INC", "REQ"]
+                }
         required: true
       responses:
         '201':
@@ -18902,7 +18995,8 @@ paths:
       tags:
         - widgettemplates
       summary: Update widget template by id
-      description: Update widget template by id
+      description: |
+        Update widget template by id. A formats list for ticket_formats type object may contain at most 100 strings, each at most 255 Unicode characters. Editing a ticket_formats template propagates its formats and title to linked AlarmsList widgets. Deleting it removes the widget's formatsTemplate reference and derived title while retaining the copied formats.
       operationId: widgettemplates-update-by-id
       parameters:
         - $ref: '#/components/parameters/id'
@@ -18931,6 +19025,14 @@ paths:
                     }
                   ]
                 }
+              ticket_formats:
+                summary: Update ticket formats template
+                description: Example strings are illustrative, not default values. Linked AlarmsList widgets receive these strings exactly; regexp syntax is not checked by the backend.
+                value: {
+                  "title": "Illustrative ticket formats",
+                  "type": "ticket_formats",
+                  "formats": ["INC", "REQ"]
+                }
         required: true
       responses:
         '200':
@@ -18955,7 +19057,7 @@ paths:
       tags:
         - widgettemplates
       summary: Delete widget template by id
-      description: Delete widget template by id
+      description: Delete widget template by id. For linked ticket format settings, the reference and derived title are removed while the copied formats remain.
       operationId: widgettemplates-delete-by-id
       parameters:
         - $ref: '#/components/parameters/id'
@@ -19041,6 +19143,8 @@ paths:
       summary: Create widget
       description: |
         Create widget.
+
+        For AlarmsList widgets, parameters.associateTicket must be an object. A present formatsTemplate must be a string; a non-empty ID must identify an existing ticket_formats template. The template's formats and derived formatsTemplateTitle take precedence over custom values, and supplied formats are ignored when a template is selected. An absent or empty reference selects custom mode and removes any supplied or stale formatsTemplateTitle. In custom mode, supplied formats must be an array of strings with at most 100 entries and at most 255 Unicode characters per entry; null lists, null elements, and non-string values are rejected. Empty strings and lists are allowed, and regexp syntax is not checked by the backend. Updating a linked template propagates formats and title; deleting it removes the reference and title while retaining copied formats. Example strings are illustrative, not defaults.
         
         -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: widgets-create
@@ -19168,6 +19272,32 @@ paths:
                     }
                   }
                 }
+              associate_ticket_template:
+                summary: Create with associate ticket template
+                description: The ID must reference an existing ticket_formats template. Its formats and derived title override custom values.
+                value: {
+                  "tab": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
+                  "title": "Opened",
+                  "type": "AlarmsList",
+                  "parameters": {
+                    "associateTicket": {
+                      "formatsTemplate": "ticket-formats-template-id"
+                    }
+                  }
+                }
+              associate_ticket_custom:
+                summary: Create with custom ticket formats
+                description: These illustrative strings are stored exactly as supplied; regexp syntax is not checked by the backend.
+                value: {
+                  "tab": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
+                  "title": "Opened",
+                  "type": "AlarmsList",
+                  "parameters": {
+                    "associateTicket": {
+                      "formats": ["INC", "REQ"]
+                    }
+                  }
+                }
         required: true
       responses:
         '201':
@@ -19213,6 +19343,8 @@ paths:
       summary: Update widget by id
       description: |
         Update widget by id.
+
+        For AlarmsList widgets, parameters.associateTicket must be an object. A present formatsTemplate must be a string; a non-empty ID must identify an existing ticket_formats template. The template's formats and derived formatsTemplateTitle take precedence over custom values, and supplied formats are ignored when a template is selected. An absent or empty reference selects custom mode and removes any supplied or stale formatsTemplateTitle. In custom mode, supplied formats must be an array of strings with at most 100 entries and at most 255 Unicode characters per entry; null lists, null elements, and non-string values are rejected. Empty strings and lists are allowed, and regexp syntax is not checked by the backend. Updating a linked template propagates formats and title; deleting it removes the reference and title while retaining copied formats. Example strings are illustrative, not defaults.
         
         -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: widgets-update-by-id
@@ -19296,6 +19428,30 @@ paths:
                     "itemsPerPage": 15,
                     "alarmsStateFilter": {
                       "opened": true
+                    }
+                  }
+                }
+              associate_ticket_template:
+                summary: Update with associate ticket template
+                description: The ID must reference an existing ticket_formats template. Its formats and derived title override custom values.
+                value: {
+                  "title": "Opened",
+                  "type": "AlarmsList",
+                  "parameters": {
+                    "associateTicket": {
+                      "formatsTemplate": "ticket-formats-template-id"
+                    }
+                  }
+                }
+              associate_ticket_custom:
+                summary: Update with custom ticket formats
+                description: These illustrative strings are stored exactly as supplied; regexp syntax is not checked by the backend.
+                value: {
+                  "title": "Opened",
+                  "type": "AlarmsList",
+                  "parameters": {
+                    "associateTicket": {
+                      "formats": ["INC", "REQ"]
                     }
                   }
                 }

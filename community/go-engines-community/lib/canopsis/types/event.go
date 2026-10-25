@@ -57,9 +57,11 @@ const (
 	EventTypeWebhookStarted       = "webhookstarted"
 	EventTypeWebhookCompleted     = "webhookcompleted"
 	EventTypeWebhookFailed        = "webhookfailed"
+	EventTypeWebhookStop          = "webhookstop"
 	EventTypeAutoWebhookStarted   = "autowebhookstarted"
 	EventTypeAutoWebhookCompleted = "autowebhookcompleted"
 	EventTypeAutoWebhookFailed    = "autowebhookfailed"
+	EventTypeAutoWebhookStop      = "autowebhookstop"
 
 	EventTypePbhEnter           = "pbhenter"
 	EventTypePbhLeaveAndEnter   = "pbhleaveandenter"
