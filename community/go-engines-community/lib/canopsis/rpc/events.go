@@ -47,14 +47,15 @@ type AxeParameters struct {
 	// AssocTicket and Webhook
 	types.TicketInfo
 	// Webhook
-	TicketResources    bool   `json:"ticket_resources,omitempty"`
-	WebhookRequest     bool   `json:"webhook_request,omitempty"`
-	WebhookFailReason  string `json:"webhook_fail_reason,omitempty"`
-	WebhookError       *Error `json:"webhook_error,omitempty"`
-	EmitTriggerSuccess bool   `json:"emit_trigger_success,omitempty"`
-	EmitTriggerFail    bool   `json:"emit_trigger_fail,omitempty"`
-	RuleExecution      string `json:"rule_execution,omitempty"`
-	IsLastWebhook      bool   `json:"is_last_webhook,omitempty"`
+	TicketResources     bool   `json:"ticket_resources,omitempty"`
+	WebhookRequest      bool   `json:"webhook_request,omitempty"`
+	WebhookFailReason   string `json:"webhook_fail_reason,omitempty"`
+	WebhookError        *Error `json:"webhook_error,omitempty"`
+	WebhookStopScenario bool   `json:"webhook_stop_scenario,omitempty"`
+	EmitTriggerSuccess  bool   `json:"emit_trigger_success,omitempty"`
+	EmitTriggerFail     bool   `json:"emit_trigger_fail,omitempty"`
+	RuleExecution       string `json:"rule_execution,omitempty"`
+	IsLastWebhook       bool   `json:"is_last_webhook,omitempty"`
 	// Snooze and Pbehavior
 	Duration *datetime.DurationWithUnit `json:"duration,omitempty"`
 	// Pbehavior enter
@@ -121,6 +122,7 @@ type AxeResultEvent struct {
 	Alarm           *types.Alarm          `json:"alarm"`
 	AlarmChangeType types.AlarmChangeType `json:"alarm_change"`
 	Error           *Error                `json:"error"`
+	StopScenario    bool                  `json:"stop_scenario,omitempty"`
 
 	Origin *types.Event `json:"origin,omitempty"`
 

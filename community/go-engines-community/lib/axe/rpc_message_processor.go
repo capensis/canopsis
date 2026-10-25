@@ -183,7 +183,8 @@ func (p *rpcMessageProcessor) sendEventToAction(
 ) {
 	switch event.EventType {
 	case types.EventTypeAutoWebhookCompleted,
-		types.EventTypeAutoWebhookFailed:
+		types.EventTypeAutoWebhookFailed,
+		types.EventTypeAutoWebhookStop:
 	default:
 		return
 	}
@@ -196,6 +197,7 @@ func (p *rpcMessageProcessor) sendEventToAction(
 		Alarm:           &alarm,
 		AlarmChangeType: alarmChange.Type,
 		Error:           event.Parameters.WebhookError,
+		StopScenario:    event.Parameters.WebhookStopScenario,
 	})
 	if err != nil {
 		p.logError(err, "RPC Message Processor: failed to encode rpc call to engine-action", msg)

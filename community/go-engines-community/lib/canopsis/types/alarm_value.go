@@ -551,6 +551,7 @@ type AlarmValue struct {
 	Resolved                    *datetime.CpsTime `bson:"resolved,omitempty" json:"resolved,omitempty"`
 	PbehaviorInfo               PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info"`
 	Meta                        string            `bson:"meta,omitempty" json:"meta,omitempty"`
+	MetaRuleName                string            `bson:"meta_rule_name,omitempty" json:"meta_rule_name,omitempty"`
 	MetaValuePath               string            `bson:"meta_value_path,omitempty" json:"meta_value_path,omitempty"`
 
 	Parents         []string `bson:"parents" json:"parents"`
