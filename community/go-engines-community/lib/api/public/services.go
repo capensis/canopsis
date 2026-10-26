@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	liblink "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -44,6 +45,7 @@ type Services struct {
 	UserMetaUpdater        metrics.MetaUpdater
 	LinkGenerator          link.Generator
 	UserProvider           liblink.UserProvider
+	EventGenerator         event.Generator
 
 	configAdapter          config.Adapter
 	apiConfigProvider      *config.BaseApiConfigProvider
@@ -53,6 +55,7 @@ type Services struct {
 
 func NewServices(ctx context.Context, opts Options, logger zerolog.Logger) (s Services, cleanup func(), err error) {
 	s.Logger = logger
+	s.EventGenerator = event.NewGenerator(canopsis.ApiConnector, canopsis.ApiConnector)
 	var cleanups []func() error
 	cleanup = func() {
 		for i := len(cleanups) - 1; i >= 0; i-- {

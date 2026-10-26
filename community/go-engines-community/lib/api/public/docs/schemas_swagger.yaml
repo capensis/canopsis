@@ -57,6 +57,8 @@ definitions:
         $ref: '#/definitions/response.Reference'
       output:
         type: string
+      pause:
+        $ref: '#/definitions/alarm.Step'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       resolved:
@@ -247,6 +249,40 @@ definitions:
         type: string
       value: {}
     type: object
+  entity.Pause:
+    properties:
+      author:
+        type: string
+      initiator:
+        type: string
+      message:
+        type: string
+      source:
+        type: string
+      source_type:
+        type: string
+      timestamp:
+        type: integer
+      type:
+        type: string
+      user_id:
+        type: string
+    type: object
+  entity.PauseRequest:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+      inherited:
+        type: boolean
+      type:
+        maxLength: 255
+        type: string
+    required:
+    - _id
+    type: object
   entity.PbehaviorInfo:
     properties:
       reason:
@@ -313,6 +349,8 @@ definitions:
         type: string
       output_template:
         type: string
+      pause:
+        $ref: '#/definitions/entity.Pause'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       type:
@@ -321,6 +359,16 @@ definitions:
         type: integer
       upstream:
         type: string
+    type: object
+  entity.ResumeRequest:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+    required:
+    - _id
     type: object
   entity.SearchRequest:
     properties:

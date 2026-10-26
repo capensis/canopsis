@@ -18,7 +18,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pausejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resumejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -52,6 +54,8 @@ func newUpstreamHelper(
 		dbClient:                dbClient,
 		alarmCollection:         dbClient.Collection(mongo.AlarmMongoCollection),
 		entityCollection:        dbClient.Collection(mongo.EntityMongoCollection),
+		resumeJobService:        resumejob.NewService(dbClient, eventGenerator, logger),
+		pauseJobService:         pausejob.NewService(dbClient, eventGenerator, logger),
 		pbehaviorCollection:     dbClient.Collection(mongo.PbehaviorMongoCollection),
 		alarmConfigProvider:     alarmConfigProvider,
 		alarmStatusService:      alarmStatusService,
@@ -73,6 +77,8 @@ type upstreamHelper struct {
 	dbClient                mongo.DbClient
 	alarmCollection         mongo.DbCollection
 	entityCollection        mongo.DbCollection
+	resumeJobService        resumejob.Service
+	pauseJobService         pausejob.Service
 	pbehaviorCollection     mongo.DbCollection
 	alarmConfigProvider     config.AlarmConfigProvider
 	alarmStatusService      alarmstatus.Service
@@ -183,24 +189,51 @@ func (h *upstreamHelper) Process(ctx context.Context, event rpc.AxeEvent, forceC
 			return err
 		}
 
+		// The entity has been added to or removed from services, so its pause
+		// and its alarm pause are updated.
+		change, err := updatePauseOnServicesChange(ctx, h.entityCollection, h.alarmCollection, h.resumeJobService, h.pauseJobService,
+			&entity, &alarm, event.Parameters.Timestamp, h.logger)
+		if err != nil {
+			return err
+		}
+
 		result, err = h.UpdateAlarm(ctx, event, alarm, entity)
 		if err != nil {
 			return err
 		}
 
-		if forceCountersUpdate || result.AlarmChange.Type != "" && result.AlarmChange.Type != types.AlarmChangeTypeUpdateStatus {
-			result.IsCountersUpdated, countersRes, err = h.countersHelper.CalculateCounters(
+		result.PauseChange = change
+
+		if forceCountersUpdate || change.alarmChange != "" ||
+			result.AlarmChange.Type != "" && result.AlarmChange.Type != types.AlarmChangeTypeUpdateStatus {
+			result.IsCountersUpdated, countersRes, err = h.countersHelper.CalculateCountersWithPauseChange(
 				ctx,
 				&result.Alarm,
 				&entity,
 				result.AlarmChange,
+				change,
 			)
 		}
 
 		return err
 	})
-	if err != nil || result.Alarm.ID == "" {
+	if err != nil {
 		return result, alarm, err
+	}
+
+	pauseChangeAlarm := alarm
+	if result.Alarm.ID != "" {
+		pauseChangeAlarm = result.Alarm
+	}
+
+	pauseChangeErr := publishPauseChange(ctx, h.amqpPublisher, h.remediationRpcClient, h.encoder, h.eventGenerator,
+		entity, pauseChangeAlarm, result.PauseChange, event.Parameters.Timestamp, h.logger)
+	if pauseChangeErr != nil {
+		h.logger.Err(pauseChangeErr).Msg("cannot publish pause change")
+	}
+
+	if result.Alarm.ID == "" {
+		return result, alarm, nil
 	}
 
 	go h.PostProcess(context.WithoutCancel(ctx), event, result, countersRes)
@@ -503,6 +536,14 @@ func (h *upstreamHelper) createAlarm(
 		}
 
 		alarmChange.Type = types.AlarmChangeTypeCreateAndPbhEnter
+	}
+
+	if entity.Pause != nil {
+		newStep := types.NewAlarmStep(types.AlarmStepPause, now, entity.Pause.Author,
+			entity.Pause.Message, entity.Pause.UserID, "", entity.Pause.Initiator, false)
+		alarm.Value.Pause = &newStep
+		alarm.Value.Steps = append(alarm.Value.Steps, newStep)
+		alarm.Value.InactiveStart = &now
 	}
 
 	result.IsInstructionMatched, err = h.autoInstructionMatcher.Match(alarmChange.GetTriggers(), types.AlarmWithEntity{Alarm: alarm, Entity: entity})

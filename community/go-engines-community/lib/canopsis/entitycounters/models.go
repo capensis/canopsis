@@ -35,6 +35,10 @@ type EntityServiceCountersCalcData struct {
 	CurState          int
 	PrevActive        bool
 	CurActive         bool
+	PrevPbhActive     bool
+	CurPbhActive      bool
+	PrevPause         bool
+	CurPause          bool
 	IsAcked           bool
 	PrevInherited     bool
 	CurInherited      bool

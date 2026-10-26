@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -122,7 +123,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
 
-		if r.Operation != nil {
+		if r.Operation != nil && r.Operation.Type == types.ActionTypePbehavior {
 			err := dbvalidation.ValidateExist(ctx, s.pbhTypeCollection, r, "Operation.Parameters.Type", r.Operation.Parameters.Type)
 			if err != nil {
 				return err
@@ -173,7 +174,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
 
-		if r.Operation != nil {
+		if r.Operation != nil && r.Operation.Type == types.ActionTypePbehavior {
 			err := dbvalidation.ValidateExist(ctx, s.pbhTypeCollection, r, "Operation.Parameters.Type", r.Operation.Parameters.Type)
 			if err != nil {
 				return err
@@ -291,20 +292,48 @@ func transformRequestToModel(r EditRequest) idlerule.Rule {
 
 func getNestedObjectsPipeline() []bson.M {
 	return []bson.M{
+		{"$addFields": bson.M{
+			"pbehavior_type": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$operation.type", types.ActionTypePbehavior}},
+				"then": "$operation.parameters.type",
+				"else": nil,
+			}},
+			"pbehavior_reason": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$operation.type", types.ActionTypePbehavior}},
+				"then": "$operation.parameters.reason",
+				"else": nil,
+			}},
+		}},
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorTypeMongoCollection,
-			"localField":   "operation.parameters.type",
+			"localField":   "pbehavior_type",
 			"foreignField": "_id",
-			"as":           "operation.parameters.type",
+			"as":           "pbehavior_type",
 		}},
-		{"$unwind": bson.M{"path": "$operation.parameters.type", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$pbehavior_type", "preserveNullAndEmptyArrays": true}},
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorReasonMongoCollection,
-			"localField":   "operation.parameters.reason",
+			"localField":   "pbehavior_reason",
 			"foreignField": "_id",
-			"as":           "operation.parameters.reason",
+			"as":           "pbehavior_reason",
 		}},
-		{"$unwind": bson.M{"path": "$operation.parameters.reason", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$pbehavior_reason", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"operation.parameters.type": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$operation.type", types.ActionTypePbehavior}},
+				"then": "$pbehavior_type",
+				"else": "$operation.parameters.type",
+			}},
+			"operation.parameters.reason": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$operation.type", types.ActionTypePbehavior}},
+				"then": "$pbehavior_reason",
+				"else": "$operation.parameters.reason",
+			}},
+		}},
+		{"$project": bson.M{
+			"pbehavior_type":   0,
+			"pbehavior_reason": 0,
+		}},
 		{"$addFields": bson.M{
 			"operation": bson.M{"$cond": bson.M{
 				"if":   "$operation.type",

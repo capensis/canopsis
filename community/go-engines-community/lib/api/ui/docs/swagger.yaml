@@ -2769,6 +2769,117 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/entities/pause:
+    post:
+      tags:
+        - entities
+      summary: Bulk pause entities
+      description: |
+        Bulk pause entities and their alarms.
+
+        -  PERMISSIONS: `api_entity:update`
+      operationId: entities-bulk-pause
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/entity.PauseRequest'
+            examples:
+              update:
+                summary: Pause
+                description: Pause entities.
+                value: [
+                  {
+                    "_id": "cps_resource/cps_component",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "293d7b83-e622-40d9-95ef-86b06eda3746",
+                    "comment": "Lorem ipsum dolor sit amet",
+                    "type": "centreon downtime",
+                    "inherited": true
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/entity.PauseRequest'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /bulk/entities/resume:
+    post:
+      tags:
+        - entities
+      summary: Bulk resume entities
+      description: |
+        Bulk resume paused entities and their alarms.
+
+        -  PERMISSIONS: `api_entity:update`
+      operationId: entities-bulk-resume
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/entity.ResumeRequest'
+            examples:
+              update:
+                summary: Resume
+                description: Resume entities.
+                value: [
+                  {
+                    "_id": "cps_resource/cps_component",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "293d7b83-e622-40d9-95ef-86b06eda3746"
+                  }
+                ]
+        required: true
+      responses:
+        '207':
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/entity.ResumeRequest'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
   /bulk/entity-infos-properties:
     delete:
       tags:
@@ -6266,6 +6377,55 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /entities/pause:
+    post:
+      tags:
+        - entities
+      summary: Pause entity
+      description: |
+        Pause an entity and its alarm. An inherited pause is also applied to the dependencies of a service or of a component.
+
+        -  PERMISSIONS: `api_entity:update`
+      operationId: entities-pause
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/entity.PauseRequest'
+            examples:
+              pause:
+                summary: Pause
+                description: Pause an entity.
+                value: {
+                  "_id": "cps_resource/cps_component",
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+              pause_inherited:
+                summary: Pause with inheritance
+                description: Pause a service and all its dependencies.
+                value: {
+                  "_id": "293d7b83-e622-40d9-95ef-86b06eda3746",
+                  "comment": "Lorem ipsum dolor sit amet",
+                  "type": "centreon downtime",
+                  "inherited": true
+                }
+        required: true
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /entities/pbehavior-calendar:
     get:
       tags:
@@ -6341,6 +6501,46 @@ paths:
                 type: array
                 items:
                   $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /entities/resume:
+    post:
+      tags:
+        - entities
+      summary: Resume entity
+      description: |
+        Resume a paused entity and its alarm. The dependencies which have inherited the pause of a service or of a component are resumed too.
+
+        -  PERMISSIONS: `api_entity:update`
+      operationId: entities-resume
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/entity.ResumeRequest'
+            examples:
+              resume:
+                summary: Resume
+                description: Resume an entity.
+                value: {
+                  "_id": "cps_resource/cps_component",
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        '204':
+          description: OK
         '400':
           description: Bad Request
           content:

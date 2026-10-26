@@ -897,21 +897,24 @@ func (s *store) validateEditRequest(ctx context.Context, r EditRequest) error {
 	pbhReasonIDs := make([]string, 0)
 	tokenRuleIDs := make([]string, 0)
 	for _, a := range r.Actions {
-		if a.Parameters.Type != "" {
-			pbhTypeIDs = append(pbhTypeIDs, a.Parameters.Type)
-		}
+		switch a.Type {
+		case types.ActionTypePbehavior:
+			if a.Parameters.Type != "" {
+				pbhTypeIDs = append(pbhTypeIDs, a.Parameters.Type)
+			}
 
-		if a.Parameters.Reason != "" {
-			pbhReasonIDs = append(pbhReasonIDs, a.Parameters.Reason)
-		}
+			if a.Parameters.Reason != "" {
+				pbhReasonIDs = append(pbhReasonIDs, a.Parameters.Reason)
+			}
+		case types.ActionTypeWebhook:
+			if a.Parameters.AuthToken != nil && a.Parameters.AuthToken.Rule != "" {
+				tokenRuleIDs = append(tokenRuleIDs, a.Parameters.AuthToken.Rule)
+			}
 
-		if a.Parameters.AuthToken != nil && a.Parameters.AuthToken.Rule != "" {
-			tokenRuleIDs = append(tokenRuleIDs, a.Parameters.AuthToken.Rule)
-		}
-
-		if a.Parameters.DeclareTicket != nil && a.Parameters.DeclareTicket.CheckTicketStatus != nil &&
-			a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken != nil && a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule != "" {
-			tokenRuleIDs = append(tokenRuleIDs, a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule)
+			if a.Parameters.DeclareTicket != nil && a.Parameters.DeclareTicket.CheckTicketStatus != nil &&
+				a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken != nil && a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule != "" {
+				tokenRuleIDs = append(tokenRuleIDs, a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule)
+			}
 		}
 	}
 
@@ -954,22 +957,25 @@ func (s *store) validateEditRequest(ctx context.Context, r EditRequest) error {
 	}
 
 	for i, a := range r.Actions {
-		if a.Parameters.Type != "" && !foundTypes[a.Parameters.Type] {
-			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Type", "Actions."+strconv.Itoa(i)+".Parameters.Type"))
-		}
+		switch a.Type {
+		case types.ActionTypePbehavior:
+			if a.Parameters.Type != "" && !foundTypes[a.Parameters.Type] {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Type", "Actions."+strconv.Itoa(i)+".Parameters.Type"))
+			}
 
-		if a.Parameters.Reason != "" && !foundReasons[a.Parameters.Reason] {
-			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Reason", "Actions."+strconv.Itoa(i)+".Parameters.Reason"))
-		}
+			if a.Parameters.Reason != "" && !foundReasons[a.Parameters.Reason] {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Reason", "Actions."+strconv.Itoa(i)+".Parameters.Reason"))
+			}
+		case types.ActionTypeWebhook:
+			if a.Parameters.AuthToken != nil && a.Parameters.AuthToken.Rule != "" && !foundTokenRules[a.Parameters.AuthToken.Rule] {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Rule", "Actions."+strconv.Itoa(i)+".Parameters.AuthToken.Rule"))
+			}
 
-		if a.Parameters.AuthToken != nil && a.Parameters.AuthToken.Rule != "" && !foundTokenRules[a.Parameters.AuthToken.Rule] {
-			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Rule", "Actions."+strconv.Itoa(i)+".Parameters.AuthToken.Rule"))
-		}
-
-		if a.Parameters.DeclareTicket != nil && a.Parameters.DeclareTicket.CheckTicketStatus != nil &&
-			a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken != nil && a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule != "" &&
-			!foundTokenRules[a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule] {
-			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Rule", "Actions."+strconv.Itoa(i)+".Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule"))
+			if a.Parameters.DeclareTicket != nil && a.Parameters.DeclareTicket.CheckTicketStatus != nil &&
+				a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken != nil && a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule != "" &&
+				!foundTokenRules[a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule] {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Rule", "Actions."+strconv.Itoa(i)+".Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule"))
+			}
 		}
 	}
 
@@ -1009,20 +1015,48 @@ func getNestedObjectsPipeline() []bson.M {
 			"preserveNullAndEmptyArrays": true,
 			"includeArrayIndex":          "action_index",
 		}},
+		{"$addFields": bson.M{
+			"pbehavior_type": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$actions.type", types.ActionTypePbehavior}},
+				"then": "$actions.parameters.type",
+				"else": nil,
+			}},
+			"pbehavior_reason": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$actions.type", types.ActionTypePbehavior}},
+				"then": "$actions.parameters.reason",
+				"else": nil,
+			}},
+		}},
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorTypeMongoCollection,
-			"localField":   "actions.parameters.type",
+			"localField":   "pbehavior_type",
 			"foreignField": "_id",
-			"as":           "actions.parameters.type",
+			"as":           "pbehavior_type",
 		}},
-		{"$unwind": bson.M{"path": "$actions.parameters.type", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$pbehavior_type", "preserveNullAndEmptyArrays": true}},
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorReasonMongoCollection,
-			"localField":   "actions.parameters.reason",
+			"localField":   "pbehavior_reason",
 			"foreignField": "_id",
-			"as":           "actions.parameters.reason",
+			"as":           "pbehavior_reason",
 		}},
-		{"$unwind": bson.M{"path": "$actions.parameters.reason", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$pbehavior_reason", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"actions.parameters.type": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$actions.type", types.ActionTypePbehavior}},
+				"then": "$pbehavior_type",
+				"else": "$actions.parameters.type",
+			}},
+			"actions.parameters.reason": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$actions.type", types.ActionTypePbehavior}},
+				"then": "$pbehavior_reason",
+				"else": "$actions.parameters.reason",
+			}},
+		}},
+		{"$project": bson.M{
+			"pbehavior_type":   0,
+			"pbehavior_reason": 0,
+		}},
 		{"$sort": bson.M{"action_index": 1}},
 		{"$group": bson.M{
 			"_id":     "$_id",

@@ -324,6 +324,12 @@ func NewEngine(
 		return nil
 	})
 
+	resumeWorker := newResumeWorker(dbClient, noTimeoutClient, initRedisLock, amqpPublisher, json.NewEncoder(), eventGenerator, logger)
+	engineAxe.AddRoutine(resumeWorker.Run)
+
+	pauseWorker := newPauseWorker(dbClient, noTimeoutClient, initRedisLock, amqpPublisher, json.NewEncoder(), eventGenerator, logger)
+	engineAxe.AddRoutine(pauseWorker.Run)
+
 	mainMessageProcessor := &MessageProcessor{
 		FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 		EventProcessor:           eventProcessor,
@@ -616,8 +622,10 @@ func (m DependencyMaker) EventProcessor(
 		alarmStatusService, templateExecutor, metricsSender, json.NewEncoder(), eventGenerator, amqpPublisher, logger))
 	container.Set(types.EventTypeMetaAlarmDetachChildren, event.NewMetaAlarmDetachProcessor(dbClient, ruleAdapter, alarmAdapter,
 		alarmStatusService, templateExecutor))
-	container.Set(types.EventTypeTrigger, event.NewTriggerProcessor(dbClient))
+	container.Set(types.EventTypeTrigger, event.NewTriggerProcessor(dbClient, autoInstructionMatcher, logger))
 	container.Set(types.EventTypeChangeTicketStatus, event.NewChangeTicketStatusProcessor(dbClient))
+	container.Set(types.EventTypePause, event.NewPauseProcessor(dbClient, autoInstructionMatcher, remediationRpcClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, eventGenerator, amqpPublisher, json.NewEncoder(), logger))
+	container.Set(types.EventTypeResume, event.NewResumeProcessor(dbClient, autoInstructionMatcher, remediationRpcClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, eventGenerator, amqpPublisher, json.NewEncoder(), logger))
 
 	return event.NewCombinedProcessor(container)
 }

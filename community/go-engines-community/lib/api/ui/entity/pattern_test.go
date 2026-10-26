@@ -23,6 +23,121 @@ func TestSearchPatternToMongoQuery(t *testing.T) {
 		expectedComputedFields map[string]struct{}
 		expectedErr            error
 	}{
+		"given pause field with exist true condition": {
+			pattern: searchPattern{
+				{
+					{
+						Field:     "pause",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
+					},
+				},
+			},
+			expectedRes: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"pause": bson.M{"$exists": true, "$ne": nil}},
+				}},
+			}},
+			expectedLookups:        map[string]struct{}{},
+			expectedComputedFields: map[string]struct{}{},
+		},
+		"given pause field with exist false condition": {
+			pattern: searchPattern{
+				{
+					{
+						Field:     "pause",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+					},
+				},
+			},
+			expectedRes: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"$or": []bson.M{
+						{"pause": bson.M{"$exists": false}},
+						{"pause": bson.M{"$eq": nil}},
+					}},
+				}},
+			}},
+			expectedLookups:        map[string]struct{}{},
+			expectedComputedFields: map[string]struct{}{},
+		},
+		"given pause.author field with equal condition": {
+			pattern: searchPattern{
+				{
+					{
+						Field:     "pause.author",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-author"),
+					},
+				},
+			},
+			expectedRes: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"pause.author": bson.M{"$eq": "test-author"}},
+				}},
+			}},
+			expectedLookups:        map[string]struct{}{},
+			expectedComputedFields: map[string]struct{}{},
+		},
+		"given pause.initiator field with equal condition": {
+			pattern: searchPattern{
+				{
+					{
+						Field:     "pause.initiator",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "external"),
+					},
+				},
+			},
+			expectedRes: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"pause.initiator": bson.M{"$eq": "external"}},
+				}},
+			}},
+			expectedLookups:        map[string]struct{}{},
+			expectedComputedFields: map[string]struct{}{},
+		},
+		"given invalid condition type for pause field": {
+			pattern: searchPattern{
+				{
+					{
+						Field:     "pause",
+						Condition: pattern.NewBoolCondition(pattern.ConditionEqual, true),
+					},
+				},
+			},
+			expectedErr: pattern.ErrUnsupportedConditionType,
+		},
+		"given invalid condition value for pause field": {
+			pattern: searchPattern{
+				{
+					{
+						Field:     "pause",
+						Condition: pattern.NewStringCondition(pattern.ConditionExist, "true"),
+					},
+				},
+			},
+			expectedErr: pattern.ErrWrongConditionValue,
+		},
+		"given invalid condition value for pause.author field": {
+			pattern: searchPattern{
+				{
+					{
+						Field:     "pause.author",
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 123),
+					},
+				},
+			},
+			expectedErr: pattern.ErrWrongConditionValue,
+		},
+		"given invalid condition value for pause.initiator field": {
+			pattern: searchPattern{
+				{
+					{
+						Field:     "pause.initiator",
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 123),
+					},
+				},
+			},
+			expectedErr: pattern.ErrWrongConditionValue,
+		},
 		"given empty pattern": {
 			pattern:                searchPattern{},
 			expectedRes:            nil,

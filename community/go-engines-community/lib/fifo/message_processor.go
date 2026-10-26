@@ -127,7 +127,10 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		return nil, nil
 	}
 
-	if !event.Healthcheck {
+	// Internal pause/resume delivery must reach AXE before normal Trigger filtering.
+	if !event.Healthcheck &&
+		(event.EventType != types.EventTypeResume || event.ResumeJob == "" || event.PauseStart == nil) &&
+		(event.EventType != types.EventTypePause || event.PauseJob == "") {
 		b, err := p.Encoder.Encode(event)
 		if err != nil {
 			p.logError(err, "cannot encode event", msg)

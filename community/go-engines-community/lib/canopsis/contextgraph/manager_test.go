@@ -1090,7 +1090,7 @@ func BenchmarkRecomputeServicesRemoveAll(b *testing.B) {
 	logger := zerolog.New(os.Stdout).Level(zerolog.DebugLevel)
 	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, logger)
 	for b.Loop() {
-		_, _ = manager.RecomputeService(ctx, "serv-1", commRegister)
+		_, _, _ = manager.RecomputeService(ctx, "serv-1", commRegister)
 	}
 }
 
@@ -1156,7 +1156,7 @@ func BenchmarkRecomputeServicesAddAll(b *testing.B) {
 	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, logger)
 	for b.Loop() {
 		addIdx = 0
-		_, _ = manager.RecomputeService(ctx, "serv-1", commRegister)
+		_, _, _ = manager.RecomputeService(ctx, "serv-1", commRegister)
 	}
 }
 
@@ -1236,6 +1236,6 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, logger)
 	for b.Loop() {
 		addIdx = 0
-		_, _ = manager.RecomputeService(ctx, "serv-1", commRegister)
+		_, _, _ = manager.RecomputeService(ctx, "serv-1", commRegister)
 	}
 }

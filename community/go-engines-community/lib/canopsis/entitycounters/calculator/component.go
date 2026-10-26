@@ -104,6 +104,7 @@ func (s *componentCountersCalculator) RecomputeCounters(ctx context.Context, com
 		{
 			"$project": bson.M{
 				"entity.pbehavior_info": 1,
+				"entity.pause":          1,
 				"alarm._id":             1,
 				"alarm.v.state":         1,
 			},
@@ -122,7 +123,7 @@ func (s *componentCountersCalculator) RecomputeCounters(ctx context.Context, com
 			return 0, err
 		}
 
-		curActive := depEnt.Entity.PbehaviorInfo.IsActive()
+		curActive := depEnt.Entity.PbehaviorInfo.IsActive() && depEnt.Entity.Pause == nil
 		curState := types.AlarmStateOK
 
 		if depEnt.Alarm.ID != "" && curActive {
@@ -218,6 +219,10 @@ func (s *componentCountersCalculator) CalculateCounters(
 		}
 
 		strategy = component.ResolveStrategy{}
+	case types.AlarmChangeTypePause:
+		strategy = component.PauseStrategy{}
+	case types.AlarmChangeTypeResume:
+		strategy = component.ResumeStrategy{}
 	default:
 		return false, false, 0, nil
 	}
@@ -246,8 +251,20 @@ func (s *componentCountersCalculator) calculateCounters(
 		return false, false, 0, nil
 	}
 
-	calcData.PrevActive = alarmChange.PreviousPbehaviorCannonicalType == types.PbhCanonicalTypeActive || alarmChange.PreviousPbehaviorCannonicalType == ""
-	calcData.CurActive = entity.PbehaviorInfo.IsActive()
+	// The entity becomes paused on a pause event and resumed on a resume event, on any other event
+	// its pause doesn't change, so it was paused before if it's still paused.
+	prevPause := entity.Pause != nil
+	switch alarmChange.Type {
+	case types.AlarmChangeTypePause:
+		prevPause = false
+	case types.AlarmChangeTypeResume:
+		prevPause = true
+	}
+
+	calcData.PrevActive = (alarmChange.PreviousPbehaviorCannonicalType == types.PbhCanonicalTypeActive ||
+		alarmChange.PreviousPbehaviorCannonicalType == "") &&
+		!prevPause
+	calcData.CurActive = entity.PbehaviorInfo.IsActive() && entity.Pause == nil
 	calcData.AlarmExists = alarm != nil && alarm.ID != ""
 
 	if calcData.AlarmExists {
