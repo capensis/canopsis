@@ -10,6 +10,7 @@
           v-model:external-data="externalDataField"
           :variables="templateVars.external_data"
           optionally
+          with-on-mismatch
         />
       </c-form-block-row>
 

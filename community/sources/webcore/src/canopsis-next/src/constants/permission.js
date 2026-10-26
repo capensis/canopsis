@@ -276,6 +276,7 @@ export const USER_PERMISSIONS = {
         category: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_category`,
 
         exportAsCsv: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_exportAsCsv`,
+        exportAlarmTimeline: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_exportAlarmTimeline`,
 
         bookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_bookmark`,
         filterByBookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_filterByBookmark`,
@@ -489,6 +490,9 @@ export const USER_PERMISSIONS = {
       commentTemplate: `${USER_PERMISSIONS_PREFIXES.api}_comment_template`,
       llmConfig: `${USER_PERMISSIONS_PREFIXES.api}_llm_config`,
       ticketStatusJobManagement: `${USER_PERMISSIONS_PREFIXES.api}_ticket_status_job_management`,
+      webhookJobManagement: `${USER_PERMISSIONS_PREFIXES.api}_webhook_job_management`,
+      webhookTokenJobManagement: `${USER_PERMISSIONS_PREFIXES.api}_webhook_token_job_management`,
+      remediationJobManagement: `${USER_PERMISSIONS_PREFIXES.api}_remediation_job_management`,
       templateData: `${USER_PERMISSIONS_PREFIXES.api}_template_data`,
       anomalyMonitoredConnector: `${USER_PERMISSIONS_PREFIXES.api}_anomaly_monitored_connector`,
 

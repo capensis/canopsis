@@ -6,10 +6,7 @@
       </template>
 
       <template #text>
-        <dynamic-info-form
-          :rule-id="dynamicInfoId"
-          :is-disabled-id-field="isDisabledIdField"
-        />
+        <dynamic-info-form :rule-id="dynamicInfoId" />
         <ai-chat-sidebar v-if="chatShown" v-bind="chatOptions.attrs" />
       </template>
 
@@ -71,10 +68,6 @@ export default {
     const title = computed(() => config.value.title || t('modals.createDynamicInfo.create.title'));
     const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
     const dynamicInfoId = computed(() => config.value.dynamicInfo?._id);
-    const isDisabledIdField = computed(
-      () => !!(config.value.isDisabledIdField || config.value.submittingIdField),
-    );
-
     const { values, handleSubmit, submitting } = useForm({
       initialValues: dynamicInfoToForm(config.value.dynamicInfo),
     });
@@ -112,7 +105,6 @@ export default {
       submitLabel,
       values,
       dynamicInfoId,
-      isDisabledIdField,
       chatShown,
       chatOptions,
       submit,

@@ -1,0 +1,3 @@
+cd community/sources/webcore/src/canopsis-next || exit 1
+
+node ./tools/prepare-commit-msg.js "$1"

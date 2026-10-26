@@ -124,6 +124,14 @@ export const useWidgetSettings = ({ sidebar, localWidget = false } = {}) => {
       await fetchActiveView();
 
       hideSettingsSidebar();
+    } catch (err) {
+      if (validationForm.setFormErrors(err)) {
+        scrollToFirstError();
+
+        return;
+      }
+
+      throw err;
     } finally {
       submitting.value = false;
     }

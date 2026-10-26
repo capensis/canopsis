@@ -73,6 +73,7 @@ export const MODALS = {
   createRemediationConfiguration: 'create-remediation-configuration',
   createRemediationJob: 'create-remediation-job',
   createTicketStatusJob: 'create-ticket-status-job',
+  stopJobs: 'stop-jobs',
   executeRemediationInstruction: 'execute-remediation-instruction',
   executeRemediationSimpleInstruction: 'execute-remediation-simple-instruction',
   pbehaviorPatterns: 'pbehavior-patterns',

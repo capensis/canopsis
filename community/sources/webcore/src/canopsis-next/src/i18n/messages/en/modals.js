@@ -698,6 +698,26 @@ export default {
       title: 'Edit job : check ticket status',
     },
   },
+  stopJobs: {
+    title: 'Stop job',
+    pendingCount: '{count} pending job after this job | {count} pending jobs after this job',
+    warnings: {
+      instructions:
+        'There is {count} remaining job in the selected instruction executions. | There are {count} remaining jobs in the selected instruction executions.',
+      webhooks:
+        'There is {count} remaining step in the selected ticket declaration rules. | There are {count} remaining steps in the selected ticket declaration rules.',
+      scenario:
+        'There is {count} remaining action in the selected scenarios. | There are {count} remaining actions in the selected scenarios.',
+    },
+    options: {
+      stop: {
+        instructions: 'Stop instruction',
+        webhooks: 'Stop ticket declaration rule',
+        scenario: 'Stop scenario',
+      },
+      continue: 'Continue with remaining jobs',
+    },
+  },
   clickOutsideConfirmation: {
     title: 'Are you sure?',
     text: 'Changes will not be saved. Are you sure?',

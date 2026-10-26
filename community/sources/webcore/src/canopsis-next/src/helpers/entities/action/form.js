@@ -256,9 +256,7 @@ const webhookActionParametersToForm = (parameters = {}) => {
     stop_on_fail: emptyParameters
       ? WORKFLOW_TYPES.stop
       : (parameters.stop_on_fail ?? WORKFLOW_TYPES.continue),
-    stop_on_success: emptyParameters
-      ? WORKFLOW_TYPES.stop
-      : (parameters.stop_on_success ?? WORKFLOW_TYPES.continue),
+    stop_on_success: parameters.stop_on_success ?? WORKFLOW_TYPES.continue,
     ticket_system_name: parameters.ticket_system_name ?? '',
   };
 };

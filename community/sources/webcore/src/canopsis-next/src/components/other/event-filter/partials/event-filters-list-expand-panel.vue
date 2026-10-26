@@ -46,7 +46,12 @@
         <v-data-table :items="eventFilter.config.actions" :headers="headers" />
       </c-window-expand-item>
       <c-window-expand-item :value="tabs.externalData" cols="11">
-        <external-data-field :external-data="externalDataForm" disabled optionally />
+        <external-data-field
+          :external-data="externalDataForm"
+          disabled
+          optionally
+          with-on-mismatch
+        />
       </c-window-expand-item>
     </template>
     <c-window-expand-item
@@ -103,7 +108,7 @@ export default {
 
     const patterns = computed(() => eventFilterPatternToForm(props.eventFilter));
     const isEnrichment = computed(() => isEnrichmentEventFilterRuleType(props.eventFilter.type));
-    const externalDataForm = computed(() => externalDataToForm(props.eventFilter.external_data));
+    const externalDataForm = computed(() => externalDataToForm(props.eventFilter.external_data, true));
 
     return {
       tabs,

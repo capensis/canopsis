@@ -11,6 +11,7 @@ const stubs = {
 
 const selectIteratorField = wrapper => wrapper.find('c-card-iterator-field-stub');
 const selectAddButton = wrapper => wrapper.find('c-btn-with-error-stub');
+const selectRoot = wrapper => wrapper.find('c-layout-stub');
 
 describe('c-card-iterator-form', () => {
   const factory = generateShallowRenderer(CCardIteratorForm, { stubs });
@@ -36,5 +37,16 @@ describe('c-card-iterator-form', () => {
     });
 
     expect(selectAddButton(wrapper).attributes('variant')).toBe('flat');
+  });
+
+  test('Class is applied to the template root', () => {
+    const wrapper = factory({
+      attrs: {
+        class: 'py-3',
+      },
+    });
+
+    expect(selectRoot(wrapper).classes()).toContain('py-3');
+    expect(selectIteratorField(wrapper).classes()).not.toContain('py-3');
   });
 });

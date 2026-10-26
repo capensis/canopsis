@@ -8,11 +8,6 @@ import MetaAlarmRuleGeneralForm from '@/components/other/meta-alarm-rule/form/me
 const stubs = {
   'c-form-block': true,
   'c-form-block-row': true,
-  'c-id-field': {
-    name: 'CIdField',
-    emits: ['update:modelValue'],
-    template: '<div />',
-  },
   'c-name-field': {
     name: 'CNameField',
     emits: ['update:modelValue'],
@@ -42,7 +37,6 @@ const stubs = {
   'meta-alarm-rule-type-field': true,
 };
 
-const selectIdField = wrapper => wrapper.findComponent({ name: 'CIdField' });
 const selectPayloadTextareaField = wrapper =>
   wrapper.findComponent({ name: 'CPayloadTextareaField' });
 const selectNameField = wrapper => wrapper.findComponent({ name: 'CNameField' });
@@ -54,23 +48,6 @@ describe('meta-alarm-rule-general-form', () => {
   const form = metaAlarmRuleToForm();
 
   const factory = generateShallowRenderer(MetaAlarmRuleGeneralForm, { stubs });
-
-  test('ID changed after trigger id field', async () => {
-    const wrapper = factory({
-      props: {
-        form,
-      },
-    });
-
-    const idField = selectIdField(wrapper);
-
-    const newId = Faker.datatype.string();
-
-    idField.vm.$emit('update:modelValue', newId);
-    await wrapper.vm.$nextTick();
-
-    expect(globalThis.__TEST_FORM__.getValue('_id')).toBe(newId);
-  });
 
   test('Output template changed after trigger description field', async () => {
     const wrapper = factory({

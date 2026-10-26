@@ -38,6 +38,7 @@ const (
 
 	RemediationPeriodicalLockKey        = "remediation-periodical-lock-key"
 	RemediationPostponedJobTasksLockKey = "remediation-postponed-job-tasks-lock-key"
+	RemediationRefreshTokenLockKey      = "remediation-refresh-token-" //nolint:gosec
 
 	PbehaviorSpanKey              = "pbehavior-span"
 	PbehaviorTypesKey             = "pbehavior-types"
