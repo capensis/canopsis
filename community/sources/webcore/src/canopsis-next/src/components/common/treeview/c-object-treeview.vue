@@ -49,7 +49,7 @@ export default {
       default: undefined,
     },
     value: {
-      type: Object,
+      type: [Object, Array],
       default: undefined,
     },
     rootName: {

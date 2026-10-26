@@ -587,10 +587,22 @@ export const API_ROUTES = {
   anomalyMonitoredConnector: '/internal/cat/anomalies/monitored-connectors',
   anomalyMonitoredConnectorStates: '/internal/cat/anomalies/monitored-connectors/states',
   bulkAnomalyMonitoredConnector: '/internal/cat/bulk/anomalies/monitored-connectors',
-  ticketStatusJobs: '/internal/cat/ticket-status-jobs',
+  ticketStatusJobs: '/internal/cat/job-management/ticket-status',
   bulkTicketStatusJobs: {
-    play: '/internal/cat/bulk/ticket-status-jobs/sync',
-    pause: '/internal/cat/bulk/ticket-status-jobs/pause',
+    play: '/internal/cat/bulk/job-management/ticket-status/sync',
+    pause: '/internal/cat/bulk/job-management/ticket-status/pause',
+  },
+  remediationJobs: '/internal/cat/job-management/remediation',
+  bulkRemediationJobs: {
+    stop: '/internal/cat/bulk/job-management/remediation/stop',
+  },
+  webhookJobs: '/internal/cat/job-management/webhook',
+  bulkWebhookJobs: {
+    stop: '/internal/cat/bulk/job-management/webhook/stop',
+  },
+  webhookTokenJobs: '/internal/cat/job-management/webhook-token',
+  bulkWebhookTokenJobs: {
+    stop: '/internal/cat/bulk/job-management/webhook-token/stop',
   },
   declareTicket: {
     rules: '/internal/cat/declare-ticket-rules',
