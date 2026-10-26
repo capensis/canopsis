@@ -41,7 +41,7 @@ pbehavior_type:
     <<: *pbehavior_type
     name: Default pause
     description: Default pause
-    icon_name: pause
+    icon_name: "$vuetify.icons.pause_action"
     type: pause
     color: "#5A6D80"
 

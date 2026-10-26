@@ -17,6 +17,7 @@ import (
 	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_entitycounters "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/entitycounters"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
+	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -202,6 +203,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
@@ -229,6 +231,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"all":                   1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
@@ -257,6 +260,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"all":                   1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
@@ -298,6 +302,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"all":                   1,
 				"state.ok":              1,
 				"inherited_state.ok":    1,
@@ -328,7 +333,9 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"all":                   1,
+				"acked_inactive":        1,
 				"acked_under_pbh":       1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
@@ -720,6 +727,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
@@ -753,6 +761,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
@@ -787,6 +796,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
@@ -838,6 +848,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
@@ -874,7 +885,9 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
+				"acked_inactive":        -1,
 				"acked_under_pbh":       -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
@@ -1163,6 +1176,67 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{"service-1": {State: types.AlarmStateMajor, Output: "2"}},
 		},
+		// paused
+		{
+			name:  "given new not yet counted paused entity with a ko alarm and alarm change is none, should count it as an inactive dependency",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:       true,
+				Type:          types.EntityTypeResource,
+				Services:      []string{"service-1"},
+				ServicesToAdd: []string{"service-1"},
+				Pause:         &types.Pause{Source: "service-2"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeNone,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+				State: entitycounters.StateCounters{
+					Critical: 1,
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"depends":          1,
+				"all":              1,
+				"state.ok":         1,
+				"paused":           1,
+				"inactive_depends": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+		},
+		{
+			name:  "given a paused entity to be removed from counters with a ko alarm and alarm change is none, should remove it from the inactive counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:          true,
+				Type:             types.EntityTypeResource,
+				ServicesToRemove: []string{"service-1"},
+				Pause:            &types.Pause{Source: "service-2"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeNone,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID:      "service-1",
+				Depends: 2,
+				All:     2,
+				State: entitycounters.StateCounters{
+					Ok:       1,
+					Critical: 1,
+				},
+				Paused:          1,
+				InactiveDepends: 1,
+			}},
+			expectedDiff: []map[string]int{{
+				"depends":          -1,
+				"all":              -1,
+				"state.ok":         -1,
+				"paused":           -1,
+				"inactive_depends": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+		},
 	}
 
 	for _, dSet := range dataSets {
@@ -1420,6 +1494,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"all":                   1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
@@ -1462,6 +1537,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"all":                   1,
 				"state.ok":              1,
 				"inherited_state.ok":    1,
@@ -1493,8 +1569,10 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"all":                   1,
 				"acked_under_pbh":       1,
+				"acked_inactive":        1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
@@ -1523,6 +1601,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"all":                   1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
@@ -1565,6 +1644,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"all":                   1,
 				"state.ok":              1,
 				"inherited_state.ok":    1,
@@ -1596,8 +1676,10 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"all":                   1,
 				"acked_under_pbh":       1,
+				"acked_inactive":        1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
 				"under_pbh":             1,
@@ -1629,6 +1711,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"all":                   1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
@@ -2219,6 +2302,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
@@ -2261,6 +2345,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
@@ -2290,8 +2375,10 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"acked_under_pbh":       -1,
+				"acked_inactive":        -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
@@ -2319,6 +2406,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
@@ -2361,6 +2449,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
@@ -2390,8 +2479,10 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"acked_under_pbh":       -1,
+				"acked_inactive":        -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
@@ -2422,6 +2513,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
@@ -3493,6 +3585,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"all":                   1,
 				"state.ok":              1,
 				"under_pbh":             1,
@@ -3534,6 +3627,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"all":                   1,
 				"state.ok":              1,
 				"inherited_state.ok":    1,
@@ -3639,6 +3733,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			}},
 			expectedDiff: []map[string]int{{
 				"all":                   1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 			}},
@@ -3679,6 +3774,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			}},
 			expectedDiff: []map[string]int{{
 				"all":                   1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 			}},
@@ -4115,6 +4211,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			}},
 			expectedDiff: []map[string]int{{
 				"all":                   1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"inherited_state.ok":    1,
@@ -4165,6 +4262,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 			}},
 			expectedDiff: []map[string]int{{
 				"all":                   1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"inherited_state.ok":    -1,
@@ -4428,6 +4526,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"state.ok":              1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
@@ -4455,6 +4554,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"all":                   1,
 				"state.ok":              1,
 				"under_pbh":             1,
@@ -4483,8 +4583,10 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"all":                   1,
 				"acked_under_pbh":       1,
+				"acked_inactive":        1,
 				"state.ok":              1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
@@ -4512,6 +4614,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"all":                   1,
 				"state.ok":              1,
 				"under_pbh":             1,
@@ -4553,6 +4656,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               1,
+				"inactive_depends":      1,
 				"all":                   1,
 				"state.ok":              1,
 				"inherited_state.ok":    1,
@@ -4716,6 +4820,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				ID: "service-1",
 			}},
 			expectedDiff: []map[string]int{{
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 			}},
@@ -4744,6 +4849,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			}},
 			expectedDiff: []map[string]int{{
 				"active":                -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -4774,9 +4880,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"acked_under_pbh":       1,
+				"acked_inactive":        1,
 				"acked":                 -1,
 				"state.ok":              1,
 				"state.minor":           -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 			}},
@@ -4809,6 +4917,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -4861,6 +4970,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				"state.critical":           -1,
 				"inherited_state.ok":       1,
 				"inherited_state.critical": -1,
+				"inactive_depends":         1,
 				"under_pbh":                1,
 				"pbehavior.maintenance":    1,
 				"unacked":                  -1,
@@ -5236,6 +5346,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -5269,6 +5380,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -5313,6 +5425,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -5357,6 +5470,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -5408,6 +5522,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -5460,6 +5575,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				"state.major":           -1,
 				"inherited_state.ok":    1,
 				"inherited_state.major": -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -5510,6 +5626,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				"state.ok":              1,
 				"state.major":           -1,
 				"inherited_state.ok":    1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -5563,6 +5680,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				"state.ok":              1,
 				"state.major":           -1,
 				"inherited_state.major": -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -5600,6 +5718,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -5634,6 +5753,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -6092,6 +6212,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				ID: "service-1",
 			}},
 			expectedDiff: []map[string]int{{
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 			}},
@@ -6118,6 +6239,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 			}},
 			expectedDiff: []map[string]int{{
 				"active":                1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -6146,9 +6268,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 			expectedDiff: []map[string]int{{
 				"active":                1,
 				"acked_under_pbh":       -1,
+				"acked_inactive":        -1,
 				"acked":                 1,
 				"state.ok":              -1,
 				"state.minor":           1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 			}},
@@ -6179,6 +6303,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -6229,6 +6354,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				"state.critical":           1,
 				"inherited_state.ok":       -1,
 				"inherited_state.critical": 1,
+				"inactive_depends":         -1,
 				"under_pbh":                -1,
 				"pbehavior.maintenance":    -1,
 				"unacked":                  1,
@@ -6274,6 +6400,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				"state.ok":                 -1,
 				"state.critical":           1,
 				"inherited_state.critical": 1,
+				"inactive_depends":         -1,
 				"under_pbh":                -1,
 				"pbehavior.maintenance":    -1,
 				"unacked":                  1,
@@ -6324,6 +6451,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
 				"state.critical":        1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -6510,6 +6638,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"state.ok":              -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
@@ -6537,6 +6666,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"under_pbh":             -1,
@@ -6565,8 +6695,10 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"acked_under_pbh":       -1,
+				"acked_inactive":        -1,
 				"state.ok":              -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
@@ -6594,6 +6726,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"under_pbh":             -1,
@@ -6639,6 +6772,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
@@ -6673,6 +6807,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -6704,6 +6839,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -6746,6 +6882,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -6788,6 +6925,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -6837,6 +6975,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -6887,6 +7026,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				"state.major":           1,
 				"inherited_state.ok":    -1,
 				"inherited_state.major": 1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -6921,6 +7061,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -6953,6 +7094,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -7158,6 +7300,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"state.ok":              1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 			}},
@@ -7187,6 +7330,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 			}},
@@ -7216,7 +7360,9 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"depends":               1,
 				"all":                   1,
 				"acked_under_pbh":       1,
+				"acked_inactive":        1,
 				"state.ok":              1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 			}},
@@ -7246,6 +7392,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 			}},
@@ -7289,6 +7436,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"all":                   1,
 				"state.ok":              1,
 				"inherited_state.ok":    1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 			}},
@@ -7484,6 +7632,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 			expectedDiff: []map[string]int{{
 				"depends":               1,
 				"state.ok":              1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 			}},
@@ -7514,6 +7663,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 			}},
@@ -7544,7 +7694,9 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"depends":               1,
 				"all":                   1,
 				"acked_under_pbh":       1,
+				"acked_inactive":        1,
 				"state.ok":              1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 			}},
@@ -7575,6 +7727,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"depends":               1,
 				"all":                   1,
 				"state.ok":              1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 			}},
@@ -7619,6 +7772,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"all":                   1,
 				"state.ok":              1,
 				"inherited_state.ok":    1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 			}},
@@ -7784,6 +7938,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				ID: "service-1",
 			}},
 			expectedDiff: []map[string]int{{
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 			}},
@@ -7810,6 +7965,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 			}},
 			expectedDiff: []map[string]int{{
 				"active":                -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -7838,9 +7994,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 			expectedDiff: []map[string]int{{
 				"active":                -1,
 				"acked_under_pbh":       1,
+				"acked_inactive":        1,
 				"acked":                 -1,
 				"state.ok":              1,
 				"state.minor":           -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 			}},
@@ -7869,6 +8027,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -7914,6 +8073,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"state.critical":           -1,
 				"inherited_state.ok":       1,
 				"inherited_state.critical": -1,
+				"inactive_depends":         1,
 				"under_pbh":                1,
 				"pbehavior.maintenance":    1,
 				"unacked":                  -1,
@@ -7957,6 +8117,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"state.critical":        -1,
 				"state.ok":              1,
 				"inherited_state.ok":    1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -8008,6 +8169,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"state.critical":           -1,
 				"inherited_state.critical": -1,
 				"state.ok":                 1,
+				"inactive_depends":         1,
 				"under_pbh":                1,
 				"pbehavior.maintenance":    1,
 				"unacked":                  -1,
@@ -8038,6 +8200,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				ID: "service-1",
 			}},
 			expectedDiff: []map[string]int{{
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 			}},
@@ -8064,6 +8227,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 			}},
 			expectedDiff: []map[string]int{{
 				"active":                1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -8092,9 +8256,11 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 			expectedDiff: []map[string]int{{
 				"active":                1,
 				"acked_under_pbh":       -1,
+				"acked_inactive":        -1,
 				"acked":                 1,
 				"state.ok":              -1,
 				"state.minor":           1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 			}},
@@ -8125,6 +8291,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -8172,6 +8339,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"state.critical":           1,
 				"inherited_state.ok":       -1,
 				"inherited_state.critical": 1,
+				"inactive_depends":         -1,
 				"under_pbh":                -1,
 				"pbehavior.maintenance":    -1,
 				"unacked":                  1,
@@ -8220,6 +8388,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"state.ok":                 -1,
 				"state.critical":           1,
 				"inherited_state.critical": 1,
+				"inactive_depends":         -1,
 				"under_pbh":                -1,
 				"pbehavior.maintenance":    -1,
 				"unacked":                  1,
@@ -8273,6 +8442,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
 				"state.critical":        1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -8779,6 +8949,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"state.ok":              -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
@@ -8806,6 +8977,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"under_pbh":             -1,
@@ -8834,8 +9006,10 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"acked_under_pbh":       -1,
+				"acked_inactive":        -1,
 				"state.ok":              -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
@@ -8863,6 +9037,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"under_pbh":             -1,
@@ -8905,6 +9080,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
@@ -8936,6 +9112,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":                    -1,
+				"inactive_depends":           -1,
 				"state.ok":                   -1,
 				"under_pbh":                  -1,
 				"pbehavior.prev-maintenance": -1,
@@ -8964,6 +9141,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":                    -1,
+				"inactive_depends":           -1,
 				"all":                        -1,
 				"state.ok":                   -1,
 				"under_pbh":                  -1,
@@ -8993,8 +9171,10 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":                    -1,
+				"inactive_depends":           -1,
 				"all":                        -1,
 				"acked_under_pbh":            -1,
+				"acked_inactive":             -1,
 				"state.ok":                   -1,
 				"under_pbh":                  -1,
 				"pbehavior.prev-maintenance": -1,
@@ -9023,6 +9203,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":                    -1,
+				"inactive_depends":           -1,
 				"all":                        -1,
 				"state.ok":                   -1,
 				"under_pbh":                  -1,
@@ -9066,6 +9247,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":                    -1,
+				"inactive_depends":           -1,
 				"all":                        -1,
 				"state.ok":                   -1,
 				"inherited_state.ok":         -1,
@@ -9103,6 +9285,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -9137,6 +9320,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -9173,6 +9357,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -9208,6 +9393,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -9253,6 +9439,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -9295,6 +9482,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -9340,6 +9528,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -9387,6 +9576,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"active":                -1,
 				"state.ok":              1,
 				"state.major":           -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -9439,6 +9629,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -9492,6 +9683,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"state.major":           1,
 				"inherited_state.ok":    -1,
 				"inherited_state.major": 1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -9544,6 +9736,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"active":                -1,
 				"state.ok":              1,
 				"state.minor":           -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -9597,6 +9790,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"state.minor":           -1,
 				"inherited_state.ok":    1,
 				"inherited_state.minor": -1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"pbehavior.maintenance": 1,
 				"unacked":               -1,
@@ -9631,6 +9825,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 				"active":                1,
 				"state.ok":              -1,
 				"state.major":           1,
+				"inactive_depends":      -1,
 				"under_pbh":             -1,
 				"pbehavior.maintenance": -1,
 				"unacked":               1,
@@ -9812,6 +10007,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				"depends":               1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
@@ -9839,6 +10035,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				"depends":               1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
@@ -9880,6 +10077,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				"state.ok":              1,
 				"inherited_state.ok":    1,
 				"pbehavior.maintenance": 1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
@@ -9908,6 +10106,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 				"depends":               1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
@@ -10310,6 +10509,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			expectedDiff: []map[string]int{{
 				"all":             -1,
 				"acked_under_pbh": -1,
+				"acked_inactive":  -1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
@@ -10487,6 +10687,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
@@ -10521,6 +10722,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
@@ -10572,6 +10774,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
@@ -10608,8 +10811,10 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"acked_under_pbh":       -1,
+				"acked_inactive":        -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
@@ -10914,6 +11119,34 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 
 func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) {
 	dataSets := []serviceDataset{
+		// paused
+		{
+			name:  "given already counted paused entity with an acked alarm and alarm change is ack, should count it as acked and inactive",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				Pause:    &types.Pause{Source: "service-2"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeAck,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID:      "service-1",
+				Depends: 1,
+				All:     1,
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				Paused:          1,
+				InactiveDepends: 1,
+			}},
+			expectedDiff: []map[string]int{{
+				"acked_inactive": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+		},
 		// active
 		{
 			name:  "given new not yet counted entity matched to inherited rule with an acked alarm and alarm change is ack, should change service counters and update service",
@@ -11021,8 +11254,10 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 				"state.ok":              1,
 				"inherited_state.ok":    1,
 				"pbehavior.maintenance": 1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 				"acked_under_pbh":       1,
+				"acked_inactive":        1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 			expectedInheritedServices: []string{"service-1"},
@@ -11050,8 +11285,10 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 				"depends":               1,
 				"all":                   1,
 				"acked_under_pbh":       1,
+				"acked_inactive":        1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
@@ -11224,6 +11461,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			}},
 			expectedDiff: []map[string]int{{
 				"acked_under_pbh": 1,
+				"acked_inactive":  1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
@@ -11260,6 +11498,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			}},
 			expectedDiff: []map[string]int{{
 				"acked_under_pbh":    1,
+				"acked_inactive":     1,
 				"inherited_state.ok": 1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
@@ -11302,6 +11541,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			}},
 			expectedDiff: []map[string]int{{
 				"acked_under_pbh":    1,
+				"acked_inactive":     1,
 				"inherited_state.ok": -1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
@@ -11418,6 +11658,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
@@ -11446,6 +11687,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
@@ -11746,6 +11988,35 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 
 func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testing.T) {
 	dataSets := []serviceDataset{
+		// paused
+		{
+			name:  "given already counted paused entity with an alarm and alarm change is ackremove, should remove it from the acked inactive counter",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				Pause:    &types.Pause{Source: "service-2"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeAckremove,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID:      "service-1",
+				Depends: 1,
+				All:     1,
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				Paused:               1,
+				InactiveDepends:      1,
+				AcknowledgedInactive: 1,
+			}},
+			expectedDiff: []map[string]int{{
+				"acked_inactive": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+		},
 		// active
 		{
 			name:  "given new not yet counted entity matched to inherited rule with an alarm and alarm change is ackremove, should change service counters and update service",
@@ -11853,6 +12124,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 				"state.ok":              1,
 				"inherited_state.ok":    1,
 				"pbehavior.maintenance": 1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
@@ -11882,6 +12154,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 				"all":                   1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
@@ -12006,6 +12279,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			}},
 			expectedDiff: []map[string]int{{
 				"acked_under_pbh": -1,
+				"acked_inactive":  -1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
@@ -12042,6 +12316,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			}},
 			expectedDiff: []map[string]int{{
 				"acked_under_pbh":    -1,
+				"acked_inactive":     -1,
 				"inherited_state.ok": 1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
@@ -12084,6 +12359,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			}},
 			expectedDiff: []map[string]int{{
 				"acked_under_pbh":    -1,
+				"acked_inactive":     -1,
 				"inherited_state.ok": -1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
@@ -12200,12 +12476,14 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
 				"acked_under_pbh":       -1,
+				"acked_inactive":        -1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
@@ -12229,11 +12507,13 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
 				"acked_under_pbh":       -1,
+				"acked_inactive":        -1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
 		},
@@ -12694,6 +12974,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				"depends":               1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
@@ -12722,6 +13003,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				"all":                   1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
@@ -12750,6 +13032,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				"all":                   1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
@@ -12792,6 +13075,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				"state.ok":              1,
 				"inherited_state.ok":    1,
 				"pbehavior.maintenance": 1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
@@ -12820,8 +13104,10 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 				"depends":               1,
 				"all":                   1,
 				"acked_under_pbh":       1,
+				"acked_inactive":        1,
 				"state.ok":              1,
 				"pbehavior.maintenance": 1,
+				"inactive_depends":      1,
 				"under_pbh":             1,
 			}},
 			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
@@ -13204,6 +13490,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
@@ -13237,6 +13524,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
@@ -13271,6 +13559,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
@@ -13322,6 +13611,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"state.ok":              -1,
 				"inherited_state.ok":    -1,
@@ -13358,8 +13648,10 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 			}},
 			expectedDiff: []map[string]int{{
 				"depends":               -1,
+				"inactive_depends":      -1,
 				"all":                   -1,
 				"acked_under_pbh":       -1,
+				"acked_inactive":        -1,
 				"state.ok":              -1,
 				"pbehavior.maintenance": -1,
 				"under_pbh":             -1,
@@ -13660,6 +13952,459 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 	}
 }
 
+func TestEntityServiceService_ProcessCounters_GivenAlarmChangePause(t *testing.T) {
+	dataSets := []serviceDataset{
+		// when already counted
+		{
+			name:  "given already counted entity with a ko alarm and alarm change is pause, should count it as paused and inactive",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				Pause:    &types.Pause{Source: "service-2"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypePause,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID:              "service-1",
+				Depends:         1,
+				All:             1,
+				Active:          1,
+				NotAcknowledged: 1,
+				State: entitycounters.StateCounters{
+					Critical: 1,
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"state.critical":   -1,
+				"state.ok":         1,
+				"active":           -1,
+				"unacked":          -1,
+				"paused":           1,
+				"inactive_depends": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateOK},
+			},
+		},
+		{
+			name:  "given already counted entity with an acked ko alarm and alarm change is pause, should count it as acked inactive",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				Pause:    &types.Pause{Source: "service-2"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypePause,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID:           "service-1",
+				Depends:      1,
+				All:          1,
+				Active:       1,
+				Acknowledged: 1,
+				State: entitycounters.StateCounters{
+					Critical: 1,
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"state.critical":   -1,
+				"state.ok":         1,
+				"active":           -1,
+				"acked":            -1,
+				"acked_inactive":   1,
+				"paused":           1,
+				"inactive_depends": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateOK},
+			},
+		},
+		{
+			name: "given already counted entity without an alarm and alarm change is pause, should count it as paused and inactive",
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				Pause:    &types.Pause{Source: "service-2"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypePause,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID:      "service-1",
+				Depends: 1,
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"paused":           1,
+				"inactive_depends": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+		},
+		{
+			name:  "given already counted entity with a ko alarm in inactive pbh and alarm change is pause, should count it as paused only once as an inactive dependency",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				Pause:    &types.Pause{Source: "service-2"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type:                            types.AlarmChangeTypePause,
+				PreviousPbehaviorTypeID:         "maintenance",
+				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID:      "service-1",
+				Depends: 1,
+				All:     1,
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				PbehaviorCounters: map[string]int{"maintenance": 1},
+				UnderPbehavior:    1,
+				InactiveDepends:   1,
+			}},
+			expectedDiff: []map[string]int{{
+				"paused": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+		},
+		// when entity should be added to counters
+		{
+			name:  "given paused entity added to a service with a ko alarm and alarm change is pause, should count it as paused and inactive",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:       true,
+				Type:          types.EntityTypeResource,
+				Services:      []string{"service-1"},
+				ServicesToAdd: []string{"service-1"},
+				Pause:         &types.Pause{Source: "service-2"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypePause,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+			}},
+			expectedDiff: []map[string]int{{
+				"depends":          1,
+				"all":              1,
+				"state.ok":         1,
+				"paused":           1,
+				"inactive_depends": 1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+		},
+		// when entity should be removed from counters
+		{
+			name:  "given paused entity removed from a service with a ko alarm and alarm change is pause, should remove it from the counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:          true,
+				Type:             types.EntityTypeResource,
+				ServicesToRemove: []string{"service-1"},
+				Pause:            &types.Pause{Source: "service-2"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypePause,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID:              "service-1",
+				Depends:         2,
+				All:             2,
+				Active:          2,
+				NotAcknowledged: 2,
+				State: entitycounters.StateCounters{
+					Ok:       1,
+					Critical: 1,
+				},
+			}},
+			expectedDiff: []map[string]int{{
+				"depends":        -1,
+				"all":            -1,
+				"state.critical": -1,
+				"active":         -1,
+				"unacked":        -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateOK},
+			},
+		},
+		{
+			name:  "given paused entity in inactive pbh removed from a service with a ko alarm and alarm change is pause, should remove it from the pbh counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:          true,
+				Type:             types.EntityTypeResource,
+				ServicesToRemove: []string{"service-1"},
+				Pause:            &types.Pause{Source: "service-2"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type:                            types.AlarmChangeTypePause,
+				PreviousPbehaviorTypeID:         "maintenance",
+				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID:      "service-1",
+				Depends: 1,
+				All:     1,
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				PbehaviorCounters: map[string]int{"maintenance": 1},
+				UnderPbehavior:    1,
+				InactiveDepends:   1,
+			}},
+			expectedDiff: []map[string]int{{
+				"depends":               -1,
+				"inactive_depends":      -1,
+				"all":                   -1,
+				"state.ok":              -1,
+				"under_pbh":             -1,
+				"pbehavior.maintenance": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+		},
+	}
+
+	for _, dSet := range dataSets {
+		t.Run(dSet.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			componentService, entityHelper, countersCollection, entityCollection := prepareEntityServiceTest(ctrl)
+			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, entityCollection, componentService, dSet)
+		})
+	}
+}
+
+func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResume(t *testing.T) {
+	dataSets := []serviceDataset{
+		// when already counted
+		{
+			name:  "given already counted paused entity with a ko alarm and alarm change is resume, should count it as active again",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeResume,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID:      "service-1",
+				Depends: 1,
+				All:     1,
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				Paused:          1,
+				InactiveDepends: 1,
+			}},
+			expectedDiff: []map[string]int{{
+				"state.ok":         -1,
+				"state.critical":   1,
+				"active":           1,
+				"unacked":          1,
+				"paused":           -1,
+				"inactive_depends": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateCritical},
+			},
+		},
+		{
+			name:  "given already counted paused entity with an acked ko alarm and alarm change is resume, should remove it from the acked inactive counter",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeResume,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID:      "service-1",
+				Depends: 1,
+				All:     1,
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				AcknowledgedInactive: 1,
+				Paused:               1,
+				InactiveDepends:      1,
+			}},
+			expectedDiff: []map[string]int{{
+				"state.ok":         -1,
+				"state.critical":   1,
+				"active":           1,
+				"acked":            1,
+				"acked_inactive":   -1,
+				"paused":           -1,
+				"inactive_depends": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateCritical},
+			},
+		},
+		{
+			name:  "given already counted paused entity with a ko alarm in inactive pbh and alarm change is resume, should keep it as an inactive dependency",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:  true,
+				Type:     types.EntityTypeResource,
+				Services: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type:                            types.AlarmChangeTypeResume,
+				PreviousPbehaviorTypeID:         "maintenance",
+				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID:      "service-1",
+				Depends: 1,
+				All:     1,
+				State: entitycounters.StateCounters{
+					Ok: 1,
+				},
+				PbehaviorCounters: map[string]int{"maintenance": 1},
+				UnderPbehavior:    1,
+				Paused:            1,
+				InactiveDepends:   1,
+			}},
+			expectedDiff: []map[string]int{{
+				"paused": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+		},
+		// when entity should be added to counters
+		{
+			name:  "given resumed entity added to a service with a ko alarm and alarm change is resume, should count it as active",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:       true,
+				Type:          types.EntityTypeResource,
+				Services:      []string{"service-1"},
+				ServicesToAdd: []string{"service-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeResume,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+			}},
+			expectedDiff: []map[string]int{{
+				"depends":        1,
+				"all":            1,
+				"state.critical": 1,
+				"active":         1,
+				"unacked":        1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{
+				"service-1": {State: types.AlarmStateCritical},
+			},
+		},
+		{
+			name:  "given resumed entity in inactive pbh added to a service with a ko alarm and alarm change is resume, should count it in the pbh counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:       true,
+				Type:          types.EntityTypeResource,
+				Services:      []string{"service-1"},
+				ServicesToAdd: []string{"service-1"},
+				PbehaviorInfo: types.PbehaviorInfo{
+					TypeID:        "maintenance",
+					CanonicalType: pbehavior.TypeMaintenance,
+				},
+			},
+			alarmChange: types.AlarmChange{
+				Type:                            types.AlarmChangeTypeResume,
+				PreviousPbehaviorTypeID:         "maintenance",
+				PreviousPbehaviorCannonicalType: pbehavior.TypeMaintenance,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID: "service-1",
+			}},
+			expectedDiff: []map[string]int{{
+				"depends":               1,
+				"all":                   1,
+				"state.ok":              1,
+				"under_pbh":             1,
+				"pbehavior.maintenance": 1,
+				"inactive_depends":      1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+		},
+		// when entity should be removed from counters
+		{
+			name:  "given paused entity removed from a service with a ko alarm and alarm change is resume, should remove it from the inactive counters",
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			entity: types.Entity{
+				Enabled:          true,
+				Type:             types.EntityTypeResource,
+				ServicesToRemove: []string{"service-1"},
+			},
+			alarmChange: types.AlarmChange{
+				Type: types.AlarmChangeTypeResume,
+			},
+			counters: []entitycounters.EntityCounters{{
+				ID:              "service-1",
+				Depends:         2,
+				All:             2,
+				Active:          1,
+				NotAcknowledged: 1,
+				State: entitycounters.StateCounters{
+					Ok:       1,
+					Critical: 1,
+				},
+				Paused:          1,
+				InactiveDepends: 1,
+			}},
+			expectedDiff: []map[string]int{{
+				"depends":          -1,
+				"all":              -1,
+				"state.ok":         -1,
+				"paused":           -1,
+				"inactive_depends": -1,
+			}},
+			expectedStateServicesInfo: map[string]entitycounters.UpdatedServicesInfo{},
+		},
+	}
+
+	for _, dSet := range dataSets {
+		t.Run(dSet.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			componentService, entityHelper, countersCollection, entityCollection := prepareEntityServiceTest(ctrl)
+			runServicesDataset(t.Context(), ctrl, t, entityHelper, countersCollection, entityCollection, componentService, dSet)
+		})
+	}
+}
+
 func runServicesDataset(
 	ctx context.Context,
 	ctrl *gomock.Controller,
@@ -13720,8 +14465,8 @@ func runServicesDataset(
 						t.Fatal("wrong")
 					}
 
-					if !maps.Equal(inc, dSet.expectedDiff[i]) {
-						t.Errorf("expected counters diff[%d] = %v, but got %v", i, dSet.expectedDiff[i], inc)
+					if diff := pretty.Compare(dSet.expectedDiff[i], inc); diff != "" {
+						t.Errorf("unexpected counters diff[%d] (-want +got):\n%s\n", i, diff)
 					}
 				}
 

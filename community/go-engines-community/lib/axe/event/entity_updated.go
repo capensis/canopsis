@@ -14,7 +14,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pausejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resumejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -45,6 +47,13 @@ func NewEntityUpdatedProcessor(
 	return &entityUpdatedProcessor{
 		dbClient:                    dbClient,
 		alarmCollection:             dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:            dbClient.Collection(mongo.EntityMongoCollection),
+		resumeJobService:            resumejob.NewService(dbClient, eventGenerator, logger),
+		pauseJobService:             pausejob.NewService(dbClient, eventGenerator, logger),
+		eventGenerator:              eventGenerator,
+		publisher:                   amqpPublisher,
+		remediationRpcClient:        remediationRpcClient,
+		encoder:                     encoder,
 		componentCountersCalculator: componentCountersCalculator,
 		externalTagUpdater:          externalTagUpdater,
 		metaAlarmPostProcessor:      metaAlarmPostProcessor,
@@ -74,6 +83,13 @@ func NewEntityUpdatedProcessor(
 type entityUpdatedProcessor struct {
 	dbClient                    mongo.DbClient
 	alarmCollection             mongo.DbCollection
+	entityCollection            mongo.DbCollection
+	resumeJobService            resumejob.Service
+	pauseJobService             pausejob.Service
+	eventGenerator              libevent.Generator
+	publisher                   amqp.Publisher
+	remediationRpcClient        engine.RPCClient
+	encoder                     encoding.Encoder
 	componentCountersCalculator calculator.ComponentCountersCalculator
 	externalTagUpdater          alarmtag.ExternalUpdater
 	metaAlarmPostProcessor      MetaAlarmPostProcessor
@@ -96,8 +112,17 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		result = Result{}
 		alarm = types.Alarm{}
 		countersRes = countersResult{}
+		entity = *event.Entity
 		err := p.alarmCollection.FindOne(ctx, getOpenAlarmMatch(event)).Decode(&alarm)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return err
+		}
+
+		// The entity has been added to or removed from services, so its pause
+		// and its alarm pause are updated.
+		change, err := updatePauseOnServicesChange(ctx, p.entityCollection, p.alarmCollection, p.resumeJobService, p.pauseJobService,
+			&entity, &alarm, event.Parameters.Timestamp, p.logger)
+		if err != nil {
 			return err
 		}
 
@@ -105,6 +130,8 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		if err != nil {
 			return err
 		}
+
+		result.PauseChange = change
 
 		if result.Alarm.ID == "" {
 			// to dynamic-infos
@@ -169,11 +196,12 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			}
 		}
 
-		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCountersWithPauseChange(
 			ctx,
 			&alarm,
 			&entity,
 			result.AlarmChange,
+			result.PauseChange,
 		)
 		if err != nil {
 			return err
@@ -194,6 +222,16 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 
 	if err != nil {
 		return result, err
+	}
+
+	if result.Alarm.ID != "" {
+		alarm = result.Alarm
+	}
+
+	err = publishPauseChange(ctx, p.publisher, p.remediationRpcClient, p.encoder, p.eventGenerator,
+		entity, alarm, result.PauseChange, event.Parameters.Timestamp, p.logger)
+	if err != nil {
+		p.logger.Err(err).Msg("cannot publish pause change")
 	}
 
 	go p.postProcess(context.WithoutCancel(ctx), event, result, countersRes)

@@ -8,7 +8,6 @@ import (
 	"sync"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -64,13 +63,12 @@ type WorkerPool interface {
 }
 
 type pool struct {
-	size                int
-	axeRpcClient        engine.RPCClient
-	webhookRpcClient    engine.RPCClient
-	encoder             encoding.Encoder
-	logger              zerolog.Logger
-	templateExecutor    template.Executor
-	alarmConfigProvider config.AlarmConfigProvider
+	size             int
+	axeRpcClient     engine.RPCClient
+	webhookRpcClient engine.RPCClient
+	encoder          encoding.Encoder
+	logger           zerolog.Logger
+	templateExecutor template.Executor
 
 	alarmCollection          mongo.DbCollection
 	webhookHistoryCollection mongo.DbCollection
@@ -84,16 +82,14 @@ func NewWorkerPool(
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 	templateExecutor template.Executor,
-	alarmConfigProvider config.AlarmConfigProvider,
 ) WorkerPool {
 	return &pool{
-		size:                size,
-		axeRpcClient:        axeRpcClient,
-		webhookRpcClient:    webhookRpcClient,
-		encoder:             encoder,
-		logger:              logger,
-		templateExecutor:    templateExecutor,
-		alarmConfigProvider: alarmConfigProvider,
+		size:             size,
+		axeRpcClient:     axeRpcClient,
+		webhookRpcClient: webhookRpcClient,
+		encoder:          encoder,
+		logger:           logger,
+		templateExecutor: templateExecutor,
 
 		alarmCollection:          dbClient.Collection(mongo.AlarmMongoCollection),
 		webhookHistoryCollection: dbClient.Collection(mongo.WebhookHistoryCollection),
@@ -287,17 +283,12 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 	case types.ActionTypePbehavior, types.ActionTypePbehaviorRemove:
 		axeParams.Origin = PbehaviorOrigin
 		axeParams.Comment = task.Action.Comment
+	case types.ActionTypePause:
+		axeParams.Output = s.genPauseOutput(params, axeParams.RuleName)
+		axeParams.Inherited = params.Inherited
+		axeParams.PauseType = params.PauseType
 	default:
-		if params.Output != "" {
-			outputBuilder := strings.Builder{}
-			outputBuilder.WriteString(axeParams.RuleName)
-			alarmConfig := s.alarmConfigProvider.Get()
-			outputBuilder.WriteString(". ")
-			outputBuilder.WriteString(types.OutputCommentPrefix)
-			outputBuilder.WriteString(utils.TruncateString(params.Output, alarmConfig.OutputLength))
-			outputBuilder.WriteRune('.')
-			axeParams.Output = outputBuilder.String()
-		}
+		axeParams.Output = s.getEventOutput(params, axeParams.RuleName)
 	}
 
 	return &rpc.AxeEvent{
@@ -414,4 +405,42 @@ func (s *pool) resolveAuthor(task Task) (types.AdditionalData, error) {
 	}
 
 	return additionalData, nil
+}
+
+func (s *pool) getEventOutput(params Parameters, ruleName string) string {
+	outputBuilder := strings.Builder{}
+	outputBuilder.WriteString(ruleName)
+	if params.Output != "" {
+		outputBuilder.WriteString(". ")
+		outputBuilder.WriteString(types.OutputCommentPrefix)
+		outputBuilder.WriteString(params.Output)
+		outputBuilder.WriteRune('.')
+	}
+
+	return outputBuilder.String()
+}
+
+func (s *pool) genPauseOutput(params Parameters, ruleName string) string {
+	outputBuilder := strings.Builder{}
+	outputBuilder.WriteString(ruleName)
+	if params.Output != "" {
+		outputBuilder.WriteString(". ")
+		outputBuilder.WriteString(types.OutputCommentPrefix)
+		outputBuilder.WriteString(params.Output)
+		outputBuilder.WriteRune('.')
+	}
+
+	if params.PauseType != "" {
+		if params.Output == "" {
+			outputBuilder.WriteString(". ")
+		} else {
+			outputBuilder.WriteRune(' ')
+		}
+
+		outputBuilder.WriteString(types.OutputTypePrefix)
+		outputBuilder.WriteString(params.PauseType)
+		outputBuilder.WriteRune('.')
+	}
+
+	return outputBuilder.String()
 }

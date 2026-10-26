@@ -149,6 +149,8 @@ func TestListPipeline_GiveOpenResolution_ShouldCheckFullPipeline(t *testing.T) {
 				"entity.perf_data":    0,
 				"entity.comments":     0,
 				"entity.imtags":       0,
+				"entity.latest_pause": 0,
+				"entity.pause.path":   0,
 			}},
 		},
 		Sort: bson.M{"$sort": bson.D{
@@ -299,6 +301,8 @@ func TestListPipeline_GiveResolvedResolution_ShouldCheckFullPipeline(t *testing.
 				"entity.perf_data":    0,
 				"entity.comments":     0,
 				"entity.imtags":       0,
+				"entity.latest_pause": 0,
+				"entity.pause.path":   0,
 			}},
 		},
 		Sort: bson.M{"$sort": bson.D{

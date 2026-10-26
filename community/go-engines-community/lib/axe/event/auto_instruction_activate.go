@@ -43,7 +43,7 @@ func (p *autoInstructionActivateProcessor) Process(ctx context.Context, event rp
 					"$v.inactive_start",
 				}},
 			}},
-			"v.inactive_start": updateInactiveStart(event.Parameters.Timestamp, true, true, false, true),
+			"v.inactive_start": updateInactiveStart(event.Parameters.Timestamp, true, true, false, true, true),
 		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)

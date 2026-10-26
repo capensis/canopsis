@@ -521,7 +521,8 @@ func RegisterRoutes(
 			exportConfigurationAPI.Export,
 		)
 
-		entityStore := entity.NewStore(primaryDbClient, dbExportClient, timezoneConfigProvider, authorProvider, patternfields.NewTransformer(primaryDbClient), json.NewDecoder())
+		entityStore := entity.NewStore(primaryDbClient, dbExportClient, timezoneConfigProvider, authorProvider,
+			patternfields.NewTransformer(primaryDbClient), json.NewEncoder(), json.NewDecoder(), amqpPublisher, eventGenerator)
 		entityAPI := entity.NewApi(
 			entityStore,
 			exportTaskExecutor,
@@ -775,6 +776,17 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer, errorResponder),
 				middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionRead, enforcer, errorResponder),
 				pbehaviorApi.CalendarByEntityID,
+			)
+
+			entityRouter.POST(
+				"/pause",
+				middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer, errorResponder),
+				entityAPI.Pause,
+			)
+			entityRouter.POST(
+				"/resume",
+				middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer, errorResponder),
+				entityAPI.Resume,
 			)
 		}
 
@@ -2633,6 +2645,18 @@ func RegisterRoutes(
 					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					entityAPI.BulkDisable,
+				)
+				entityRouter.POST(
+					"/pause",
+					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
+					entityAPI.BulkPause,
+				)
+				entityRouter.POST(
+					"/resume",
+					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
+					entityAPI.BulkResume,
 				)
 			}
 

@@ -41,6 +41,7 @@ type AxeParameters struct {
 	Role      string           `json:"role,omitempty"`
 	Initiator string           `json:"initiator,omitempty"`
 	Timestamp datetime.CpsTime `json:"timestamp"`
+	Inherited bool             `json:"inherited"`
 	// ChangeState
 	State *types.CpsNumber `json:"state,omitempty"`
 	// AssocTicket and Webhook
@@ -101,6 +102,17 @@ type AxeParameters struct {
 	StructuredMessage []types.StructuredMessage `json:"struct_m,omitempty"`
 	// CheckTicketStatus shows if an event processor should create a check ticket status job.
 	CheckTicketStatus bool `json:"check_ticket_status,omitempty"`
+
+	PauseType       string   `json:"pause_type,omitempty"`
+	PauseSource     string   `json:"pause_source,omitempty"`
+	PauseSourceType string   `json:"pause_source_type,omitempty"`
+	PausePath       []string `json:"pause_path,omitempty"`
+	// PauseStart identifies the inherited pause ended by an internal resume event.
+	PauseStart *datetime.CpsTime `json:"pause_start,omitempty"`
+	// ResumeJob identifies the durable internal propagation receipt.
+	ResumeJob string `json:"resume_job,omitempty"`
+	// PauseJob identifies the durable internal pause propagation receipt.
+	PauseJob string `json:"pause_job,omitempty"`
 }
 
 // AxeResultEvent

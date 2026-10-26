@@ -20,7 +20,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pausejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resumejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -56,6 +58,8 @@ func NewCheckProcessor(
 		client:                      client,
 		alarmCollection:             client.Collection(mongo.AlarmMongoCollection),
 		entityCollection:            client.Collection(mongo.EntityMongoCollection),
+		resumeJobService:            resumejob.NewService(client, eventGenerator, logger),
+		pauseJobService:             pausejob.NewService(client, eventGenerator, logger),
 		pbehaviorCollection:         client.Collection(mongo.PbehaviorMongoCollection),
 		closeDelayJobCollection:     client.Collection(mongo.CloseDelayJobCollection),
 		alarmConfigProvider:         alarmConfigProvider,
@@ -69,6 +73,8 @@ func NewCheckProcessor(
 		externalTagUpdater:          externalTagUpdater,
 		internalTagAlarmMatcher:     internalTagAlarmMatcher,
 		componentCountersCalculator: componentCountersCalculator,
+		eventGenerator:              eventGenerator,
+		publisher:                   amqpPublisher,
 		encoder:                     encoder,
 		logger:                      logger,
 		countersHelper:              newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
@@ -97,6 +103,8 @@ type checkProcessor struct {
 	client                      mongo.DbClient
 	alarmCollection             mongo.DbCollection
 	entityCollection            mongo.DbCollection
+	resumeJobService            resumejob.Service
+	pauseJobService             pausejob.Service
 	pbehaviorCollection         mongo.DbCollection
 	closeDelayJobCollection     mongo.DbCollection
 	alarmConfigProvider         config.AlarmConfigProvider
@@ -110,6 +118,8 @@ type checkProcessor struct {
 	externalTagUpdater          alarmtag.ExternalUpdater
 	internalTagAlarmMatcher     alarmtag.InternalTagAlarmMatcher
 	componentCountersCalculator calculator.ComponentCountersCalculator
+	eventGenerator              event.Generator
+	publisher                   libamqp.Publisher
 	encoder                     encoding.Encoder
 	logger                      zerolog.Logger
 	countersHelper              *countersHelper
@@ -162,6 +172,14 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 			return err
 		}
 
+		// The entity has been added to or removed from services, so its pause and its alarm pause
+		// are updated before the alarm is updated by the event.
+		change, err := updatePauseOnServicesChange(ctx, p.entityCollection, p.alarmCollection, p.resumeJobService, p.pauseJobService,
+			&entity, &alarm, event.Parameters.Timestamp, p.logger)
+		if err != nil {
+			return err
+		}
+
 		if alarm.ID == "" {
 			if !event.Healthcheck {
 				var v types.Entity
@@ -186,16 +204,25 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 			result.AlarmChange.ChangedLongOutput = result.Alarm.Value.LongOutput != alarm.Value.LongOutput
 		}
 
+		if result.PauseChange.alarmChange == "" {
+			result.PauseChange = change
+		}
+
 		if result.Entity.ID != "" {
 			entity = result.Entity
 		}
 
+		// TODO: review and rework all this chaos in all event processor regarding entity, event.Entity and result.Entity, the same for Alarm
+		// add it to result to cover case when entity changed after updatePauseOnServicesChange we should put updated entity to the result to send updated entity to the postProcess
+		result.Entity = entity
+
 		if !event.Healthcheck {
-			result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
+			result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCountersWithPauseChange(
 				ctx,
 				&result.Alarm,
 				&entity,
 				result.AlarmChange,
+				result.PauseChange,
 			)
 			if err != nil {
 				return err
@@ -345,6 +372,39 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 		alarmChange.Type = types.AlarmChangeTypeCreateAndPbhEnter
 	}
 
+	setEntity, unsetEntity := bson.M{}, bson.M{}
+
+	pause, resolvedFromParents, err := p.resolvePause(ctx, entity)
+	if err != nil {
+		return result, err
+	}
+
+	if pause != nil {
+		// The entity is paused by this event only if the pause has been resolved from its parents,
+		// then the pause is propagated. Otherwise the entity is already paused and counted as paused,
+		// and its pause has already been propagated when it has been paused, or it's not inherited.
+		if resolvedFromParents {
+			result.PauseChange = pauseChange{pause: pause, alarmChange: types.AlarmChangeTypePause}
+		}
+
+		newStep := types.NewAlarmStep(types.AlarmStepPause, now, pause.Author,
+			pause.Message, pause.UserID, "", pause.Initiator, false)
+		alarm.Value.Pause = &newStep
+		alarm.Value.Steps = append(alarm.Value.Steps, newStep)
+		alarm.Value.InactiveStart = &now
+	}
+
+	if resolvedFromParents {
+		// The resolved pause is written even if it's nil, so that a pause event received by the entity
+		// in parallel conflicts with this transaction and it's retried with the up-to-date entity.
+		setEntity["latest_pause"] = pause
+		if pause == nil {
+			unsetEntity["pause"] = ""
+		} else {
+			setEntity["pause"] = pause.Pause
+		}
+	}
+
 	result.IsInstructionMatched, err = p.autoInstructionMatcher.Match(alarmChange.GetTriggers(), types.AlarmWithEntity{Alarm: alarm, Entity: entity})
 	if err != nil {
 		return result, err
@@ -385,7 +445,6 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 		return result, fmt.Errorf("cannot create alarm: %w", err)
 	}
 
-	setEntity, unsetEntity := bson.M{}, bson.M{}
 	if alarmChange.Type == types.AlarmChangeTypeCreateAndPbhEnter && updateEntityPbhInfo {
 		setEntity["pbehavior_info"] = alarm.Value.PbehaviorInfo
 		setEntity["last_pbehavior_date"] = alarm.Value.PbehaviorInfo.Timestamp
@@ -406,6 +465,19 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 		}
 
 		result.Entity, err = updateEntityByID(ctx, entity.ID, update, p.entityCollection)
+		if err != nil {
+			return result, err
+		}
+	}
+
+	if resolvedFromParents && pause != nil {
+		err = p.pauseJobService.Create(ctx, result.Entity, *pause, rpc.AxeParameters{
+			Timestamp: pause.Timestamp,
+			Output:    pause.Message,
+			Author:    pause.Author,
+			User:      pause.UserID,
+			Initiator: pause.Initiator,
+		})
 		if err != nil {
 			return result, err
 		}
@@ -856,6 +928,12 @@ func (p *checkProcessor) postProcess(
 			}
 		}
 	}
+
+	err = publishPauseChange(ctx, p.publisher, p.remediationRpcClient, p.encoder, p.eventGenerator,
+		entity, result.Alarm, result.PauseChange, event.Parameters.Timestamp, p.logger)
+	if err != nil {
+		p.logger.Err(err).Msg("cannot publish pause change")
+	}
 }
 
 func (p *checkProcessor) sendEventStatistics(ctx context.Context, event rpc.AxeEvent) {
@@ -871,4 +949,63 @@ func (p *checkProcessor) sendEventStatistics(ctx context.Context, event rpc.AxeE
 	}
 
 	p.eventStatisticsSender.Send(ctx, event.Entity.ID, stats)
+}
+
+// resolvePause returns the pause of the entity's new alarm, nil if it's not paused.
+// The second value is true when the pause has been resolved from the entity's parents
+// and must be written to the entity.
+func (p *checkProcessor) resolvePause(ctx context.Context, entity types.Entity) (*types.LatestPause, bool, error) {
+	// The entity has already received pause events, so its own pause is up to date,
+	// nil means it has been resumed.
+	if entity.LatestPause != nil {
+		if entity.Pause == nil {
+			return nil, false, nil
+		}
+
+		pause := types.LatestPause{Pause: *entity.Pause}
+		if pause.Source == "" {
+			pause.Source = entity.ID
+			pause.SourceType = entity.Type
+		}
+
+		return &pause, false, nil
+	}
+
+	// The entity has never received any pause event, e.g. it could be just created,
+	// so its pause is inherited from its paused parents, the newest one wins.
+	parentIDs := make([]string, len(entity.Services))
+	copy(parentIDs, entity.Services)
+	if entity.Type == types.EntityTypeResource {
+		parentIDs = append(parentIDs, entity.Component)
+	}
+
+	if len(parentIDs) == 0 {
+		return nil, true, nil
+	}
+
+	parent := struct {
+		ID    string      `bson:"_id"`
+		Type  string      `bson:"type"`
+		Name  string      `bson:"name"`
+		Pause types.Pause `bson:"pause"`
+	}{}
+	err := p.entityCollection.
+		FindOne(ctx,
+			bson.M{"_id": bson.M{"$in": parentIDs}, "pause.inherited": true},
+			// pause.source breaks ties so all entities of the parents inherit the same pause.
+			options.FindOne().
+				SetSort(bson.D{{Key: "pause.timestamp", Value: -1}, {Key: "pause.source", Value: -1}}).
+				SetProjection(bson.M{"pause": 1, "type": 1, "name": 1})).
+		Decode(&parent)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, true, nil
+		}
+
+		return nil, true, err
+	}
+
+	parentEntity := types.Entity{ID: parent.ID, Type: parent.Type, Name: parent.Name, Pause: &parent.Pause}
+	inheritedPause, err := parentEntity.InheritedPause()
+	return inheritedPause, true, err
 }

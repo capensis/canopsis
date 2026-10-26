@@ -10,6 +10,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pausejob"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resumejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -20,6 +22,8 @@ import (
 type serviceProcessor struct {
 	dbClient                libmongo.DbClient
 	dbCollection            libmongo.DbCollection
+	resumeJobService        resumejob.Service
+	pauseJobService         pausejob.Service
 	contextGraphManager     contextgraph.Manager
 	eventFilterService      eventfilter.Service
 	entityInfosUpdateSender metrics.EntityInfosUpdateSender
@@ -29,6 +33,8 @@ type serviceProcessor struct {
 
 func NewServiceProcessor(
 	dbClient libmongo.DbClient,
+	resumeJobService resumejob.Service,
+	pauseJobService pausejob.Service,
 	contextGraphManager contextgraph.Manager,
 	eventFilterService eventfilter.Service,
 	entityInfosUpdateSender metrics.EntityInfosUpdateSender,
@@ -38,6 +44,8 @@ func NewServiceProcessor(
 	return &serviceProcessor{
 		dbClient:                dbClient,
 		dbCollection:            dbClient.Collection(libmongo.EntityMongoCollection),
+		resumeJobService:        resumeJobService,
+		pauseJobService:         pauseJobService,
 		contextGraphManager:     contextGraphManager,
 		eventFilterService:      eventFilterService,
 		entityInfosUpdateSender: entityInfosUpdateSender,
@@ -57,16 +65,28 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event, part
 
 		if event.EventType == types.EventTypeRecomputeEntityService {
 			var eventEntity types.Entity
+			var pauseChanges contextgraph.ServicePauseChanges
 
 			err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 				commRegister.Clear()
 
 				eventEntity = types.Entity{}
+				pauseChanges = contextgraph.ServicePauseChanges{}
 				var err error
 
-				eventEntity, err = p.contextGraphManager.RecomputeService(ctx, event.GetEID(), commRegister)
+				eventEntity, pauseChanges, err = p.contextGraphManager.RecomputeService(ctx, event.GetEID(), commRegister)
 				if err != nil {
 					return fmt.Errorf("cannot recompute service %s: %w", event.Component, err)
+				}
+
+				err = p.resumeJobService.CreateForRemoved(ctx, event.GetEID(), pauseChanges.ToResume, event.Timestamp)
+				if err != nil {
+					return err
+				}
+
+				err = p.pauseJobService.CreateForAdded(ctx, event.GetEID(), pauseChanges.ToPause, pauseChanges.ServicePause)
+				if err != nil {
+					return err
 				}
 
 				return commRegister.Commit(ctx)

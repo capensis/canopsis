@@ -195,7 +195,9 @@ func (a *API) processValue(ctx context.Context, value *fastjson.Value, contextUs
 		eventType == types.EventTypeUncancel ||
 		eventType == types.EventTypeAssocTicket ||
 		eventType == types.EventTypeChangestate ||
-		eventType == types.EventTypeSnooze {
+		eventType == types.EventTypeSnooze ||
+		eventType == types.EventTypePause ||
+		eventType == types.EventTypeResume {
 
 		if len(roles) > 0 {
 			role := roles[0]
@@ -208,6 +210,13 @@ func (a *API) processValue(ctx context.Context, value *fastjson.Value, contextUs
 	if longOutputValue != nil && longOutputValue.Type() != fastjson.TypeString {
 		value.Set("long_output", fastjson.MustParse(`""`))
 		a.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msgf("Long output field is not a string : %s. Replacing it by \"\"", longOutputValue.Type())
+	}
+
+	for _, field := range []string{"pause_source", "pause_source_type", "pause_path", "pause_start", "resume_job", "pause_job"} {
+		if value.Exists(field) {
+			value.Del(field)
+			a.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msgf("%s cannot be set in an event, it has been removed", field)
+		}
 	}
 
 	author, err := getStringField(value, "author")

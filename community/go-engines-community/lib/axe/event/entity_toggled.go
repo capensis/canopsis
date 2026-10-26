@@ -2,6 +2,7 @@ package event
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -15,12 +16,15 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pausejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resumejob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 func NewEntityToggledProcessor(
@@ -45,6 +49,9 @@ func NewEntityToggledProcessor(
 	return &entityToggledProcessor{
 		dbClient:                dbClient,
 		alarmCollection:         dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:        dbClient.Collection(mongo.EntityMongoCollection),
+		resumeJobService:        resumejob.NewService(dbClient, eventGenerator, logger),
+		pauseJobService:         pausejob.NewService(dbClient, eventGenerator, logger),
 		closeDelayJobCollection: dbClient.Collection(mongo.CloseDelayJobCollection),
 		logger:                  logger,
 		countersHelper:          newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
@@ -91,6 +98,9 @@ func NewEntityToggledProcessor(
 type entityToggledProcessor struct {
 	dbClient                mongo.DbClient
 	alarmCollection         mongo.DbCollection
+	entityCollection        mongo.DbCollection
+	resumeJobService        resumejob.Service
+	pauseJobService         pausejob.Service
 	closeDelayJobCollection mongo.DbCollection
 	logger                  zerolog.Logger
 	resolveHelper           *resolveHelper
@@ -137,12 +147,47 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		countersRes = countersResult{}
 		notAckedMetricType = ""
 
+		var entity types.Entity
+		err := p.entityCollection.FindOne(ctx, bson.M{"_id": event.Entity.ID}).Decode(&entity)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+
+			return fmt.Errorf("cannot find entity on entitytoggled event: %w", err)
+		}
+
+		if entity.Enabled {
+			return nil
+		}
+
 		beforeAlarm, err := p.resolveHelper.UpdateAlarmToResolve(ctx, match, event.Parameters)
 		if err != nil {
 			return err
 		}
 
-		entity := *event.Entity
+		change := pauseChange{}
+		if entity.Pause != nil {
+			// Disable ends the entity's pause without a resume trigger. Its alarm is
+			// resolved above, but descendants still need a durable resume continuation.
+			var resolvedAlarm types.Alarm
+			err = resumeInheritedPause(ctx, p.entityCollection, p.alarmCollection, p.resumeJobService, p.pauseJobService,
+				&entity, &resolvedAlarm, event.Parameters.Timestamp)
+			if err != nil {
+				return err
+			}
+
+			change.alarmChange = types.AlarmChangeTypeResume
+		} else if event.Entity.Pause != nil {
+			// CHE may have already ended a disabled service's pause. Cancel its
+			// remaining jobs and keep the previous pause for the counter update.
+			if err := p.pauseJobService.Cancel(ctx, entity, *event.Entity.Pause); err != nil {
+				return err
+			}
+
+			change.alarmChange = types.AlarmChangeTypeResume
+		}
+
 		if beforeAlarm.ID != "" {
 			_, err = p.closeDelayJobCollection.DeleteOne(ctx, bson.M{"_id": beforeAlarm.ID})
 			if err != nil {
@@ -176,11 +221,12 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			}
 		}
 
-		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCountersWithPauseChange(
 			ctx,
 			&result.Alarm,
 			&entity,
 			result.AlarmChange,
+			change,
 		)
 
 		return err

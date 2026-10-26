@@ -11,6 +11,20 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 )
 
+// ServicePauseChanges are the pause changes which the recompute of a service implies for its dependencies:
+// the new dependencies inherit its pause and the removed ones are resumed. Their pause and their alarm
+// are updated by the pause and resume events which must be sent for them.
+type ServicePauseChanges struct {
+	// ServicePause is the pause which the dependencies inherit from the service, nil if it's not paused.
+	ServicePause *types.LatestPause
+	// ServiceName is the name of the service whose dependencies are recomputed.
+	ServiceName string
+	// ToPause are the new dependencies of the paused service.
+	ToPause []types.Entity
+	// ToResume are the removed dependencies which are paused by the service.
+	ToResume []types.Entity
+}
+
 type EntityServiceStorage interface {
 	GetAll(ctx context.Context) ([]EntityService, error)
 	Get(ctx context.Context, serviceID string) (entityservice.EntityService, error)
@@ -37,8 +51,9 @@ type Manager interface {
 	AssignStateSetting(ctx context.Context, entity *types.Entity, commRegister mongo.CommandsRegister) (bool, error)
 	// UpdateImpactedServicesFromDependencies updates impacted services from dependencies info for connector entity
 	UpdateImpactedServicesFromDependencies(ctx context.Context) error
-	// RecomputeService recomputes context graph for an entity service
-	RecomputeService(ctx context.Context, serviceID string, commRegister mongo.CommandsRegister) (types.Entity, error)
+	// RecomputeService recomputes context graph for an entity service, it also returns the dependencies
+	// which must be paused or resumed, since their pause is not updated by the recompute itself.
+	RecomputeService(ctx context.Context, serviceID string, commRegister mongo.CommandsRegister) (types.Entity, ServicePauseChanges, error)
 	// ProcessComponentInfos processes component's dependencies to update component infos.
 	ProcessComponentInfos(ctx context.Context, component *types.Entity, updatedComponentInfos []string, stateSettingUpdated bool, commRegister mongo.CommandsRegister) (resourceIDs, servicesIDs []string, err error)
 	// InheritComponentFields fills resource with component infos and check if resource is matched by component state setting.
