@@ -140,7 +140,7 @@ func getAlarmStoreWithFixtures(ctx context.Context, b *testing.B, fixturesPath s
 
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	s := NewStore(dbClient, dbClient, nil, patternfields.NewTransformer(dbClient), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
-		authorProvider, nil, json.NewDecoder(), zerolog.Nop())
+		config.NewUserInterfaceAdapter(dbClient), authorProvider, nil, json.NewDecoder(), zerolog.Nop())
 
 	b.Cleanup(func() {
 		err := loader.Clean(context.WithoutCancel(ctx))

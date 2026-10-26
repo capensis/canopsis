@@ -584,6 +584,9 @@ definitions:
       time_field:
         type: string
       time_format:
+        description: TimeFormat accepts a legacy format name or a user interface Go
+          date layout. It overrides date_format for this export. If both are empty,
+          the default export format is used.
         type: string
       tstart:
         type: integer
@@ -1170,6 +1173,16 @@ definitions:
         type: boolean
       check_count_request_timeout:
         type: integer
+      date_format:
+        description: |-
+          DateFormat is the Go date layout used to display dates in the user interface.
+          It accepts the three listed layouts; an empty or omitted value resets to the default layout.
+        enum:
+        - ""
+        - 02/01/2006 15:04:05
+        - 02/01/2006 (Mon) 15:04:05
+        - Mon 02/01/2006 15:04:05
+        type: string
       default_color_theme:
         $ref: '#/definitions/colortheme.Response'
       disabled_transitions:
@@ -1286,6 +1299,16 @@ definitions:
         type: boolean
       check_count_request_timeout:
         type: integer
+      date_format:
+        description: |-
+          DateFormat is the Go date layout used to display dates in the user interface.
+          It accepts the three listed layouts; an empty or omitted value resets to the default layout.
+        enum:
+        - ""
+        - 02/01/2006 15:04:05
+        - 02/01/2006 (Mon) 15:04:05
+        - Mon 02/01/2006 15:04:05
+        type: string
       default_color_theme:
         type: string
       disabled_transitions:
@@ -2146,6 +2169,9 @@ definitions:
       separator:
         type: string
       time_format:
+        description: TimeFormat accepts a legacy format name or a user interface Go
+          date layout. If empty, the user interface date format or the default is
+          used.
         type: string
       type:
         items:
