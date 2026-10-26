@@ -201,7 +201,7 @@ const webhookActionParametersToForm = (parameters = {}) => {
     skip_for_child: parameters.skip_for_child ?? false,
     skip_for_instruction: parameters.skip_for_instruction ?? false,
     stop_on_fail: isEmptyParameters ? WORKFLOW_TYPES.stop : parameters.stop_on_fail ?? WORKFLOW_TYPES.continue,
-    stop_on_success: isEmptyParameters ? WORKFLOW_TYPES.stop : parameters.stop_on_success ?? WORKFLOW_TYPES.continue,
+    stop_on_success: parameters.stop_on_success ?? WORKFLOW_TYPES.continue,
     ticket_system_name: parameters.ticket_system_name ?? '',
   };
 };
