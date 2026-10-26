@@ -62,7 +62,7 @@
     />
 
     <widget-settings-group :title="t('clock.fields.clocks')">
-      <clocks-field v-model="form.parameters.clocks" />
+      <clocks-field v-model="form.parameters.clocks" class="py-3" />
     </widget-settings-group>
 
     <widget-colors-form v-model="form.parameters.colors" />
