@@ -5,6 +5,10 @@
     </template>
 
     <template #text>
+      <v-alert v-if="config.warningText" class="mb-4" type="warning">
+        {{ config.warningText }}
+      </v-alert>
+
       <c-text-field
         :model-value="config.value"
         :label="config.label"

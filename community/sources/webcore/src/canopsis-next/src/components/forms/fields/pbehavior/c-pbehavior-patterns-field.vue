@@ -11,7 +11,7 @@
     :alarm-counter="alarmCounter"
     :entity-counter="entityCounter"
     class="c-pbehavior-patterns-field"
-    @update:patterns="$emit('update:value', $event)"
+    @update:patterns="$emit('update:patterns', $event)"
   >
     <template #append-count="">
       <v-btn
@@ -51,7 +51,7 @@ import { useI18n } from '@/hooks/i18n';
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
 export default {
-  emits: ['update:patterns', 'update:value', 'show:alarms', 'show:entities'],
+  emits: ['update:patterns', 'show:alarms', 'show:entities'],
   components: { PatternEditorField },
   props: {
     patterns: {
@@ -102,6 +102,7 @@ export default {
       operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
       valueField: {
         is: 'c-pbehavior-field',
+        model: 'modelValue',
         props: {
           itemTitle: 'name',
           itemValue: '_id',
@@ -114,6 +115,7 @@ export default {
       operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
       valueField: {
         is: 'c-pbehavior-reason-field',
+        model: 'modelValue',
         props: {
           ellipsis: true,
         },
@@ -124,6 +126,7 @@ export default {
       operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
       valueField: {
         is: 'c-pbehavior-type-field',
+        model: 'modelValue',
         props: {
           ellipsis: true,
         },
@@ -139,6 +142,7 @@ export default {
       operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
       valueField: {
         is: 'c-select',
+        model: 'modelValue',
         props: {
           items: availablePbehaviorTypeTypes.value,
           itemTitle: 'text',
