@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarmaction"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarmtag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/commenttemplate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/entityservice"
@@ -204,6 +205,7 @@ func registerStructValidations(
 
 	v.RegisterStructValidation(template.ValidateEditDataRequest, template.EditDataRequest{})
 	v.RegisterStructValidation(template.ValidateEditTestRequest, template.EditTestRequest{})
+	v.RegisterStructValidation(colortheme.ValidateColors, colortheme.Colors{})
 
 	checkTicketStatusValidator := webhook.NewCheckTicketStatusValidator(tplExecutor)
 	v.RegisterStructValidation(checkTicketStatusValidator.ValidateCheckTicketStatus, libwebhook.CheckTicketStatus{})
