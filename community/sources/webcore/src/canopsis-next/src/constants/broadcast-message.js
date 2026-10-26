@@ -3,9 +3,9 @@ import { ROUTES_NAMES } from './common';
 export const DEFAULT_BROADCAST_MESSAGE_COLOR = '#e75e40';
 
 export const BROADCAST_MESSAGES_STATUSES = {
-  active: 0,
-  pending: 1,
-  expired: 2,
+  active: 1,
+  pending: 2,
+  expired: 3,
 };
 
 export const BROADCAST_MESSAGE_VIEWS = {

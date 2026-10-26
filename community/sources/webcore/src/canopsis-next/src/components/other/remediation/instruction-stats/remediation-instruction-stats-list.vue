@@ -27,7 +27,7 @@
       <template #last_executed_on="{ item }">
         {{ dateToString(item.last_executed_on) }}
       </template>
-      <template #last_modified="{ item }">
+      <template #updated="{ item }">
         {{ dateToString(item.last_modified) }}
       </template>
       <template #avg_complete_time="{ item }">
@@ -141,7 +141,7 @@ export default {
           value: 'last_executed_on',
           width: 160,
         },
-        { text: t('common.lastModifiedOn'), value: 'last_modified', width: 160 },
+        { text: t('common.lastModifiedOn'), value: 'updated', width: 160 },
         {
           text: t('remediation.instructionStat.averageCompletionTime'),
           value: 'avg_complete_time',
