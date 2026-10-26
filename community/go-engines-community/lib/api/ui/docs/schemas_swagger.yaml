@@ -4045,14 +4045,10 @@ definitions:
     properties:
       instances:
         type: integer
-      is_diff_instances_config:
-        type: boolean
-      is_queue_overflown:
-        type: boolean
-      is_running:
-        type: boolean
-      is_too_few_instances:
-        type: boolean
+      issues:
+        items:
+          type: string
+        type: array
       min_instances:
         type: integer
       name:
@@ -4061,6 +4057,8 @@ definitions:
         type: integer
       queue_length:
         type: integer
+      status:
+        type: string
       time:
         type: integer
     type: object
@@ -4106,14 +4104,18 @@ definitions:
     type: object
   healthcheck.Service:
     properties:
-      is_running:
-        type: boolean
+      issues:
+        items:
+          type: string
+        type: array
       name:
         type: string
       nodes:
         type: integer
       running_nodes:
         type: integer
+      status:
+        type: string
     type: object
   healthcheck.Status:
     properties:
