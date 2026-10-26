@@ -140,6 +140,8 @@ export default {
     [USER_PERMISSIONS.business.alarmsList.actions.exportPdf]: 'Exporter en PDF',
     [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]:
       'Exporter la liste des alarmes en CSV',
+    [USER_PERMISSIONS.business.alarmsList.actions.exportAlarmTimeline]:
+      'Exporter la chronologie de l\'alarme en CSV',
     [USER_PERMISSIONS.business.alarmsList.actions.metaAlarmGroup]:
       'Délier l\'alarme de la méta-alarme automatique',
     [USER_PERMISSIONS.business.alarmsList.actions.bookmark]: 'Ajouter / supprimer un signet',

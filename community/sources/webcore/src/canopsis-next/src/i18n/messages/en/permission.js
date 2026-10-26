@@ -123,6 +123,8 @@ export default {
     [USER_PERMISSIONS.business.alarmsList.actions.category]: 'Filter alarms by category',
     [USER_PERMISSIONS.business.alarmsList.actions.exportPdf]: 'Export in PDF',
     [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: 'Export alarm list as CSV',
+    [USER_PERMISSIONS.business.alarmsList.actions.exportAlarmTimeline]:
+      'Export alarm timeline as CSV',
     [USER_PERMISSIONS.business.alarmsList.actions.metaAlarmGroup]:
       'Unlink alarm from auto meta alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.bookmark]: 'Add / remove bookmark',
