@@ -19,39 +19,25 @@ RUN make
 RUN make install DESTDIR=/installroot
 
 #
-# OpenShift-compatible NGINX Container
+# NGINX container (Docker, Kubernetes and OpenShift, without root)
 #
 
-FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} as nginx-openshift
-
-# Put the nginx certificates in a volume
-RUN mkdir -m 750 -p /etc/nginx/ssl && \
-	chown -R nginx /etc/nginx/ssl
-VOLUME /etc/nginx/ssl
-
-COPY --from=build /installroot/ /
-
-COPY community/sources/webcore/src/canopsis-next/docker/files/entrypoint-nginx.sh /entrypoint.sh
+FROM nginxinc/nginx-unprivileged:${NGINX_VERSION}
 
 USER root
-RUN chmod +x /entrypoint.sh
-USER nginx
 
-ENV NGINX_OPENSHIFT=1
-ENTRYPOINT /entrypoint.sh
-
-#
-# Default NGINX Container
-#
-
-FROM nginx:${NGINX_VERSION}
-
-RUN mkdir -p -m 0750 /etc/nginx/ssl
+# Certificate mount point
+RUN mkdir -p /etc/nginx/ssl && chmod 0755 /etc/nginx/ssl
 
 COPY --from=build /installroot/ /
 
-COPY community/sources/webcore/src/canopsis-next/docker/files/entrypoint-nginx.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN rm -f /etc/nginx/conf.d/default.conf
 
-ENV NGINX_OPENSHIFT=0
-ENTRYPOINT /entrypoint.sh
+COPY community/sources/webcore/src/canopsis-next/docker/files/entrypoint-nginx.sh /entrypoint.sh
+RUN chmod 0755 /entrypoint.sh
+
+# Numeric UID: required so that runAsNonRoot is verifiable.
+# OpenShift replaces it with a UID from the namespace range.
+USER 101
+
+ENTRYPOINT ["/entrypoint.sh"]
