@@ -14,6 +14,7 @@ import (
 type Store interface {
 	SyncConnections(ctx context.Context, conns []websocket.ConnectionAuthInfo) error
 	GetConnections(ctx context.Context, userIDs []string) (map[string]int64, error)
+	GetTopConnectedUser(ctx context.Context) (*UserConnections, error)
 	CountActiveConnections(ctx context.Context) (int64, error)
 	GetUsers(ctx context.Context) ([]string, error)
 }
@@ -33,6 +34,77 @@ type store struct {
 	collection     mongo.DbCollection
 	deleteInterval time.Duration
 	readInterval   time.Duration
+}
+
+// UserConnections contains the distinct active token count for one user.
+type UserConnections struct {
+	UserID string `bson:"_id"`
+	Count  int64  `bson:"count"`
+}
+
+func (s *store) freshnessFilter() bson.M {
+	return bson.M{
+		"updated": bson.M{"$gt": datetime.CpsTime{Time: time.Now().Add(-s.readInterval)}},
+	}
+}
+
+// freshConnectionsPipeline returns new stages on each call so callers can
+// safely extend the aggregation without sharing mutable BSON values.
+func (s *store) freshConnectionsPipeline() []bson.M {
+	return []bson.M{
+		{"$match": s.freshnessFilter()},
+		{"$group": bson.M{
+			"_id":    "$user",
+			"tokens": bson.M{"$addToSet": "$token"},
+		}},
+	}
+}
+
+func (s *store) GetTopConnectedUser(ctx context.Context) (*UserConnections, error) {
+	pipeline := s.freshConnectionsPipeline()
+	pipeline = append(pipeline,
+		bson.M{"$project": bson.M{
+			"_id":   1,
+			"count": bson.M{"$size": "$tokens"},
+		}},
+		bson.M{"$match": bson.M{"count": bson.M{"$gt": 0}}},
+		// Keep candidates ranked while checking existence so MongoDB can stop
+		// the lookup after it finds the first existing user. The limit must
+		// remain after the existence filter so orphaned connections fall back.
+		bson.M{"$sort": bson.D{{Key: "count", Value: -1}, {Key: "_id", Value: 1}}},
+		bson.M{"$lookup": bson.M{
+			"from":         mongo.UserCollection,
+			"localField":   "_id",
+			"foreignField": "_id",
+			"pipeline": bson.A{
+				bson.M{"$match": bson.M{"enabled": true}},
+				bson.M{"$project": bson.M{"_id": 1}},
+			},
+			"as": "existingUser",
+		}},
+		bson.M{"$match": bson.M{"existingUser.0": bson.M{"$exists": true}}},
+		bson.M{"$limit": 1},
+		bson.M{"$project": bson.M{"_id": 1, "count": 1}},
+	)
+
+	cursor, err := s.collection.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		res := &UserConnections{}
+		if err := cursor.Decode(res); err != nil {
+			return nil, err
+		}
+		return res, nil
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return nil, nil
 }
 
 func (s *store) SyncConnections(ctx context.Context, conns []websocket.ConnectionAuthInfo) error {
@@ -69,11 +141,10 @@ func (s *store) SyncConnections(ctx context.Context, conns []websocket.Connectio
 }
 
 func (s *store) GetConnections(ctx context.Context, userIDs []string) (map[string]int64, error) {
+	match := s.freshnessFilter()
+	match["user"] = bson.M{"$in": userIDs}
 	cursor, err := s.collection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{
-			"user":    bson.M{"$in": userIDs},
-			"updated": bson.M{"$gt": datetime.CpsTime{Time: time.Now().Add(-s.readInterval)}},
-		}},
+		{"$match": match},
 		{"$group": bson.M{
 			"_id":    "$user",
 			"tokens": bson.M{"$addToSet": "$token"},
@@ -106,19 +177,12 @@ func (s *store) GetConnections(ctx context.Context, userIDs []string) (map[strin
 }
 
 func (s *store) CountActiveConnections(ctx context.Context) (int64, error) {
-	cursor, err := s.collection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{
-			"updated": bson.M{"$gt": datetime.CpsTime{Time: time.Now().Add(-s.readInterval)}},
-		}},
-		{"$group": bson.M{
-			"_id":    "$user",
-			"tokens": bson.M{"$addToSet": "$token"},
-		}},
-		{"$group": bson.M{
-			"_id":   nil,
-			"count": bson.M{"$sum": bson.M{"$size": "$tokens"}},
-		}},
-	})
+	pipeline := s.freshConnectionsPipeline()
+	pipeline = append(pipeline, bson.M{"$group": bson.M{
+		"_id":   nil,
+		"count": bson.M{"$sum": bson.M{"$size": "$tokens"}},
+	}})
+	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return 0, err
 	}
@@ -131,15 +195,16 @@ func (s *store) CountActiveConnections(ctx context.Context) (int64, error) {
 		err = cursor.Decode(&res)
 		return res.Count, err
 	}
+	if err := cursor.Err(); err != nil {
+		return 0, err
+	}
 
 	return 0, nil
 }
 
 func (s *store) GetUsers(ctx context.Context) ([]string, error) {
 	cursor, err := s.collection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{
-			"updated": bson.M{"$gt": datetime.CpsTime{Time: time.Now().Add(-s.readInterval)}},
-		}},
+		{"$match": s.freshnessFilter()},
 		{"$group": bson.M{
 			"_id": "$user",
 		}},

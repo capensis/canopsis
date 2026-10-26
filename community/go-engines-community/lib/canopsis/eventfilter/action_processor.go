@@ -75,7 +75,7 @@ func (p *actionProcessor) Process(
 		updatedEntityInfos, err = p.setEntityInfoFromDictionary(rule, action, event, updatedEntityInfos, tplData)
 	default:
 		failReason := fmt.Sprintf("action %d has invalid type %q", action.Index, action.Type)
-		p.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, event)
+		p.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, failReason, event)
 
 		err = fmt.Errorf("action type = %s is invalid", action.Type)
 	}
@@ -91,7 +91,7 @@ func (p *actionProcessor) setField(
 	err := event.SetField(action.Name, action.Value)
 	if err != nil {
 		failReason := fmt.Sprintf("action %d cannot set %q field: %s", action.Index, action.Name, err.Error())
-		p.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, nil)
+		p.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, failReason, nil)
 
 		return err
 	}
@@ -113,7 +113,7 @@ func (p *actionProcessor) setFieldFromTemplate(
 	err = event.SetField(action.Name, value)
 	if err != nil {
 		failReason := fmt.Sprintf("action %d cannot set %q field: %s", action.Index, action.Name, err.Error())
-		p.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, nil)
+		p.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, failReason, nil)
 
 		return err
 	}
@@ -130,7 +130,7 @@ func (p *actionProcessor) setEntityInfo(
 	if !types.IsInfoValueValid(action.Value) {
 		failReason := fmt.Sprintf("action %d cannot set %q entity info: invalid type of %v", action.Index,
 			action.Name, action.Value)
-		p.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, nil)
+		p.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, failReason, nil)
 
 		return updatedEntityInfos, types.ErrInvalidInfoType
 	}
@@ -167,7 +167,7 @@ func (p *actionProcessor) copy(
 	if !ok {
 		failReason := fmt.Sprintf("action %d cannot copy to %q field: value %v must be path to field",
 			action.Index, action.Name, action.Value)
-		p.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, nil)
+		p.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, failReason, nil)
 
 		return ErrShouldBeAString
 	}
@@ -176,7 +176,7 @@ func (p *actionProcessor) copy(
 	if err != nil {
 		failReason := fmt.Sprintf("action %d cannot copy from %q to %q: %s", action.Index, strValue,
 			action.Name, err.Error())
-		p.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, event)
+		p.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, failReason, event)
 
 		return err
 	}
@@ -185,7 +185,7 @@ func (p *actionProcessor) copy(
 	if err != nil {
 		failReason := fmt.Sprintf("action %d cannot copy from %q to %q: %s", action.Index, strValue,
 			action.Name, err.Error())
-		p.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, event)
+		p.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, failReason, event)
 
 		return err
 	}
@@ -204,7 +204,7 @@ func (p *actionProcessor) copyEntityInfo(
 	if !ok {
 		failReason := fmt.Sprintf("action %d cannot copy to %q entity info: value %v must be path to field",
 			action.Index, action.Name, action.Value)
-		p.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, nil)
+		p.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, failReason, nil)
 
 		return updatedEntityInfos, ErrShouldBeAString
 	}
@@ -213,7 +213,7 @@ func (p *actionProcessor) copyEntityInfo(
 	if err != nil {
 		failReason := fmt.Sprintf("action %d cannot copy from %q to %q entity info: %s", action.Index,
 			strValue, action.Name, err.Error())
-		p.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, event)
+		p.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, failReason, event)
 
 		return updatedEntityInfos, err
 	}
@@ -221,7 +221,7 @@ func (p *actionProcessor) copyEntityInfo(
 	if !types.IsInfoValueValid(value) {
 		failReason := fmt.Sprintf("action %d cannot copy from %q to %q entity info: invalid type of %v",
 			action.Index, strValue, action.Name, value)
-		p.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, event)
+		p.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, failReason, event)
 
 		return updatedEntityInfos, types.ErrInvalidInfoType
 	}
@@ -241,7 +241,7 @@ func (p *actionProcessor) setTags(
 	if !ok {
 		failReason := fmt.Sprintf("action %d cannot set tags in %q: value %v must be path to field", action.Index,
 			action.Name, action.Value)
-		p.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, nil)
+		p.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, failReason, nil)
 
 		return ErrShouldBeAString
 	}
@@ -249,7 +249,7 @@ func (p *actionProcessor) setTags(
 	value, err := utils.GetField(tplData, strValue)
 	if err != nil {
 		failReason := fmt.Sprintf("action %d cannot read source field to set tags in %q: %s", action.Index, action.Name, err)
-		p.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, event)
+		p.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, failReason, event)
 
 		return err
 	}
@@ -262,7 +262,7 @@ func (p *actionProcessor) setTags(
 	if !ok {
 		failReason := fmt.Sprintf("action %d cannot assert field's type as string to set tags in %q: %s",
 			action.Index, action.Name, err)
-		p.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, event)
+		p.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, failReason, event)
 
 		return ErrShouldBeAString
 	}
@@ -334,7 +334,7 @@ func (p *actionProcessor) setEntityInfoFromDictionary(
 	if !ok {
 		failReason := fmt.Sprintf("action %d cannot set entity info in %q: value %v must be path to field", action.Index,
 			action.Name, action.Value)
-		p.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, nil)
+		p.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, failReason, nil)
 
 		return updatedEntityInfos, ErrShouldBeAString
 	}
@@ -347,7 +347,7 @@ func (p *actionProcessor) setEntityInfoFromDictionary(
 
 		failReason := fmt.Sprintf("action %d cannot read source field to set entity info in %q: %s",
 			action.Index, action.Name, err)
-		p.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, event)
+		p.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, failReason, event)
 
 		return updatedEntityInfos, err
 	}
@@ -356,7 +356,7 @@ func (p *actionProcessor) setEntityInfoFromDictionary(
 	if !ok {
 		failReason := fmt.Sprintf("action %d cannot assert field's type as map to set entity info in %q",
 			action.Index, action.Name)
-		p.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, event)
+		p.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, failReason, event)
 
 		return updatedEntityInfos, errors.New("value should be a map")
 	}
@@ -365,7 +365,7 @@ func (p *actionProcessor) setEntityInfoFromDictionary(
 		if !types.IsInfoValueValid(v) {
 			err = fmt.Errorf("value %v for %q is invalid", v, k)
 			failReason := fmt.Sprintf("action %d cannot set entity info in %q: %s", action.Index, action.Name, err)
-			p.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, event)
+			p.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, failReason, event)
 
 			return updatedEntityInfos, err
 		}
@@ -380,7 +380,7 @@ func (p *actionProcessor) executeParsedTemplate(action ParsedAction, rule Parsed
 	if action.ParsedValue.Text == "" {
 		failReason := fmt.Sprintf("action %d cannot set %q %s: %v must be template", action.Index,
 			action.Name, target, action.Value)
-		p.failureService.Add(rule.ID, rule.Description, rule.Updated, FailureTypeOther, failReason, nil)
+		p.failureService.Add(rule.ID, rule.Name, rule.Updated, FailureTypeOther, failReason, nil)
 
 		return "", ErrShouldBeAString
 	}

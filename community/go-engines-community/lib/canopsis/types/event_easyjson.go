@@ -4004,6 +4004,12 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			} else {
 				out.Meta = string(in.String())
 			}
+		case "meta_rule_name":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.MetaRuleName = string(in.String())
+			}
 		case "meta_value_path":
 			if in.IsNull() {
 				in.Skip()
@@ -4520,6 +4526,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"meta\":"
 		out.RawString(prefix)
 		out.String(string(in.Meta))
+	}
+	if in.MetaRuleName != "" {
+		const prefix string = ",\"meta_rule_name\":"
+		out.RawString(prefix)
+		out.String(string(in.MetaRuleName))
 	}
 	if in.MetaValuePath != "" {
 		const prefix string = ",\"meta_value_path\":"

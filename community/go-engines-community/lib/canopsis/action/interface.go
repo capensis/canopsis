@@ -117,4 +117,5 @@ type RpcResult struct {
 	Alarm           *types.Alarm
 	AlarmChangeType types.AlarmChangeType
 	Error           error
+	StopScenario    bool
 }

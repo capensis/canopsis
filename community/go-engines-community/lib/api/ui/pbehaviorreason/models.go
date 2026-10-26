@@ -9,7 +9,7 @@ import (
 type ListRequest struct {
 	pagination.FilteredQuery
 	WithHidden bool     `form:"with_hidden"`
-	SortBy     string   `form:"sort_by" binding:"oneoforempty=name created"`
+	SortBy     string   `form:"sort_by" binding:"oneoforempty=name created hidden"`
 	IDs        []string `form:"ids[]"`
 }
 
