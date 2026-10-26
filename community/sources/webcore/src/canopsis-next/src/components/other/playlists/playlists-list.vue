@@ -127,7 +127,7 @@ export default {
 
     const headers = computed(() => [
       { text: t('common.name'), value: 'name' },
-      { text: t('common.fullscreen'), value: 'fullscreen', sortable: false },
+      { text: t('common.fullscreen'), value: 'fullscreen' },
       { text: t('common.enabled'), value: 'enabled' },
       { text: t('common.interval'), value: 'interval', sortable: false },
       { text: t('common.actionsLabel'), value: 'actions', sortable: false },

@@ -251,6 +251,111 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+  /alarm-timeline-export:
+    post:
+      tags:
+        - alarms
+      summary: Start an alarm timeline export
+      description: |
+        Export all retained steps of one open or resolved alarm as CSV, without filtering or grouping.
+        Rows are ordered by timestamp, preserving stored step order for equal timestamps.
+        The fixed columns are type, timestamp, author, message, value, and initiator.
+        Author is the recorded step author; no user lookup is performed.
+        Timestamps use the configured timezone and the requested time format, or YYYY-MM-DDThh:mm:ss by default.
+        Previously cropped steps cannot be reconstructed.
+
+        The export runs in the background: poll `GET /alarm-timeline-export/{id}` until its status is
+        `1` (succeeded) or `2` (failed), then fetch the CSV with
+        `GET /alarm-timeline-export/{id}/download` when succeeded.
+        Completed tasks and files are retained for one hour, with cleanup on the next hourly tick.
+
+        -  PERMISSIONS: `api_alarm_read`
+      operationId: alarm-timeline-export-start
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmtimeline.ExportRequest'
+            example:
+              alarm: my-alarm-id
+              separator: comma
+              time_format: YYYY-MM-DDThh:mm:ss
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmtimeline.ExportResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /alarm-timeline-export/{id}:
+    get:
+      tags:
+        - alarms
+      summary: Get the status of an alarm timeline export
+      description: |
+        Status values: `0` - running, `1` - succeeded, `2` - failed.
+
+        -  PERMISSIONS: `api_alarm_read`
+      operationId: alarm-timeline-export-status
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmtimeline.ExportResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /alarm-timeline-export/{id}/download:
+    get:
+      tags:
+        - alarms
+      summary: Download an alarm timeline export
+      description: |
+        Download the CSV when the task status is `1` (succeeded); running or failed tasks return not found.
+
+        -  PERMISSIONS: `api_alarm_read`
+      operationId: alarm-timeline-export-download
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: CSV file
+          headers:
+            Content-Disposition:
+              description: attachment, with the generated file name
+              schema:
+                type: string
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /alarm-export:
     post:
       tags:

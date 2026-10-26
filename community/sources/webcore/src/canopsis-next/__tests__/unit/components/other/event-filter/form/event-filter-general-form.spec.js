@@ -19,6 +19,7 @@ const stubs = {
 };
 
 const selectDescriptionField = wrapper => wrapper.find('c-description-field-stub');
+const selectNameField = wrapper => wrapper.find('c-name-field-stub');
 const selectPriorityField = wrapper => wrapper.find('c-priority-field-stub');
 const selectRecurrenceRuleField = wrapper => wrapper.find('pbehavior-recurrence-rule-field-stub');
 const selectEnrichmentForm = wrapper => wrapper.find('event-filter-enrichment-form-stub');
@@ -26,6 +27,7 @@ const selectChangeEntityForm = wrapper => wrapper.find('event-filter-change-enti
 
 describe('event-filter-general-form', () => {
   const form = {
+    name: Faker.datatype.string(),
     type: EVENT_FILTER_TYPES.drop,
     priority: 2,
     description: Faker.datatype.string(),
@@ -33,6 +35,23 @@ describe('event-filter-general-form', () => {
   };
 
   const factory = generateShallowRenderer(EventFilterGeneralForm, { stubs });
+
+  test('Name is required and changed after trigger name field', () => {
+    const wrapper = factory({
+      propsData: {
+        form,
+      },
+    });
+
+    const newName = Faker.datatype.string();
+    const nameField = selectNameField(wrapper);
+
+    expect(nameField.attributes()).toHaveProperty('required');
+
+    nameField.triggerCustomEvent('input', newName);
+
+    expect(wrapper).toEmitInput({ ...form, name: newName });
+  });
 
   test('Priority is optional', () => {
     const wrapper = factory({

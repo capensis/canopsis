@@ -45,6 +45,7 @@
           :disabled="disabled"
           :variables="variables"
           :optionally="optionally"
+          :with-on-mismatch="withOnMismatch"
           @update:form="updateModel"
         />
         <request-with-token-form
@@ -109,6 +110,10 @@ export default {
       default: () => [],
     },
     optionally: {
+      type: Boolean,
+      default: false,
+    },
+    withOnMismatch: {
       type: Boolean,
       default: false,
     },

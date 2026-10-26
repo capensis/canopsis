@@ -1,5 +1,7 @@
 <template>
   <c-layout gap="3" column>
+    <c-name-field v-model="nameField" autofocus required />
+
     <c-form-block>
       <c-form-block-row :label="$t('common.type')">
         <c-event-filter-type-field v-model="typeField" />
@@ -73,13 +75,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    isDisabledIdField: {
-      type: Boolean,
-      default: false,
-    },
   },
   setup() {
     const {
+      nameField,
       typeField,
       priorityField,
       descriptionField,
@@ -89,6 +88,7 @@ export default {
       startField,
       stopField,
     } = useFormModels({
+      nameField: 'name',
       typeField: 'type',
       priorityField: 'priority',
       descriptionField: 'description',
@@ -104,6 +104,7 @@ export default {
     const isChangeEntityType = computed(() => isChangeEntityEventFilterRuleType(typeField.value));
 
     return {
+      nameField,
       typeField,
       priorityField,
       descriptionField,

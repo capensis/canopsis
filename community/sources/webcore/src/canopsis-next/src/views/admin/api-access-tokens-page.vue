@@ -4,24 +4,24 @@
 
     <v-card class="ma-4 mt-0">
       <v-tabs v-model="activeTab" align-tabs="center" color="primary">
-        <v-tab v-if="hasReadShareTokenAccess" :value="API_ACCESS_TOKENS_TABS.shareTokens">
-          {{ t('apiToken.sharedViewTokens') }}
-        </v-tab>
         <v-tab :value="API_ACCESS_TOKENS_TABS.apiTokens">
           {{ t('apiToken.publicApiTokens') }}
+        </v-tab>
+        <v-tab v-if="hasReadShareTokenAccess" :value="API_ACCESS_TOKENS_TABS.shareTokens">
+          {{ t('apiToken.sharedViewTokens') }}
         </v-tab>
       </v-tabs>
 
       <v-card-text>
         <v-window v-model="activeTab">
+          <v-window-item :value="API_ACCESS_TOKENS_TABS.apiTokens">
+            <api-tokens />
+          </v-window-item>
           <v-window-item
             v-if="hasReadShareTokenAccess"
             :value="API_ACCESS_TOKENS_TABS.shareTokens"
           >
             <share-tokens />
-          </v-window-item>
-          <v-window-item :value="API_ACCESS_TOKENS_TABS.apiTokens">
-            <api-tokens />
           </v-window-item>
         </v-window>
       </v-card-text>
@@ -75,11 +75,7 @@ export default {
       hasCreateAccess: hasCreateShareTokenAccess,
       hasReadAccess: hasReadShareTokenAccess,
     } = useCRUDPermissions(USER_PERMISSIONS.technical.shareToken);
-    const activeTab = ref(
-      hasReadShareTokenAccess.value
-        ? API_ACCESS_TOKENS_TABS.shareTokens
-        : API_ACCESS_TOKENS_TABS.apiTokens,
-    );
+    const activeTab = ref(API_ACCESS_TOKENS_TABS.apiTokens);
     const isApiTokensTab = computed(() => activeTab.value === API_ACCESS_TOKENS_TABS.apiTokens);
     const hasCreateTokenAccess = computed(
       () => isApiTokensTab.value || hasCreateShareTokenAccess.value,
@@ -109,6 +105,7 @@ export default {
                 title: t('apiToken.createdTitle'),
                 label: t('apiToken.publicApiToken'),
                 value: apiToken.value,
+                warningText: t('apiToken.copyWarning'),
                 copySuccessText: t('apiToken.copied'),
               },
             });

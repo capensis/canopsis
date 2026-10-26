@@ -6,11 +6,7 @@
       </template>
 
       <template #text>
-        <ticket-status-job-form
-          :form="values"
-          :is-new="isNew"
-          @update:form="updateForm"
-        />
+        <ticket-status-job-form :is-new="isNew" />
       </template>
 
       <template #actions>
@@ -75,8 +71,6 @@ export default {
     const { values, handleSubmit, isSubmitting } = form;
 
     const closeModal = () => modals.hide({ id: props.modal.id });
-    const updateForm = value => (values.value = value);
-
     const submit = handleSubmit(async () => {
       await config.value.action?.(formToTicketStatusJob(values.value));
 
@@ -97,7 +91,6 @@ export default {
       isSubmitting,
       submitLabel,
       submit,
-      updateForm,
       closeModal,
     };
   },

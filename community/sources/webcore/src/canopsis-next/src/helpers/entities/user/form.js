@@ -63,7 +63,6 @@ export const findDefaultViewId = (groupsList = []) => {
  * @returns {UserForm}
  */
 export const userToForm = (user = {}) => ({
-  _id: user._id ?? '',
   name: user.name ?? '',
   firstname: user.firstname ?? '',
   lastname: user.lastname ?? '',
@@ -84,8 +83,11 @@ export const userToForm = (user = {}) => ({
  * @param {UserForm} form
  * @returns {User}
  */
-export const formToUserRequest = form => ({
-  ...form,
+export const formToUserRequest = (form) => {
+  const { _id, ...user } = form;
 
-  roles: mapIds(form.roles),
-});
+  return {
+    ...user,
+    roles: mapIds(user.roles),
+  };
+};
