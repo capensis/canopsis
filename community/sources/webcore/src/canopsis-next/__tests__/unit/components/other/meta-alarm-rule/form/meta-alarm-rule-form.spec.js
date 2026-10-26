@@ -24,7 +24,6 @@ const stubs = {
   },
   'meta-alarm-rule-general-form': {
     name: 'MetaAlarmRuleGeneralForm',
-    props: ['disabledIdField'],
     template: '<div />',
   },
   'meta-alarm-rule-parameters-form': {
@@ -66,17 +65,6 @@ describe('meta-alarm-rule-form', () => {
     await wrapper.vm.$nextTick();
 
     expect(globalThis.__TEST_FORM__.getValue('enabled')).toBe(false);
-  });
-
-  test('Disabled ID state forwarded to general form', () => {
-    const wrapper = factory({
-      props: {
-        form,
-        disabledIdField: true,
-      },
-    });
-
-    expect(selectMetaAlarmRuleGeneralForm(wrapper).props('disabledIdField')).toBe(true);
   });
 
   test('Tabs receive form context, rule ID and test type', () => {

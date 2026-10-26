@@ -11,6 +11,22 @@ import {
 import { eventFilterToForm, formToEventFilter } from '@/helpers/entities/event-filter/rule/form';
 
 describe('formToEventFilter', () => {
+  it('keeps the name and omits the system-managed ID', () => {
+    const eventFilter = formToEventFilter({
+      _id: 'event-filter-id',
+      name: 'Event filter name',
+      type: EVENT_FILTER_TYPES.drop,
+      config: {},
+      patterns: {},
+      exdates: [],
+      exceptions: [],
+      external_data: {},
+    });
+
+    expect(eventFilter.name).toBe('Event filter name');
+    expect(eventFilter).not.toHaveProperty('_id');
+  });
+
   it('keeps the recurrence rule in the event-filter request', () => {
     const eventFilter = formToEventFilter({
       type: EVENT_FILTER_TYPES.drop,

@@ -77,7 +77,6 @@ export const useEventFilterActions = (refresh = () => {}) => {
       config: {
         rule,
         title: t('modals.createEventFilter.edit.title'),
-        isDisabledIdField: true,
         action: async (data) => {
           const result = await updateEventFilter({ id: rule._id, data });
 

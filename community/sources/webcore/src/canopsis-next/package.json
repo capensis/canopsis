@@ -21,7 +21,7 @@
     "format:code": "eslint . --fix --cache",
     "format:assets": "oxfmt --write \"**/*.{json,jsonc,css,scss,html,md}\" --no-error-on-unmatched-pattern",
     "generate-icons-json": "node ./tools/generate-icons-json.js",
-    "prepare": "husky",
+    "prepare": "cd ../../../../.. && husky community/sources/webcore/src/canopsis-next/.husky",
     "postinstall": "node ./tools/apply-patches.js"
   },
   "dependencies": {
@@ -103,6 +103,9 @@
     "vitest": "^4.1.4",
     "vue-tsc": "^3.2.6"
   },
+  "overrides": {
+    "katex": "0.18.2"
+  },
   "lint-staged": {
     "*.{js,cjs,mjs,jsx,ts,mts,cts,tsx}": [
       "oxlint --fix",
@@ -115,9 +118,6 @@
     "*.{json,jsonc,css,scss,html,md}": [
       "oxfmt --write --no-error-on-unmatched-pattern"
     ]
-  },
-  "overrides": {
-    "katex": "0.18.2"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
