@@ -9,7 +9,7 @@
     :with-type="withType"
     :counter="counter"
     class="c-service-weather-patterns-field"
-    @update:patterns="$emit('update:value', $event)"
+    @update:patterns="$emit('update:patterns', $event)"
   />
 </template>
 
@@ -57,7 +57,7 @@ export default {
     },
   },
 
-  emits: ['update:patterns', 'update:value'],
+  emits: ['update:patterns'],
 
   setup(props) {
     const { t } = useI18n();

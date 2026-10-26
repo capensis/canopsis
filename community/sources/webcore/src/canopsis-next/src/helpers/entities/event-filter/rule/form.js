@@ -190,6 +190,7 @@ export const eventFilterPatternToForm = (eventFilter) => {
  * @returns {EventFilterForm}
  */
 export const eventFilterToForm = (eventFilter = {}, timezone) => ({
+  name: eventFilter.name ?? eventFilter._id ?? '',
   type: eventFilter.type ?? EVENT_FILTER_TYPES.drop,
   description: eventFilter.description ?? '',
   priority: eventFilter.priority,
@@ -200,7 +201,7 @@ export const eventFilterToForm = (eventFilter = {}, timezone) => ({
   exceptions: exceptionsToForm(eventFilter.exceptions),
   exdates: exdatesToForm(eventFilter.exdates, timezone),
   config: eventFilterConfigToForm(eventFilter.config),
-  external_data: externalDataToForm(eventFilter.external_data),
+  external_data: externalDataToForm(eventFilter.external_data, true),
   patterns: eventFilterPatternToForm(eventFilter),
 });
 
@@ -248,6 +249,7 @@ export const formToEventFilterAction = (eventFilterActionForm) => {
  */
 export const formToEventFilter = (eventFilterForm, timezone) => {
   const {
+    _id,
     config,
     patterns,
     exdates,
@@ -276,7 +278,7 @@ export const formToEventFilter = (eventFilterForm, timezone) => {
   }
 
   if (!isEmpty(externalData)) {
-    eventFilter.external_data = formToExternalData(externalData);
+    eventFilter.external_data = formToExternalData(externalData, true);
   }
 
   return {

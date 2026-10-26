@@ -17,6 +17,7 @@ import { convertSortToRequest } from '@/helpers/entities/shared/query';
  * @param {number} [params.page=1] - The current page number.
  * @param {string} [params.search] - The search term to filter results.
  * @param {number} [params.type] - The type to filter results.
+ * @param {number} [params.rule_type] - The rule type to filter results.
  * @param {number} [params.status] - The status to filter results.
  * @param {Object} [params.interval] - The interval term to filter results.
  * @param {number} params.itemsPerPage - The number of items per page.
@@ -30,6 +31,7 @@ export const convertQueryToRequest = ({
   page = 1,
   search = '',
   type,
+  rule_type: ruleType,
   status,
   interval,
   itemsPerPage,
@@ -51,6 +53,10 @@ export const convertQueryToRequest = ({
 
   if (!isNil(type)) {
     query.type = type;
+  }
+
+  if (!isNil(ruleType)) {
+    query.rule_type = ruleType;
   }
 
   if (!isNil(status)) {

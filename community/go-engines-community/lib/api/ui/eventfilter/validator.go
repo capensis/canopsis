@@ -123,7 +123,29 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 		sl.ReportError(r.RRule, "RRule", "RRule", "rrule", "")
 	}
 
-	apiexternaldata.ValidateRefParameters(sl, v.templateExecutor, r.ExternalData, []string{externaldata.RefTypeAPI, externaldata.RefTypeTable})
+	apiexternaldata.ValidateRefParameters(sl, v.templateExecutor, toRefParameters(r.ExternalData), []string{externaldata.RefTypeAPI, externaldata.RefTypeTable})
+
+	for i, d := range r.ExternalData {
+		name := "ExternalData." + strconv.Itoa(i) + ".OnMismatch"
+
+		if d.Type != externaldata.RefTypeTable || d.Optional {
+			if d.OnMismatch != nil {
+				sl.ReportError(d.OnMismatch, "OnMismatch", name, "must_be_empty", "")
+			}
+
+			continue
+		}
+
+		if d.OnMismatch == nil {
+			sl.ReportError(d.OnMismatch, "OnMismatch", name, "required", "")
+			continue
+		}
+
+		if r.Type == eventfilter.RuleTypeChangeEntity && *d.OnMismatch == eventfilter.OnMismatchSkipActions {
+			// there are no actions in change entity rules
+			sl.ReportError(d.OnMismatch, "OnMismatch", name, "oneof", "0 1")
+		}
+	}
 }
 
 func (v *Validator) ValidateTemplateRuleRequest(sl validator.StructLevel) {

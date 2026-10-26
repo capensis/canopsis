@@ -1,23 +1,6 @@
 <template>
   <c-layout gap="3" column>
-    <c-layout gap="2">
-      <div class="flex-grow-1">
-        <c-id-field
-          v-model="idField"
-          :disabled="disabledIdField"
-          :help-text="t('metaAlarmRule.idHelp')"
-          autofocus
-        />
-      </div>
-
-      <div class="flex-grow-1">
-        <c-name-field
-          v-model="nameField"
-          :autofocus="disabledIdField"
-          required
-        />
-      </div>
-    </c-layout>
+    <c-name-field v-model="nameField" autofocus required />
 
     <c-form-block>
       <c-form-block-row :label="t('metaAlarmRule.outputTemplate')" indented>
@@ -100,10 +83,6 @@ export default {
   },
 
   props: {
-    disabledIdField: {
-      type: Boolean,
-      default: false,
-    },
     templateVars: {
       type: Object,
       default: () => ({}),
@@ -113,7 +92,6 @@ export default {
   setup() {
     const { t } = useI18n();
     const {
-      idField,
       nameField,
       outputTemplateField,
       tagsField,
@@ -123,7 +101,6 @@ export default {
       componentTemplateField,
       resourceTemplateField,
     } = useFormModels({
-      idField: '_id',
       nameField: 'name',
       outputTemplateField: 'output_template',
       tagsField: 'tags',
@@ -138,7 +115,6 @@ export default {
 
     return {
       t,
-      idField,
       nameField,
       outputTemplateField,
       tagsField,

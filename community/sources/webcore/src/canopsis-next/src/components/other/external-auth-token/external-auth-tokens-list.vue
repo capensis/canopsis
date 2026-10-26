@@ -112,7 +112,6 @@ export default {
       {
         text: t('common.description'),
         value: 'description',
-        sortable: false,
       },
       {
         text: t('externalAuthToken.tokenExpirationTime'),

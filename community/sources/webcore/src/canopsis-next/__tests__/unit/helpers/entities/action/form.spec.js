@@ -1,4 +1,9 @@
-import { ACTION_TYPES, MIN_DURATION_VALUE, TIME_UNITS } from '@/constants';
+import {
+  ACTION_TYPES,
+  MIN_DURATION_VALUE,
+  TIME_UNITS,
+  WORKFLOW_TYPES,
+} from '@/constants';
 
 import {
   actionToForm,
@@ -12,6 +17,13 @@ describe('scenario action form', () => {
       value: MIN_DURATION_VALUE,
       unit: TIME_UNITS.second,
     });
+  });
+
+  test('continues with remaining steps after a new webhook succeeds', () => {
+    const webhookParameters = actionToForm().parameters[ACTION_TYPES.webhook];
+
+    expect(webhookParameters.stop_on_success).toBe(WORKFLOW_TYPES.continue);
+    expect(webhookParameters.stop_on_fail).toBe(WORKFLOW_TYPES.stop);
   });
 
   test('converts pause parameters with author fields', () => {

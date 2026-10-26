@@ -57,6 +57,7 @@ For `.js` helpers, prefer named exports. `.vue` files use `export default`.
 ## Vue Style
 
 - In Vue SFC files, keep top-level blocks in this order: `<template>`, then `<script>`, then `<style>`. The `<template>` block must be first whenever it exists.
+- Name refs used as Vue template refs with an `Element` suffix (for example, `menuElement` for `ref="menuElement"`).
 - Preserve Options API or Composition API from the source component.
 - Do not force components into Composition API during migration.
 - Do not use `reactive` in the form layer; use `ref`/`computed`.

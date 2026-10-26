@@ -64,6 +64,7 @@ type ServiceResult struct {
 	ExecutedEnrichRuleCount int64                   `json:"eerc,omitzero"`
 	ExternalRequestCount    map[string]int64        `json:"erc,omitzero"`
 	ExternalData            map[string]any          `json:"ed,omitzero"`
+	SkippedRefs             map[string]bool         `json:"sr,omitzero"`
 
 	// ExternalDataRequest is set when rule processing is suspended to
 	// fetch external data asynchronously through a webhook RPC.

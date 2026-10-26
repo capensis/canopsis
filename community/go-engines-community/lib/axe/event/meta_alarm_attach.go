@@ -262,6 +262,8 @@ func (p *metaAlarmAttachProcessor) attachChildrenToMetaAlarm(ctx context.Context
 			setUpdate["v.meta"] = event.Parameters.MetaAlarmRuleID
 			metaAlarm.Value.MetaValuePath = event.Parameters.MetaAlarmValuePath
 			setUpdate["v.meta_value_path"] = event.Parameters.MetaAlarmValuePath
+			metaAlarm.Value.MetaRuleName = rule.Name
+			setUpdate["v.meta_rule_name"] = rule.Name
 			if !rule.IsManual() {
 				if rule.Tags.CopyFromChildren {
 					metaAlarm.CopyTagsFromChildren = rule.Tags.CopyFromChildren

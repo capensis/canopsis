@@ -10,7 +10,6 @@
       <template #general="{ setRef, templateVars, copyVars }">
         <dynamic-info-general-form
           :ref="setRef"
-          :is-disabled-id-field="isDisabledIdField"
           :template-vars="templateVars"
           :copy-vars="copyVars"
         />
@@ -41,10 +40,6 @@ export default {
     ruleId: {
       type: String,
       default: undefined,
-    },
-    isDisabledIdField: {
-      type: Boolean,
-      default: false,
     },
   },
 

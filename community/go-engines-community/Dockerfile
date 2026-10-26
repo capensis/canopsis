@@ -1,9 +1,9 @@
 # Args defined here are only available to FROM commands
 # See https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
-ARG ALPINE_VERSION
-ARG ALPINE_BUILD_VERSION
-ARG GOLANG_VERSION
-ARG DEBIAN_VERSION
+ARG ALPINE_VERSION=invalid
+ARG ALPINE_BUILD_VERSION=invalid
+ARG GOLANG_VERSION=invalid
+ARG DEBIAN_VERSION=invalid
 
 #
 # Build the engines
@@ -13,6 +13,8 @@ FROM golang:${GOLANG_VERSION}-alpine${ALPINE_BUILD_VERSION} AS builder
 RUN apk add --no-cache make git gcc binutils libc-dev
 
 ARG CANOPSIS_EDITION
+ARG VERSION
+ENV VERSION=${VERSION}
 WORKDIR /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/
 
 # Do a first pass that only handles Go dependencies, so that we can cache this part
@@ -23,11 +25,14 @@ COPY community/.env /monorepo/community/.env
 COPY ${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/go.mod /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/go.mod
 COPY ${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/go.sum /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/go.sum
 COPY ${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/Makefile /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/Makefile
-RUN make deps
+RUN --mount=type=cache,target=/go/pkg/mod \
+    make deps
 
 # Always build everything in the current $CANOPSIS_EDITION
 COPY . /monorepo
-RUN make
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    --mount=type=cache,target=/go/pkg/mod \
+    make
 
 #
 # Prepare the common final container
@@ -45,7 +50,7 @@ COPY community/go-engines-community/config /opt/canopsis/share/config
 
 ARG CANOPSIS_EDITION
 ARG CMD
-ENV CMD ${CMD}
+ENV CMD=${CMD}
 
 COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/build/cmd/${CMD} /${CMD}
 RUN ln -sf /${CMD} /opt/canopsis/bin/${CMD}
@@ -66,7 +71,7 @@ FROM debian:${DEBIAN_VERSION} AS canopsis-reconfigure
 USER root
 RUN addgroup --system canopsis && adduser --system --disabled-password --shell /sbin/nologin --no-create-home --home /opt/canopsis --ingroup canopsis canopsis
 RUN mkdir -p /opt/canopsis/bin /opt/canopsis/etc /opt/canopsis/share
-RUN apt update && apt install musl -y && apt clean
+RUN apt update && apt install musl -y && apt clean && rm -rf /var/lib/apt/lists/*
 RUN ln -sf /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1
 COPY community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml /canopsis-community.toml
 COPY community/go-engines-community/cmd/canopsis-reconfigure/canopsis-pro.toml /canopsis-pro.toml
@@ -79,7 +84,7 @@ COPY --from=builder /monorepo/community/go-engines-community/build/cmd/${CMD} /$
 
 USER canopsis:canopsis
 
-ENV CMD ${CMD}
+ENV CMD=${CMD}
 
 # note: CPS_EDITION is defined at Docker Compose runtime in the .env file
 CMD ["/bin/sh", "-c", "/${CMD} -edition ${CPS_EDITION:-community} -conf /canopsis-${CPS_EDITION:-community}.toml -migrate-postgres=true -override /opt/canopsis/etc/conf.d/canopsis-override.toml"]
@@ -126,3 +131,9 @@ FROM final-container AS export-alarms
 USER root
 RUN mkdir -p /tmp/export-alarms
 USER root:root
+
+FROM final-container AS mcp-server
+EXPOSE 8081
+USER root
+COPY pro/go-engines-pro/cmd/mcp-server/config.yml.sample /opt/canopsis/share/config/mcp-server/config.yml
+USER canopsis:canopsis

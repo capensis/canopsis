@@ -28,6 +28,7 @@ export default {
   alarmDisplayName: 'Alarm display name',
   popups: {
     exportFailed: 'Failed to export alarms list in CSV format',
+    timelineExportFailed: 'Failed to export alarm timeline in CSV format',
     addBookmarkSuccess: 'Bookmark was added',
     addBookmarkFailed: 'Something went wrong. Bookmark wasn\'t added',
     removeBookmarkSuccess: 'Bookmark was removed',
@@ -87,6 +88,7 @@ export default {
   },
   timeline: {
     by: 'by',
+    export: 'Export timeline',
     launched: 'launched',
     junit: 'JUnit',
     groupItems: 'Group elements',

@@ -352,8 +352,14 @@ func (c *channel) handleReconnect(amqpConn amqp091Conn) {
 		select {
 		case <-c.done:
 			return
-		case <-notifyChClose:
-		case <-notifyConnClose:
+		case err := <-notifyChClose:
+			if err != nil {
+				c.logger.Err(err).Msg("amqp channel closed with error")
+			}
+		case err := <-notifyConnClose:
+			if err != nil {
+				c.logger.Err(err).Msg("amqp connection closed with error")
+			}
 			connDied = true
 		}
 

@@ -29,8 +29,6 @@ export default {
   valuePath: 'Chemin de valeur | Chemins de valeur',
   addValuePath: 'Ajouter un chemin de valeur',
   autoResolve: 'Résolution automatique',
-  idHelp:
-    'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
   corelId: 'Identifiant de corrélation',
   corelIdHelpText: 'Les alarmes avec le même attribut sélectionné sont regroupées',
   corelStatus: 'Statut de corrélation',
