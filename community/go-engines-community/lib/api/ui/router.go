@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarmaction"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarmtag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarmtimeline"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/apitoken"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/appinfo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/associativetable"
@@ -487,6 +488,29 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer, errorResponder),
 				alarmAPI.GetExport,
+			)
+		}
+
+		timelineExportStore := alarmtimeline.NewStore(secondaryDbClient, dbExportClient, json.NewDecoder(), timezoneConfigProvider)
+		timelineExportAPI := alarmtimeline.NewApi(timelineExportStore, exportTaskExecutor, json.NewEncoder(), errorResponder)
+		exportTaskExecutor.RegisterType(alarmtimeline.ExportType, timelineExportStore.Export)
+		timelineExportRouter := protected.Group("/alarm-timeline-export")
+		{
+			timelineExportRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer, errorResponder),
+				timelineExportAPI.StartExport,
+			)
+			timelineExportRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer, errorResponder),
+				timelineExportAPI.GetExport,
+			)
+			timelineExportRouter.GET(
+				"/:id/download",
+				security.GetFileAuthMiddleware(),
+				middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer, errorResponder),
+				timelineExportAPI.DownloadExport,
 			)
 		}
 

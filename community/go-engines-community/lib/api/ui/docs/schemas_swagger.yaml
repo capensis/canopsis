@@ -1094,6 +1094,28 @@ definitions:
     required:
     - color
     type: object
+  alarmtimeline.ExportRequest:
+    properties:
+      alarm:
+        type: string
+      separator:
+        type: string
+      time_format:
+        type: string
+    required:
+    - alarm
+    type: object
+  alarmtimeline.ExportResponse:
+    properties:
+      _id:
+        type: string
+      status:
+        description: |-
+          * `0` - Running
+            * `1` - Succeeded
+            * `2` - Failed
+        type: integer
+    type: object
   apitoken.EditRequest:
     properties:
       duration:
