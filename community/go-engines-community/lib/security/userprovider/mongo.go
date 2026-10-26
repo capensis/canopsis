@@ -4,6 +4,8 @@ package userprovider
 import (
 	"context"
 	"errors"
+	"fmt"
+	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -18,6 +20,75 @@ type mongoProvider struct {
 	client         libmongo.DbClient
 	collection     libmongo.DbCollection
 	configProvider config.ApiConfigProvider
+}
+
+type roleNamesReader struct {
+	collection libmongo.DbCollection
+}
+
+type roleNamesAggregationResult struct {
+	Roles []struct {
+		Name string `bson:"name"`
+	} `bson:"role_names"`
+}
+
+// NewRoleNamesReader creates a reader for current role names assigned to users.
+func NewRoleNamesReader(db libmongo.DbClient) security.UserRoleReader {
+	return &roleNamesReader{collection: db.Collection(libmongo.UserCollection)}
+}
+
+func (r *roleNamesReader) GetRoleNames(ctx context.Context, userID string) ([]string, error) {
+	if userID == "" {
+		return []string{}, nil
+	}
+
+	cursor, err := r.collection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"_id": userID}},
+		{"$project": bson.M{"roles": 1}},
+		{"$lookup": bson.M{
+			"from":         libmongo.RoleCollection,
+			"localField":   "roles",
+			"foreignField": "_id",
+			"pipeline":     []bson.M{{"$project": bson.M{"_id": 0, "name": 1}}},
+			"as":           "role_names",
+		}},
+		{"$project": bson.M{"_id": 0, "role_names.name": 1}},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to aggregate role names for user %q: %w", userID, err)
+	}
+	defer cursor.Close(ctx)
+
+	if !cursor.Next(ctx) {
+		if err := cursor.Err(); err != nil {
+			return nil, fmt.Errorf("failed to read role names for user %q: %w", userID, err)
+		}
+		if err := ctx.Err(); err != nil {
+			return nil, fmt.Errorf("failed to read role names for user %q: %w", userID, err)
+		}
+		return []string{}, nil
+	}
+
+	var result roleNamesAggregationResult
+	if err := cursor.Decode(&result); err != nil {
+		return nil, fmt.Errorf("failed to decode role names for user %q: %w", userID, err)
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, fmt.Errorf("failed to read role names for user %q: %w", userID, err)
+	}
+	if err := ctx.Err(); err != nil {
+		return nil, fmt.Errorf("failed to read role names for user %q: %w", userID, err)
+	}
+
+	roleNames := make([]string, 0, len(result.Roles))
+	for _, role := range result.Roles {
+		if role.Name != "" {
+			roleNames = append(roleNames, role.Name)
+		}
+	}
+	slices.Sort(roleNames)
+
+	return roleNames, nil
 }
 
 // NewMongoProvider creates new provider.
@@ -72,15 +143,8 @@ func (p *mongoProvider) FindByAuthApiKey(ctx context.Context, apiKey string) (*s
 }
 
 func (p *mongoProvider) FindByID(ctx context.Context, id string) (*security.User, error) {
-	var objID any
-	var err error
-	objID, err = bson.ObjectIDFromHex(id)
-	if err != nil {
-		objID = id
-	}
-
 	return p.findByFilter(ctx, bson.M{
-		"_id": objID,
+		"_id": id,
 	})
 }
 
