@@ -10,6 +10,12 @@ export const EXTERNAL_DATA_TYPES = {
   table: 'table',
 };
 
+export const EXTERNAL_DATA_ON_MISMATCH_TYPES = {
+  throwError: 0,
+  skipRule: 1,
+  skipActions: 2,
+};
+
 export const EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS = {
   component: 'component',
   connector: 'connector',
