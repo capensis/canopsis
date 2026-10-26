@@ -107,7 +107,7 @@ func benchmarkBulkPause_givenNCreateItems(b *testing.B, itemCount int) {
 	reqItems := make([]map[string]any, itemCount)
 	for i := 0; i < itemCount; i++ {
 		reqItems[i] = map[string]any{
-			"_id":     "test-resource-" + strconv.Itoa(i) + "/test-component",
+			"_id":     "test-resource-" + strconv.Itoa(i+1) + "/test-component",
 			"comment": "pause comment",
 			"type":    "test-pause-type",
 		}
@@ -118,24 +118,43 @@ func benchmarkBulkPause_givenNCreateItems(b *testing.B, itemCount int) {
 		b.Errorf("unexpected error %v", err)
 	}
 
-	reqBody := io.NopCloser(bytes.NewBuffer(buf))
-	r, err := http.NewRequestWithContext(ctx, http.MethodPut, "/api/v4/bulk/entities/pause", nil)
-	if err != nil {
-		b.Fatalf("unexpected error %v", err)
-	}
-
-	w := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)
-	ginCtx, _ := gin.CreateTestContext(w)
-	ginCtx.Request = r
-	authctx.SetUserKey(ginCtx, "root")
-	authctx.SetUsername(ginCtx, "root")
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		r.Body = reqBody
+	decoder := json.NewDecoder()
+	for b.Loop() {
+		b.StopTimer()
+		r, err := http.NewRequestWithContext(ctx, http.MethodPut, "/api/v4/bulk/entities/pause", nil)
+		if err != nil {
+			b.Fatalf("unexpected error %v", err)
+		}
+		r.Body = io.NopCloser(bytes.NewBuffer(buf))
+
+		w := httptest.NewRecorder()
+		ginCtx, _ := gin.CreateTestContext(w)
+		ginCtx.Request = r
+		authctx.SetUserKey(ginCtx, "root")
+		authctx.SetUsername(ginCtx, "root")
+		b.StartTimer()
+
 		api.BulkPause(ginCtx)
+
+		b.StopTimer()
 		if w.Code != http.StatusMultiStatus {
 			b.Fatalf("unexpected status code %v", w.Code)
 		}
+		var res []struct {
+			Status int `json:"status"`
+		}
+		if err := decoder.Decode(w.Body.Bytes(), &res); err != nil {
+			b.Fatalf("unexpected error %v", err)
+		}
+		if len(res) != itemCount {
+			b.Fatalf("unexpected response items count %v, expected %v", len(res), itemCount)
+		}
+		for _, item := range res {
+			if item.Status != http.StatusOK {
+				b.Fatalf("unexpected item status %v", item.Status)
+			}
+		}
+		b.StartTimer()
 	}
 }
