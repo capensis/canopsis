@@ -82,7 +82,6 @@ nginx_config:
 # DOCKER
 #
 
-
 #
 # DOCKER FLAGS
 #
@@ -102,7 +101,8 @@ define DOCKER_BUILD_ARGS
 endef
 
 .PHONY: docker-check-version docker-images docker-nginx
-docker-images: docker-nginx docker-nginx-openshift
+# We build only one image
+docker-images: docker-nginx
 
 docker-check-version:
 	@if test "$$(docker version --format '{{.Server.Version}}' 2>/dev/null | awk -F. '{printf "%02i%02i", $$1,$$2}')" -lt "$$(echo $(REQUIRED_DOCKER_VERSION) | sed 's/\.//')" ; then\
@@ -118,15 +118,6 @@ docker-nginx: docker-check-version
 		--file "$(MONOREPO_ROOT)/community/sources/webcore/src/canopsis-next/docker/Dockerfile.nginx" \
 		"$(MONOREPO_ROOT)"
 
-docker-nginx-openshift: docker-check-version
-	docker build \
-		-t "$(DOCKER_IMAGE_BASE_PATH)/nginx-openshift:$(DOCKER_TAG)" \
-		$(if $(DOCKER_NO_CACHE),--no-cache,) \
-		$(DOCKER_BUILD_ARGS) \
-		--file "$(MONOREPO_ROOT)/community/sources/webcore/src/canopsis-next/docker/Dockerfile.nginx" \
-		--target nginx-openshift \
-		"$(MONOREPO_ROOT)"
-
 #
 # HELP
 #
@@ -136,7 +127,7 @@ help:
 	@echo "Available targets are:"
 	@$(MAKE) -pRrq -f "$(CURRENT_MAKEFILE)" : 2>/dev/null | awk -F':' '/^[a-zA-Z0-9][^$$#\/\t=]*:([^=]|$$)/ {split($$1,A,/ /);for(i in A)print A[i]}' | sort -u
 	@echo
-	@echo "See also: $(CURRENT_ROOT_DIR)/README.md"
+	@echo "See also: "$(CURRENT_ROOT_DIR)/README.md"
 
 #
 # CLEANUP
