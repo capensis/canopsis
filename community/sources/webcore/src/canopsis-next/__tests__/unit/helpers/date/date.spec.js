@@ -62,6 +62,10 @@ describe('convertDateToString', () => {
     expect(convertDateToString(timestamp / 1000, 'DD/MM/YYYY H:mm:ss')).toEqual(expectedString);
   });
 
+  it('Date as unix timestamp in microseconds', () => {
+    expect(convertDateToString(timestamp * 1000, 'DD/MM/YYYY H:mm:ss')).toEqual(expectedString);
+  });
+
   it('Date as native Date object', () => {
     expect(convertDateToString(new Date(timestamp), 'DD/MM/YYYY H:mm:ss')).toEqual(expectedString);
   });
