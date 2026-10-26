@@ -16,6 +16,7 @@ import (
 
 type API interface {
 	crud.BulkAPI
+	GetTopByActiveConnects(c *gin.Context)
 	Patch(c *gin.Context)
 	BulkPatch(c *gin.Context)
 	BulkEnable(c *gin.Context)
@@ -416,4 +417,33 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 	}, a.errorResponder)
 
 	a.metricMetaUpdater.UpdateById(c, userIDs...)
+}
+
+// GetTopByActiveConnects returns the enabled user with the most active
+// distinct websocket tokens. Counts use the websocket store freshness window.
+// @Success 200 {object} User
+// @Success 204 "No user has an active connection"
+func (a *api) GetTopByActiveConnects(c *gin.Context) {
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+		return
+	}
+
+	roleIDs, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+		return
+	}
+
+	user, err := a.store.GetTopByActiveConnects(c, userID, roleIDs)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+		return
+	}
+	if user == nil {
+		c.Status(http.StatusNoContent)
+		return
+	}
+	c.JSON(http.StatusOK, user)
 }

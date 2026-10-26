@@ -55,7 +55,7 @@
             :attributes="entityAttributes"
             :entity-types="entityTypes"
             with-type
-            @update:value="
+            @update:patterns="
               updatePatternAndClear(PATTERNS_FIELDS.entity, preparedEntityName, $event)
             "
             @show:alarms="showPatternAlarmsModal([PATTERNS_FIELDS.entity])"
@@ -78,7 +78,7 @@
           :name="preparedPbehaviorName"
           :attributes="pbehaviorAttributes"
           with-type
-          @update:value="
+          @update:patterns="
             updatePatternAndClear(PATTERNS_FIELDS.pbehavior, preparedPbehaviorName, $event)
           "
           @show:alarms="showPatternAlarmsModal([PATTERNS_FIELDS.pbehavior])"
@@ -99,7 +99,7 @@
           :name="preparedEventName"
           :attributes="eventAttributes"
           :counter="counters.event_pattern"
-          @update:value="updatePatternAndClear(PATTERNS_FIELDS.event, preparedEventName, $event)"
+          @update:patterns="updatePatternAndClear(PATTERNS_FIELDS.event, preparedEventName, $event)"
           @show:entities="showPatternEntitiesModal([PATTERNS_FIELDS.event])"
         />
       </c-collapse-panel>
@@ -118,7 +118,7 @@
           :attributes="totalEntityAttributes"
           :entity-counter="totalEntityPatternCounter"
           with-type
-          @update:value="
+          @update:patterns="
             updatePatternAndClear(PATTERNS_FIELDS.totalEntity, preparedTotalEntityName, $event)
           "
           @show:entities="showPatternEntitiesModal([PATTERNS_FIELDS.totalEntity])"
@@ -137,7 +137,7 @@
           :name="preparedServiceWeatherName"
           :attributes="weatherServiceAttributes"
           with-type
-          @update:value="
+          @update:patterns="
             updatePatternAndClear(
               PATTERNS_FIELDS.serviceWeather,
               preparedServiceWeatherName,

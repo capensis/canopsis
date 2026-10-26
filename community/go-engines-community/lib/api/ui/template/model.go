@@ -134,7 +134,7 @@ type EditTestRequest struct {
 
 type ListTestRequest struct {
 	pagination.FilteredQuery
-	SortBy string `form:"sort_by" binding:"oneoforempty=_id name description type"`
+	SortBy string `form:"sort_by" binding:"oneoforempty=_id name description type rule.name"`
 	// Possible types:
 	//   * `0` - Event filter rule
 	//   * `1` - Link rule

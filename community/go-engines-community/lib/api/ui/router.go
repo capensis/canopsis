@@ -244,6 +244,10 @@ func RegisterRoutes(
 			metricsUserMetaUpdater, errorResponder)
 		userRouter := protected.Group("/users")
 		{
+			userRouter.GET("/top/active-connects",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer, errorResponder),
+				userApi.GetTopByActiveConnects,
+			)
 			userRouter.POST("",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer, errorResponder),
 				middleware.SetAuthor(errorResponder),

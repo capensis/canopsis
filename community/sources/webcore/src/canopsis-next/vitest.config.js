@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url';
 
 import { mergeConfig, defineConfig, configDefaults } from 'vitest/config';
 
-import viteConfig from './vite.config';
+import viteConfig from './vite.config.js';
 
 const TEST_EXCLUDED_PLUGINS = new Set([
   'vite-plugin-inspect',

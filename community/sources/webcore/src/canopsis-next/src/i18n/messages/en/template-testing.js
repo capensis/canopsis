@@ -176,6 +176,7 @@ export default {
     types: 'Types',
     user: 'User',
     userID: 'User ID',
+    userRoles: 'User roles',
     username: 'Username',
     environmentVariables: 'Env',
     rawResponse: 'Raw response',

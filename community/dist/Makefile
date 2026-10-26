@@ -3,7 +3,8 @@ VERSION_SAFE ?= $(shell echo "$(VERSION)" | sed -e 's/\(.*\)-\([^g][^-]*\)/\1~\2
 CANOPSIS_ENV = $(addprefix ../../, ./community/.env)
 VERSION_PYTHON ?= $(shell grep "^PYTHON_VERSION" "$(CANOPSIS_ENV)" | cut -d = -f2 | sed 's/ //g' | cut -d . -f1,2 )
 BUILD_TARGET = almalinux-8-x86_64 \
-	almalinux-9-x86_64
+	almalinux-9-x86_64 \
+	almalinux-10-x86_64
 CANOPSIS_ARCHIVES = $(addsuffix /SOURCES/canopsis$(PACKAGE_PREFIX).tar.gz, $(addprefix build/, $(BUILD_TARGET)))
 CANOPSIS_SPECS = $(addsuffix /SPECS/canopsis.spec, $(addprefix build/, $(BUILD_TARGET)))
 CANOPSIS_MOCK = $(addsuffix /canopsis.cfg, $(addprefix build/, $(BUILD_TARGET)))
@@ -46,6 +47,8 @@ $(CANOPSIS_MOCK): $(TREE)
 	    cp almalinux-8-canopsis.cfg $@; \
 	elif [ "$(word 2,$(subst /, ,$@))" = "almalinux-9-x86_64" ]; then \
 	    cp almalinux-9-canopsis.cfg $@; \
+	elif [ "$(word 2,$(subst /, ,$@))" = "almalinux-10-x86_64" ]; then \
+	    cp almalinux-10-canopsis.cfg $@; \
 	fi
 
 $(CANOPSIS_SPECS): $(TREE)

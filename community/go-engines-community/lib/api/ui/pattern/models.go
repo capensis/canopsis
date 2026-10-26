@@ -24,7 +24,7 @@ const (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy    string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id title author.name author.display_name created updated"`
+	SortBy    string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id title type author.name author.display_name created updated"`
 	Corporate *bool  `json:"corporate" form:"corporate"`
 	Type      string `json:"type" form:"type"`
 }

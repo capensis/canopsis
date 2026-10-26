@@ -11,7 +11,7 @@
     :alarm-counter="alarmCounter"
     :entity-counter="entityCounter"
     class="c-entity-patterns-field"
-    @update:patterns="$emit('update:value', $event)"
+    @update:patterns="$emit('update:patterns', $event)"
   >
     <template #append-count="">
       <v-btn
@@ -61,7 +61,7 @@ import { entitiesEntityInfoPropertyMixin } from '@/mixins/entities/entity-info-p
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
 export default {
-  emits: ['update:patterns', 'update:value', 'show:alarms', 'show:entities'],
+  emits: ['update:patterns', 'show:alarms', 'show:entities'],
   components: { PatternEditorField },
   mixins: [entitiesEntityInfoPropertyMixin],
   props: {

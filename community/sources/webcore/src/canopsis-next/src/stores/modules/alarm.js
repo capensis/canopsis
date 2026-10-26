@@ -110,6 +110,10 @@ export const useAlarmStore = defineStore('alarm', () => {
     });
   const createAlarmsListExport = ({ data = {} } = {}) =>
     request.post(API_ROUTES.alarmListExport, data);
+  const fetchAlarmTimelineExport = ({ id } = {}) =>
+    request.get(`${API_ROUTES.alarmTimelineExport}/${id}`);
+  const createAlarmTimelineExport = ({ data = {} } = {}) =>
+    request.post(API_ROUTES.alarmTimelineExport, data);
 
   const createAlarmEvent = (event, { id, data } = {}) =>
     request.put(`${API_ROUTES.alarms.list}/${id}/${event}`, data);
@@ -263,6 +267,8 @@ export const useAlarmStore = defineStore('alarm', () => {
     fetchItemWithoutStore,
     fetchAlarmsListExport,
     createAlarmsListExport,
+    fetchAlarmTimelineExport,
+    createAlarmTimelineExport,
     createAlarmAckEvent: payload => createAlarmEvent('ack', payload),
     bulkCreateAlarmAckEvent: payload => bulkCreateAlarmEvent('ack', payload),
     createAlarmAckremoveEvent: payload => createAlarmEvent('ackremove', payload),
