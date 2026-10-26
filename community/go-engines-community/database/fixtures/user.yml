@@ -2680,6 +2680,18 @@ permission:
       - "@group_widgets_alarmslist"
       - "@group_widgets_alarmslist_alarmactions"
 
+  permission_listalarm_exportAlarmTimeline:
+    <<: *permission
+    _id: listalarm_exportAlarmTimeline
+    name: <Current()._id>
+    description: Export alarm timeline as CSV file
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_read": 1
+
   # widgets -> alarmslist -> actions
   permission_listalarm_exportAsCsv:
     <<: *permission
@@ -3859,6 +3871,7 @@ role:
       "@permission_listalarm_correlation": 1
       "@permission_listalarm_executeInstruction": 1
       "@permission_listalarm_exportPdf": 1
+      "@permission_listalarm_exportAlarmTimeline": 1
       "@permission_listalarm_category": 1
       "@permission_listalarm_exportAsCsv": 1
       "@permission_listalarm_bookmark": 1
