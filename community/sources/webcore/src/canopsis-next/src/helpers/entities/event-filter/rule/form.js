@@ -200,7 +200,7 @@ export const eventFilterToForm = (eventFilter = {}, timezone) => ({
   exceptions: exceptionsToForm(eventFilter.exceptions),
   exdates: exdatesToForm(eventFilter.exdates, timezone),
   config: eventFilterConfigToForm(eventFilter.config),
-  external_data: externalDataToForm(eventFilter.external_data),
+  external_data: externalDataToForm(eventFilter.external_data, true),
   patterns: eventFilterPatternToForm(eventFilter),
 });
 
@@ -276,7 +276,7 @@ export const formToEventFilter = (eventFilterForm, timezone) => {
   }
 
   if (!isEmpty(externalData)) {
-    eventFilter.external_data = formToExternalData(externalData);
+    eventFilter.external_data = formToExternalData(externalData, true);
   }
 
   return {

@@ -1,6 +1,10 @@
 import { omit } from 'lodash';
 
-import { EXTERNAL_DATA_CONDITION_TYPES, EXTERNAL_DATA_TYPES } from '@/constants';
+import {
+  EXTERNAL_DATA_CONDITION_TYPES,
+  EXTERNAL_DATA_ON_MISMATCH_TYPES,
+  EXTERNAL_DATA_TYPES,
+} from '@/constants';
 
 import { isApiExternalDataType } from '@/helpers/entities/shared/external-data/entity';
 import { uid } from '@/helpers/uid';
@@ -32,6 +36,7 @@ import {
  * @property {string} [sort_by]
  * @property {string} [sort]
  * @property {boolean} [optional]
+ * @property {number} [on_mismatch]
  * @property {Request} [request]
  * @property {RequestAuthToken} [auth_token]
  */
@@ -57,6 +62,7 @@ import {
  * @property {string} sort_by
  * @property {string} sort
  * @property {boolean} optional
+ * @property {number} [on_mismatch]
  * @property {ExternalDataConditionForm[]} conditions
  */
 
@@ -115,9 +121,13 @@ export const externalDataItemConditionsToForm = (item = {}) => {
  * Convert external data item to form
  *
  * @param {ExternalDataItem} item
+ * @param {boolean} [withOnMismatch]
  * @returns {ExternalDataItemForm}
  */
-export const externalDataItemToForm = (item = { type: EXTERNAL_DATA_TYPES.table }) => ({
+export const externalDataItemToForm = (
+  item = { type: EXTERNAL_DATA_TYPES.table },
+  withOnMismatch = false,
+) => ({
   key: uid(),
   reference: item.reference,
   type: item.type,
@@ -128,16 +138,22 @@ export const externalDataItemToForm = (item = { type: EXTERNAL_DATA_TYPES.table 
   optional: item.optional ?? false,
   table: item.table?._id ?? '',
   conditions: externalDataItemConditionsToForm(item),
+  ...(withOnMismatch
+    ? { on_mismatch: item.on_mismatch ?? EXTERNAL_DATA_ON_MISMATCH_TYPES.throwError }
+    : {}),
 });
 
 /**
  * Convert external data to form
  *
  * @param {ExternalData} [externalData]
+ * @param {boolean} [withOnMismatch]
  * @returns {ExternalDataForm}
  */
-export const externalDataToForm = externalData =>
-  externalData ? externalData.map(externalDataItemToForm) : [];
+export const externalDataToForm = (externalData, withOnMismatch = false) =>
+  externalData
+    ? externalData.map(item => externalDataItemToForm(item, withOnMismatch))
+    : [];
 
 /**
  * Convert form to external data conditions
@@ -160,9 +176,10 @@ export const formToExternalDataConditions = (form = []) =>
  * Convert form to external data
  *
  * @param {ExternalDataForm} form
+ * @param {boolean} [withOnMismatch]
  * @returns {ExternalData}
  */
-export const formToExternalData = (form = []) =>
+export const formToExternalData = (form = [], withOnMismatch = false) =>
   form.map((externalData) => {
     const { type, reference } = externalData;
 
@@ -177,8 +194,14 @@ export const formToExternalData = (form = []) =>
           ),
         }
       : {
-          ...omit(externalData, ['request', 'auth_token']),
+          ...omit(externalData, ['request', 'auth_token', 'on_mismatch']),
           ...formToExternalDataConditions(externalData.conditions),
+          ...(withOnMismatch && !externalData.optional
+            ? {
+                on_mismatch:
+                  externalData.on_mismatch ?? EXTERNAL_DATA_ON_MISMATCH_TYPES.throwError,
+              }
+            : {}),
         };
   });
 
