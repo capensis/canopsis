@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"slices"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/asyncjob"
@@ -40,6 +41,7 @@ type Services struct {
 	AuthProviders          []libsecurity.HttpProvider
 	APIConfigProvider      config.ApiConfigProvider
 	TimezoneConfigProvider config.TimezoneConfigProvider
+	UserInterfaceAdapter   config.UserInterfaceAdapter
 	TemplateConfigProvider config.TemplateConfigProvider
 	JobPublisher           asyncjob.Publisher
 	UserMetaUpdater        metrics.MetaUpdater
@@ -58,8 +60,8 @@ func NewServices(ctx context.Context, opts Options, logger zerolog.Logger) (s Se
 	s.EventGenerator = event.NewGenerator(canopsis.ApiConnector, canopsis.ApiConnector)
 	var cleanups []func() error
 	cleanup = func() {
-		for i := len(cleanups) - 1; i >= 0; i-- {
-			err := cleanups[i]()
+		for _, cleanup := range slices.Backward(cleanups) {
+			err := cleanup()
 			if err != nil {
 				logger.Err(err).Msg("cannot close connection")
 			}
@@ -127,6 +129,7 @@ func NewServices(ctx context.Context, opts Options, logger zerolog.Logger) (s Se
 	s.APIConfigProvider = s.apiConfigProvider
 	s.TimezoneConfigProvider = s.timezoneConfigProvider
 	s.TemplateConfigProvider = s.templateConfigProvider
+	s.UserInterfaceAdapter = config.NewUserInterfaceAdapter(s.PrimaryDbClient)
 
 	validator, uniTrans, err := RegisterValidators(s.SecurityConfig)
 	if err != nil {

@@ -304,7 +304,7 @@ func Default(
 	services.LinkGenerator = link.NewGenerator(primaryDbClient, tplExecutor, externalDataGetter, logger)
 	authorProvider := author.NewProvider(services.ApiConfigProvider)
 	alarmStore := alarmapi.NewStore(secondaryDbClient, dbExportClient, services.LinkGenerator, patternfields.NewTransformer(primaryDbClient),
-		timezoneConfigProvider, authorProvider, tplExecutor, json.NewDecoder(), logger)
+		timezoneConfigProvider, userInterfaceAdapter, authorProvider, tplExecutor, json.NewDecoder(), logger)
 	alarmWatcher := alarmapi.NewWatcher(noTimeoutClient, services.WebsocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
 
 	messageRateWatcher := messageratestats.NewWatcher(services.WebsocketHub, messageratestats.NewStore(pgPoolProvider),

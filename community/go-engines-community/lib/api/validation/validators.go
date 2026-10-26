@@ -17,6 +17,9 @@ var timeFormats = map[string]string{
 	"DD MMM YYYY hh:mm:ss":       "02 Jan 2006 15:04",
 	"DD MMM YYYY hh:mm:ss ZZ":    "02 Jan 2006 15:04 MST",
 	"W, DD MMM YYYY hh:mm:ss ZZ": "Mon, 02 Jan 2006 15:04:05 MST",
+	"02/01/2006 15:04:05":        "02/01/2006 15:04:05",
+	"02/01/2006 (Mon) 15:04:05":  "02/01/2006 (Mon) 15:04:05",
+	"Mon 02/01/2006 15:04:05":    "Mon 02/01/2006 15:04:05",
 }
 
 func ValidateOneOfOrEmpty(fl validator.FieldLevel) bool {

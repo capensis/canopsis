@@ -182,6 +182,8 @@ type UserInterfaceConf struct {
 	CheckCountRequestTimeout   int    `bson:"check_count_request_timeout"`
 	RequiredInstructionApprove bool   `bson:"required_instruction_approve"`
 	DefaultColorTheme          string `bson:"default_color_theme"`
+	// Provider value refreshes periodically; use UserInterfaceAdapter where read-after-write matters.
+	DateFormat string `bson:"date_format"`
 }
 
 type VersionConf struct {

@@ -32,6 +32,10 @@ type UserInterfaceConf struct {
 	AutoSuggestPbehaviorName   bool          `json:"auto_suggest_pbehavior_name" bson:"auto_suggest_pbehavior_name"`
 	DefaultColorTheme          string        `json:"default_color_theme" bson:"default_color_theme"`
 	VersionDescription         string        `json:"version_description" bson:"version_description" binding:"max=10000"`
+
+	// DateFormat is the Go date layout used to display dates in the user interface.
+	// It accepts the three listed layouts; an empty or omitted value resets to the default layout.
+	DateFormat string `json:"date_format,omitempty" bson:"date_format" binding:"omitempty,oneof='02/01/2006 15:04:05' '02/01/2006 (Mon) 15:04:05' 'Mon 02/01/2006 15:04:05'" enums:",02/01/2006 15:04:05,02/01/2006 (Mon) 15:04:05,Mon 02/01/2006 15:04:05"`
 }
 
 type GlobalConf struct {
