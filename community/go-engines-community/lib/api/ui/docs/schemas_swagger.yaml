@@ -1358,6 +1358,16 @@ definitions:
       name:
         type: string
     type: object
+  broadcastmessage.BroadcastMessageStatus:
+    enum:
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - BroadcastMessageStatusActive
+    - BroadcastMessageStatusPending
+    - BroadcastMessageStatusExpired
   broadcastmessage.CreateRequest:
     properties:
       _id:
@@ -1409,12 +1419,7 @@ definitions:
       start:
         type: integer
       status:
-        description: Computed status (1 Active, 2 Pending, 3 Expired).
-        type: integer
-        enum:
-        - 1
-        - 2
-        - 3
+        $ref: '#/definitions/broadcastmessage.BroadcastMessageStatus'
       updated:
         type: integer
       views:
