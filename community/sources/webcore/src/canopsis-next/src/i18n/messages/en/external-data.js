@@ -1,5 +1,6 @@
 import {
   EXTERNAL_DATA_TYPES,
+  EXTERNAL_DATA_ON_MISMATCH_TYPES,
   EXTERNAL_DATA_CONDITION_TYPES,
   EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS,
   EXTERNAL_DATA_TABLES_TYPES,
@@ -37,6 +38,15 @@ export default {
     [EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.resource]: 'Resource',
     [EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.output]: 'Output',
     [EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.extraInfos]: 'Extra infos',
+  },
+  onMismatch: {
+    title: 'If external data query didn\'t match',
+    types: {
+      [EXTERNAL_DATA_ON_MISMATCH_TYPES.throwError]: 'Throw an error',
+      [EXTERNAL_DATA_ON_MISMATCH_TYPES.skipRule]: 'Skip entire rule execution',
+      [EXTERNAL_DATA_ON_MISMATCH_TYPES.skipActions]:
+        'Skip the actions relying on external data',
+    },
   },
 
   tableTypes: {

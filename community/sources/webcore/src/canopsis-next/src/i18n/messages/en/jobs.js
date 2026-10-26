@@ -1,5 +1,6 @@
 import {
   JOB_STATUS,
+  JOB_EXECUTION_STATUS,
   JOB_LAST_RUN_STATUS,
   JOB_RULE_TYPE,
   JOB_RULE_TYPES,
@@ -8,6 +9,7 @@ import {
 
 export default {
   filterByStatus: 'Filter by status',
+  filterByRuleType: 'Filter by rule type',
   filterByLastStatus: 'Filter by last status',
   filterByActiveState: 'Filter by active state',
   ruleName: 'Rule name',
@@ -23,10 +25,38 @@ export default {
   failReason: 'Fail reason',
   expirationDate: 'Expiration date',
   searchByRuleName: 'Search by rule name, ticket system name or ticket number',
+  searchByRuleNameOnly: 'Search by rule name',
+  searchByAuthTokenName: 'Search by auth token name',
   data: {
     request: 'Request',
     response: 'Response',
     webhookFailedPrefix: 'Webhook is failed',
+    statusPrefix: {
+      [JOBS_TABS.instructions]: {
+        [JOB_EXECUTION_STATUS.running]: 'Instruction job is running',
+        [JOB_EXECUTION_STATUS.succeeded]: 'Instruction job executed successfully',
+        [JOB_EXECUTION_STATUS.failed]: 'Instruction job is failed',
+        [JOB_EXECUTION_STATUS.aborted]: 'Instruction job is aborted',
+      },
+      [JOBS_TABS.webhooks]: {
+        [JOB_EXECUTION_STATUS.running]: 'Webhook is running',
+        [JOB_EXECUTION_STATUS.succeeded]: 'Webhook executed successfully',
+        [JOB_EXECUTION_STATUS.failed]: 'Webhook is failed',
+        [JOB_EXECUTION_STATUS.aborted]: 'Webhook is aborted',
+      },
+      [JOBS_TABS.authToken]: {
+        [JOB_EXECUTION_STATUS.running]: 'Auth token job is running',
+        [JOB_EXECUTION_STATUS.succeeded]: 'Auth token job executed successfully',
+        [JOB_EXECUTION_STATUS.failed]: 'Auth token job is failed',
+        [JOB_EXECUTION_STATUS.aborted]: 'Auth token job is aborted',
+      },
+    },
+  },
+  executionStatus: {
+    [JOB_EXECUTION_STATUS.running]: 'In progress',
+    [JOB_EXECUTION_STATUS.succeeded]: 'Succeeded',
+    [JOB_EXECUTION_STATUS.failed]: 'Failed',
+    [JOB_EXECUTION_STATUS.aborted]: 'Aborted',
   },
   status: {
     [JOB_STATUS.running]: 'Running',
@@ -46,16 +76,20 @@ export default {
   },
   types: {
     [JOB_RULE_TYPES.scenario]: 'Scenario',
-    [JOB_RULE_TYPES.declareTicket]: 'Ticket declaration rules',
+    [JOB_RULE_TYPES.declareTicket]: 'Ticket declaration rule',
   },
   actions: {
     editJob: 'Edit job',
     repeatJob: 'Repeat job',
     pauseJob: 'Pause job',
     startJob: 'Start job',
+    stopJob: 'Stop job',
   },
   tabs: {
+    [JOBS_TABS.instructions]: 'Instructions',
+    [JOBS_TABS.webhooks]: 'Webhooks',
     [JOBS_TABS.ticketStatus]: 'Ticket status',
+    [JOBS_TABS.authToken]: 'Auth token',
   },
   popups: {
     updated: 'Job updated',
@@ -71,5 +105,7 @@ export default {
       'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> paused | {count} jobs paused',
     pauseFailed:
       'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> failed to pause | {count} jobs failed to pause',
+    stopped: 'Job for <strong>{ruleName}</strong> stopped | {count} jobs stopped',
+    stopFailed: 'Job failed to stop | {count} jobs failed to stop',
   },
 };

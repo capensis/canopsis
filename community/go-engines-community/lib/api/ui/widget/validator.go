@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
@@ -42,6 +43,8 @@ func (v *baseValidator) ValidateEditRequest(sl validator.StructLevel) {
 		validateMapParametersRequest(sl, r.Parameters)
 	case view.WidgetTypeExternalData:
 		validateExternalDataParametersRequest(sl, r.Parameters)
+	case view.WidgetTypeAlarmsList:
+		validateAssociateTicketParametersRequest(sl, r.Parameters)
 	}
 	validateTemplateParametersRequest(sl, r)
 
@@ -70,6 +73,51 @@ func (v *baseValidator) ValidateEditRequest(sl validator.StructLevel) {
 					}
 				}
 			}
+		}
+	}
+}
+
+func validateAssociateTicketParametersRequest(sl validator.StructLevel, r view.Parameters) {
+	value, exists := r.RemainParameters["associateTicket"]
+	if !exists {
+		return
+	}
+	parameters, ok := value.(map[string]any)
+	if !ok {
+		sl.ReportError(value, "AssociateTicket", "Parameters.RemainParameters.associateTicket", "invalid", "")
+		return
+	}
+
+	templateValue, hasTemplate := parameters["formatsTemplate"]
+	templateID, templateIsString := templateValue.(string)
+	if hasTemplate && !templateIsString {
+		sl.ReportError(templateValue, "FormatsTemplate", "Parameters.RemainParameters.associateTicket.formatsTemplate", "value_string", "")
+		return
+	}
+	if templateID != "" {
+		return
+	}
+
+	formatsValue, hasFormats := parameters["formats"]
+	if !hasFormats {
+		return
+	}
+	formats, ok := formatsValue.([]any)
+	if !ok {
+		sl.ReportError(formatsValue, "Formats", "Parameters.RemainParameters.associateTicket.formats", "value_string_array", "")
+		return
+	}
+	if len(formats) > view.TicketFormatsMaxCount {
+		sl.ReportError(formatsValue, "Formats", "Parameters.RemainParameters.associateTicket.formats", "max", strconv.Itoa(view.TicketFormatsMaxCount))
+	}
+	for i, format := range formats {
+		stringFormat, ok := format.(string)
+		if !ok {
+			ns := fmt.Sprintf("Parameters.RemainParameters.associateTicket.formats.%d", i)
+			sl.ReportError(format, "Formats", ns, "value_string", "")
+		} else if utf8.RuneCountInString(stringFormat) > view.TicketFormatMaxLength {
+			ns := fmt.Sprintf("Parameters.RemainParameters.associateTicket.formats.%d", i)
+			sl.ReportError(format, "Formats", ns, "max", strconv.Itoa(view.TicketFormatMaxLength))
 		}
 	}
 }

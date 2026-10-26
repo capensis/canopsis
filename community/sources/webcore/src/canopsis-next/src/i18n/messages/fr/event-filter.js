@@ -6,8 +6,6 @@ import {
 
 export default {
   externalData: 'Données externes',
-  idHelp:
-    'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
   editPattern: 'Éditer le modèle',
   advanced: 'Avancée',
   addAField: 'Ajouter un champ',

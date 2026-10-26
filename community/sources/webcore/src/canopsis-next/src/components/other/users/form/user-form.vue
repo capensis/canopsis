@@ -7,18 +7,11 @@
       with-background
     />
 
-    <c-id-field
-      v-model="idField"
-      :disabled="onlyUserPrefs || !isNew"
-      name="_id"
-      autofocus
-    />
-
     <c-name-field
       v-model="nameField"
       :label="t('common.username')"
       :disabled="onlyUserPrefs || idpFieldsMap.name"
-      :autofocus="!isNew"
+      :autofocus="!onlyUserPrefs"
       name="name"
       autocomplete="new-password"
       required
@@ -162,7 +155,6 @@ export default {
 
     const {
       enabledField,
-      idField,
       nameField,
       emailField,
       firstNameField,
@@ -175,7 +167,6 @@ export default {
       defaultviewField,
     } = useFormModels({
       enabledField: 'enabled',
-      idField: '_id',
       nameField: 'name',
       emailField: 'email',
       firstNameField: 'firstname',
@@ -209,7 +200,6 @@ export default {
       t,
       menuProps,
       enabledField,
-      idField,
       nameField,
       emailField,
       firstNameField,

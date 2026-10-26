@@ -222,7 +222,11 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event, par
 			if len(component.ServicesToAdd) > 0 || len(component.ServicesToRemove) > 0 {
 				res.UpdatedEntitiesForEvent = append(res.UpdatedEntitiesForEvent, component)
 			}
+		}
 
+		if component.ID != "" && (report.CheckComponent || report.CheckResource && component.StateInfo == nil) {
+			// A concurrent resource event can create the component before its creator assigns a state setting.
+			// Retry assignment when a resource check sees that component still uninitialized.
 			res.EventMetric.IsStateSettingUpdated, err = p.contextGraphManager.AssignStateSetting(ctx, &component, commRegister)
 			if err != nil {
 				return fmt.Errorf("cannot assign state settings for a component: %w", err)

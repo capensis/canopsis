@@ -2,7 +2,7 @@
   <c-form-block-row :label="$t('declareTicket.ticketStatusSourceField')" :depth="1" top-border>
     <v-col cols="6">
       <c-payload-text-field
-        v-if="form.template"
+        v-if="withTemplate && form.template"
         :value="form.value"
         :label="$t('declareTicket.ticketStatusSourceField')"
         :name="name"
@@ -22,6 +22,7 @@
       />
     </v-col>
     <c-enabled-field
+      v-if="withTemplate"
       :model-value="form.template"
       :label="$t('declareTicket.allowTicketStatusSourceTemplate')"
       @update:model-value="updateField('template', $event)"
@@ -51,6 +52,10 @@ export default {
     variables: {
       type: Array,
       default: () => [],
+    },
+    withTemplate: {
+      type: Boolean,
+      default: true,
     },
   },
 };

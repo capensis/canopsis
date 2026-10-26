@@ -70,22 +70,18 @@ export default {
       {
         text: t('common.name'),
         value: 'title',
-        sortable: false,
       },
       {
         text: t('common.type'),
         value: 'type',
-        sortable: false,
       },
       {
         text: t('common.lastModifiedOn'),
         value: 'updated',
-        sortable: false,
       },
       {
         text: t('common.lastModifiedBy'),
         value: 'author.display_name',
-        sortable: false,
       },
       {
         text: t('common.actionsLabel'),

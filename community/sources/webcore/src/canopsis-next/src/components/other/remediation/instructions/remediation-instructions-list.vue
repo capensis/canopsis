@@ -150,7 +150,6 @@ export default {
         {
           text: this.$t('common.priority'),
           value: 'priority',
-          sortable: false,
         },
         {
           text: this.$t('common.status'),

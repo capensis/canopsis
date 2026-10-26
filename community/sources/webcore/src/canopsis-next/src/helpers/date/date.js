@@ -24,6 +24,14 @@ export const convertDateToMoment = (date, format) => {
     return moment.unix(date);
   }
 
+  /**
+   * NOTE: MicroTime values from the API are unix timestamps in microseconds,
+   * while moment expects milliseconds.
+   */
+  if (typeof date === 'number' && date >= 100000000000000) {
+    return moment(date / 1000);
+  }
+
   if (format && isString(date)) {
     const preparedFormat = DATETIME_FORMATS[format] ?? format;
 

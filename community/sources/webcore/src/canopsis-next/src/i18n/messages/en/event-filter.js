@@ -6,7 +6,6 @@ import {
 
 export default {
   externalData: 'External data',
-  idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
   editPattern: 'Edit pattern',
   advanced: 'Advanced',
   addAField: 'Add a field',

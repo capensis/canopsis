@@ -6,12 +6,15 @@
       :name="name"
       :required="required"
       :autofocus="autofocus"
+      :max-length="FORM_MAX_STRING_LENGTH"
       @update:model-value="$emit('update:modelValue', $event)"
     />
   </widget-settings-item>
 </template>
 
 <script>
+import { FORM_MAX_STRING_LENGTH } from '@/constants';
+
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 /**
@@ -50,5 +53,11 @@ export default {
   },
 
   emits: ['update:modelValue'],
+
+  setup() {
+    return {
+      FORM_MAX_STRING_LENGTH,
+    };
+  },
 };
 </script>

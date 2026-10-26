@@ -48,7 +48,7 @@ SOURCE_DATE_EPOCH:=$(shell date -u +%s)
 LINKPKG=git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis
 VERSION ?= $(shell (git -C "$(MONOREPO_ROOT)" tag --list --sort=-taggerdate --merged 2>/dev/null || echo "0.0.0") | head -1)
 # Metadata for the binaries
-CUSTOM_LDFLAGS=
+CUSTOM_LDFLAGS ?= -s -w
 LDFLAGS:=-ldflags "\
 	-X '$(LINKPKG).Version=$(VERSION)' \
 	-X '$(LINKPKG).BuildDate=$(SOURCE_DATE_EPOCH)' $(CUSTOM_LDFLAGS)"
@@ -178,6 +178,7 @@ docker-cmd-canopsis-reconfigure: TARGET=canopsis-reconfigure
 docker-cmd-engine-webhook: TARGET=engine-webhook
 docker-cmd-import-context-graph: TARGET=import-context-graph
 docker-cmd-export-alarms: TARGET=export-alarms
+docker-cmd-mcp-server: TARGET=mcp-server
 
 # Support tool targets.
 $(CURRENT_BUILD_OUTPUT_DIR)/support/%:
@@ -299,7 +300,11 @@ help:
 # CLEANUP
 #
 
-.PHONY: clean
+.PHONY: clean docker-clean-builder
 clean:
 	rm -rf -- "$(CURRENT_BUILD_OUTPUT_DIR)"
 	rm -f -- "$(MONOREPO_ROOT)/.dockerignore"
+
+docker-clean-builder:
+	docker rmi "$(DOCKER_IMAGE_BASE_PATH)/canopsis-go-builder:latest" 2>/dev/null || true
+	docker image prune -f --filter "label=stage=builder"

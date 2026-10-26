@@ -965,6 +965,11 @@ func (s *store) transformTemplateFields(ctx context.Context, r *EditRequest) err
 			}
 
 			tplId, ok := parameters[key+"Template"].(string)
+			if tplType == view.WidgetTemplateTypeTicketFormats && (!ok || tplId == "") {
+				// Custom associate-ticket settings clear the derived title; existing template types retain their behavior.
+				delete(parameters, key+"TemplateTitle")
+				continue
+			}
 			if !ok || tplId == "" {
 				continue
 			}
@@ -997,6 +1002,12 @@ func (s *store) transformTemplateFields(ctx context.Context, r *EditRequest) err
 				parameters[key] = tpl.Actions
 			case view.WidgetTemplateTypeAlarmSortColumns:
 				parameters[key] = tpl.SortColumns
+			case view.WidgetTemplateTypeTicketFormats:
+				formats := tpl.Formats
+				if formats == nil {
+					formats = []string{}
+				}
+				parameters[key] = formats
 			}
 		}
 	}

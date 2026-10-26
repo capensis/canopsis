@@ -8,7 +8,7 @@
     :attributes="availableEventFilterAttributes"
     :counter="counter"
     class="c-event-filter-patterns-field"
-    @update:patterns="$emit('update:value', $event)"
+    @update:patterns="$emit('update:patterns', $event)"
   />
 </template>
 
@@ -32,7 +32,7 @@ import CAlarmOldStateField from '@/components/forms/fields/alarm/c-alarm-old-sta
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
 export default {
-  emits: ['update:patterns', 'update:value'],
+  emits: ['update:patterns'],
   components: { PatternEditorField },
   props: {
     patterns: {

@@ -12,11 +12,14 @@ import (
 )
 
 type EditRequest struct {
-	Title          string          `json:"title" binding:"max=255"`
-	Type           string          `json:"type" binding:"required,max=255"`
-	GridParameters map[string]any  `json:"grid_parameters"`
-	Parameters     view.Parameters `json:"parameters"`
-	Author         string          `json:"author" swaggerignore:"true"`
+	Title          string         `json:"title" binding:"max=255"`
+	Type           string         `json:"type" binding:"required,max=255"`
+	GridParameters map[string]any `json:"grid_parameters"`
+	// Parameters may include AlarmsList associateTicket: {formats: []string, formatsTemplate: string, formatsTemplateTitle: string}.
+	// A non-empty formatsTemplate must reference an existing ticket_formats template; its formats and derived title take precedence, and supplied custom formats are ignored.
+	// An absent or empty reference selects custom mode and clears the derived title. In custom mode, formats are stored exactly; empty strings and lists are allowed, regexp syntax is not checked, and null lists, null elements, or non-string entries are rejected. A present formatsTemplate must be a string.
+	Parameters view.Parameters `json:"parameters"`
+	Author     string          `json:"author" swaggerignore:"true"`
 
 	Filters []FilterRequest `json:"filters" binding:"dive"`
 }

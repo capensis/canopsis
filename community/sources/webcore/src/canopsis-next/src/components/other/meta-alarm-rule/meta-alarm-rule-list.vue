@@ -124,7 +124,7 @@ export default {
       { text: t('common.id'), value: '_id' },
       { text: t('common.name'), value: 'name' },
       { text: t('common.type'), value: 'type' },
-      { text: t('common.enabled'), value: 'enabled', sortable: false },
+      { text: t('common.enabled'), value: 'enabled' },
       { text: t('metaAlarmRule.autoResolve'), value: 'auto_resolve' },
       { text: t('metaAlarmRule.thresholdRate'), value: 'config.threshold_rate' },
       { text: t('metaAlarmRule.thresholdCount'), value: 'config.threshold_count' },

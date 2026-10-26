@@ -1,6 +1,7 @@
 eventfilter:
   eventfilter_{1..1000}:
     _id: <UUID()>
+    name: <UniqueName()>
     priority: <RangeIndex()>
     type: drop
     description: <LoremIpsumSentence(3)>
