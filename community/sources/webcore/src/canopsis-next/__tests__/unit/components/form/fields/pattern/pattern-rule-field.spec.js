@@ -218,6 +218,34 @@ describe('pattern-rule-field', () => {
     });
   });
 
+  test('Custom value field uses the configured model contract', () => {
+    const value = Faker.datatype.string();
+    const wrapper = factory({
+      propsData: {
+        rule: {
+          ...emptyRule,
+          attribute: ALARM_PATTERN_FIELDS.output,
+          operator: PATTERN_OPERATORS.equal,
+          value,
+        },
+        valueField: {
+          is: 'custom-component',
+          model: 'modelValue',
+        },
+      },
+    });
+
+    expect(wrapper.vm.valueComponent).toEqual({
+      is: 'custom-component',
+      props: expect.objectContaining({
+        modelValue: value,
+        'onUpdate:modelValue': wrapper.vm.updateValue,
+      }),
+    });
+    expect(wrapper.vm.valueComponent.props).not.toHaveProperty('value');
+    expect(wrapper.vm.valueComponent.props).not.toHaveProperty('onUpdate:value');
+  });
+
   test.each([
     [true, 'common.true'],
     [false, 'common.false'],
