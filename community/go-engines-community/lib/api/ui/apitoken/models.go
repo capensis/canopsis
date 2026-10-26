@@ -9,6 +9,7 @@ import (
 type ListRequest struct {
 	pagination.FilteredQuery
 	SortBy string `form:"sort_by" binding:"oneoforempty=name created expired accessed"`
+	Active *bool  `form:"active"`
 }
 
 type EditRequest struct {
