@@ -53,12 +53,29 @@ type Colors struct {
 		HoverRow      *bool  `bson:"hover_row" json:"hover_row" binding:"required"`
 		HoverRowColor string `bson:"hover_row_color,omitempty" json:"hover_row_color,omitempty" binding:"required_if=HoverRow true,iscolororempty"`
 	} `bson:"table" json:"table"`
+	Widget struct {
+		TitleBackground   string `bson:"title_background" json:"title_background" binding:"required,iscolor"`
+		ContentBackground string `bson:"content_background" json:"content_background" binding:"required,iscolor"`
+		Border            *bool  `bson:"border" json:"border" binding:"required"`
+		BorderColor       string `bson:"border_color" json:"border_color" binding:"required_if=Border true,iscolororempty"`
+		BorderRadius      *int   `bson:"border_radius" json:"border_radius" binding:"required_if=Border true"`
+	} `bson:"widget" json:"widget"`
 	State struct {
 		OK       string `bson:"ok" json:"ok" binding:"required,iscolor"`
 		Minor    string `bson:"minor" json:"minor" binding:"required,iscolor"`
 		Major    string `bson:"major" json:"major" binding:"required,iscolor"`
 		Critical string `bson:"critical" json:"critical" binding:"required,iscolor"`
 	} `bson:"state" json:"state"`
+	Icons struct {
+		Ack         string `bson:"ack" json:"ack" binding:"required,iscolor"`
+		Canceled    string `bson:"canceled" json:"canceled" binding:"required,iscolor"`
+		Children    string `bson:"children" json:"children" binding:"required,iscolor"`
+		Parent      string `bson:"parent" json:"parent" binding:"required,iscolor"`
+		Comment     string `bson:"comment" json:"comment" binding:"required,iscolor"`
+		Snooze      string `bson:"snooze" json:"snooze" binding:"required,iscolor"`
+		Tickets     string `bson:"tickets" json:"tickets" binding:"required,iscolor"`
+		CancelDelay string `bson:"cancel_delay" json:"cancel_delay" binding:"required,iscolor"`
+	} `bson:"icons" json:"icons"`
 }
 
 type Document struct {

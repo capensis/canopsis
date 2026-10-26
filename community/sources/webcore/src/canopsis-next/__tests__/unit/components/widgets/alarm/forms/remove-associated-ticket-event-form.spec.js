@@ -28,5 +28,6 @@ describe('remove-associated-ticket-event-form', () => {
     });
 
     expect(wrapper.find('c-lazy-search-field-stub').attributes('disabled')).toBe('true');
+    expect(wrapper.find('c-description-field-stub').attributes()).toHaveProperty('autofocus');
   });
 });

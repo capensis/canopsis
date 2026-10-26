@@ -81,12 +81,20 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 			},
 		})
 	}
-	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
-		r.Query,
-		pipeline,
-		mongoquery.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
-		project,
-	))
+	sortQuery := mongoquery.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
+
+	var aggregatePipeline []bson.M
+	if r.SortBy == "author.display_name" {
+		pipeline = append(pipeline, project...)
+		aggregatePipeline = pagination.CreateAggregationPipeline(
+			r.Query, pipeline, sortQuery,
+		)
+	} else {
+		aggregatePipeline = pagination.CreateAggregationPipeline(
+			r.Query, pipeline, sortQuery, project,
+		)
+	}
+	cursor, err := s.collection.Aggregate(ctx, aggregatePipeline)
 
 	if err != nil {
 		return nil, err
@@ -101,6 +109,10 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
 	}
 
 	return &res, nil

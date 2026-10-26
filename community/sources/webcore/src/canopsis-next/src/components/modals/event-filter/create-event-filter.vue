@@ -7,7 +7,6 @@
       <template #text="">
         <event-filter-form
           :rule-id="ruleId"
-          :is-disabled-id-field="isDisabledIdField"
           :event-attributes="eventAttributes"
           :attributes-pending="pending"
         />
@@ -86,10 +85,6 @@ export default {
     const title = computed(() => config.value.title ?? t('modals.createEventFilter.create.title'));
     const isNew = computed(() => !config.value.rule?._id || config.value.duplicating);
     const submitLabel = computed(() => t(isNew.value ? 'common.create' : 'common.edit'));
-    const isDisabledIdField = computed(
-      () => config.value.isDisabledIdField || config.value.submittingIdField,
-    );
-
     const { shown: chatShown, options: chatOptions } = useAiChatForm({
       form: values,
       modal: toRef(props, 'modal'),
@@ -129,7 +124,6 @@ export default {
       eventAttributes,
       submitting,
       submitDisabled,
-      isDisabledIdField,
       chatShown,
       chatOptions,
       submitLabel,

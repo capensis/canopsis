@@ -263,6 +263,7 @@ export default {
   [MODALS.createTicketStatusJob]: defineAsyncComponent(
     () => import('./ticket-status-job/create-ticket-status-job.vue'),
   ),
+  [MODALS.stopJobs]: defineAsyncComponent(() => import('./job-management/stop-jobs.vue')),
   [MODALS.testSuite]: defineAsyncComponent(() => import('./test-suite/test-suite.vue')),
 
   ...featureModalComponents,

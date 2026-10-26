@@ -27,6 +27,8 @@ import { ref, watch } from 'vue';
 
 import { MODALS } from '@/constants';
 
+import { convertQueryToRequest } from '@/helpers/query';
+
 import { useModals } from '@/hooks/modals';
 import { useQueryOptions } from '@/hooks/query/options';
 import { usePendingWithLocalQuery } from '@/hooks/query/shared';
@@ -85,10 +87,7 @@ export default {
     } = usePendingWithLocalQuery({
       fetchHandler: async (fetchQuery) => {
         const response = await fetchEventsRecordsListWithoutStore({
-          params: {
-            limit: fetchQuery.itemsPerPage,
-            page: fetchQuery.page,
-          },
+          params: convertQueryToRequest(fetchQuery),
         });
 
         await fetchCurrentEventsRecord();

@@ -1,6 +1,6 @@
 <template>
-  <c-layout gap="3">
-    <div class="ticket-status-jobs-table-filters__field">
+  <v-row>
+    <v-col cols="12" sm="6" md="3">
       <c-select
         :model-value="options.status"
         :label="t('jobs.filterByActiveState')"
@@ -11,8 +11,8 @@
         hide-details
         @update:model-value="updateStatus"
       />
-    </div>
-    <div class="ticket-status-jobs-table-filters__field">
+    </v-col>
+    <v-col cols="12" sm="6" md="3">
       <c-select
         :model-value="options.last_run_status"
         :label="t('jobs.filterByLastStatus')"
@@ -23,8 +23,8 @@
         hide-details
         @update:model-value="updateLastRunStatus"
       />
-    </div>
-  </c-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -78,11 +78,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.ticket-status-jobs-table-filters__field {
-  flex: 0 0 25%;
-  max-width: 25%;
-  min-width: 220px;
-}
-</style>

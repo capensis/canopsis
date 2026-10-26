@@ -2,7 +2,7 @@
   <c-layout gap="2" column>
     <c-name-field
       v-model="nameField"
-      :autofocus="isDisabledIdField"
+      autofocus
       required
     />
 
@@ -37,10 +37,6 @@ export default {
   },
 
   props: {
-    isDisabledIdField: {
-      type: Boolean,
-      default: false,
-    },
     templateVars: {
       type: Object,
       default: () => ({}),

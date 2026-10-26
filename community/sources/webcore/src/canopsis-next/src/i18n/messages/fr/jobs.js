@@ -1,5 +1,6 @@
 import {
   JOB_STATUS,
+  JOB_EXECUTION_STATUS,
   JOB_LAST_RUN_STATUS,
   JOB_RULE_TYPE,
   JOB_RULE_TYPES,
@@ -8,6 +9,7 @@ import {
 
 export default {
   filterByStatus: 'Filtrer par statut',
+  filterByRuleType: 'Filtrer par type de règle',
   filterByLastStatus: 'Filtrer par dernier statut',
   filterByActiveState: 'Filtrer par état actif',
   ruleName: 'Nom de la règle',
@@ -23,10 +25,38 @@ export default {
   failReason: 'Raison de l\'échec',
   expirationDate: 'Date d\'expiration',
   searchByRuleName: 'Rechercher par nom de règle, nom du système de tickets ou numéro de ticket',
+  searchByRuleNameOnly: 'Rechercher par nom de règle',
+  searchByAuthTokenName: 'Rechercher par nom du jeton d\'auth',
   data: {
     request: 'Requête',
     response: 'Réponse',
     webhookFailedPrefix: 'Webhook a échoué',
+    statusPrefix: {
+      [JOBS_TABS.instructions]: {
+        [JOB_EXECUTION_STATUS.running]: 'La tâche d\'instruction est en cours',
+        [JOB_EXECUTION_STATUS.succeeded]: 'La tâche d\'instruction a réussi',
+        [JOB_EXECUTION_STATUS.failed]: 'La tâche d\'instruction a échoué',
+        [JOB_EXECUTION_STATUS.aborted]: 'La tâche d\'instruction est annulée',
+      },
+      [JOBS_TABS.webhooks]: {
+        [JOB_EXECUTION_STATUS.running]: 'Le webhook est en cours',
+        [JOB_EXECUTION_STATUS.succeeded]: 'Le webhook a réussi',
+        [JOB_EXECUTION_STATUS.failed]: 'Le webhook a échoué',
+        [JOB_EXECUTION_STATUS.aborted]: 'Le webhook est annulé',
+      },
+      [JOBS_TABS.authToken]: {
+        [JOB_EXECUTION_STATUS.running]: 'La tâche du jeton d\'auth est en cours',
+        [JOB_EXECUTION_STATUS.succeeded]: 'La tâche du jeton d\'auth a réussi',
+        [JOB_EXECUTION_STATUS.failed]: 'La tâche du jeton d\'auth a échoué',
+        [JOB_EXECUTION_STATUS.aborted]: 'La tâche du jeton d\'auth est annulée',
+      },
+    },
+  },
+  executionStatus: {
+    [JOB_EXECUTION_STATUS.running]: 'En cours',
+    [JOB_EXECUTION_STATUS.succeeded]: 'Réussi',
+    [JOB_EXECUTION_STATUS.failed]: 'Échoué',
+    [JOB_EXECUTION_STATUS.aborted]: 'Annulé',
   },
   status: {
     [JOB_STATUS.running]: 'En cours',
@@ -49,13 +79,17 @@ export default {
     repeatJob: 'Répéter le job',
     pauseJob: 'Mettre le job en pause',
     startJob: 'Démarrer le job',
+    stopJob: 'Arrêter le job',
   },
   types: {
     [JOB_RULE_TYPES.scenario]: 'Scénario',
-    [JOB_RULE_TYPES.declareTicket]: 'Règles de déclaration de ticket',
+    [JOB_RULE_TYPES.declareTicket]: 'Règle de déclaration de ticket',
   },
   tabs: {
+    [JOBS_TABS.instructions]: 'Instructions',
+    [JOBS_TABS.webhooks]: 'Webhooks',
     [JOBS_TABS.ticketStatus]: 'Statut des tickets',
+    [JOBS_TABS.authToken]: 'Jeton d\'auth',
   },
   popups: {
     updated: 'Job mis à jour',
@@ -71,5 +105,7 @@ export default {
       'Job pour <strong>{ruleName}</strong> / <strong>Numéro de ticket {ticketNumber}</strong> mis en pause | {count} jobs mis en pause',
     pauseFailed:
       'Échec de mise en pause du job pour <strong>{ruleName}</strong> / <strong>Numéro de ticket {ticketNumber}</strong> | {count} jobs n\'ont pas pu être mis en pause',
+    stopped: 'Job pour <strong>{ruleName}</strong> arrêté | {count} jobs arrêtés',
+    stopFailed: 'Le job n\'a pas pu être arrêté | {count} jobs n\'ont pas pu être arrêtés',
   },
 };

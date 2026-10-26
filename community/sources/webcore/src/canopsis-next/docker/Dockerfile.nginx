@@ -5,7 +5,7 @@ ARG NODE_VERSION
 
 FROM node:${NODE_VERSION} AS build
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y make && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y make patch && rm -rf /var/lib/apt/lists/*
 
 # Copy only files needed to build the frontend
 COPY ./community/.env /app/community/.env

@@ -17,6 +17,8 @@ const stubs = {
 const selectAlarmPatternsField = wrapper => wrapper.find('c-alarm-patterns-field-stub');
 const selectEntityPatternsField = wrapper => wrapper.find('c-entity-patterns-field-stub');
 const selectPbehaviorPatternsField = wrapper => wrapper.find('c-pbehavior-patterns-field-stub');
+const selectServiceWeatherPatternsField = wrapper =>
+  wrapper.find('c-service-weather-patterns-field-stub');
 
 describe('pattern-form', () => {
   const factory = generateShallowRenderer(PatternForm, { stubs });
@@ -57,7 +59,7 @@ describe('pattern-form', () => {
     const groups = [{}];
     const nextForm = { ...form, id, groups };
 
-    selectAlarmPatternsField(wrapper).triggerCustomEvent('input', nextForm);
+    selectAlarmPatternsField(wrapper).triggerCustomEvent('update:patterns', nextForm);
 
     expect(globalThis.__TEST_FORM__.values.value).toEqual(nextForm);
   });
@@ -75,11 +77,13 @@ describe('pattern-form', () => {
       },
     });
 
+    expect(selectEntityPatternsField(wrapper).attributes('patterns')).toBe('[object Object]');
+
     const id = Faker.datatype.string();
     const groups = [{}];
     const nextForm = { ...form, id, groups };
 
-    selectEntityPatternsField(wrapper).triggerCustomEvent('input', nextForm);
+    selectEntityPatternsField(wrapper).triggerCustomEvent('update:patterns', nextForm);
 
     expect(globalThis.__TEST_FORM__.values.value).toEqual(nextForm);
   });
@@ -97,11 +101,39 @@ describe('pattern-form', () => {
       },
     });
 
+    expect(selectPbehaviorPatternsField(wrapper).attributes('patterns')).toBe('[object Object]');
+
     const id = Faker.datatype.string();
     const groups = [{}];
     const nextForm = { ...form, id, groups };
 
-    selectPbehaviorPatternsField(wrapper).triggerCustomEvent('input', nextForm);
+    selectPbehaviorPatternsField(wrapper).triggerCustomEvent('update:patterns', nextForm);
+
+    expect(globalThis.__TEST_FORM__.values.value).toEqual(nextForm);
+  });
+
+  test('Service weather pattern changed after trigger service weather patterns field', () => {
+    const form = {
+      title: '',
+      id: PATTERN_CUSTOM_ITEM_VALUE,
+      groups: [],
+      type: PATTERN_TYPES.serviceWeather,
+    };
+    const wrapper = factory({
+      propsData: {
+        form,
+      },
+    });
+
+    const serviceWeatherPatternsField = selectServiceWeatherPatternsField(wrapper);
+
+    expect(serviceWeatherPatternsField.attributes('patterns')).toBe('[object Object]');
+
+    const id = Faker.datatype.string();
+    const groups = [{}];
+    const nextForm = { ...form, id, groups };
+
+    serviceWeatherPatternsField.triggerCustomEvent('update:patterns', nextForm);
 
     expect(globalThis.__TEST_FORM__.values.value).toEqual(nextForm);
   });
