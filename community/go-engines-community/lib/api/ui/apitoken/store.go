@@ -39,10 +39,20 @@ type store struct {
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest, userID string) (AggregationResult, error) {
+	match := bson.M{"user": userID}
+	if r.Active != nil {
+		if *r.Active {
+			match["$or"] = []bson.M{
+				{"expired": nil},
+				{"expired": bson.M{"$gt": datetime.NewCpsTime()}},
+			}
+		} else {
+			match["expired"] = bson.M{"$lte": datetime.NewCpsTime()}
+		}
+	}
+
 	beforeLimit := []bson.M{
-		{"$match": bson.M{
-			"user": userID,
-		}},
+		{"$match": match},
 		{"$project": bson.M{
 			"hash": 0,
 		}},
