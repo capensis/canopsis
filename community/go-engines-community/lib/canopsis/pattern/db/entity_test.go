@@ -45,6 +45,36 @@ func TestEntityPatternToSql(t *testing.T) {
 
 func getEntityToMongoQueryDataSets() map[string]entityDataSet {
 	return map[string]entityDataSet{
+		"given pause author condition": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "pause.author",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-author"),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"entity.pause.author": bson.M{"$eq": "test-author"}},
+				}},
+			}},
+		},
+		"given pause initiator condition": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "pause.initiator",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "external"),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"entity.pause.initiator": bson.M{"$eq": "external"}},
+				}},
+			}},
+		},
 		"given one condition": {
 			pattern: pattern.Entity{
 				{

@@ -30,6 +30,7 @@ const (
 	OutputJobPrefix        = "Job: "
 	OutputFailReasonPrefix = "Fail reason: "
 	OutputUpstreamPrefix   = "Upstream: "
+	OutputTypePrefix       = "Type: "
 )
 
 // PbhCanonicalTypeActive is duplicate of pbehavior.TypeActive because of package cycle.
@@ -516,6 +517,7 @@ type AlarmValue struct {
 	ACK         *AlarmStep  `bson:"ack,omitempty" json:"ack,omitempty"`
 	Canceled    *AlarmStep  `bson:"canceled,omitempty" json:"canceled,omitempty"`
 	Snooze      *AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
+	Pause       *AlarmStep  `bson:"pause,omitempty" json:"pause,omitempty"`
 	State       *AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
 	Status      *AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
 	Comments    []AlarmStep `bson:"comments,omitempty" json:"comments,omitempty"`
@@ -549,6 +551,7 @@ type AlarmValue struct {
 	Resolved                    *datetime.CpsTime `bson:"resolved,omitempty" json:"resolved,omitempty"`
 	PbehaviorInfo               PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info"`
 	Meta                        string            `bson:"meta,omitempty" json:"meta,omitempty"`
+	MetaRuleName                string            `bson:"meta_rule_name,omitempty" json:"meta_rule_name,omitempty"`
 	MetaValuePath               string            `bson:"meta_value_path,omitempty" json:"meta_value_path,omitempty"`
 
 	Parents         []string `bson:"parents" json:"parents"`
@@ -579,6 +582,8 @@ type AlarmValue struct {
 	InactiveDuration int64 `bson:"inactive_duration" json:"inactive_duration"`
 	// SnoozeDuration represents a duration when an alarm was in snooze.
 	SnoozeDuration int64 `bson:"snooze_duration" json:"snooze_duration"`
+	// PauseDuration represents a duration when an alarm was in pause.
+	PauseDuration int64 `bson:"pause_duration" json:"pause_duration"`
 	// PbehaviorInactiveDuration represents a duration when an alarm was in maintenance, pause, inactive pbehavior interval.
 	PbehaviorInactiveDuration int64 `bson:"pbh_inactive_duration" json:"pbh_inactive_duration"`
 	// CloseDelayValue represents a close delay timeout, used only in the API response.

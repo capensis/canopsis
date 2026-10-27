@@ -13,7 +13,6 @@
           :ref="setRef"
           :template-vars="templateVars"
           :copy-vars="copyVars"
-          :is-disabled-id-field="isDisabledIdField"
         />
       </template>
 
@@ -46,10 +45,6 @@ export default {
     ruleId: {
       type: String,
       default: undefined,
-    },
-    isDisabledIdField: {
-      type: Boolean,
-      default: false,
     },
     eventAttributes: {
       type: Array,

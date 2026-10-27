@@ -205,5 +205,5 @@ func (r *AggregationResult) GetTotal() int64 {
 
 type FilteredQuery struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=title enabled priority method"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=title enabled priority method type"`
 }

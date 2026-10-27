@@ -1,17 +1,19 @@
 <template>
-  <c-layout class="pt-2" align="center">
+  <div class="d-flex align-center ga-4 pt-2">
     <div :style="labelStyles">
-      <div class="text-subtitle-1 font-weight-bold">
+      <div class="font-weight-bold text-label-large">
         {{ label }}
       </div>
     </div>
     <div class="text-break">
       <slot>{{ value }}</slot>
     </div>
-  </c-layout>
+  </div>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 export default {
   props: {
     label: {
@@ -24,16 +26,13 @@ export default {
     },
     width: {
       type: [Number, String],
-      default: 160,
+      default: 200,
     },
   },
-  computed: {
-    labelStyles() {
-      return {
-        minWidth: `${this.width}px`,
-        maxWidth: `${this.width}px`,
-      };
-    },
+  setup(props) {
+    const labelStyles = computed(() => ({ minWidth: `${props.width}px`, maxWidth: `${props.width}px` }));
+
+    return { labelStyles };
   },
 };
 </script>

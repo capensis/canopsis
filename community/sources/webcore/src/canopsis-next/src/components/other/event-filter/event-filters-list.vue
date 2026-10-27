@@ -116,6 +116,7 @@ export default {
 
     const headers = computed(() => [
       { text: t('common.id'), value: '_id' },
+      { text: t('common.name'), value: 'name' },
       { text: t('common.type'), value: 'type' },
       { text: t('common.priority'), value: 'priority' },
       { text: t('common.enabled'), value: 'enabled' },

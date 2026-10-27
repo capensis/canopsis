@@ -9,6 +9,24 @@ const (
 	ServiceTimescaleDB = "TimescaleDB"
 )
 
+const (
+	StatusHealthy   = "healthy"
+	StatusDegraded  = "degraded"
+	StatusUnhealthy = "unhealthy"
+)
+
+const (
+	EngineIssueQueueOverflowed         = "queue_overflowed"
+	EngineIssueTooFewInstances         = "too_few_instances"
+	EngineIssueInstancesConfigMismatch = "instances_config_mismatch"
+)
+
+const (
+	ServiceIssueNodeDown       = "node_down"
+	ServiceIssueNoQuorum       = "no_quorum"
+	ServiceIssueQuorumDegraded = "quorum_degraded"
+)
+
 type Info struct {
 	Services []Service `json:"services"`
 	Engines  Engines   `json:"engines"`
@@ -32,10 +50,11 @@ type Status struct {
 }
 
 type Service struct {
-	Name         string `json:"name"`
-	IsRunning    bool   `json:"is_running"`
-	Nodes        *int   `json:"nodes,omitempty"`
-	RunningNodes *int   `json:"running_nodes,omitempty"`
+	Name         string   `json:"name"`
+	Status       string   `json:"status"`
+	Issues       []string `json:"issues,omitempty"`
+	Nodes        *int     `json:"nodes,omitempty"`
+	RunningNodes *int     `json:"running_nodes,omitempty"`
 }
 
 type Graph struct {
@@ -45,16 +64,13 @@ type Graph struct {
 
 type Engine struct {
 	Name             string            `json:"name,omitempty"`
+	Status           string            `json:"status"`
+	Issues           []string          `json:"issues,omitempty"`
 	Instances        *int              `json:"instances,omitempty"`
 	MinInstances     *int              `json:"min_instances,omitempty"`
 	OptimalInstances *int              `json:"optimal_instances,omitempty"`
 	QueueLength      *int              `json:"queue_length,omitempty"`
 	Time             *datetime.CpsTime `json:"time,omitempty" swaggertype:"integer"`
-
-	IsRunning             bool `json:"is_running"`
-	IsQueueOverflown      bool `json:"is_queue_overflown"`
-	IsTooFewInstances     bool `json:"is_too_few_instances"`
-	IsDiffInstancesConfig bool `json:"is_diff_instances_config"`
 }
 
 type Edge struct {

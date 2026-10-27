@@ -11,7 +11,6 @@
       <template #general="{ setRef, templateVars }">
         <meta-alarm-rule-general-form
           :ref="setRef"
-          :disabled-id-field="disabledIdField"
           :template-vars="templateVars"
         />
       </template>
@@ -45,10 +44,6 @@ export default {
     ruleId: {
       type: String,
       default: undefined,
-    },
-    disabledIdField: {
-      type: Boolean,
-      default: false,
     },
   },
 

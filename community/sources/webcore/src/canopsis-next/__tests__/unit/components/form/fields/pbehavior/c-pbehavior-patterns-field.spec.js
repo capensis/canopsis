@@ -28,6 +28,7 @@ describe('c-pbehavior-patterns-field', () => {
 
     expect(attributesByValue[PBEHAVIOR_PATTERN_FIELDS.id].options.valueField).toEqual({
       is: 'c-pbehavior-field',
+      model: 'modelValue',
       props: {
         itemTitle: 'name',
         itemValue: '_id',
@@ -36,12 +37,14 @@ describe('c-pbehavior-patterns-field', () => {
     });
     expect(attributesByValue[PBEHAVIOR_PATTERN_FIELDS.reason].options.valueField).toEqual({
       is: 'c-pbehavior-reason-field',
+      model: 'modelValue',
       props: {
         ellipsis: true,
       },
     });
     expect(attributesByValue[PBEHAVIOR_PATTERN_FIELDS.type].options.valueField).toEqual({
       is: 'c-pbehavior-type-field',
+      model: 'modelValue',
       props: {
         ellipsis: true,
       },

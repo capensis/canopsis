@@ -59,7 +59,7 @@ describe('pattern-form', () => {
     const groups = [{}];
     const nextForm = { ...form, id, groups };
 
-    selectAlarmPatternsField(wrapper).triggerCustomEvent('input', nextForm);
+    selectAlarmPatternsField(wrapper).triggerCustomEvent('update:patterns', nextForm);
 
     expect(globalThis.__TEST_FORM__.values.value).toEqual(nextForm);
   });
@@ -76,6 +76,8 @@ describe('pattern-form', () => {
         form,
       },
     });
+
+    expect(selectEntityPatternsField(wrapper).attributes('patterns')).toBe('[object Object]');
 
     const id = Faker.datatype.string();
     const groups = [{}];
@@ -98,6 +100,8 @@ describe('pattern-form', () => {
         form,
       },
     });
+
+    expect(selectPbehaviorPatternsField(wrapper).attributes('patterns')).toBe('[object Object]');
 
     const id = Faker.datatype.string();
     const groups = [{}];

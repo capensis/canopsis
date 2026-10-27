@@ -1,15 +1,17 @@
 <template>
-  <c-layout gap="3" column>
-    <c-layout gap="3" wrap>
+  <v-row>
+    <v-col cols="12" md="4">
       <c-text-field
         :model-value="ruleType"
         :label="t('jobs.ruleType')"
         readonly
         disabled
       />
+    </v-col>
 
+    <v-col cols="12" md="4">
       <c-text-field
-        :model-value="form.rule_name"
+        :model-value="ruleNameField"
         :label="t('jobs.ruleName')"
         readonly
         disabled
@@ -23,42 +25,43 @@
           />
         </template>
       </c-text-field>
+    </v-col>
 
+    <v-col cols="12" md="4">
       <c-text-field
-        :model-value="form.ticket_system_name"
+        :model-value="ticketSystemNameField"
         :label="t('jobs.ticketSystemName')"
         readonly
         disabled
       />
-    </c-layout>
+    </v-col>
 
-    <c-text-field
-      :model-value="form.ticket_id"
-      :label="$tc('common.ticket')"
-      :disabled="!isNew"
-      name="ticket"
-      required
-      @update:model-value="updateField('ticket_id', $event)"
-    />
-
-    <c-form-block>
-      <declare-ticket-rule-check-ticket-status-field
-        :form="form.check_ticket_status"
-        :template-vars="templateVars"
-        @update:form="updateField('check_ticket_status', $event)"
+    <v-col cols="12">
+      <c-text-field
+        v-model="ticketIdField"
+        :label="t('common.ticket')"
+        :disabled="!isNew"
+        name="ticket"
+        required
       />
-    </c-form-block>
-  </c-layout>
+    </v-col>
+
+    <v-col cols="12">
+      <c-form-block>
+        <declare-ticket-rule-check-ticket-status-field
+          v-model:form="checkTicketStatusField"
+          :with-templates="false"
+        />
+      </c-form-block>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
-import { computed, onMounted } from 'vue';
+import { computed } from 'vue';
 
-import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
-
-import { useModelField } from '@/hooks/form/model-field';
+import { useFormModels } from '@/hooks/form';
 import { useI18n } from '@/hooks/i18n';
-import { useTemplateVarsList } from '@/hooks/vars/template';
 
 import DeclareTicketRuleCheckTicketStatusField from '@/components/other/declare-ticket/form/fields/declare-ticket-rule-check-ticket-status-field.vue';
 
@@ -68,34 +71,36 @@ export default {
   },
 
   props: {
-    form: {
-      type: Object,
-      default: () => ({}),
-    },
     isNew: {
       type: Boolean,
       default: false,
     },
   },
 
-  emits: ['update:form'],
-
-  setup(props, { emit }) {
+  setup() {
     const { t } = useI18n();
-    const { updateField } = useModelField(props, emit);
-    const ruleType = computed(() => t(`jobs.types.${props.form.rule_type}`));
     const {
-      vars: templateVars,
-      fetchList: fetchTemplateVarsList,
-    } = useTemplateVarsList({ type: TEMPLATE_TESTING_TEST_TYPES.declareTicketRule });
-
-    onMounted(fetchTemplateVarsList);
+      ruleNameField,
+      ruleTypeField,
+      ticketSystemNameField,
+      ticketIdField,
+      checkTicketStatusField,
+    } = useFormModels({
+      ruleNameField: 'rule_name',
+      ruleTypeField: 'rule_type',
+      ticketSystemNameField: 'ticket_system_name',
+      ticketIdField: 'ticket_id',
+      checkTicketStatusField: 'check_ticket_status',
+    });
+    const ruleType = computed(() => t(`jobs.types.${ruleTypeField.value}`));
 
     return {
       t,
       ruleType,
-      templateVars,
-      updateField,
+      ruleNameField,
+      ticketSystemNameField,
+      ticketIdField,
+      checkTicketStatusField,
     };
   },
 };

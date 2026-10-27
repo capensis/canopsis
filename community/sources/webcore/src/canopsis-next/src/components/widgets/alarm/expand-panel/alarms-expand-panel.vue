@@ -110,6 +110,7 @@
           />
         </template>
         <alarm-timeline
+          :alarm-id="alarm._id"
           :steps="timelineSteps"
           :meta="stepsMeta"
           :query="stepsQuery"

@@ -140,6 +140,8 @@ export default {
     [USER_PERMISSIONS.business.alarmsList.actions.exportPdf]: 'Exporter en PDF',
     [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]:
       'Exporter la liste des alarmes en CSV',
+    [USER_PERMISSIONS.business.alarmsList.actions.exportAlarmTimeline]:
+      'Exporter la chronologie de l\'alarme en CSV',
     [USER_PERMISSIONS.business.alarmsList.actions.metaAlarmGroup]:
       'Délier l\'alarme de la méta-alarme automatique',
     [USER_PERMISSIONS.business.alarmsList.actions.bookmark]: 'Ajouter / supprimer un signet',
@@ -429,6 +431,10 @@ export default {
     [USER_PERMISSIONS.api.general.techmetrics]: 'Métriques techniques',
     [USER_PERMISSIONS.api.general.ticketStatusJobManagement]:
       'Gestion des tâches de statut de ticket',
+    [USER_PERMISSIONS.api.general.webhookJobManagement]: 'Gestion des jobs webhook',
+    [USER_PERMISSIONS.api.general.webhookTokenJobManagement]:
+      'Gestion des jobs de jeton webhook',
+    [USER_PERMISSIONS.api.general.remediationJobManagement]: 'Gestion des jobs de remédiation',
     [USER_PERMISSIONS.api.general.techmetricsSettings]: 'Paramètres des métriques techniques',
     [USER_PERMISSIONS.api.general.userInterfaceDelete]: 'Supprimer l\'interface utilisateur',
     [USER_PERMISSIONS.api.general.userInterfaceUpdate]: 'Mettre à jour l\'interface utilisateur',

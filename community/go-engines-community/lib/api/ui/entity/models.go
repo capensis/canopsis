@@ -54,9 +54,10 @@ type BaseFilterRequest struct {
 
 type ExportRequest struct {
 	BaseFilterRequest
-	Fields     export.Fields `json:"fields"`
-	Separator  string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
-	TimeFormat string        `json:"time_format" binding:"time_format"`
+	Fields    export.Fields `json:"fields"`
+	Separator string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
+	// TimeFormat accepts a legacy format name or a user interface Go date layout. If empty, the user interface date format or the default is used.
+	TimeFormat string `json:"time_format" binding:"time_format"`
 }
 
 type ArchiveDisabledRequest struct {
@@ -87,6 +88,8 @@ type Entity struct {
 	Category       *Category         `bson:"category" json:"category"`
 	IdleSince      *datetime.CpsTime `bson:"idle_since,omitempty" json:"idle_since,omitempty" swaggertype:"integer"`
 	LastEventDate  *datetime.CpsTime `bson:"last_event_date,omitempty" json:"last_event_date,omitempty" swaggertype:"integer"`
+
+	Pause *types.Pause `bson:"pause,omitempty" json:"pause,omitempty"`
 
 	PbehaviorInfo     *PbehaviorInfo    `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
 	LastPbehaviorDate *datetime.CpsTime `bson:"last_pbehavior_date,omitempty" json:"last_pbehavior_date,omitempty" swaggertype:"integer"`
@@ -303,4 +306,16 @@ type RefResponse struct {
 	Name      string `bson:"name" json:"name"`
 	Component string `bson:"component" json:"component,omitempty"`
 	Connector string `bson:"connector" json:"connector,omitempty"`
+}
+
+type PauseRequest struct {
+	ID        string `json:"_id" binding:"required"`
+	Comment   string `json:"comment" binding:"max=255"`
+	Inherited bool   `json:"inherited"`
+	Type      string `json:"type" binding:"max=255"`
+}
+
+type ResumeRequest struct {
+	ID      string `json:"_id" binding:"required"`
+	Comment string `json:"comment" binding:"max=255"`
 }

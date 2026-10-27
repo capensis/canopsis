@@ -102,6 +102,7 @@ export default {
       operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
       valueField: {
         is: 'c-pbehavior-field',
+        model: 'modelValue',
         props: {
           itemTitle: 'name',
           itemValue: '_id',
@@ -114,6 +115,7 @@ export default {
       operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
       valueField: {
         is: 'c-pbehavior-reason-field',
+        model: 'modelValue',
         props: {
           ellipsis: true,
         },
@@ -124,6 +126,7 @@ export default {
       operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
       valueField: {
         is: 'c-pbehavior-type-field',
+        model: 'modelValue',
         props: {
           ellipsis: true,
         },
@@ -139,6 +142,7 @@ export default {
       operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
       valueField: {
         is: 'c-select',
+        model: 'modelValue',
         props: {
           items: availablePbehaviorTypeTypes.value,
           itemTitle: 'text',

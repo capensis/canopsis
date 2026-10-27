@@ -1,1 +1,3 @@
-npx lint-staged
+cd community/sources/webcore/src/canopsis-next || exit 1
+
+npx --no-install lint-staged

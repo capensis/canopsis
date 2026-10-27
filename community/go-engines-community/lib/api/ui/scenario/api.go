@@ -246,6 +246,7 @@ func (a *api) DBExport(c *gin.Context) {
 // ValidateTemplates
 // @Param body body TemplateRequest true "body"
 // @Success 200 {object} template.ValidateResponse
+// @Description Webhook request templates can use .AdditionalData.UserRoles for the current role names of the event user when forward_author is enabled. The value is empty when no event user is forwarded.
 func (a *api) ValidateTemplates(c *gin.Context) {
 	var request TemplateRequest
 	if err := binding.Bind(c, &request); err != nil {
@@ -266,6 +267,7 @@ func (a *api) ValidateTemplates(c *gin.Context) {
 
 // GetTemplateVars
 // @Success 200 {array} TemplateVarsResponse
+// @Description The first_webhook and webhook groups include userRoles for request templates. It renders the current role names of the event user when forward_author is enabled.
 func (a *api) GetTemplateVars(c *gin.Context) {
 	vars, err := a.store.GetTemplateVars(c)
 	if err != nil {

@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarmaction"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarmtag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarmtimeline"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/apitoken"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/appinfo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/associativetable"
@@ -244,6 +245,10 @@ func RegisterRoutes(
 			metricsUserMetaUpdater, errorResponder)
 		userRouter := protected.Group("/users")
 		{
+			userRouter.GET("/top/active-connects",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer, errorResponder),
+				userApi.GetTopByActiveConnects,
+			)
 			userRouter.POST("",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer, errorResponder),
 				middleware.SetAuthor(errorResponder),
@@ -352,7 +357,7 @@ func RegisterRoutes(
 		}
 
 		alarmStore := alarm.NewStore(secondaryDbClient, dbExportClient, linkGenerator, patternfields.NewTransformer(primaryDbClient),
-			timezoneConfigProvider, authorProvider, tplExecutor, json.NewDecoder(), logger)
+			timezoneConfigProvider, userInterfaceAdapter, authorProvider, tplExecutor, json.NewDecoder(), logger)
 		alarmAPI := alarm.NewApi(alarmStore, exportTaskExecutor, json.NewEncoder(), json.NewDecoder(), errorResponder, logger)
 		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(primaryDbClient, amqpPublisher, canopsis.DefaultExchangeName,
 			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, eventGenerator, logger),
@@ -486,6 +491,29 @@ func RegisterRoutes(
 			)
 		}
 
+		timelineExportStore := alarmtimeline.NewStore(secondaryDbClient, dbExportClient, json.NewDecoder(), timezoneConfigProvider, userInterfaceAdapter)
+		timelineExportAPI := alarmtimeline.NewApi(timelineExportStore, exportTaskExecutor, json.NewEncoder(), errorResponder)
+		exportTaskExecutor.RegisterType(alarmtimeline.ExportType, timelineExportStore.Export)
+		timelineExportRouter := protected.Group("/alarm-timeline-export")
+		{
+			timelineExportRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer, errorResponder),
+				timelineExportAPI.StartExport,
+			)
+			timelineExportRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer, errorResponder),
+				timelineExportAPI.GetExport,
+			)
+			timelineExportRouter.GET(
+				"/:id/download",
+				security.GetFileAuthMiddleware(),
+				middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer, errorResponder),
+				timelineExportAPI.DownloadExport,
+			)
+		}
+
 		exportConfigurationAPI := exportconfiguration.NewApi(primaryDbClient, errorResponder, logger)
 		protected.POST(
 			"/export-configuration",
@@ -493,7 +521,8 @@ func RegisterRoutes(
 			exportConfigurationAPI.Export,
 		)
 
-		entityStore := entity.NewStore(primaryDbClient, dbExportClient, timezoneConfigProvider, authorProvider, patternfields.NewTransformer(primaryDbClient), json.NewDecoder())
+		entityStore := entity.NewStore(primaryDbClient, dbExportClient, timezoneConfigProvider, userInterfaceAdapter, authorProvider,
+			patternfields.NewTransformer(primaryDbClient), json.NewEncoder(), json.NewDecoder(), amqpPublisher, eventGenerator)
 		entityAPI := entity.NewApi(
 			entityStore,
 			exportTaskExecutor,
@@ -747,6 +776,17 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer, errorResponder),
 				middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionRead, enforcer, errorResponder),
 				pbehaviorApi.CalendarByEntityID,
+			)
+
+			entityRouter.POST(
+				"/pause",
+				middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer, errorResponder),
+				entityAPI.Pause,
+			)
+			entityRouter.POST(
+				"/resume",
+				middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer, errorResponder),
+				entityAPI.Resume,
 			)
 		}
 
@@ -2605,6 +2645,18 @@ func RegisterRoutes(
 					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer, errorResponder),
 					middleware.PreProcessBulk(apiConfigProvider, errorResponder, true),
 					entityAPI.BulkDisable,
+				)
+				entityRouter.POST(
+					"/pause",
+					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
+					entityAPI.BulkPause,
+				)
+				entityRouter.POST(
+					"/resume",
+					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer, errorResponder),
+					middleware.PreProcessBulk(apiConfigProvider, errorResponder, false),
+					entityAPI.BulkResume,
 				)
 			}
 

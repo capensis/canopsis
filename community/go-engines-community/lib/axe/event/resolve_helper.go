@@ -308,6 +308,10 @@ func (h *resolveHelper) GetResolveAlarmUpdate(t datetime.CpsTime, params rpc.Axe
 							}}},
 							{"$eq": bson.A{"$auto_instruction_in_progress", true}},
 							{"$eq": bson.A{"$inactive_delay_meta_alarm_in_progress", true}},
+							{"$ne": bson.A{
+								bson.M{"$ifNull": bson.A{"$v.pause", nil}},
+								nil,
+							}},
 						}},
 					}},
 					"then": bson.M{"$subtract": bson.A{
@@ -353,6 +357,20 @@ func (h *resolveHelper) GetResolveAlarmUpdate(t datetime.CpsTime, params rpc.Axe
 					"then": bson.M{"$subtract": bson.A{
 						t,
 						"$v.pbehavior_info.timestamp",
+					}},
+					"else": 0,
+				}},
+			}},
+			"v.pause_duration": bson.M{"$sum": bson.A{
+				"$v.pause_duration",
+				bson.M{"$cond": bson.M{
+					"if": bson.M{"$ne": bson.A{
+						bson.M{"$ifNull": bson.A{"$v.pause", nil}},
+						nil,
+					}},
+					"then": bson.M{"$subtract": bson.A{
+						t,
+						"$v.pause.t",
 					}},
 					"else": 0,
 				}},

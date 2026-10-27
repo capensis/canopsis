@@ -49,6 +49,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -127,6 +129,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -217,6 +221,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -297,6 +303,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -389,6 +397,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -459,6 +469,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -522,6 +534,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -655,6 +669,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -805,6 +821,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -911,6 +929,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -998,6 +1018,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipelineForResolvedAlarms_GivenR
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -1099,6 +1121,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -1168,6 +1192,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -1247,6 +1273,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 			"resolved_children":  0,
@@ -1337,6 +1365,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 			"resolved_children":  0,
@@ -1425,6 +1455,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 			"resolved_children":  0,
@@ -1500,6 +1532,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithPattern
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -1577,6 +1611,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithPattern
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -1662,6 +1698,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithPattern
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -1741,6 +1779,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithPattern
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -1807,6 +1847,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithPattern
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -1929,6 +1971,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 		}},
 		bson.M{"$addFields": bson.M{"entity": "$e"}},
 		bson.M{"$project": bson.M{"e": 0}},
@@ -2027,6 +2071,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepende
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
@@ -2116,6 +2162,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepende
 		bson.M{"$project": bson.M{
 			"bookmarks":          0,
 			"e.services":         0,
+			"e.pause.path":       0,
+			"e.latest_pause":     0,
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},

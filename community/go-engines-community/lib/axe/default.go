@@ -324,6 +324,12 @@ func NewEngine(
 		return nil
 	})
 
+	resumeWorker := newResumeWorker(dbClient, noTimeoutClient, initRedisLock, amqpPublisher, json.NewEncoder(), eventGenerator, logger)
+	engineAxe.AddRoutine(resumeWorker.Run)
+
+	pauseWorker := newPauseWorker(dbClient, noTimeoutClient, initRedisLock, amqpPublisher, json.NewEncoder(), eventGenerator, logger)
+	engineAxe.AddRoutine(pauseWorker.Run)
+
 	mainMessageProcessor := &MessageProcessor{
 		FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 		EventProcessor:           eventProcessor,
@@ -585,9 +591,11 @@ func (m DependencyMaker) EventProcessor(
 	container.Set(types.EventTypeWebhookStarted, event.NewWebhookStartProcessor(dbClient))
 	container.Set(types.EventTypeWebhookCompleted, event.NewWebhookCompleteProcessor(dbClient, metaAlarmPostProcessor, metricsSender, amqpPublisher, eventGenerator, json.NewEncoder(), checkTicketStatusService, logger))
 	container.Set(types.EventTypeWebhookFailed, event.NewWebhookFailProcessor(dbClient, amqpPublisher, eventGenerator, json.NewEncoder(), logger))
+	container.Set(types.EventTypeWebhookStop, event.NewWebhookStopProcessor(dbClient, amqpPublisher, eventGenerator, json.NewEncoder(), logger))
 	container.Set(types.EventTypeAutoWebhookStarted, event.NewAutoWebhookStartProcessor(dbClient))
 	container.Set(types.EventTypeAutoWebhookCompleted, event.NewAutoWebhookCompleteProcessor(dbClient, metaAlarmPostProcessor, metricsSender, checkTicketStatusService, logger))
 	container.Set(types.EventTypeAutoWebhookFailed, event.NewAutoWebhookFailProcessor(dbClient))
+	container.Set(types.EventTypeAutoWebhookStop, event.NewAutoWebhookStopProcessor(dbClient))
 	instructionProcessor := event.NewInstructionProcessor(dbClient, metricsSender, amqpPublisher, eventGenerator, json.NewEncoder(), logger)
 	container.Set(types.EventTypeInstructionStarted, instructionProcessor)
 	container.Set(types.EventTypeInstructionPaused, instructionProcessor)
@@ -614,8 +622,10 @@ func (m DependencyMaker) EventProcessor(
 		alarmStatusService, templateExecutor, metricsSender, json.NewEncoder(), eventGenerator, amqpPublisher, logger))
 	container.Set(types.EventTypeMetaAlarmDetachChildren, event.NewMetaAlarmDetachProcessor(dbClient, ruleAdapter, alarmAdapter,
 		alarmStatusService, templateExecutor))
-	container.Set(types.EventTypeTrigger, event.NewTriggerProcessor(dbClient))
+	container.Set(types.EventTypeTrigger, event.NewTriggerProcessor(dbClient, autoInstructionMatcher, logger))
 	container.Set(types.EventTypeChangeTicketStatus, event.NewChangeTicketStatusProcessor(dbClient))
+	container.Set(types.EventTypePause, event.NewPauseProcessor(dbClient, autoInstructionMatcher, remediationRpcClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, eventGenerator, amqpPublisher, json.NewEncoder(), logger))
+	container.Set(types.EventTypeResume, event.NewResumeProcessor(dbClient, autoInstructionMatcher, remediationRpcClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, eventGenerator, amqpPublisher, json.NewEncoder(), logger))
 
 	return event.NewCombinedProcessor(container)
 }

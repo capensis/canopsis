@@ -167,7 +167,7 @@ func (q *MongoQueryBuilder) clear(now datetime.CpsTime, userID string) {
 	q.computedFieldsForAlarmMatch = make(map[string]bool)
 	q.computedFieldsForSort = make(map[string]bool)
 	q.computedFields = getComputedFields(now, userID)
-	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", entityDbPrefix + ".services"}
+	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", entityDbPrefix + ".services", entityDbPrefix + ".pause.path", entityDbPrefix + ".latest_pause"}
 }
 
 func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(ctx context.Context, r GetDisplayNamesRequest, now datetime.CpsTime) ([]bson.M, error) {
@@ -1429,6 +1429,18 @@ func getComputedFields(now datetime.CpsTime, userID string) bson.M {
 				bson.M{"$cond": bson.M{
 					"if":   "$v.snooze",
 					"then": bson.M{"$subtract": bson.A{now, "$v.inactive_start"}},
+					"else": 0,
+				}},
+			}},
+		}},
+		"v.pause_duration": bson.M{"$cond": bson.M{
+			"if":   "$v.resolved",
+			"then": "$v.pause_duration",
+			"else": bson.M{"$sum": bson.A{
+				"$v.pause_duration",
+				bson.M{"$cond": bson.M{
+					"if":   "$v.pause",
+					"then": bson.M{"$subtract": bson.A{now, "$v.pause.t"}},
 					"else": 0,
 				}},
 			}},

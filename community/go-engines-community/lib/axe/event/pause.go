@@ -1,0 +1,357 @@
+package event
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"runtime/debug"
+	"slices"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pausejob"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"github.com/rabbitmq/amqp091-go"
+	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
+)
+
+func NewPauseProcessor(
+	client mongo.DbClient,
+	autoInstructionMatcher AutoInstructionMatcher,
+	remediationRpcClient engine.RPCClient,
+	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
+	componentCountersCalculator calculator.ComponentCountersCalculator,
+	eventsSender entitycounters.EventsSender,
+	eventGenerator event.Generator,
+	publisher amqp.Publisher,
+	encoder encoding.Encoder,
+	logger zerolog.Logger,
+) Processor {
+	return &pauseProcessor{
+		client:                 client,
+		alarmCollection:        client.Collection(mongo.AlarmMongoCollection),
+		entityCollection:       client.Collection(mongo.EntityMongoCollection),
+		pauseJobService:        pausejob.NewService(client, eventGenerator, logger),
+		autoInstructionMatcher: autoInstructionMatcher,
+		remediationRpcClient:   remediationRpcClient,
+		eventGenerator:         eventGenerator,
+		publisher:              publisher,
+		encoder:                encoder,
+		logger:                 logger,
+		countersHelper:         newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
+	}
+}
+
+type pauseProcessor struct {
+	client                 mongo.DbClient
+	alarmCollection        mongo.DbCollection
+	entityCollection       mongo.DbCollection
+	pauseJobService        pausejob.Service
+	autoInstructionMatcher AutoInstructionMatcher
+	remediationRpcClient   engine.RPCClient
+	eventGenerator         event.Generator
+	publisher              amqp.Publisher
+	encoder                encoding.Encoder
+	logger                 zerolog.Logger
+	countersHelper         *countersHelper
+}
+
+func (p *pauseProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
+	result := Result{}
+	if event.Entity == nil || !event.Entity.Enabled {
+		return result, nil
+	}
+
+	result, countersRes, err := p.processEvent(ctx, event)
+	if err != nil {
+		return result, err
+	}
+
+	if event.EventType == types.EventTypePause && event.Parameters.PauseJob != "" {
+		// Pause delivery ends here. Its generated Trigger follows the normal filters.
+		result.Forward = false
+		if result.AlarmChange.Type != types.AlarmChangeTypeNone {
+			triggerEvent, err := p.eventGenerator.Generate(*event.Entity)
+			if err != nil {
+				p.logger.Err(err).Str("entity", event.Entity.ID).Msg("cannot generate event for dependency")
+				return result, nil
+			}
+			triggerEvent.Timestamp = event.Parameters.Timestamp
+			triggerEvent.AlarmChange = &result.AlarmChange
+			triggerEvent.EventType = types.EventTypeTrigger
+			triggerEvent.AlarmID = result.Alarm.ID
+			if err := p.sendEvent(ctx, triggerEvent); err != nil {
+				p.logger.Err(err).Str("entity", event.Entity.ID).Msg("cannot send trigger event for dependency")
+				return result, nil
+			}
+			p.postProcess(context.WithoutCancel(ctx), event, result, countersRes)
+		}
+		return result, nil
+	}
+
+	if result.AlarmChange.Type != types.AlarmChangeTypeNone {
+		p.postProcess(context.WithoutCancel(ctx), event, result, countersRes)
+	}
+
+	return result, nil
+}
+
+func (p *pauseProcessor) processEvent(ctx context.Context, event rpc.AxeEvent) (_ Result, _ countersResult, resErr error) {
+	// A panic is returned as an error, so a panic on a dependency doesn't stop the processing of the other ones.
+	defer func() {
+		if r := recover(); r != nil {
+			resErr = fmt.Errorf("panic on pause of %s: %v\n%s", event.Entity.ID, r, debug.Stack())
+		}
+	}()
+
+	if event.Parameters.PauseSource == "" && event.Parameters.PauseType != "" &&
+		event.Parameters.RuleName == "" && event.Parameters.IdleRuleApply == "" {
+		// API and external events carry the comment; rule and inherited pauses already carry a step message.
+		output := ""
+		if event.Parameters.Output != "" {
+			output = types.OutputCommentPrefix + event.Parameters.Output + ". "
+		}
+
+		output += types.OutputTypePrefix + event.Parameters.PauseType
+		if event.Parameters.Output != "" {
+			output += "."
+		}
+
+		event.Parameters.Output = output
+	}
+
+	newPause := types.Pause{
+		Timestamp:  event.Parameters.Timestamp,
+		Message:    event.Parameters.Output,
+		Author:     event.Parameters.Author,
+		UserID:     event.Parameters.User,
+		Initiator:  event.Parameters.Initiator,
+		Type:       event.Parameters.PauseType,
+		Source:     event.Parameters.PauseSource,
+		SourceType: event.Parameters.PauseSourceType,
+		Inherited:  event.Parameters.Inherited,
+		Path:       event.Parameters.PausePath,
+	}
+	match := getOpenAlarmMatch(event)
+	now := datetime.NewCpsTime()
+	newStepQuery := stepUpdateQueryWithInPbhIntervalByStep(types.NewAlarmStep(types.AlarmStepPause, now,
+		event.Parameters.Author, event.Parameters.Output, event.Parameters.User, event.Parameters.Role,
+		event.Parameters.Initiator, false))
+	// wasPaused is true if the pause of the alarm is replaced by this one.
+	alarmUpdate := func(wasPaused bool) []bson.M {
+		set := bson.M{
+			"v.pause":          newStepQuery,
+			"v.steps":          addStepUpdateQuery(newStepQuery),
+			"v.inactive_start": now,
+			"v.inactive_duration": bson.M{"$sum": bson.A{
+				"$v.inactive_duration",
+				bson.M{"$cond": bson.M{
+					"if": bson.M{"$gt": bson.A{"$v.inactive_start", 0}},
+					"then": bson.M{"$subtract": bson.A{
+						now,
+						"$v.inactive_start",
+					}},
+					"else": 0,
+				}},
+			}},
+			"v.last_update_date": now,
+		}
+		if wasPaused {
+			// The replaced pause is not resumed, so its duration is kept.
+			set["v.pause_duration"] = bson.M{"$sum": bson.A{
+				"$v.pause_duration",
+				bson.M{"$subtract": bson.A{now, "$v.pause.t"}},
+			}}
+		}
+
+		return []bson.M{{"$set": set}}
+	}
+
+	result := Result{}
+	countersRes := countersResult{}
+	err := p.client.WithTransaction(ctx, func(ctx context.Context) (txErr error) {
+		result = Result{}
+		countersRes = countersResult{}
+		defer func() {
+			if txErr == nil {
+				txErr = p.pauseJobService.Complete(ctx, event.Parameters.PauseJob, event.Entity.ID)
+			}
+		}()
+		if event.Parameters.PauseJob != "" {
+			pending, err := p.pauseJobService.IsPending(ctx, event.Parameters.PauseJob, event.Entity.ID)
+			if err != nil {
+				return fmt.Errorf("cannot find pause propagation receipt: %w", err)
+			}
+
+			if !pending {
+				return nil
+			}
+
+			current, err := p.pauseJobService.IsCurrent(ctx, event.Parameters)
+			if err != nil {
+				return err
+			}
+
+			if !current {
+				return nil
+			}
+		}
+
+		entity := types.Entity{}
+		err := p.entityCollection.FindOne(ctx, bson.M{"_id": event.Entity.ID}).Decode(&entity)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+
+			return err
+		}
+
+		if !entity.Enabled {
+			return nil
+		}
+
+		// The entity may have been removed from the parent which propagates the pause after the parent
+		// has fetched its dependencies, then the pause is ignored, otherwise nothing would resume it.
+		// The parent is the last entity of the pause path or the source if the pause comes from it.
+		if newPause.Inherited && newPause.Source != "" && newPause.Source != entity.ID {
+			parent := newPause.Source
+			if len(newPause.Path) > 0 {
+				parent = newPause.Path[len(newPause.Path)-1]
+			}
+
+			if !slices.Contains(entity.Services, parent) && (entity.Type != types.EntityTypeResource || entity.Component != parent) {
+				return nil
+			}
+		}
+
+		latestPause := types.LatestPause{Pause: newPause}
+		if latestPause.Source == "" {
+			latestPause.Source = entity.ID
+			latestPause.SourceType = entity.Type
+		}
+
+		// An inherited pause replaces an older one and the entity's own pause, the entity's own pause
+		// is ignored while it's paused; see types.LatestPause.CanApplyOver.
+		if !latestPause.CanApplyOver(entity.LatestPause, entity.ID) {
+			return nil
+		}
+
+		if entity.Pause != nil {
+			if err := p.pauseJobService.Cancel(ctx, entity, *entity.Pause); err != nil {
+				return err
+			}
+		}
+		wasPaused := entity.Pause != nil
+		entity.Pause = &newPause
+		entity.LatestPause = &latestPause
+		result.Entity = entity
+		_, err = p.entityCollection.UpdateOne(ctx, bson.M{"_id": entity.ID}, bson.M{"$set": bson.M{
+			"pause":        newPause,
+			"latest_pause": latestPause,
+		}})
+		if err != nil {
+			return fmt.Errorf("cannot update entity: %w", err)
+		}
+
+		if err := p.pauseJobService.Create(ctx, entity, latestPause, event.Parameters); err != nil {
+			return err
+		}
+
+		alarm := types.Alarm{}
+		err = p.alarmCollection.
+			FindOneAndUpdate(ctx, match, alarmUpdate(wasPaused), options.FindOneAndUpdate().SetReturnDocument(options.After)).
+			Decode(&alarm)
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return err
+		}
+
+		result.Forward = true
+		result.Alarm = alarm
+
+		// Only the first pause of the alarm is an alarm change.
+		if wasPaused {
+			return nil
+		}
+
+		alarmChange := types.NewAlarmChange()
+		alarmChange.Type = types.AlarmChangeTypePause
+		alarmChange.PreviousPbehaviorTypeID = entity.PbehaviorInfo.TypeID
+		alarmChange.PreviousPbehaviorCannonicalType = entity.PbehaviorInfo.CanonicalType
+		result.AlarmChange = alarmChange
+
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
+			ctx,
+			&result.Alarm,
+			&result.Entity,
+			result.AlarmChange,
+		)
+
+		return err
+	})
+
+	if err != nil {
+		return result, countersRes, err
+	}
+
+	if result.Alarm.ID != "" {
+		result.IsInstructionMatched = isInstructionMatched(event, result, p.autoInstructionMatcher, p.logger)
+	}
+
+	return result, countersRes, err
+}
+
+func (p *pauseProcessor) postProcess(
+	ctx context.Context,
+	event rpc.AxeEvent,
+	result Result,
+	countersRes countersResult,
+) {
+	// A panic is logged, so a panic on a dependency doesn't stop the processing of the other ones.
+	defer func() {
+		if r := recover(); r != nil {
+			p.logger.Error().Str("entity", event.Entity.ID).Interface("panic", r).Bytes("stack", debug.Stack()).
+				Msg("panic on post process of pause")
+		}
+	}()
+
+	p.countersHelper.UpdateStates(ctx, countersRes)
+
+	if result.Alarm.ID != "" {
+		err := sendRemediationEvent(ctx, event, result, p.remediationRpcClient, p.encoder)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot send event to engine-remediation")
+		}
+	}
+}
+
+func (p *pauseProcessor) sendEvent(ctx context.Context, event types.Event) error {
+	b, err := p.encoder.Encode(event)
+	if err != nil {
+		return fmt.Errorf("failed to encode event %w", err)
+	}
+
+	return p.publisher.PublishWithContext(
+		ctx,
+		"",
+		canopsis.FIFOQueueName,
+		false,
+		false,
+		amqp091.Publishing{
+			ContentType:  canopsis.JsonContentType,
+			Body:         b,
+			DeliveryMode: amqp091.Persistent,
+		},
+	)
+}
