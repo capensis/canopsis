@@ -1,7 +1,6 @@
 package alarmexport
 
 import (
-	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -14,7 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/asyncjob"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/dataexport"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/public/link"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	liblink "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
@@ -60,6 +59,7 @@ type handler struct {
 	dbInfoPropCollection   mongo.DbCollection
 	dir                    string
 	timezoneConfigProvider config.TimezoneConfigProvider
+	userInterfaceAdapter   config.UserInterfaceAdapter
 	generator              link.Generator
 	userProvider           liblink.UserProvider
 	logger                 zerolog.Logger
@@ -71,6 +71,7 @@ func NewHandler(
 	dbClient mongo.DbClient,
 	dir string,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	userInterfaceAdapter config.UserInterfaceAdapter,
 	generator link.Generator,
 	userProvider liblink.UserProvider,
 	logger zerolog.Logger,
@@ -83,6 +84,7 @@ func NewHandler(
 		dbInfoPropCollection:   dbClient.Collection(mongo.EntityInfosPropertyCollection),
 		dir:                    dir,
 		timezoneConfigProvider: timezoneConfigProvider,
+		userInterfaceAdapter:   userInterfaceAdapter,
 		generator:              generator,
 		userProvider:           userProvider,
 		logger:                 logger,
@@ -157,7 +159,10 @@ func (h *handler) Handle(ctx context.Context, jobID string) error {
 
 func (h *handler) do(ctx context.Context, job Job) error {
 	location := h.timezoneConfigProvider.Get().Location
-	timeFormat := cmp.Or(validation.GetRealFormatTime(job.Params.TimeFormat), validation.DefaultTimeFormat)
+	timeFormat, err := export.ResolveTimeFormat(ctx, job.Params.TimeFormat, h.userInterfaceAdapter)
+	if err != nil {
+		return fmt.Errorf("resolve time format: %w", err)
+	}
 
 	enrich, err := h.linksEnrich(ctx, job)
 	if err != nil {

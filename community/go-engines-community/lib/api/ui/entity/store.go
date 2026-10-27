@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -14,7 +13,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/statesettings"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -50,6 +48,7 @@ type store struct {
 	stateSettingsCollection  mongo.DbCollection
 	entityInfoPropCollection mongo.DbCollection
 	timezoneConfigProvider   config.TimezoneConfigProvider
+	userInterfaceAdapter     config.UserInterfaceAdapter
 	authorProvider           author.Provider
 	encoder                  encoding.Encoder
 	decoder                  encoding.Decoder
@@ -61,6 +60,7 @@ type store struct {
 func NewStore(
 	db, dbExport mongo.DbClient,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	userInterfaceAdapter config.UserInterfaceAdapter,
 	authorProvider author.Provider,
 	transformer patternfields.Transformer,
 	encoder encoding.Encoder,
@@ -75,6 +75,7 @@ func NewStore(
 		stateSettingsCollection:  db.Collection(mongo.StateSettingsMongoCollection),
 		entityInfoPropCollection: db.Collection(mongo.EntityInfosPropertyCollection),
 		timezoneConfigProvider:   timezoneConfigProvider,
+		userInterfaceAdapter:     userInterfaceAdapter,
 		authorProvider:           authorProvider,
 		encoder:                  encoder,
 		decoder:                  decoder,
@@ -419,6 +420,11 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 		return nil, err
 	}
 
+	timeFormat, err := export.ResolveTimeFormat(ctx, t.TimeFormat, s.userInterfaceAdapter)
+	if err != nil {
+		return nil, err
+	}
+
 	now := datetime.NewCpsTime()
 	pipeline, err := s.getQueryBuilder().CreateOnlyListAggregationPipeline(ctx, ListRequest{
 		BaseFilterRequest: r,
@@ -452,7 +458,6 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	}
 
 	location := s.timezoneConfigProvider.Get().Location
-	timeFormat := validation.GetRealFormatTime(cmp.Or(t.TimeFormat, validation.DefaultTimeFormat))
 	timestampPropsCache := map[string]bool{}
 
 	return export.NewMongoCursor(cursor, t.Fields.Fields(), func(k string, v any) (any, error) {

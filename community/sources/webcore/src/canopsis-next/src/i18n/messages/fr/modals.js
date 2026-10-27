@@ -170,7 +170,7 @@ export default {
     title: 'Mettre l\'entité en pause',
   },
   createEntityResumeEvent: {
-    title: 'Réactiver l\'entité',
+    title: 'Sortir l\'entité de pause',
   },
   createAckRemove: {
     title: 'Annuler l\'acquittement',

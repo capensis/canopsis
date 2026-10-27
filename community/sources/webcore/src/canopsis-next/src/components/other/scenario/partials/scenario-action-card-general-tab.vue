@@ -169,7 +169,7 @@ export default {
         {
           icon: 'label',
           label: this.$t('common.type'),
-          value: this.action.parameters.type,
+          value: this.action.parameters.pause_type,
         },
         {
           icon: 'account_tree',

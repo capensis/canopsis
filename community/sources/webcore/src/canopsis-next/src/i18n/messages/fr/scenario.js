@@ -44,7 +44,7 @@ export default {
     [ACTION_TYPES.cancel]: 'Annuler',
     [ACTION_TYPES.webhook]: 'Webhook',
     [ACTION_TYPES.pause]: 'Mettre en pause',
-    [ACTION_TYPES.resume]: 'Reprendre',
+    [ACTION_TYPES.resume]: 'Sortir de pause',
   },
   tabs: {
     pattern: 'Modèle',

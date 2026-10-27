@@ -54,9 +54,10 @@ type BaseFilterRequest struct {
 
 type ExportRequest struct {
 	BaseFilterRequest
-	Fields     export.Fields `json:"fields"`
-	Separator  string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
-	TimeFormat string        `json:"time_format" binding:"time_format"`
+	Fields    export.Fields `json:"fields"`
+	Separator string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
+	// TimeFormat accepts a legacy format name or a user interface Go date layout. If empty, the user interface date format or the default is used.
+	TimeFormat string `json:"time_format" binding:"time_format"`
 }
 
 type ArchiveDisabledRequest struct {

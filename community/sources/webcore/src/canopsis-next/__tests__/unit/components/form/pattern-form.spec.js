@@ -125,13 +125,12 @@ describe('pattern-form', () => {
       },
     });
 
-    const serviceWeatherPatternsField = selectServiceWeatherPatternsField(wrapper);
-
-    expect(serviceWeatherPatternsField.attributes('patterns')).toBe('[object Object]');
-
     const id = Faker.datatype.string();
     const groups = [{}];
     const nextForm = { ...form, id, groups };
+    const serviceWeatherPatternsField = selectServiceWeatherPatternsField(wrapper);
+
+    expect(serviceWeatherPatternsField.attributes('patterns')).toBe('[object Object]');
 
     serviceWeatherPatternsField.triggerCustomEvent('update:patterns', nextForm);
 

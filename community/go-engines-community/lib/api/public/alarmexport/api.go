@@ -38,7 +38,7 @@ func NewAPI(
 	a := &api{
 		transformer: transformer,
 	}
-	a.API = dataexport.NewAPI[Job, Request](asyncjob.TypeAlarmExport, store, a.prepare, a.newJob, jobPublisher, dir, binder, responder, logger)
+	a.API = dataexport.NewAPI(asyncjob.TypeAlarmExport, store, a.prepare, a.newJob, jobPublisher, dir, binder, responder, logger)
 
 	return a
 }

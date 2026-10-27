@@ -2,7 +2,17 @@ import { CONTEXT_ACTIONS_TYPES, ENTITY_TYPES, MODALS } from '@/constants';
 
 import ActionsPanel from '@/components/widgets/context/actions/actions-panel.vue';
 
-const translate = (key, parameters = {}) => `${key}:${parameters.source ?? ''}`;
+const translate = (key, parameters = {}) => {
+  if (key.startsWith('entity.types.')) {
+    return key.split('.').at(-1).replace(/^./u, character => character.toUpperCase());
+  }
+
+  if (parameters.message) {
+    return `${key}:${parameters.message}`;
+  }
+
+  return `${key}:`;
+};
 const $popups = {
   success: vi.fn(),
   info: vi.fn(),
@@ -54,7 +64,8 @@ describe('context actions-panel', () => {
       type: ENTITY_TYPES.resource,
       pause: {
         inherited: true,
-        message: 'Comment\nComponent: Parent component',
+        source: 'parent-component-id',
+        message: '\nParent component',
       },
     });
 
@@ -62,8 +73,27 @@ describe('context actions-panel', () => {
       expect.objectContaining({
         type: CONTEXT_ACTIONS_TYPES.resume,
         icon: 'play_arrow',
-        title: 'context.actions.titles.inheritedPause:',
+        title: 'context.actions.titles.inheritedPause:Parent component',
         disabledButton: true,
+      }),
+    );
+  });
+
+  test('keeps Unpause enabled for an own pause propagated to dependencies', () => {
+    const context = createActionsContext({
+      _id: 'component-id',
+      type: ENTITY_TYPES.component,
+      pause: {
+        inherited: true,
+        message: 'Comment',
+      },
+    });
+
+    expect(ActionsPanel.computed.pauseAction.call(context)).toEqual(
+      expect.objectContaining({
+        type: CONTEXT_ACTIONS_TYPES.resume,
+        title: 'context.actions.titles.unpause:',
+        disabledButton: false,
       }),
     );
   });

@@ -645,8 +645,8 @@ export default {
       selectedText: 'Alarme mise en pause',
     },
     [TRIGGERS_TYPES.resume]: {
-      text: 'Reprise',
-      selectedText: 'Alarme reprise',
+      text: 'Sortie de pause',
+      selectedText: 'Alarme sortie de pause',
     },
     [TRIGGERS_TYPES.pbhenter]: {
       text: 'Entrée dans un pbehavior',
@@ -697,7 +697,7 @@ export default {
       text: 'Alarme mise en pause',
     },
     [TRIGGERS_TYPES.resume]: {
-      text: 'Alarme reprise',
+      text: 'Alarme sortie de pause',
     },
     [TRIGGERS_TYPES.eventscount]: {
       text: 'L\'alarme a reçu un nouvel événement check',

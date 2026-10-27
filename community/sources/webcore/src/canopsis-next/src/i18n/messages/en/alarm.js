@@ -105,7 +105,7 @@ export default {
       [ALARM_LIST_STEPS.snooze]: 'Alarm snoozed for {duration}',
       [ALARM_LIST_STEPS.unsnooze]: 'Alarm unsnoozed',
       [ALARM_LIST_STEPS.pause]: 'Resource paused',
-      [ALARM_LIST_STEPS.resume]: 'Resource resumed',
+      [ALARM_LIST_STEPS.resume]: 'Resource unpaused',
       [ALARM_LIST_STEPS.ack]: 'Ack',
       [ALARM_LIST_STEPS.ackRemove]: 'Cancel ack',
       [ALARM_LIST_STEPS.pbhenter]: 'Periodical behavior activated',
