@@ -56,7 +56,6 @@ type Store interface {
 type store struct {
 	client                    mongo.DbClient
 	collection                mongo.DbCollection
-	exdataTableCollection     mongo.DbCollection
 	alarmCollection           mongo.DbCollection
 	entityCollection          mongo.DbCollection
 	userCollection            mongo.DbCollection
@@ -102,7 +101,6 @@ func NewStore(
 	return &store{
 		client:                    dbClient,
 		collection:                dbClient.Collection(mongo.LinkRuleMongoCollection),
-		exdataTableCollection:     dbClient.Collection(mongo.ExternalDataTableCollection),
 		alarmCollection:           dbClient.Collection(mongo.AlarmMongoCollection),
 		entityCollection:          dbClient.Collection(mongo.EntityMongoCollection),
 		userCollection:            dbClient.Collection(mongo.UserCollection),
@@ -499,7 +497,7 @@ func (s *store) GetTemplateVars(ctx context.Context) (TemplateVarsResponse, erro
 }
 
 func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (link.Rule, error) {
-	externalData, err := apiexternaldata.TransformRefParameters(ctx, r.ExternalData, s.exdataTableCollection)
+	externalData, err := apiexternaldata.TransformRefParameters(ctx, r.ExternalData, s.client)
 	if err != nil {
 		return link.Rule{}, err
 	}
@@ -848,7 +846,7 @@ func (s *store) processTableExdata(
 		}
 	}
 
-	params, err := apiexternaldata.TransformRefParameters(ctx, []externaldata.RefParameters{refParam}, s.exdataTableCollection)
+	params, err := apiexternaldata.TransformRefParameters(ctx, []externaldata.RefParameters{refParam}, s.client)
 	if err != nil {
 		return nil, err
 	}

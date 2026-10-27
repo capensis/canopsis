@@ -3619,6 +3619,8 @@ definitions:
     type: object
   externaldata.RefParameters:
     properties:
+      auth_token:
+        $ref: '#/definitions/request.WebhookAuthToken'
       optional:
         description: Optional defines will it cause error or not if external data
           isn't found.
@@ -3803,6 +3805,8 @@ definitions:
     type: object
   externaldatatable.RefResponse:
     properties:
+      auth_token:
+        $ref: '#/definitions/request.WebhookAuthToken'
       optional:
         type: boolean
       reference:
