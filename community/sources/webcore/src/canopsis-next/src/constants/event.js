@@ -11,6 +11,12 @@ export const EVENT_TYPES = {
   contextupdate: 'contextupdate',
 };
 
+export const EVENT_INITIATORS = {
+  user: 'user',
+  system: 'system',
+  external: 'external',
+};
+
 export const HEALTHCHECK_EVENT_TYPES = {
   ...EVENT_TYPES,
 

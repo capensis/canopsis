@@ -50,7 +50,7 @@ export default {
     [ACTION_TYPES.cancel]: 'Cancel',
     [ACTION_TYPES.webhook]: 'Webhook',
     [ACTION_TYPES.pause]: 'Pause',
-    [ACTION_TYPES.resume]: 'Resume',
+    [ACTION_TYPES.resume]: 'Unpause',
   },
   tabs: {
     pattern: 'Pattern',

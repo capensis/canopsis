@@ -31,7 +31,7 @@ describe('scenario action form', () => {
       type: ACTION_TYPES.pause,
       parameters: {
         output: 'Pause {{ .Entity.ID }}',
-        type: 'maintenance',
+        pause_type: 'maintenance',
         inherited: true,
         forward_author: false,
         author: 'Pause author',
@@ -40,14 +40,14 @@ describe('scenario action form', () => {
 
     expect(form.parameters[ACTION_TYPES.pause]).toEqual({
       output: 'Pause {{ .Entity.ID }}',
-      type: 'maintenance',
+      pause_type: 'maintenance',
       inherited: true,
       forward_author: false,
       author: 'Pause author',
     });
     expect(formToAction(form).parameters).toEqual({
       output: 'Pause {{ .Entity.ID }}',
-      type: 'maintenance',
+      pause_type: 'maintenance',
       inherited: true,
       forward_author: false,
       author: 'Pause author',

@@ -1,8 +1,11 @@
 import {
+  EVENT_INITIATORS,
   BASIC_ENTITY_TYPES,
   ENTITY_PATTERN_FIELDS,
   ENTITY_TYPES,
   PATTERN_EXISTS_OPERATORS,
+  PATTERN_OPERATORS,
+  PATTERN_STRING_OPERATORS,
 } from '@/constants';
 
 import CEntityPatternsField from '@/components/forms/fields/entity/c-entity-patterns-field.vue';
@@ -36,6 +39,8 @@ describe('c-entity-patterns-field', () => {
   });
 
   test('Pause fields are available with the correct operators', () => {
+    const stringWithOneOfOptions = CEntityPatternsField.computed.stringWithOneOfOptions();
+    const initiatorOptions = CEntityPatternsField.computed.initiatorOptions();
     const entityAttributes = CEntityPatternsField.computed.entityAttributes.call({
       $t: key => key,
       entitiesOptions: {},
@@ -48,6 +53,8 @@ describe('c-entity-patterns-field', () => {
       categoryOptions: {},
       impactLevelOptions: {},
       dateOptions: {},
+      stringWithOneOfOptions,
+      initiatorOptions,
       aliasesAttributes: [],
     });
 
@@ -57,9 +64,36 @@ describe('c-entity-patterns-field', () => {
           value: ENTITY_PATTERN_FIELDS.pause,
           options: { operators: PATTERN_EXISTS_OPERATORS },
         }),
-        expect.objectContaining({ value: ENTITY_PATTERN_FIELDS.pauseAuthor }),
-        expect.objectContaining({ value: ENTITY_PATTERN_FIELDS.pauseInitiator }),
+        expect.objectContaining({
+          value: ENTITY_PATTERN_FIELDS.pauseAuthor,
+          options: {
+            operators: [
+              ...PATTERN_STRING_OPERATORS,
+              PATTERN_OPERATORS.isOneOf,
+              PATTERN_OPERATORS.isNotOneOf,
+            ],
+          },
+        }),
+        expect.objectContaining({
+          value: ENTITY_PATTERN_FIELDS.pauseInitiator,
+          options: initiatorOptions,
+        }),
       ]),
     );
+
+    expect(initiatorOptions.valueField.props({ value: EVENT_INITIATORS.user })).toEqual({
+      items: Object.values(EVENT_INITIATORS),
+      chips: false,
+      multiple: false,
+      closableChips: false,
+    });
+    expect(
+      initiatorOptions.valueField.props({ value: [EVENT_INITIATORS.user] }),
+    ).toEqual({
+      items: Object.values(EVENT_INITIATORS),
+      chips: true,
+      multiple: true,
+      closableChips: true,
+    });
   });
 });

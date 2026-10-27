@@ -846,12 +846,6 @@ export const ALARM_PATTERN_FIELDS = {
   pbehaviorInfoCanonicalType: ALARM_FIELDS.pbehaviorInfoCanonicalType,
 };
 
-export const ALARM_EVENT_INITIATORS = {
-  user: 'user',
-  system: 'system',
-  external: 'external',
-};
-
 export const ALARM_TEMPLATE_FIELDS = {
   id: `alarm.${ALARM_FIELDS.id}`,
   ack: `alarm.${ALARM_FIELDS.ack}`,

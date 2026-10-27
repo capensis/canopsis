@@ -1,37 +1,31 @@
 <template>
-  <v-row class="ma-0">
-    <v-col class="pa-0" cols="12">
-      <action-note-form
-        :model-value="modelValue"
-        :name="name"
-        :depth="depth"
-        :template-vars="templateVars"
-        @update:model-value="$emit('update:modelValue', $event)"
+  <div>
+    <action-note-form
+      :model-value="modelValue"
+      :name="name"
+      :depth="depth"
+      :template-vars="templateVars"
+      @update:model-value="$emit('update:modelValue', $event)"
+    />
+    <c-form-block-row :label="t('common.type')" :depth="depth" indented>
+      <c-text-field
+        :model-value="modelValue.pause_type"
+        :label="t('common.type')"
+        :max-length="FORM_MAX_STRING_LENGTH"
+        :name="`${name}.pause_type`"
+        @update:model-value="updateField('pause_type', $event)"
       />
-    </v-col>
-    <v-col class="pa-0" cols="12">
-      <c-form-block-row :label="t('common.type')" :depth="depth" indented>
-        <c-text-field
-          :model-value="modelValue.type"
-          :label="t('common.type')"
-          :max-length="FORM_MAX_STRING_LENGTH"
-          :name="`${name}.type`"
-          @update:model-value="updateField('type', $event)"
-        />
-      </c-form-block-row>
-    </v-col>
-    <v-col class="pa-0" cols="12">
-      <c-form-block-row :label="t('settings.pause.propagate')" :depth="depth" indented>
-        <v-switch
-          :model-value="modelValue.inherited"
-          :label="t('settings.pause.propagate')"
-          color="primary"
-          hide-details
-          @update:model-value="updateField('inherited', $event)"
-        />
-      </c-form-block-row>
-    </v-col>
-  </v-row>
+    </c-form-block-row>
+    <c-form-block-row :label="t('settings.pause.propagate')" :depth="depth" indented>
+      <v-switch
+        :model-value="modelValue.inherited"
+        :label="t('settings.pause.propagate')"
+        color="primary"
+        hide-details
+        @update:model-value="updateField('inherited', $event)"
+      />
+    </c-form-block-row>
+  </div>
 </template>
 
 <script>

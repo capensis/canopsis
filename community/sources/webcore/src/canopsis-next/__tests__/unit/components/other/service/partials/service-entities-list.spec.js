@@ -344,7 +344,7 @@ describe('service-entities-list', () => {
     const entity = {
       _id: Faker.datatype.string(),
       name: Faker.datatype.string(),
-      type: ENTITY_TYPES.service,
+      source_type: ENTITY_TYPES.service,
     };
     const wrapper = factory({
       propsData: {
@@ -381,6 +381,30 @@ describe('service-entities-list', () => {
           inherited: true,
         },
       ],
+    });
+  });
+
+  test('Pause action hides propagation for a resource', async () => {
+    const entity = {
+      _id: Faker.datatype.string(),
+      name: Faker.datatype.string(),
+      source_type: ENTITY_TYPES.resource,
+    };
+    const wrapper = factory({
+      propsData: {
+        serviceEntities: [entity],
+      },
+    });
+
+    await selectAllEntities(wrapper);
+    await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityPause);
+
+    expect($modals.show).toHaveBeenCalledWith({
+      name: MODALS.createEntityPauseEvent,
+      config: {
+        withInherited: false,
+        action: expect.any(Function),
+      },
     });
   });
 
