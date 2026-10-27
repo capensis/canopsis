@@ -1517,6 +1517,15 @@ paths:
         -  PERMISSIONS: `none`
       operationId: api-tokens-find-all
       parameters:
+        - name: active
+          in: query
+          description: |
+            When true, return only tokens with no expiration date or an expiration date in the future.
+            When false, return only tokens with an expiration date at or before the current time.
+            When omitted, return all tokens.
+          required: false
+          schema:
+            type: boolean
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/sort'
