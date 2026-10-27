@@ -38,6 +38,7 @@
 import { isArray } from 'lodash';
 
 import {
+  EVENT_INITIATORS,
   BASIC_ENTITY_TYPES,
   ENTITY_PATTERN_FIELDS,
   ENTITY_TYPES,
@@ -118,6 +119,41 @@ export default {
     };
   },
   computed: {
+    stringWithOneOfOptions() {
+      return {
+        operators: [
+          ...PATTERN_STRING_OPERATORS,
+
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
+        ],
+      };
+    },
+
+    initiatorOptions() {
+      return {
+        operators: [
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
+        ],
+        valueField: {
+          is: 'c-select',
+          props: (rule) => {
+            const isMultiple = isArray(rule?.value);
+
+            return {
+              items: Object.values(EVENT_INITIATORS),
+              chips: isMultiple,
+              multiple: isMultiple,
+              closableChips: isMultiple,
+            };
+          },
+        },
+      };
+    },
+
     entitiesOperators() {
       return [
         PATTERN_OPERATORS.equal,
@@ -363,10 +399,12 @@ export default {
         {
           text: this.$t('entity.fields.pauseAuthor'),
           value: ENTITY_PATTERN_FIELDS.pauseAuthor,
+          options: this.stringWithOneOfOptions,
         },
         {
           text: this.$t('entity.fields.pauseInitiator'),
           value: ENTITY_PATTERN_FIELDS.pauseInitiator,
+          options: this.initiatorOptions,
         },
         {
           text: this.$t('common.lastEventDate'),

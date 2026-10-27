@@ -534,6 +534,9 @@ describe('actions-panel', () => {
         ]),
       }),
     );
+    expect($popups.success).toHaveBeenCalledWith({
+      text: 'modals.createPbehavior.success.create',
+    });
     expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
   });
 
@@ -576,6 +579,9 @@ describe('actions-panel', () => {
 
     expect(removeEntityPbehaviors).toHaveBeenCalledWith(expect.any(Object), {
       data: [{ origin: PBEHAVIOR_ORIGINS.alarmList, entity: entity._id }],
+    });
+    expect($popups.success).toHaveBeenCalledWith({
+      text: 'modals.createPbehavior.success.remove',
     });
     expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
   });
@@ -663,7 +669,7 @@ describe('actions-panel', () => {
           ...alarm,
           entity: {
             _id: 'inherited-pause-entity',
-            pause: { inherited: true },
+            pause: { inherited: true, source: 'parent-entity-id' },
           },
         },
         widget: {

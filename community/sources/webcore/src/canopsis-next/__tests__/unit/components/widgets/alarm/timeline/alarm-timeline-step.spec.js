@@ -62,12 +62,28 @@ describe('alarm-timeline-step', () => {
           t: new Date(),
           _t: ALARM_LIST_STEPS.pause,
           in_pbh: true,
-          m: 'Planned maintenance\nComponent: API',
+          m: 'Planned maintenance\nWindow: API',
         },
       },
     });
 
-    expect(wrapper.text()).toContain('Planned maintenance\nComponent: API');
+    expect(wrapper.text()).toContain('Planned maintenance\nWindow: API');
+  });
+
+  test('Inherited source message is rendered exactly as received', () => {
+    const message = 'Planned maintenance\nComponent: API';
+    const wrapper = factory({
+      propsData: {
+        step: {
+          t: new Date(),
+          _t: ALARM_LIST_STEPS.pause,
+          m: message,
+        },
+      },
+    });
+
+    expect(wrapper.text()).toContain(message);
+    expect(wrapper.text()).not.toContain('Inherited from:');
   });
 
   test('HTML step message is rendered through sanitized content', () => {

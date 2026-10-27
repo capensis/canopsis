@@ -17,7 +17,7 @@ import { isArray, keyBy } from 'lodash';
 
 import {
   ALARM_STATES,
-  ALARM_EVENT_INITIATORS,
+  EVENT_INITIATORS,
   BASIC_ENTITY_TYPES,
   EVENT_FILTER_PATTERN_FIELDS,
   EVENT_FILTER_SOURCE_TYPES,
@@ -241,7 +241,7 @@ export default {
         valueField: {
           is: 'c-select',
           props: {
-            items: Object.values(ALARM_EVENT_INITIATORS),
+            items: Object.values(EVENT_INITIATORS),
           },
         },
       };

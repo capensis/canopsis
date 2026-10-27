@@ -883,6 +883,8 @@ export default {
           ),
         });
 
+        this.$popups.success({ text: this.$t('modals.createPbehavior.success.create') });
+
         await promisedWait(ALARM_LIST_FAST_PBEHAVIOR_TIMEOUT);
         await this.afterSubmit();
       } catch (err) {
@@ -902,6 +904,8 @@ export default {
             entity: id,
           })),
         });
+
+        this.$popups.success({ text: this.$t('modals.createPbehavior.success.remove') });
 
         await promisedWait(ALARM_LIST_FAST_PBEHAVIOR_TIMEOUT);
         await this.afterSubmit();
