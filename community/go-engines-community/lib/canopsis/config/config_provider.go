@@ -694,6 +694,11 @@ func NewUserInterfaceConfigProvider(cfg UserInterfaceConf, logger zerolog.Logger
 	logger.Info().
 		Bool("value", cfg.RequiredInstructionApprove).
 		Msg("RequiredInstructionApprove of user interface config is used")
+	if cfg.DateFormat != "" {
+		logger.Info().
+			Str("value", cfg.DateFormat).
+			Msg("DateFormat of user interface config is used")
+	}
 
 	return &BaseUserInterfaceConfigProvider{
 		conf: UserInterfaceConf{
@@ -701,6 +706,7 @@ func NewUserInterfaceConfigProvider(cfg UserInterfaceConf, logger zerolog.Logger
 			MaxMatchedItems:             maxMatchedItems,
 			CheckCountRequestTimeout:    checkCountRequestTimeout,
 			RequiredInstructionApprove:  cfg.RequiredInstructionApprove,
+			DateFormat:                  cfg.DateFormat,
 		},
 		logger: logger,
 	}
@@ -757,6 +763,15 @@ func (p *BaseUserInterfaceConfigProvider) Update(conf UserInterfaceConf) {
 
 		p.conf.RequiredInstructionApprove = conf.RequiredInstructionApprove
 	}
+	if conf.DateFormat != p.conf.DateFormat {
+		p.logger.Info().
+			Str("previous", p.conf.DateFormat).
+			Str("new", conf.DateFormat).
+			Msg("DateFormat of user interface config is loaded")
+
+		p.conf.DateFormat = conf.DateFormat
+	}
+
 }
 
 func (p *BaseUserInterfaceConfigProvider) Get() UserInterfaceConf {

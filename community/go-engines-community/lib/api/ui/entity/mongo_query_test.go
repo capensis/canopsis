@@ -45,9 +45,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"services":    0,
-			"alarm":       0,
-			"event_stats": 0,
+			"services":     0,
+			"alarm":        0,
+			"event_stats":  0,
+			"pause.path":   0,
+			"latest_pause": 0,
 		},
 	})
 	expected := []bson.M{
@@ -118,9 +120,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"services":    0,
-			"alarm":       0,
-			"event_stats": 0,
+			"services":     0,
+			"alarm":        0,
+			"event_stats":  0,
+			"pause.path":   0,
+			"latest_pause": 0,
 		},
 	})
 	expected := []bson.M{
@@ -205,9 +209,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"services":    0,
-			"alarm":       0,
-			"event_stats": 0,
+			"services":     0,
+			"alarm":        0,
+			"event_stats":  0,
+			"pause.path":   0,
+			"latest_pause": 0,
 		},
 	})
 	expected := []bson.M{
@@ -294,9 +300,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"services":    0,
-			"alarm":       0,
-			"event_stats": 0,
+			"services":     0,
+			"alarm":        0,
+			"event_stats":  0,
+			"pause.path":   0,
+			"latest_pause": 0,
 		},
 	})
 	expected := []bson.M{{"$match": bson.M{
@@ -371,9 +379,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"services":    0,
-			"alarm":       0,
-			"event_stats": 0,
+			"services":     0,
+			"alarm":        0,
+			"event_stats":  0,
+			"pause.path":   0,
+			"latest_pause": 0,
 		},
 	})
 	expected := []bson.M{{"$match": bson.M{
@@ -449,9 +459,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithAlarmSo
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"services":    0,
-			"alarm":       0,
-			"event_stats": 0,
+			"services":     0,
+			"alarm":        0,
+			"event_stats":  0,
+			"pause.path":   0,
+			"latest_pause": 0,
 		},
 	})
 	expected := []bson.M{{"$match": bson.M{
@@ -513,9 +525,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"services":    0,
-			"alarm":       0,
-			"event_stats": 0,
+			"services":     0,
+			"alarm":        0,
+			"event_stats":  0,
+			"pause.path":   0,
+			"latest_pause": 0,
 		},
 	})
 	expected := []bson.M{
@@ -574,9 +588,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchP
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"services":    0,
-			"alarm":       0,
-			"event_stats": 0,
+			"services":     0,
+			"alarm":        0,
+			"event_stats":  0,
+			"pause.path":   0,
+			"latest_pause": 0,
 		},
 	})
 	expected := []bson.M{
@@ -636,9 +652,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityP
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"services":    0,
-			"alarm":       0,
-			"event_stats": 0,
+			"services":     0,
+			"alarm":        0,
+			"event_stats":  0,
+			"pause.path":   0,
+			"latest_pause": 0,
 		},
 	})
 	expected := []bson.M{
@@ -752,9 +770,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
-			"alarm":       0,
-			"event_stats": 0,
-			"services":    0,
+			"alarm":        0,
+			"event_stats":  0,
+			"pause.path":   0,
+			"latest_pause": 0,
+			"services":     0,
 		},
 	})
 	expected := []bson.M{

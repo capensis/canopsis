@@ -99,7 +99,7 @@
           :name="preparedEventName"
           :attributes="eventAttributes"
           :counter="counters.event_pattern"
-          @update:value="updatePatternAndClear(PATTERNS_FIELDS.event, preparedEventName, $event)"
+          @update:patterns="updatePatternAndClear(PATTERNS_FIELDS.event, preparedEventName, $event)"
           @show:entities="showPatternEntitiesModal([PATTERNS_FIELDS.event])"
         />
       </c-collapse-panel>

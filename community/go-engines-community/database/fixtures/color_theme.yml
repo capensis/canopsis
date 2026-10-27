@@ -29,6 +29,21 @@ color_theme:
         shift_row_color: '#F5F5F5'
         hover_row: true
         hover_row_color: '#E5E5E5'
+      icons:
+        ack: '#9C27B0'
+        canceled: '#607D8B'
+        children: '#6D4C41'
+        parent: '#6D4C41'
+        comment: '#BA68C8'
+        snooze: '#E91E63'
+        tickets: '#2196F3'
+        cancel_delay: '#808080'
+      widget:
+        title_background: '#FFFFFF'
+        content_background: '#FFFFFF'
+        border: false
+        border_color: '#C7C7C7'
+        border_radius: 0
     font_size: 2
     author: root
     created: <NowUnix()>
@@ -64,6 +79,21 @@ color_theme:
         shift_row_color: '#515151'
         hover_row: true
         hover_row_color: '#616161'
+      icons:
+        ack: '#9C27B0'
+        canceled: '#607D8B'
+        children: '#6D4C41'
+        parent: '#6D4C41'
+        comment: '#BA68C8'
+        snooze: '#E91E63'
+        tickets: '#2196F3'
+        cancel_delay: '#808080'
+      widget:
+        title_background: '#424242'
+        content_background: '#424242'
+        border: false
+        border_color: '#7D7D7D'
+        border_radius: 0
     font_size: 2
     author: root
     created: <NowUnix()>
@@ -99,6 +129,21 @@ color_theme:
         shift_row_color: '#F5F5F5'
         hover_row: true
         hover_row_color: '#E5E5E5'
+      icons:
+        ack: '#9C27B0'
+        canceled: '#607D8B'
+        children: '#6D4C41'
+        parent: '#6D4C41'
+        comment: '#BA68C8'
+        snooze: '#E91E63'
+        tickets: '#2196F3'
+        cancel_delay: '#808080'
+      widget:
+        title_background: '#FFFFFF'
+        content_background: '#FFFFFF'
+        border: false
+        border_color: '#C7C7C7'
+        border_radius: 0
     font_size: 2
     author: root
     created: <NowUnix()>
@@ -134,6 +179,21 @@ color_theme:
         shift_row_color: '#515151'
         hover_row: true
         hover_row_color: '#616161'
+      icons:
+        ack: '#9C27B0'
+        canceled: '#607D8B'
+        children: '#6D4C41'
+        parent: '#6D4C41'
+        comment: '#BA68C8'
+        snooze: '#E91E63'
+        tickets: '#2196F3'
+        cancel_delay: '#808080'
+      widget:
+        title_background: '#424242'
+        content_background: '#424242'
+        border: false
+        border_color: '#7D7D7D'
+        border_radius: 0
     font_size: 2
     author: root
     created: <NowUnix()>

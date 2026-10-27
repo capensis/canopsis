@@ -240,15 +240,21 @@ export default {
     },
 
     valueComponent() {
-      const valueProps = {
-        value: this.rule.value,
-        modelValue: this.rule.value,
+      const commonValueProps = {
         required: true,
         disabled: this.disabled,
         name: this.valueFieldName,
         label: this.$t('common.value'),
+      };
+      const defaultValueModelProps = {
+        value: this.rule.value,
+        modelValue: this.rule.value,
         'onUpdate:value': this.updateValue,
         'onUpdate:modelValue': this.updateValue,
+      };
+      const valueProps = {
+        ...commonValueProps,
+        ...defaultValueModelProps,
       };
 
       if (this.isDateRule) {
@@ -272,12 +278,18 @@ export default {
         const valueFieldOn = isFunction(this.valueField.on)
           ? this.valueField.on.call(this, this.rule)
           : this.valueField.on;
+        const valueFieldModelProps = this.valueField.model
+          ? {
+            [this.valueField.model]: this.rule.value,
+            [`onUpdate:${this.valueField.model}`]: this.updateValue,
+          }
+          : defaultValueModelProps;
 
         return {
           is: this.valueField.is,
           props: {
-            disabled: this.disabled,
-            ...valueProps,
+            ...commonValueProps,
+            ...valueFieldModelProps,
             ...valueFieldProps,
             ...valueFieldOn,
           },

@@ -7,7 +7,7 @@ import (
 type PbhLeaveStrategy struct{}
 
 func (s PbhLeaveStrategy) CanSkip(calcData entitycounters.EntityServiceCountersCalcData) bool {
-	return calcData.PrevActive && len(calcData.ServicesToAdd) == 0 && len(calcData.ServicesToRemove) == 0
+	return calcData.PrevPbhActive && len(calcData.ServicesToAdd) == 0 && len(calcData.ServicesToRemove) == 0
 }
 
 func (s PbhLeaveStrategy) Calculate(calcData entitycounters.EntityServiceCountersCalcData) entitycounters.EntityCounters {
@@ -21,11 +21,19 @@ func (s PbhLeaveStrategy) Calculate(calcData entitycounters.EntityServiceCounter
 		calcData.Counters.DecrementState(calcData.PrevState, inheritedMode)
 
 		if calcData.AlarmExists {
-			calcData.Counters.DecrementAlarmCounters(calcData.IsAcked, calcData.PrevActive)
+			calcData.Counters.DecrementAlarmCounters(calcData.IsAcked, calcData.PrevActive, calcData.PrevPbhActive)
+		}
+
+		if !calcData.PrevPbhActive {
+			calcData.Counters.DecrementPbhCounters(calcData.PrevPbhTypeID)
+		}
+
+		if calcData.CurPause {
+			calcData.Counters.Paused--
 		}
 
 		if !calcData.PrevActive {
-			calcData.Counters.DecrementPbhCounters(calcData.PrevPbhTypeID)
+			calcData.Counters.InactiveDepends--
 		}
 	} else if calcData.ServicesToAdd[calcData.Counters.ID] {
 		inheritedMode := entitycounters.InheritedNone
@@ -37,7 +45,15 @@ func (s PbhLeaveStrategy) Calculate(calcData entitycounters.EntityServiceCounter
 		calcData.Counters.IncrementState(calcData.CurState, inheritedMode)
 
 		if calcData.AlarmExists {
-			calcData.Counters.IncrementAlarmCounters(calcData.IsAcked, true)
+			calcData.Counters.IncrementAlarmCounters(calcData.IsAcked, calcData.CurActive, calcData.CurPbhActive)
+		}
+
+		if calcData.CurPause {
+			calcData.Counters.Paused++
+		}
+
+		if !calcData.CurActive {
+			calcData.Counters.InactiveDepends++
 		}
 	} else {
 		prevInheritedMode := entitycounters.InheritedNone
@@ -52,13 +68,17 @@ func (s PbhLeaveStrategy) Calculate(calcData entitycounters.EntityServiceCounter
 		calcData.Counters.DecrementState(calcData.PrevState, prevInheritedMode)
 		calcData.Counters.IncrementState(calcData.CurState, curInheritedMode)
 
-		if !calcData.PrevActive {
+		if !calcData.PrevPbhActive {
 			calcData.Counters.DecrementPbhCounters(calcData.PrevPbhTypeID)
+		}
 
-			if calcData.AlarmExists {
-				calcData.Counters.DecrementAlarmCounters(calcData.IsAcked, false)
-				calcData.Counters.IncrementAlarmCounters(calcData.IsAcked, true)
-			}
+		if !calcData.PrevActive && calcData.CurActive {
+			calcData.Counters.InactiveDepends--
+		}
+
+		if calcData.AlarmExists {
+			calcData.Counters.DecrementAlarmCounters(calcData.IsAcked, calcData.PrevActive, calcData.PrevPbhActive)
+			calcData.Counters.IncrementAlarmCounters(calcData.IsAcked, calcData.CurActive, calcData.CurPbhActive)
 		}
 	}
 

@@ -53,6 +53,8 @@ type Trigger struct {
 	//   * `assocticket` - Ticket has been associated with an alarm
 	//   * `snooze` - Alarm has been snoozed
 	//   * `unsnooze` - Alarm has been unsnoozed
+	//   * `pause` - Alarm has been paused
+	//   * `resume` - Alarm has been resumed
 	//   * `pbhenter` - Alarm enters a periodic behavior
 	//   * `pbhleave` - Alarm leaves a periodic behavior
 	//   * `activate` - Alarm has been activated
@@ -68,7 +70,7 @@ type Trigger struct {
 	//   * `eventscount` - Alarm check events count
 	//   * `changedoutput` - Alarm output is changed
 	//   * `changedlongoutput` - Alarm long output is changed
-	Type      string `json:"type" binding:"required,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment declareticketwebhook declareticketwebhookfail assocticket snooze unsnooze resolve activate pbhenter pbhleave instructionfail autoinstructionfail instructionjobfail instructionjobcomplete instructioncomplete autoinstructioncomplete autoinstructionresultok autoinstructionresultfail eventscount changedoutput changedlongoutput"`
+	Type      string `json:"type" binding:"required,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment declareticketwebhook declareticketwebhookfail assocticket snooze unsnooze pause resume resolve activate pbhenter pbhleave instructionfail autoinstructionfail instructionjobfail instructionjobcomplete instructioncomplete autoinstructioncomplete autoinstructionresultok autoinstructionresultfail eventscount changedoutput changedlongoutput"`
 	Threshold int    `json:"threshold,omitempty" binding:"required_if=Type eventscount,excluded_unless=Type eventscount,omitempty,gt=1"`
 }
 
@@ -136,7 +138,7 @@ type BulkToggleRequestItem struct {
 }
 
 type ActionRequest struct {
-	Type                     string            `json:"type" binding:"required,oneof=ack ackremove assocticket cancel changestate pbehavior pbehaviorremove snooze unsnooze webhook"`
+	Type                     string            `json:"type" binding:"required,oneof=ack ackremove assocticket cancel changestate pbehavior pbehaviorremove snooze unsnooze pause resume webhook"`
 	Parameters               action.Parameters `json:"parameters"`
 	Comment                  string            `json:"comment"`
 	DropScenarioIfNotMatched *bool             `json:"drop_scenario_if_not_matched" binding:"required"`
@@ -193,11 +195,15 @@ type Parameters struct {
 	// Pbehavior
 	Name           string            `json:"name,omitempty" bson:"name"`
 	Reason         *pbehavior.Reason `json:"reason,omitempty" bson:"reason"`
-	Type           *pbehavior.Type   `json:"type,omitempty" bson:"type"`
 	RRule          string            `json:"rrule,omitempty" bson:"rrule"`
 	Tstart         *int64            `json:"tstart,omitempty" bson:"tstart"`
 	Tstop          *int64            `json:"tstop,omitempty" bson:"tstop"`
 	StartOnTrigger *bool             `json:"start_on_trigger,omitempty" bson:"start_on_trigger"`
+	Type           *pbehavior.Type   `json:"type,omitempty" bson:"type"`
+	Color          string            `json:"color,omitempty" bson:"color"`
+	// Pause
+	Inherited bool   `json:"inherited,omitempty" bson:"inherited,omitempty"`
+	PauseType string `json:"pause_type,omitempty" bson:"pause_type"`
 	// Webhook
 	webhook.Webhook    `bson:",inline"`
 	SkipForChild       *bool `json:"skip_for_child,omitempty" bson:"skip_for_child"`

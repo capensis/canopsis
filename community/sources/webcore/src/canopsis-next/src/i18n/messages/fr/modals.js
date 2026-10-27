@@ -701,6 +701,26 @@ export default {
       title: 'Éditer la tâche : {jobName}',
     },
   },
+  stopJobs: {
+    title: 'Arrêter le job',
+    pendingCount: '{count} job en attente après ce job | {count} jobs en attente après ce job',
+    warnings: {
+      instructions:
+        'Il reste {count} job dans les exécutions d\'instruction sélectionnées. | Il reste {count} jobs dans les exécutions d\'instruction sélectionnées.',
+      webhooks:
+        'Il reste {count} étape dans les règles de déclaration de ticket sélectionnées. | Il reste {count} étapes dans les règles de déclaration de ticket sélectionnées.',
+      scenario:
+        'Il reste {count} action dans les scénarios sélectionnés. | Il reste {count} actions dans les scénarios sélectionnés.',
+    },
+    options: {
+      stop: {
+        instructions: 'Arrêter l\'instruction',
+        webhooks: 'Arrêter la règle de déclaration de ticket',
+        scenario: 'Arrêter le scénario',
+      },
+      continue: 'Continuer avec les jobs restants',
+    },
+  },
   clickOutsideConfirmation: {
     title: 'Êtes-vous sûr(e) ?',
     text: 'Les modifications ne seront pas enregistrées. Êtes-vous sûr(e) ?',

@@ -136,6 +136,7 @@ func (p *MessageProcessor) transformEvent(event types.Event) rpc.AxeEvent {
 		Role:                event.Role,
 		Initiator:           event.Initiator,
 		Timestamp:           event.Timestamp,
+		Inherited:           event.Inherited,
 		State:               &event.State,
 		TicketInfo:          event.TicketInfo,
 		PbehaviorInfo:       event.PbehaviorInfo,
@@ -158,6 +159,13 @@ func (p *MessageProcessor) transformEvent(event types.Event) rpc.AxeEvent {
 		CloseDelayValue:     event.CloseDelayValue,
 		IsCloseDelayJob:     event.IsCloseDelayJob,
 		StructuredMessage:   event.StructuredMessage,
+		PauseType:           event.PauseType,
+		PauseSource:         event.PauseSource,
+		PauseSourceType:     event.PauseSourceType,
+		PausePath:           event.PausePath,
+		PauseStart:          event.PauseStart,
+		ResumeJob:           event.ResumeJob,
+		PauseJob:            event.PauseJob,
 	}
 
 	if event.Duration > 0 {

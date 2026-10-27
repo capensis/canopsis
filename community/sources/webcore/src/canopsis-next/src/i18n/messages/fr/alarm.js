@@ -28,6 +28,7 @@ export default {
   alarmDisplayName: 'Nom d\'affichage de l\'alarme',
   popups: {
     exportFailed: 'Impossible d\'exporter la liste des alarmes au format CSV',
+    timelineExportFailed: 'Impossible d\'exporter la chronologie de l\'alarme au format CSV',
     addBookmarkSuccess: 'Le signet a été ajouté',
     addBookmarkFailed: 'Quelque chose s\'est mal passé. Le signet n\'a pas été ajouté',
     removeBookmarkSuccess: 'Le signet a été supprimé',
@@ -88,6 +89,7 @@ export default {
   },
   timeline: {
     by: 'par',
+    export: 'Exporter la chronologie',
     launched: 'lancé',
     junit: 'JUnit',
     groupItems: 'Grouper les éléments',

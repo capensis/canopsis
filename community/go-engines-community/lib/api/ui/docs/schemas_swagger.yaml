@@ -100,6 +100,9 @@ definitions:
         description: Duration is used in snooze and pbehavior actions.
       forward_author:
         type: boolean
+      inherited:
+        description: Inherited is used in pause action.
+        type: boolean
       multiple_urls:
         type: boolean
       name:
@@ -108,6 +111,9 @@ definitions:
         type: string
       output:
         maxLength: 1000
+        type: string
+      pause_type:
+        description: PauseType is used in pause action.
         type: string
       reason:
         description: Reason is used in pbehavior action.
@@ -167,6 +173,7 @@ definitions:
         type: integer
       type:
         description: Type is used in pbehavior action.
+        maxLength: 255
         type: string
     type: object
   alarm.Alarm:
@@ -326,12 +333,18 @@ definitions:
         type: integer
       meta:
         type: string
+      meta_rule_name:
+        type: string
       output:
         type: string
       parents:
         items:
           type: string
         type: array
+      pause:
+        $ref: '#/definitions/common.AlarmStep'
+      pause_duration:
+        type: integer
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       pbh_inactive_duration:
@@ -410,6 +423,8 @@ definitions:
   alarm.Count:
     properties:
       ack:
+        type: integer
+      pause:
         type: integer
       pbehavior_active:
         type: integer
@@ -569,6 +584,9 @@ definitions:
       time_field:
         type: string
       time_format:
+        description: TimeFormat accepts a legacy format name or a user interface Go
+          date layout. It overrides date_format for this export. If both are empty,
+          the default export format is used.
         type: string
       tstart:
         type: integer
@@ -1092,6 +1110,28 @@ definitions:
     required:
     - color
     type: object
+  alarmtimeline.ExportRequest:
+    properties:
+      alarm:
+        type: string
+      separator:
+        type: string
+      time_format:
+        type: string
+    required:
+    - alarm
+    type: object
+  alarmtimeline.ExportResponse:
+    properties:
+      _id:
+        type: string
+      status:
+        description: |-
+          * `0` - Running
+            * `1` - Succeeded
+            * `2` - Failed
+        type: integer
+    type: object
   apitoken.EditRequest:
     properties:
       duration:
@@ -1133,6 +1173,16 @@ definitions:
         type: boolean
       check_count_request_timeout:
         type: integer
+      date_format:
+        description: |-
+          DateFormat is the Go date layout used to display dates in the user interface.
+          It accepts the three listed layouts; an empty or omitted value resets to the default layout.
+        enum:
+        - ""
+        - 02/01/2006 15:04:05
+        - 02/01/2006 (Mon) 15:04:05
+        - Mon 02/01/2006 15:04:05
+        type: string
       default_color_theme:
         $ref: '#/definitions/colortheme.Response'
       disabled_transitions:
@@ -1180,7 +1230,7 @@ definitions:
       version:
         type: string
       version_description:
-        maxLength: 500
+        maxLength: 10000
         type: string
       version_updated:
         type: integer
@@ -1249,6 +1299,16 @@ definitions:
         type: boolean
       check_count_request_timeout:
         type: integer
+      date_format:
+        description: |-
+          DateFormat is the Go date layout used to display dates in the user interface.
+          It accepts the three listed layouts; an empty or omitted value resets to the default layout.
+        enum:
+        - ""
+        - 02/01/2006 15:04:05
+        - 02/01/2006 (Mon) 15:04:05
+        - Mon 02/01/2006 15:04:05
+        type: string
       default_color_theme:
         type: string
       disabled_transitions:
@@ -1270,7 +1330,7 @@ definitions:
       show_header_on_kiosk_mode:
         type: boolean
       version_description:
-        maxLength: 500
+        maxLength: 10000
         type: string
     type: object
   associativetable.AssociativeTable:
@@ -1321,16 +1381,30 @@ definitions:
       name:
         type: string
     type: object
+  broadcastmessage.BroadcastMessageStatus:
+    enum:
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - BroadcastMessageStatusActive
+    - BroadcastMessageStatusPending
+    - BroadcastMessageStatusExpired
   broadcastmessage.CreateRequest:
     properties:
       _id:
         type: string
+      closable:
+        type: boolean
       color:
         type: string
       end:
         type: integer
       message:
         type: string
+      priority:
+        type: integer
       start:
         type: integer
       views:
@@ -1338,9 +1412,11 @@ definitions:
           type: string
         type: array
     required:
+    - closable
     - color
     - end
     - message
+    - priority
     - start
     type: object
   broadcastmessage.Response:
@@ -1349,6 +1425,8 @@ definitions:
         type: string
       author:
         $ref: '#/definitions/author.Author'
+      closable:
+        type: boolean
       color:
         type: string
       created:
@@ -1359,8 +1437,12 @@ definitions:
         type: boolean
       message:
         type: string
+      priority:
+        type: integer
       start:
         type: integer
+      status:
+        $ref: '#/definitions/broadcastmessage.BroadcastMessageStatus'
       updated:
         type: integer
       views:
@@ -1370,12 +1452,16 @@ definitions:
     type: object
   broadcastmessage.UpdateRequest:
     properties:
+      closable:
+        type: boolean
       color:
         type: string
       end:
         type: integer
       message:
         type: string
+      priority:
+        type: integer
       start:
         type: integer
       views:
@@ -1383,9 +1469,11 @@ definitions:
           type: string
         type: array
     required:
+    - closable
     - color
     - end
     - message
+    - priority
     - start
     type: object
   colortheme.BulkDeleteRequestItem:
@@ -1397,6 +1485,34 @@ definitions:
     type: object
   colortheme.Colors:
     properties:
+      icons:
+        properties:
+          ack:
+            type: string
+          cancel_delay:
+            type: string
+          canceled:
+            type: string
+          children:
+            type: string
+          comment:
+            type: string
+          parent:
+            type: string
+          snooze:
+            type: string
+          tickets:
+            type: string
+        required:
+        - ack
+        - cancel_delay
+        - canceled
+        - children
+        - comment
+        - parent
+        - snooze
+        - tickets
+        type: object
       main:
         properties:
           accent:
@@ -1475,6 +1591,23 @@ definitions:
         - hover_row
         - row_color
         - shift_row
+        type: object
+      widget:
+        properties:
+          border:
+            type: boolean
+          border_color:
+            type: string
+          border_radius:
+            type: integer
+          content_background:
+            type: string
+          title_background:
+            type: string
+        required:
+        - border
+        - content_background
+        - title_background
         type: object
     type: object
   colortheme.EditRequest:
@@ -1764,6 +1897,8 @@ definitions:
             $ref: '#/definitions/datetime.DurationWithEnabled'
           delete_stats_after:
             $ref: '#/definitions/datetime.DurationWithEnabled'
+          log_credentials:
+            type: boolean
         type: object
       webhook:
         properties:
@@ -1780,6 +1915,9 @@ definitions:
       history:
         additionalProperties:
           $ref: '#/definitions/datastorage.HistoryWithCount'
+        description: History stores cleaner history. For health_check, Time is the
+          latest observed TimescaleDB retention-job start; a newer persisted value
+          is retained when the live observation is absent or older.
         type: object
     type: object
   datastorage.HistoryWithCount:
@@ -1980,6 +2118,8 @@ definitions:
       ok_events:
         description: Stats
         type: integer
+      pause:
+        $ref: '#/definitions/types.Pause'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       snooze:
@@ -2029,6 +2169,9 @@ definitions:
       separator:
         type: string
       time_format:
+        description: TimeFormat accepts a legacy format name or a user interface Go
+          date layout. If empty, the user interface date format or the default is
+          used.
         type: string
       type:
         items:
@@ -2070,6 +2213,21 @@ definitions:
   entity.Infos:
     additionalProperties:
       $ref: '#/definitions/entity.Info'
+    type: object
+  entity.PauseRequest:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+      inherited:
+        type: boolean
+      type:
+        maxLength: 255
+        type: string
+    required:
+    - _id
     type: object
   entity.PbehaviorInfo:
     properties:
@@ -2131,6 +2289,16 @@ definitions:
         type: string
       type:
         type: string
+    type: object
+  entity.ResumeRequest:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+    required:
+    - _id
     type: object
   entity.StateSettingResponse:
     properties:
@@ -2262,6 +2430,8 @@ definitions:
       ok_events:
         description: Stats
         type: integer
+      pause:
+        $ref: '#/definitions/types.Pause'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       sli_avail_state:
@@ -2566,6 +2736,8 @@ definitions:
       ok_events:
         description: Stats
         type: integer
+      pause:
+        $ref: '#/definitions/types.Pause'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       snooze:
@@ -2706,6 +2878,8 @@ definitions:
         type: integer
       output_template:
         type: string
+      pause:
+        $ref: '#/definitions/types.Pause'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       sli_avail_state:
@@ -2866,6 +3040,8 @@ definitions:
       ok_events:
         description: Stats
         type: integer
+      pause:
+        $ref: '#/definitions/types.Pause'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       snooze:
@@ -2939,8 +3115,11 @@ definitions:
         type: array
       external_data:
         items:
-          $ref: '#/definitions/externaldata.RefParameters'
+          $ref: '#/definitions/eventfilter.ExternalDataParametersRequest'
         type: array
+      name:
+        maxLength: 255
+        type: string
       priority:
         minimum: 0
         type: integer
@@ -2960,6 +3139,7 @@ definitions:
     required:
     - _id
     - description
+    - name
     - type
     type: object
   eventfilter.CopyVarsResponse:
@@ -2969,10 +3149,8 @@ definitions:
           $ref: '#/definitions/template.VarResponse'
         type: array
     type: object
-  eventfilter.CreateRequest:
+  eventfilter.EditRequest:
     properties:
-      _id:
-        type: string
       config:
         $ref: '#/definitions/eventfilter.RuleConfig'
       corporate_entity_pattern:
@@ -3004,8 +3182,11 @@ definitions:
         type: array
       external_data:
         items:
-          $ref: '#/definitions/externaldata.RefParameters'
+          $ref: '#/definitions/eventfilter.ExternalDataParametersRequest'
         type: array
+      name:
+        maxLength: 255
+        type: string
       priority:
         minimum: 0
         type: integer
@@ -3024,6 +3205,7 @@ definitions:
         type: string
     required:
     - description
+    - name
     - type
     type: object
   eventfilter.Exception:
@@ -3039,6 +3221,90 @@ definitions:
           $ref: '#/definitions/types.Exdate'
         type: array
       name:
+        type: string
+    type: object
+  eventfilter.ExternalDataParametersRequest:
+    properties:
+      on_mismatch:
+        description: |-
+          Possible values.
+            * `0` - Throw error
+            * `1` - Skip rule
+            * `2` - Skip action with external data reference
+        enum:
+        - 0
+        - 1
+        - 2
+        type: integer
+      optional:
+        description: Optional defines will it cause error or not if external data
+          isn't found.
+        type: boolean
+      reference:
+        type: string
+      regexp:
+        additionalProperties:
+          type: string
+        description: |-
+          Regexp defines regexp match conditions.
+          Key contains field name of table with regexp, value contains template.
+        type: object
+      request:
+        allOf:
+        - $ref: '#/definitions/request.Parameters'
+        description: are used in api external data
+      select:
+        additionalProperties:
+          type: string
+        description: |-
+          Select defines equal match conditions.
+          Key contains field name of table, value contains template.
+        type: object
+      sort:
+        type: string
+      sort_by:
+        description: SortBy and Sort define priority of found rows. It's id by default.
+        type: string
+      table:
+        description: |-
+          are used in db external data
+          Table contains id of external table
+        type: string
+      type:
+        type: string
+    required:
+    - reference
+    - type
+    type: object
+  eventfilter.ExternalDataParametersResponse:
+    properties:
+      on_mismatch:
+        type: integer
+      optional:
+        type: boolean
+      reference:
+        type: string
+      regexp:
+        additionalProperties:
+          type: string
+        type: object
+      request:
+        allOf:
+        - $ref: '#/definitions/request.Parameters'
+        description: are used in api external data
+      select:
+        additionalProperties:
+          type: string
+        type: object
+      sort:
+        type: string
+      sort_by:
+        type: string
+      table:
+        allOf:
+        - $ref: '#/definitions/externaldatatable.Table'
+        description: are used in db external data
+      type:
         type: string
     type: object
   eventfilter.FailureResponse:
@@ -3096,10 +3362,12 @@ definitions:
         type: array
       external_data:
         items:
-          $ref: '#/definitions/externaldatatable.RefResponse'
+          $ref: '#/definitions/eventfilter.ExternalDataParametersResponse'
         type: array
       failures_count:
         type: integer
+      name:
+        type: string
       priority:
         type: integer
       rrule:
@@ -3246,8 +3514,11 @@ definitions:
         type: array
       external_data:
         items:
-          $ref: '#/definitions/externaldata.RefParameters'
+          $ref: '#/definitions/eventfilter.ExternalDataParametersRequest'
         type: array
+      name:
+        maxLength: 255
+        type: string
       priority:
         minimum: 0
         type: integer
@@ -3266,6 +3537,7 @@ definitions:
         type: string
     required:
     - description
+    - name
     - type
     type: object
   exdate.Request:
@@ -3328,6 +3600,10 @@ definitions:
             * `link_rule` - export link_rule collection
             * `map` - export map collection
             * `entity_infos_property` - export entity_infos_property collection
+            * `template_data` - export template_data collection
+            * `template_test` - export template_test collection
+            * `webhook_token_rule` - export webhook_token_rule collection
+            * `icon` - export icon collection
         items:
           type: string
         type: array
@@ -3766,15 +4042,22 @@ definitions:
     type: object
   git_canopsis_net_canopsis_canopsis-community_community_go-engines-community_lib_api_ui_idlerule.Parameters:
     properties:
+      color:
+        type: string
       duration:
         allOf:
         - $ref: '#/definitions/datetime.DurationWithUnit'
         description: Snooze and Pbehavior
+      inherited:
+        description: Pause
+        type: boolean
       name:
         description: Pbehavior
         maxLength: 255
         type: string
       output:
+        type: string
+      pause_type:
         type: string
       reason:
         $ref: '#/definitions/pbehavior.Reason'
@@ -3813,11 +4096,17 @@ definitions:
         allOf:
         - $ref: '#/definitions/datetime.DurationWithUnit'
         description: Snooze and Pbehavior
+      inherited:
+        description: Pause
+        type: boolean
       name:
         description: Pbehavior
         maxLength: 255
         type: string
       output:
+        maxLength: 255
+        type: string
+      pause_type:
         maxLength: 255
         type: string
       reason:
@@ -3857,6 +4146,8 @@ definitions:
       tstop:
         type: integer
       type:
+        description: Pbehavior
+        maxLength: 255
         type: string
     type: object
   healthcheck.Edge:
@@ -3870,14 +4161,10 @@ definitions:
     properties:
       instances:
         type: integer
-      is_diff_instances_config:
-        type: boolean
-      is_queue_overflown:
-        type: boolean
-      is_running:
-        type: boolean
-      is_too_few_instances:
-        type: boolean
+      issues:
+        items:
+          type: string
+        type: array
       min_instances:
         type: integer
       name:
@@ -3886,6 +4173,8 @@ definitions:
         type: integer
       queue_length:
         type: integer
+      status:
+        type: string
       time:
         type: integer
     type: object
@@ -3931,14 +4220,18 @@ definitions:
     type: object
   healthcheck.Service:
     properties:
-      is_running:
-        type: boolean
+      issues:
+        items:
+          type: string
+        type: array
       name:
         type: string
       nodes:
         type: integer
       running_nodes:
         type: integer
+      status:
+        type: string
     type: object
   healthcheck.Status:
     properties:
@@ -6145,6 +6438,8 @@ definitions:
         - pbehaviorremove
         - snooze
         - unsnooze
+        - pause
+        - resume
         - webhook
         type: string
     required:
@@ -6267,6 +6562,8 @@ definitions:
         $ref: '#/definitions/request.WebhookAuthToken'
       author:
         type: string
+      color:
+        type: string
       declare_ticket:
         $ref: '#/definitions/webhook.DeclareTicket'
       duration:
@@ -6275,12 +6572,17 @@ definitions:
         description: Snooze and Pbehavior
       forward_author:
         type: boolean
+      inherited:
+        description: Pause
+        type: boolean
       multiple_urls:
         type: boolean
       name:
         description: Pbehavior
         type: string
       output:
+        type: string
+      pause_type:
         type: string
       reason:
         $ref: '#/definitions/pbehavior.Reason'
@@ -6462,6 +6764,8 @@ definitions:
             * `assocticket` - Ticket has been associated with an alarm
             * `snooze` - Alarm has been snoozed
             * `unsnooze` - Alarm has been unsnoozed
+            * `pause` - Alarm has been paused
+            * `resume` - Alarm has been resumed
             * `pbhenter` - Alarm enters a periodic behavior
             * `pbhleave` - Alarm leaves a periodic behavior
             * `activate` - Alarm has been activated
@@ -6493,6 +6797,8 @@ definitions:
         - assocticket
         - snooze
         - unsnooze
+        - pause
+        - resume
         - resolve
         - activate
         - pbhenter
@@ -6516,6 +6822,8 @@ definitions:
     properties:
       acked:
         type: integer
+      acked_inactive:
+        type: integer
       acked_under_pbh:
         type: integer
       active:
@@ -6523,6 +6831,10 @@ definitions:
       all:
         type: integer
       depends:
+        type: integer
+      inactive_depends:
+        type: integer
+      paused:
         type: integer
       pbh_types:
         items:
@@ -6612,6 +6924,8 @@ definitions:
         $ref: '#/definitions/link.LinksByCategory'
       name:
         type: string
+      pause:
+        $ref: '#/definitions/types.Pause'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       pbehaviors:
@@ -6718,6 +7032,8 @@ definitions:
         type: string
       output:
         type: string
+      pause:
+        $ref: '#/definitions/types.Pause'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       pbehaviors:
@@ -7276,6 +7592,35 @@ definitions:
       name:
         type: string
       value: {}
+    type: object
+  types.Pause:
+    properties:
+      author:
+        type: string
+      inherited:
+        type: boolean
+      initiator:
+        type: string
+      message:
+        type: string
+      path:
+        description: |-
+          Path is the entities the pause has passed through between its source and the paused entity,
+          its own source is not in it. It's used to compare a pause with a pause of an entity
+          above or below its source.
+        items:
+          type: string
+        type: array
+      source:
+        type: string
+      source_type:
+        type: string
+      timestamp:
+        type: integer
+      type:
+        type: string
+      user_id:
+        type: string
     type: object
   types.StructuredMessage:
     properties:
@@ -7947,7 +8292,12 @@ definitions:
         additionalProperties: {}
         type: object
       parameters:
-        $ref: '#/definitions/view.Parameters'
+        allOf:
+        - $ref: '#/definitions/view.Parameters'
+        description: |-
+          Parameters may include AlarmsList associateTicket: {formats: []string, formatsTemplate: string, formatsTemplateTitle: string}.
+          A non-empty formatsTemplate must reference an existing ticket_formats template; its formats and derived title take precedence, and supplied custom formats are ignored.
+          An absent or empty reference selects custom mode and clears the derived title. In custom mode, formats are stored exactly; empty strings and lists are allowed, regexp syntax is not checked, and null lists, null elements, or non-string entries are rejected. A present formatsTemplate must be a string.
       title:
         maxLength: 255
         type: string
@@ -8169,6 +8519,15 @@ definitions:
         type: array
       content:
         type: string
+      formats:
+        description: |-
+          Formats preserves ticket format strings verbatim; regexp syntax is not validated by the backend.
+          Empty strings and an empty list are allowed. A null list, null elements, and non-string entries are rejected; omission means an empty list.
+        items:
+          maxLength: 255
+          type: string
+        maxItems: 100
+        type: array
       sort_columns:
         items:
           $ref: '#/definitions/view.WidgetSortColumn'
@@ -8188,6 +8547,7 @@ definitions:
         - weather_item
         - weather_modal
         - weather_entity
+        - ticket_formats
         type: string
     required:
     - title
@@ -8211,6 +8571,12 @@ definitions:
         type: string
       created:
         type: integer
+      formats:
+        description: Formats contains the exact strings stored by a ticket_formats
+          template.
+        items:
+          type: string
+        type: array
       sort_columns:
         items:
           $ref: '#/definitions/view.WidgetSortColumn'

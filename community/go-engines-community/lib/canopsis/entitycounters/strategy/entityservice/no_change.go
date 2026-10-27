@@ -19,12 +19,20 @@ func (s NoChangeStrategy) Calculate(calcData entitycounters.EntityServiceCounter
 
 		calcData.Counters.Depends--
 		calcData.Counters.DecrementState(calcData.CurState, inheritedMode)
-		if !calcData.CurActive {
+		if !calcData.CurPbhActive {
 			calcData.Counters.DecrementPbhCounters(calcData.CurPbhTypeID)
 		}
 
 		if calcData.AlarmExists {
-			calcData.Counters.DecrementAlarmCounters(calcData.IsAcked, calcData.CurActive)
+			calcData.Counters.DecrementAlarmCounters(calcData.IsAcked, calcData.CurActive, calcData.CurPbhActive)
+		}
+
+		if calcData.CurPause {
+			calcData.Counters.Paused--
+		}
+
+		if !calcData.CurActive {
+			calcData.Counters.InactiveDepends--
 		}
 	} else if calcData.ServicesToAdd[calcData.Counters.ID] {
 		inheritedMode := entitycounters.InheritedNone
@@ -34,12 +42,20 @@ func (s NoChangeStrategy) Calculate(calcData entitycounters.EntityServiceCounter
 
 		calcData.Counters.Depends++
 		calcData.Counters.IncrementState(calcData.CurState, inheritedMode)
-		if !calcData.CurActive {
+		if !calcData.CurPbhActive {
 			calcData.Counters.IncrementPbhCounters(calcData.CurPbhTypeID)
 		}
 
 		if calcData.AlarmExists {
-			calcData.Counters.IncrementAlarmCounters(calcData.IsAcked, calcData.CurActive)
+			calcData.Counters.IncrementAlarmCounters(calcData.IsAcked, calcData.CurActive, calcData.CurPbhActive)
+		}
+
+		if calcData.CurPause {
+			calcData.Counters.Paused++
+		}
+
+		if !calcData.CurActive {
+			calcData.Counters.InactiveDepends++
 		}
 	} else if calcData.PrevInherited != calcData.CurInherited {
 		if calcData.PrevInherited {

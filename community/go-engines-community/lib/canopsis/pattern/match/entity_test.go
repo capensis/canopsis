@@ -73,6 +73,28 @@ func TestValidateEntityPattern(t *testing.T) {
 			},
 			expectedResult: false,
 		},
+		"given pause author condition should be valid": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "pause.author",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-author"),
+					},
+				},
+			},
+			expectedResult: true,
+		},
+		"given pause initiator condition should be valid": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "pause.initiator",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "external"),
+					},
+				},
+			},
+			expectedResult: true,
+		},
 		"given valid int field condition should be valid": {
 			pattern: pattern.Entity{
 				{
@@ -296,6 +318,110 @@ type entityDataSet struct {
 
 func getMatchEntityPatternDataSets() map[string]entityDataSet {
 	return map[string]entityDataSet{
+		"given matching pause author should match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "pause.author",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-author"),
+					},
+				},
+			},
+			entity: types.Entity{
+				Pause: &types.Pause{Author: "test-author", Initiator: "external"},
+			},
+			matchResult: true,
+		},
+		"given matching pause initiator should match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "pause.initiator",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "external"),
+					},
+				},
+			},
+			entity: types.Entity{
+				Pause: &types.Pause{Author: "test-author", Initiator: "external"},
+			},
+			matchResult: true,
+		},
+		"given different pause author should not match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "pause.author",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-author"),
+					},
+				},
+			},
+			entity: types.Entity{
+				Pause: &types.Pause{Author: "another-author", Initiator: "external"},
+			},
+			matchResult: false,
+		},
+		"given different pause initiator should not match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "pause.initiator",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "external"),
+					},
+				},
+			},
+			entity: types.Entity{
+				Pause: &types.Pause{Author: "test-author", Initiator: "user"},
+			},
+			matchResult: false,
+		},
+		"given pause author equality and no pause should not match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "pause.author",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-author"),
+					},
+				},
+			},
+			entity:      types.Entity{},
+			matchResult: false,
+		},
+		"given pause initiator equality and no pause should not match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "pause.initiator",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "external"),
+					},
+				},
+			},
+			entity:      types.Entity{},
+			matchResult: false,
+		},
+		"given pause author inequality and no pause should match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "pause.author",
+						Condition: pattern.NewStringCondition(pattern.ConditionNotEqual, "test-author"),
+					},
+				},
+			},
+			entity:      types.Entity{},
+			matchResult: true,
+		},
+		"given pause initiator inequality and no pause should match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "pause.initiator",
+						Condition: pattern.NewStringCondition(pattern.ConditionNotEqual, "external"),
+					},
+				},
+			},
+			entity:      types.Entity{},
+			matchResult: true,
+		},
 		"given empty pattern should match": {
 			pattern: pattern.Entity{},
 			entity: types.Entity{

@@ -6,6 +6,8 @@ const (
 	SessionMongoCollection            = "session"
 	AlarmMongoCollection              = "periodical_alarm"
 	EntityMongoCollection             = "default_entities"
+	ResumeJobCollection               = "resume_job"
+	PauseJobCollection                = "pause_job"
 	PbehaviorMongoCollection          = "pbehavior"
 	PbehaviorTypeMongoCollection      = "pbehavior_type"
 	PbehaviorReasonMongoCollection    = "pbehavior_reason"

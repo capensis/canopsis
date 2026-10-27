@@ -280,15 +280,15 @@ func (m *MockFailureService) EXPECT() *MockFailureServiceMockRecorder {
 }
 
 // Add mocks base method.
-func (m *MockFailureService) Add(ruleID, ruleDesc string, ruleUpdated datetime.CpsTime, failureType int64, message string, event *types.Event) {
+func (m *MockFailureService) Add(ruleID, ruleName string, ruleUpdated datetime.CpsTime, failureType int64, message string, event *types.Event) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Add", ruleID, ruleDesc, ruleUpdated, failureType, message, event)
+	m.ctrl.Call(m, "Add", ruleID, ruleName, ruleUpdated, failureType, message, event)
 }
 
 // Add indicates an expected call of Add.
-func (mr *MockFailureServiceMockRecorder) Add(ruleID, ruleDesc, ruleUpdated, failureType, message, event any) *gomock.Call {
+func (mr *MockFailureServiceMockRecorder) Add(ruleID, ruleName, ruleUpdated, failureType, message, event any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockFailureService)(nil).Add), ruleID, ruleDesc, ruleUpdated, failureType, message, event)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockFailureService)(nil).Add), ruleID, ruleName, ruleUpdated, failureType, message, event)
 }
 
 // Run mocks base method.

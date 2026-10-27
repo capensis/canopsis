@@ -13,7 +13,7 @@ import (
 
 type FilteredQuery struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author.name author.display_name created updated type priority"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author.name author.display_name created updated type priority enabled operation.type"`
 }
 
 type EditRequest struct {
@@ -101,6 +101,10 @@ type Parameters struct {
 	Tstart         *int64            `json:"tstart,omitempty" bson:"tstart"`
 	Tstop          *int64            `json:"tstop,omitempty" bson:"tstop"`
 	StartOnTrigger *bool             `json:"start_on_trigger,omitempty" bson:"start_on_trigger"`
+	Color          string            `json:"color,omitempty" bson:"color"`
+	// Pause
+	Inherited bool   `json:"inherited,omitempty" bson:"inherited"`
+	PauseType string `json:"pause_type,omitempty" bson:"pause_type"`
 }
 
 type AggregationResult struct {

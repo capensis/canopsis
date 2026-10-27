@@ -1,24 +1,26 @@
 <template>
   <c-page @refresh="refresh">
-    <ticket-status-jobs-tabs />
+    <job-management-tabs ref="tabsElement" />
   </c-page>
 </template>
 
 <script>
-import { useTicketStatusJob } from '@/hooks/store/modules/ticket-status-job';
+import { ref } from 'vue';
 
-import TicketStatusJobsTabs from '@/components/other/ticket-status-job/ticket-status-jobs-tabs.vue';
+import JobManagementTabs from '@/components/other/job-management/job-management-tabs.vue';
 
 export default {
   components: {
-    TicketStatusJobsTabs,
+    JobManagementTabs,
   },
 
   setup() {
-    const { fetchTicketStatusJobsListWithPreviousParams } = useTicketStatusJob();
+    const tabsElement = ref(null);
+    const refresh = () => tabsElement.value?.refresh();
 
     return {
-      refresh: fetchTicketStatusJobsListWithPreviousParams,
+      tabsElement,
+      refresh,
     };
   },
 };

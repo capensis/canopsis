@@ -1,6 +1,9 @@
 package types
 
 import (
+	"fmt"
+	"slices"
+	"strings"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -101,6 +104,111 @@ type Entity struct {
 
 	Comments    []EntityComment `bson:"comments,omitempty" json:"comments,omitempty"`
 	LastComment *EntityComment  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
+
+	// Pause is the active pause, nil if the entity is not paused.
+	Pause *Pause `bson:"pause,omitempty" json:"pause,omitempty"`
+	// LatestPause is the newest pause received, active or ended (End is set).
+	// It is used to order pause/resume events and reject late ones, not to check if the entity is paused.
+	LatestPause *LatestPause `bson:"latest_pause,omitempty" json:"latest_pause,omitempty"`
+}
+
+// MaxPausePathLength is the maximum number of the entities which a pause can be propagated through.
+// A real hierarchy never reaches it, so the pause is not propagated further to stop a propagation loop.
+const MaxPausePathLength = 100
+
+// LatestPause is a pause with its end, Source is always set (entity ID for its own pause).
+type LatestPause struct {
+	Pause `bson:",inline"`
+	End   *datetime.CpsTime `bson:"end,omitempty" json:"end,omitempty"`
+}
+
+// CanApplyOver reports whether the pause p can be applied to the entity whose latest pause is o.
+// A pause inherited from another entity replaces the entity's own pause, whatever their times.
+// A pause of an entity above the source of o, i.e. which has passed through it, replaces it,
+// and a pause from below it is ignored, so all the dependencies of a paused entity keep its pause.
+// Two other inherited pauses are compared by their times.
+// The entity's own pause is applied only if the entity is not paused and its latest pause has ended before it.
+func (p LatestPause) CanApplyOver(o *LatestPause, entityID string) bool {
+	switch {
+	case o == nil:
+		return true
+	case p.Source == entityID:
+		return o.End != nil && p.Timestamp.After(*o.End)
+	case o.Source == entityID:
+		return true
+	case slices.Contains(p.Path, o.Source):
+		return true
+	case slices.Contains(o.Path, p.Source):
+		return false
+	case !p.Timestamp.Equal(o.Timestamp):
+		return p.Timestamp.After(o.Timestamp)
+	default:
+		// Source breaks ties so all entities pick the same pause.
+		return p.Source > o.Source
+	}
+}
+
+// InheritedPause returns the pause which the dependencies of the entity inherit from it,
+// nil if the entity is not paused or if its pause is applied only to itself.
+// The own pause of the entity becomes a pause with the entity as a source, and the entity is added
+// to the pause path, so the dependencies know that the pause has passed through it.
+func (e Entity) InheritedPause() (*LatestPause, error) {
+	if e.Pause == nil || !e.Pause.Inherited {
+		return nil, nil
+	}
+
+	pause := LatestPause{Pause: *e.Pause}
+	if pause.Source != "" && pause.Source != e.ID {
+		if len(pause.Path) >= MaxPausePathLength {
+			return nil, fmt.Errorf("the path of the pause of %s is longer than %d entities", e.ID, MaxPausePathLength)
+		}
+
+		// The pause of another entity passes through this one.
+		pause.Path = append(slices.Clone(pause.Path), e.ID)
+
+		return &pause, nil
+	}
+
+	// The entity is the source of its own pause, so it's not in the path.
+	pause.Source = e.ID
+	pause.SourceType = e.Type
+	pause.Message = pause.GetInheritedMessage(e.Type, e.Name)
+
+	return &pause, nil
+}
+
+// GetInheritedMessage formats the pause message for entities inheriting it from the given source.
+func (p Pause) GetInheritedMessage(entityType, entityName string) string {
+	message := p.Message
+
+	if p.Type != "" {
+		typeOutput := OutputTypePrefix + p.Type
+		switch {
+		case strings.HasSuffix(message, typeOutput+"."):
+			message = strings.TrimSuffix(strings.TrimSuffix(message, typeOutput+"."), ". ")
+		case strings.HasSuffix(message, typeOutput):
+			message = strings.TrimSuffix(strings.TrimSuffix(message, typeOutput), ". ")
+		}
+
+		message = strings.TrimPrefix(message, OutputCommentPrefix)
+	}
+
+	output := fmt.Sprintf("Inherited from: %s %s.", entityType, entityName)
+	if message != "" {
+		output += " " + OutputCommentPrefix + message
+		if !strings.HasSuffix(message, ".") {
+			output += "."
+		}
+	}
+
+	if p.Type != "" {
+		output += " " + OutputTypePrefix + p.Type
+		if !strings.HasSuffix(p.Type, ".") {
+			output += "."
+		}
+	}
+
+	return output
 }
 
 type StateInfo struct {
@@ -130,6 +238,30 @@ func (c Coordinates) IsZero() bool {
 	return c == Coordinates{}
 }
 
+// Pause is a pause of an entity, its own one or inherited from a parent: a service of the entity
+// or the component of a resource.
+//
+// An entity has a single pause even if several of its parents are paused: it keeps the one
+// chosen by LatestPause.CanApplyOver, and Source and Path keep the route it has come through.
+// The pause is ended when it's resumed through this route, i.e. when its source is resumed or
+// when an entity of the route doesn't propagate it anymore (removed from a service, deleted
+// or disabled), whether or not the other parents of the entity are still paused.
+type Pause struct {
+	Timestamp  datetime.CpsTime `bson:"timestamp" json:"timestamp" swaggertype:"integer"`
+	Message    string           `bson:"message" json:"message"`
+	Author     string           `bson:"author" json:"author"`
+	UserID     string           `bson:"user_id" json:"user_id"`
+	Initiator  string           `bson:"initiator" json:"initiator"`
+	Type       string           `bson:"type,omitempty" json:"type"`
+	Source     string           `bson:"source,omitempty" json:"source"`
+	SourceType string           `bson:"source_type,omitempty" json:"source_type"`
+	Inherited  bool             `bson:"inherited,omitempty" json:"inherited,omitempty"`
+	// Path is the entities the pause has passed through between its source and the paused entity,
+	// its own source is not in it. It's used to compare a pause with a pause of an entity
+	// above or below its source.
+	Path []string `bson:"path,omitempty" json:"path,omitempty"`
+}
+
 // EnsureInitialized verifies that all complex structs are well initialized
 func (e *Entity) EnsureInitialized() {
 	if e.Infos == nil {
@@ -157,6 +289,18 @@ func (e *Entity) GetStringField(f string) (string, bool) {
 		return e.Component, true
 	case "upstream":
 		return e.Upstream, true
+	case "pause.author":
+		if e.Pause == nil {
+			return "", true
+		}
+
+		return e.Pause.Author, true
+	case "pause.initiator":
+		if e.Pause == nil {
+			return "", true
+		}
+
+		return e.Pause.Initiator, true
 	default:
 		return "", false
 	}
@@ -193,4 +337,18 @@ func (e *Entity) GetInfoVal(f string) (any, bool) {
 	}
 
 	return nil, false
+}
+
+// GetRefField is a magic getter for reference fields for easier field retrieving when matching entity pattern
+func (e *Entity) GetRefField(f string) (any, bool) {
+	switch f {
+	case "pause":
+		if e.Pause == nil {
+			return nil, true
+		}
+
+		return e.Pause, true
+	default:
+		return nil, false
+	}
 }

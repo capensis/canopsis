@@ -47,6 +47,8 @@ const (
 	EventTypeSnooze       = "snooze"
 	EventTypeUnsnooze     = "unsnooze"
 	EventTypeUncancel     = "uncancel"
+	EventTypePause        = "pause"
+	EventTypeResume       = "resume"
 
 	// EventTypeContextUpdate is used to send a context graph update event without counting it and updating LastEventDate
 	EventTypeContextUpdate = "contextupdate"
@@ -55,9 +57,11 @@ const (
 	EventTypeWebhookStarted       = "webhookstarted"
 	EventTypeWebhookCompleted     = "webhookcompleted"
 	EventTypeWebhookFailed        = "webhookfailed"
+	EventTypeWebhookStop          = "webhookstop"
 	EventTypeAutoWebhookStarted   = "autowebhookstarted"
 	EventTypeAutoWebhookCompleted = "autowebhookcompleted"
 	EventTypeAutoWebhookFailed    = "autowebhookfailed"
+	EventTypeAutoWebhookStop      = "autowebhookstop"
 
 	EventTypePbhEnter           = "pbhenter"
 	EventTypePbhLeaveAndEnter   = "pbhleaveandenter"
@@ -145,6 +149,7 @@ type Event struct {
 	Alarm             *Alarm              `bson:"current_alarm,omitempty" json:"current_alarm,omitempty"`
 	Entity            *Entity             `bson:"current_entity,omitempty" json:"current_entity,omitempty"`
 	StructuredMessage []StructuredMessage `bson:"struct_m,omitempty" json:"struct_m,omitempty"`
+	Inherited         bool                `bson:"inherited,omitempty" json:"inherited,omitempty"`
 
 	// AlarmID is used if an event is emitted for the specific alarm.
 	AlarmID string `bson:"aid,omitempty" json:"aid,omitempty"`
@@ -220,6 +225,17 @@ type Event struct {
 	CloseDelayValue *int64 `bson:"close_delay,omitempty" json:"close_delay,omitempty"`
 	// IsCloseDelayJob shows if an event is triggered by a close delay job.
 	IsCloseDelayJob bool `bson:"is_close_delay,omitempty" json:"is_close_delay,omitempty"`
+
+	PauseType       string   `bson:"pause_type,omitempty" json:"pause_type,omitempty"`
+	PauseSource     string   `bson:"pause_source,omitempty" json:"pause_source,omitempty"`
+	PauseSourceType string   `bson:"pause_source_type,omitempty" json:"pause_source_type,omitempty"`
+	PausePath       []string `bson:"pause_path,omitempty" json:"pause_path,omitempty"`
+	// PauseStart identifies the inherited pause ended by an internal resume event.
+	PauseStart *datetime.CpsTime `bson:"pause_start,omitempty" json:"pause_start,omitempty"`
+	// ResumeJob identifies the durable internal propagation receipt.
+	ResumeJob string `bson:"resume_job,omitempty" json:"resume_job,omitempty"`
+	// PauseJob identifies the durable internal pause propagation receipt.
+	PauseJob string `bson:"pause_job,omitempty" json:"pause_job,omitempty"`
 }
 
 // Format an event
@@ -227,9 +243,12 @@ type Event struct {
 //	"timestamp" is fill with time.Now()
 //	"event_type" is fill with EventTypeCheck
 func (e *Event) Format() {
-	//events can't be later or earlier than MaxEventTimestampVariation
+	// Events cannot exceed MaxEventTimestampVariation, except internal pause/resume jobs:
+	// their original transition time must survive delayed delivery and retries.
 	now := datetime.NewCpsTime()
-	if e.Timestamp.IsZero() || e.Timestamp.Time.Before(now.Add(-MaxEventTimestampVariation)) || e.Timestamp.Time.After(now.Add(MaxEventTimestampVariation)) {
+	if (e.EventType != EventTypeResume || e.ResumeJob == "" || e.PauseStart == nil) &&
+		(e.EventType != EventTypePause || e.PauseJob == "") &&
+		(e.Timestamp.IsZero() || e.Timestamp.Time.Before(now.Add(-MaxEventTimestampVariation)) || e.Timestamp.Time.After(now.Add(MaxEventTimestampVariation))) {
 		e.Timestamp = now
 	}
 
@@ -570,6 +589,8 @@ func isValidEventType(t string) bool {
 		EventTypeSnooze,
 		EventTypeUnsnooze,
 		EventTypeUncancel,
+		EventTypePause,
+		EventTypeResume,
 		EventTypeResolveCancel,
 		EventTypeResolveClose,
 		EventTypeResolveDeleted,

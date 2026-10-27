@@ -1,7 +1,7 @@
 <template>
   <c-form-block-array-field
     :form="externalData"
-    :item-to-form="externalDataItemToForm"
+    :item-to-form="itemToForm"
     :label="$t('eventFilter.externalData')"
     :disabled="disabled"
     :add-button-label="$t('externalData.add')"
@@ -16,6 +16,7 @@
         :types="types"
         :variables="variables"
         :optionally="optionally"
+        :with-on-mismatch="withOnMismatch"
         @update:form="updateItemInArray(index, $event)"
         @remove="remove"
       />
@@ -58,12 +59,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    withOnMismatch: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const { updateModel, updateItemInArray } = useArrayModelField(props, emit);
 
+    const itemToForm = item => externalDataItemToForm(item, props.withOnMismatch);
+
     return {
-      externalDataItemToForm,
+      itemToForm,
       updateModel,
       updateItemInArray,
     };

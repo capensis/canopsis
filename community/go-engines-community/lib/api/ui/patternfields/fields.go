@@ -237,6 +237,18 @@ var entityFields = []FieldResponse{
 		Name: "last_event_date",
 		Type: pattern.FieldTypeTimestamp,
 	},
+	{
+		Name: "pause",
+		Type: pattern.FieldTypeReference,
+	},
+	{
+		Name: "pause.author",
+		Type: pattern.FieldTypeString,
+	},
+	{
+		Name: "pause.initiator",
+		Type: pattern.FieldTypeString,
+	},
 }
 
 var eventFields = []FieldResponse{

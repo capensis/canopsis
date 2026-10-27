@@ -35,6 +35,7 @@ func (p *axeRpcClientMessageProcessor) Process(_ context.Context, msg engine.RPC
 		Alarm:           event.Alarm,
 		AlarmChangeType: event.AlarmChangeType,
 		Error:           eventErr,
+		StopScenario:    event.StopScenario,
 	}
 
 	return nil

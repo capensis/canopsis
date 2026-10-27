@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type ListRequest struct {
@@ -64,6 +65,7 @@ type Service struct {
 	Category         *entity.Category       `json:"category" bson:"category"`
 	IsGrey           bool                   `json:"is_grey" bson:"is_grey"`
 	IdleSince        *datetime.CpsTime      `json:"idle_since,omitempty" bson:"idle_since,omitempty" swaggertype:"integer"`
+	Pause            *types.Pause           `json:"pause" bson:"pause"`
 }
 
 type Info struct {
@@ -82,9 +84,12 @@ type Counters struct {
 	} `bson:"state" json:"state"`
 	Acknowledged         int64            `bson:"acked" json:"acked"`
 	NotAcknowledged      int64            `bson:"unacked" json:"unacked"`
+	AcknowledgedInactive int64            `bson:"acked_inactive" json:"acked_inactive"`
 	AcknowledgedUnderPbh int64            `bson:"acked_under_pbh" json:"acked_under_pbh"`
 	UnderPbehavior       int64            `bson:"under_pbh" json:"under_pbh"`
+	Paused               int64            `bson:"paused" json:"paused"`
 	Depends              int64            `bson:"depends" json:"depends"`
+	InactiveDepends      int64            `bson:"inactive_depends" json:"inactive_depends"`
 	PbhTypeCounters      []PbhTypeCounter `bson:"pbh_types" json:"pbh_types"`
 }
 
@@ -158,6 +163,8 @@ type Entity struct {
 	Imported     *datetime.CpsTime `bson:"imported,omitempty" json:"imported,omitempty" swaggertype:"integer"`
 
 	AssignedDeclareTicketRules []alarm.AssignedDeclareTicketRule `bson:"-" json:"assigned_declare_ticket_rules,omitempty"`
+
+	Pause *types.Pause `bson:"pause" json:"pause"`
 }
 
 type EntityAggregationResult struct {

@@ -16,6 +16,8 @@ const (
 	ActionDelayedScenarioKey   = "action-delayed-scenario"
 	ActionScenarioExecutionKey = "action-scenario-execution"
 
+	AxeResumeLockKey                          = "axe-resume-lock-key"
+	AxePauseLockKey                           = "axe-pause-lock-key"
 	AxePeriodicalLockKey                      = "axe-periodical-lock-key"
 	AxeInternalTagsPeriodicalLockKey          = "axe-internal-tags-periodical-lock-key"
 	AxeEntityServiceStateLockKey              = "axe-entity-service-state-lock-key"
@@ -36,6 +38,7 @@ const (
 
 	RemediationPeriodicalLockKey        = "remediation-periodical-lock-key"
 	RemediationPostponedJobTasksLockKey = "remediation-postponed-job-tasks-lock-key"
+	RemediationRefreshTokenLockKey      = "remediation-refresh-token-" //nolint:gosec
 
 	PbehaviorSpanKey              = "pbehavior-span"
 	PbehaviorTypesKey             = "pbehavior-types"

@@ -2,17 +2,12 @@ package healthcheck
 
 import (
 	"context"
-	"crypto/tls"
-	"net/http"
-	"os"
 	"reflect"
 	"slices"
 	"sort"
-	"strings"
 	"sync"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -20,7 +15,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/jackc/pgx/v5"
-	rabbithole "github.com/michaelklishin/rabbit-hole/v3"
 	libredis "github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -71,7 +65,7 @@ type store struct {
 	mxConn      sync.Mutex
 	mongoClient mongo.DbClient
 	redisClient *libredis.Client
-	rmqClient   *rabbithole.Client
+	rmqClient   *rabbitClient
 	pgConn      *pgx.Conn
 
 	mxChangedParamsCh sync.RWMutex
@@ -205,19 +199,21 @@ func (s *store) GetStatus() Status {
 	}
 
 	for _, service := range services {
-		if !service.IsRunning {
-			status.Services = append(status.Services, service)
+		if service.Status != StatusHealthy {
+			status.Services = append(status.Services, Service{
+				Name:   service.Name,
+				Status: service.Status,
+				Issues: service.Issues,
+			})
 		}
 	}
 
 	for name, e := range engines.Parameters {
-		if !e.IsRunning || e.IsQueueOverflown || e.IsTooFewInstances || e.IsDiffInstancesConfig {
+		if e.Status != StatusHealthy {
 			status.Engines = append(status.Engines, Engine{
-				Name:                  name,
-				IsRunning:             e.IsRunning,
-				IsQueueOverflown:      e.IsQueueOverflown,
-				IsTooFewInstances:     e.IsTooFewInstances,
-				IsDiffInstancesConfig: e.IsDiffInstancesConfig,
+				Name:   name,
+				Status: e.Status,
+				Issues: e.Issues,
 			})
 		}
 	}
@@ -285,7 +281,7 @@ func (s *store) loadServices(ctx context.Context) {
 	services := []Service{
 		s.checkMongoDB(ctx),
 		s.checkRedis(ctx),
-		s.checkRabbitMQ(),
+		s.checkRabbitMQ(ctx),
 		s.checkTimescaleDB(ctx),
 	}
 	s.mxConn.Unlock()
@@ -345,9 +341,7 @@ func (s *store) getServices() []Service {
 }
 
 func (s *store) checkMongoDB(ctx context.Context) Service {
-	res := Service{
-		Name: ServiceMongoDB,
-	}
+	name := ServiceMongoDB
 	if s.mongoClient == nil {
 		var err error
 		s.mongoClient, err = mongo.NewClient(ctx, mongo.ClientOptions{
@@ -357,131 +351,146 @@ func (s *store) checkMongoDB(ctx context.Context) Service {
 		if err != nil {
 			s.logger.Err(err).Msg("cannot connect to mongo")
 
-			return res
+			return s.unhealthyService(name)
 		}
 	}
 
 	if err := s.mongoClient.Ping(ctx, nil); err != nil {
 		s.logger.Err(err).Msg("cannot ping mongo")
 
-		return res
+		return s.unhealthyService(name)
 	}
 
-	res.IsRunning = true
-
-	return res
+	return s.healthyService(name)
 }
 
 func (s *store) checkRedis(ctx context.Context) Service {
-	res := Service{
-		Name: ServiceRedis,
-	}
-
+	name := ServiceRedis
 	if s.redisClient == nil {
 		var err error
 		s.redisClient, err = redis.NewSession(ctx, 0, s.logger, -1, -1)
 		if err != nil {
 			s.logger.Err(err).Msg("cannot connect to redis")
 
-			return res
+			return s.unhealthyService(name)
 		}
 	}
 
 	if err := s.redisClient.Ping(ctx).Err(); err != nil {
 		s.logger.Err(err).Msg("cannot ping redis")
 
-		return res
+		return s.unhealthyService(name)
 	}
 
-	res.IsRunning = true
-
-	return res
+	return s.healthyService(name)
 }
 
-func (s *store) checkRabbitMQ() Service {
-	res := Service{
-		Name: ServiceRabbitMQ,
-	}
+func (s *store) checkRabbitMQ(ctx context.Context) Service {
+	name := ServiceRabbitMQ
 	if s.rmqClient == nil {
 		var err error
-		url := os.Getenv(amqp.EnvHTTPURL)
-		username := os.Getenv(amqp.EnvHTTPUser)
-		pwd := os.Getenv(amqp.EnvHTTPPassword)
-		skipVerify := strings.ToLower(os.Getenv(amqp.EnvHTTPInsecureSkipVerify))
-		if skipVerify == "true" {
-			dt, ok := http.DefaultTransport.(*http.Transport)
-			if !ok {
-				s.logger.Error().Msg("unknown type of http.DefaultTransport")
-
-				return res
-			}
-
-			tr := dt.Clone()
-			tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} //nolint:gosec
-			s.rmqClient, err = rabbithole.NewTLSClient(url, username, pwd, tr)
-		} else {
-			s.rmqClient, err = rabbithole.NewClient(url, username, pwd)
-		}
-
+		s.rmqClient, err = newRabbitClient()
 		if err != nil {
 			s.logger.Err(err).Msg("cannot connect to rabbitmq api")
 
-			return res
+			return s.unhealthyService(name)
 		}
-
-		s.rmqClient.SetTimeout(timeout)
 	}
 
-	nodes, err := s.rmqClient.ListNodes()
+	nodes, runningNodes, err := s.rmqClient.checkNodes(ctx)
 	if err != nil {
 		s.logger.Err(err).Msg("cannot get list of rabbitmq nodes")
 
-		return res
+		return s.unhealthyService(name)
 	}
 
-	runningCount := 0
-	for _, node := range nodes {
-		if node.IsRunning {
-			runningCount++
+	status := StatusHealthy
+	issue := ""
+
+	// No node running means the broker is down; a partial outage is only degraded.
+	if runningNodes == 0 {
+		status = StatusUnhealthy
+	} else if runningNodes < nodes {
+		status = StatusDegraded
+		issue = ServiceIssueNodeDown
+	}
+
+	// Quorum queues can still lose their majority while nodes are up,
+	// so inspect them unless the broker is already unhealthy.
+	if status != StatusUnhealthy {
+		queueStatus, err := s.rmqClient.checkQueues(ctx)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot get list of rabbitmq queues")
+
+			return s.unhealthyService(name)
+		}
+
+		switch queueStatus {
+		case queueQuorumLost:
+			// A quorum queue accepts writes only while a strict majority of its Raft members is online.
+			// Without majority it is blocked: unhealthy.
+			status = StatusUnhealthy
+			issue = ServiceIssueNoQuorum
+		case queueDegraded:
+			// Majority is held but at least one replica is offline: degraded.
+			status = StatusDegraded
+			issue = ServiceIssueQuorumDegraded
 		}
 	}
 
-	res.IsRunning = runningCount > 0
-	res.Nodes = new(len(nodes))
-	res.RunningNodes = new(runningCount)
+	var issues []string
+	if issue != "" {
+		issues = append(issues, issue)
+	}
 
-	return res
+	return Service{
+		Name:         name,
+		Status:       status,
+		Issues:       issues,
+		Nodes:        new(nodes),
+		RunningNodes: new(runningNodes),
+	}
 }
 
 func (s *store) checkTimescaleDB(ctx context.Context) Service {
-	res := Service{
-		Name: ServiceTimescaleDB,
-	}
+	name := ServiceTimescaleDB
 	if s.pgConn == nil || s.pgConn.IsClosed() {
 		connStr, err := postgres.GetConnStr()
 		if err != nil {
 			s.logger.Err(err).Msg("cannot connect to postgres")
 
-			return res
+			return s.unhealthyService(name)
 		}
 
 		s.pgConn, err = pgx.Connect(ctx, connStr)
 		if err != nil {
 			s.logger.Err(err).Msg("cannot connect to postgres")
 
-			return res
+			return s.unhealthyService(name)
 		}
 	}
 
 	if err := s.pgConn.Ping(ctx); err != nil {
 		s.logger.Err(err).Msg("cannot ping postgres")
 
-		return res
+		return s.unhealthyService(name)
 	}
 
-	res.IsRunning = true
+	return s.healthyService(name)
+}
 
-	return res
+func (s *store) healthyService(name string) Service {
+	return Service{
+		Name:   name,
+		Status: StatusHealthy,
+	}
+}
+
+func (s *store) unhealthyService(name string) Service {
+	return Service{
+		Name:   name,
+		Status: StatusUnhealthy,
+	}
 }
 
 func transformEngineInfoToGraph(engines map[string]engine.RunInfo, order []string, parameters config.HealthCheckParameters) Engines {
@@ -500,22 +509,38 @@ func transformEngineInfoToGraph(engines map[string]engine.RunInfo, order []strin
 				optimalInstances = 1
 			}
 
+			var issues []string
+			if parameters.Queue.Enabled && info.QueueLength > parameters.Queue.Limit {
+				issues = append(issues, EngineIssueQueueOverflowed)
+			}
+
+			if info.Instances < minInstances {
+				issues = append(issues, EngineIssueTooFewInstances)
+			}
+
+			if info.HasDiffConfig {
+				issues = append(issues, EngineIssueInstancesConfigMismatch)
+			}
+
+			status := StatusHealthy
+			if len(issues) > 0 {
+				status = StatusDegraded
+			}
+
 			graph.Nodes[i] = name
 			enginesParams[name] = Engine{
-				Instances:             &info.Instances,
-				MinInstances:          &minInstances,
-				OptimalInstances:      &optimalInstances,
-				QueueLength:           &info.QueueLength,
-				Time:                  &info.Time,
-				IsRunning:             true,
-				IsQueueOverflown:      parameters.Queue.Enabled && info.QueueLength > parameters.Queue.Limit,
-				IsTooFewInstances:     info.Instances < minInstances,
-				IsDiffInstancesConfig: info.HasDiffConfig,
+				Instances:        &info.Instances,
+				MinInstances:     &minInstances,
+				OptimalInstances: &optimalInstances,
+				QueueLength:      &info.QueueLength,
+				Time:             &info.Time,
+				Status:           status,
+				Issues:           issues,
 			}
 		} else {
 			graph.Nodes[i] = name
 			enginesParams[name] = Engine{
-				IsRunning: false,
+				Status: StatusUnhealthy,
 			}
 		}
 	}

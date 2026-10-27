@@ -41,7 +41,6 @@ export const dynamicInfoToForm = (dynamicInfo = {}) => {
   return {
     infos,
 
-    _id: dynamicInfo._id ?? '',
     name: dynamicInfo.name ?? '',
     enabled: dynamicInfo.enabled ?? true,
     description: dynamicInfo.description ?? '',
@@ -57,7 +56,7 @@ export const dynamicInfoToForm = (dynamicInfo = {}) => {
  * @returns {DynamicInfo}
  */
 export const formToDynamicInfo = (form) => {
-  const { patterns, infos = [], ...dynamicInfo } = form;
+  const { _id, patterns, infos = [], ...dynamicInfo } = form;
 
   return {
     ...dynamicInfo,

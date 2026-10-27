@@ -1,17 +1,20 @@
 package webhook
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"maps"
 	"reflect"
+	"slices"
 	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
@@ -54,6 +57,7 @@ type History struct {
 	Alarms    []string `bson:"alarms,omitempty" json:"alarms,omitempty"`
 	Rule      string   `bson:"rule" json:"rule"`
 	RuleType  RuleType `bson:"rule_type" json:"rule_type"`
+	RuleName  string   `bson:"rule_name" json:"rule_name"`
 	Name      string   `bson:"name" json:"name"`
 	// ReplyTo is the name of the engine that emitted this webhook execution.
 	// It is recorded when the execution is created and used to
@@ -91,6 +95,26 @@ type History struct {
 	TicketData map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
 
 	IsTest bool `bson:"is_test,omitempty" json:"is_test,omitempty"`
+
+	// Cmd, CmdByUsername, CmdByUserID, CmdStopPendingJobs fields are required for the job management feature, don't use it in other places.
+	Cmd                int    `bson:"cmd,omitempty"`
+	CmdByUsername      string `bson:"cmd_by_username,omitempty"`
+	CmdByUserID        string `bson:"cmd_by_user_id,omitempty"`
+	CmdStopPendingJobs bool   `bson:"cmd_stop_pending_jobs,omitempty"`
+}
+
+func (h History) ShouldStopExecution() bool {
+	switch h.Status {
+	case StatusSucceeded:
+		return h.StopOnSuccess
+	case StatusFailed:
+		return h.StopOnFail
+	case StatusAborted:
+		// Multiple URL webhooks are a single unit, so abort their pending jobs together.
+		return h.CmdStopPendingJobs || h.MultipleURLs
+	}
+
+	return false
 }
 
 func (h History) CloneForURL(url string) History {
@@ -102,6 +126,7 @@ func (h History) CloneForURL(url string) History {
 		Alarms:    h.Alarms,
 		Rule:      h.Rule,
 		RuleType:  h.RuleType,
+		RuleName:  h.RuleName,
 		Name:      h.Name,
 		IsTest:    h.IsTest,
 
@@ -152,6 +177,37 @@ type TplAlarm struct {
 		types.Alarm `bson:",inline"`
 		Entity      types.Entity `bson:"entity" json:"entity"`
 	} `bson:"children" json:"children"`
+}
+
+// TemplateAdditionalData extends persisted execution data only while rendering templates.
+type TemplateAdditionalData struct {
+	types.AdditionalData
+	UserRoles []string `json:"user_roles"`
+}
+
+// PrepareAdditionalData resolves current user role names for template rendering.
+func PrepareAdditionalData(
+	ctx context.Context,
+	reader security.UserRoleReader,
+	additionalData types.AdditionalData,
+) (TemplateAdditionalData, error) {
+	result := TemplateAdditionalData{AdditionalData: additionalData, UserRoles: []string{}}
+	if additionalData.User == "" {
+		return result, nil
+	}
+	if reader == nil {
+		return TemplateAdditionalData{}, errors.New("user role reader is required for a non-empty user ID")
+	}
+
+	roleNames, err := reader.GetRoleNames(ctx, additionalData.User)
+	if err != nil {
+		return TemplateAdditionalData{}, err
+	}
+	if len(roleNames) > 0 {
+		result.UserRoles = slices.Clone(roleNames)
+	}
+
+	return result, nil
 }
 
 func FetchAlarmsForTplPipeline(ids []string) []bson.M {
@@ -209,7 +265,7 @@ func FetchAlarmsForTplPipeline(ids []string) []bson.M {
 func NewTplData(
 	forMultiple bool,
 	alarms []TplAlarm,
-	additionalData types.AdditionalData,
+	additionalData TemplateAdditionalData,
 	responseTplVars ResponseTplVars,
 ) map[string]any {
 	res := make(map[string]any)
@@ -241,11 +297,18 @@ func NewTplData(
 type TokenHistory struct {
 	BaseHistory        `bson:",inline"`
 	Rule               string                    `bson:"rule" json:"rule"`
+	RuleName           string                    `bson:"rule_name" json:"rule_name"`
 	ResponseField      string                    `bson:"response_field,omitempty" json:"response_field,omitempty"`
 	Template           string                    `bson:"template,omitempty" json:"template,omitempty"`
 	ExpirationDuration datetime.DurationWithUnit `bson:"expiration_duration" json:"expiration_duration"`
 	Token              string                    `bson:"token,omitempty" json:"token,omitempty"`
 	ExpiredAt          datetime.MicroTime        `bson:"expired_at,omitempty" json:"expired_at,omitzero"`
+	LastUsedAt         *datetime.MicroTime       `bson:"last_used_at,omitempty" json:"last_used_at,omitempty"`
+
+	// Cmd, CmdByUsername, CmdByUserID fields are required for the job management feature, don't use it in other places.
+	Cmd           int    `bson:"cmd,omitempty"`
+	CmdByUsername string `bson:"cmd_by_username"`
+	CmdByUserID   string `bson:"cmd_by_user_id"`
 }
 
 type BaseHistory struct {
@@ -262,6 +325,15 @@ type BaseHistory struct {
 	LaunchedAt  datetime.MicroTime `bson:"launched_at,omitempty" json:"launched_at,omitzero"`
 	CompletedAt datetime.MicroTime `bson:"completed_at,omitempty" json:"completed_at,omitzero"`
 	LastPing    datetime.MicroTime `bson:"last_ping,omitempty" json:"last_ping,omitzero"`
+}
+
+func (b BaseHistory) IsTerminalStatus() bool {
+	switch b.Status {
+	case StatusSucceeded, StatusFailed, StatusAborted:
+		return true
+	}
+
+	return false
 }
 
 type DeclareTicket struct {

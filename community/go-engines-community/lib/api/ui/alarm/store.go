@@ -3,7 +3,6 @@ package alarm
 //go:generate go tool go.uber.org/mock/mockgen -destination=../../../../mocks/lib/api/ui/alarm/alarm.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/alarm Store
 
 import (
-	"cmp"
 	"context"
 	"encoding/json"
 	"errors"
@@ -81,6 +80,7 @@ type store struct {
 	transformer                      patternfields.Transformer
 
 	timezoneConfigProvider config.TimezoneConfigProvider
+	userInterfaceAdapter   config.UserInterfaceAdapter
 
 	tplExecutor template.Executor
 
@@ -97,6 +97,7 @@ func NewStore(
 	linkGenerator link.Generator,
 	transformer patternfields.Transformer,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	userInterfaceAdapter config.UserInterfaceAdapter,
 	authorProvider author.Provider,
 	tplExecutor template.Executor,
 	decoder encoding.Decoder,
@@ -119,6 +120,7 @@ func NewStore(
 		transformer: transformer,
 
 		timezoneConfigProvider: timezoneConfigProvider,
+		userInterfaceAdapter:   userInterfaceAdapter,
 
 		tplExecutor: tplExecutor,
 
@@ -570,6 +572,7 @@ func (s *store) Count(ctx context.Context, r FilterRequest, userID string) (*Cou
 	totalActivePipeline := []bson.M{
 		{"$match": bson.M{"$and": []bson.M{
 			{"v.snooze": bson.M{"$exists": false}},
+			{"v.pause": bson.M{"$exists": false}},
 			{"$or": []bson.M{
 				{"v.pbehavior_info": bson.M{"$exists": false}},
 				{"v.pbehavior_info.canonical_type": bson.M{"$eq": pbehavior.TypeActive}},
@@ -580,6 +583,11 @@ func (s *store) Count(ctx context.Context, r FilterRequest, userID string) (*Cou
 
 	totalSnoozePipeline := []bson.M{
 		{"$match": bson.M{"v.snooze": bson.M{"$exists": true}}},
+		{"$count": "count"},
+	}
+
+	totalPausePipeline := []bson.M{
+		{"$match": bson.M{"v.pause": bson.M{"$exists": true}}},
 		{"$count": "count"},
 	}
 
@@ -611,6 +619,7 @@ func (s *store) Count(ctx context.Context, r FilterRequest, userID string) (*Cou
 			"total":           totalPipeline,
 			"total_active":    totalActivePipeline,
 			"total_snooze":    totalSnoozePipeline,
+			"total_pause":     totalPausePipeline,
 			"total_ack":       totalAckPipeline,
 			"total_unack":     totalUnackPipeline,
 			"total_ticket":    totalTicketPipeline,
@@ -664,6 +673,11 @@ func (s *store) GetAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, error) {
 	r := ExportFetchParameters{}
 	err := s.decoder.Decode([]byte(t.Parameters), &r)
+	if err != nil {
+		return nil, err
+	}
+
+	timeFormat, err := export.ResolveTimeFormat(ctx, r.TimeFormat, s.userInterfaceAdapter)
 	if err != nil {
 		return nil, err
 	}
@@ -759,7 +773,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 			return nil, err
 		}
 	}
-	exportCursor := newExportCursor(cursor, t.Fields, cmp.Or(validation.GetRealFormatTime(r.TimeFormat), validation.DefaultTimeFormat), location,
+	exportCursor := newExportCursor(cursor, t.Fields, timeFormat, location,
 		instructions, linkGenerator, user, s.tplExecutor, withModel, s.dbClient.Collection(mongo.EntityInfosPropertyCollection), s.logger)
 	return exportCursor, nil
 }
@@ -1750,6 +1764,7 @@ func (s *store) getStepsDetailsPipeline(steps StepsRequest) []bson.M {
 					"if": bson.M{"$or": []bson.M{
 						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookComplete}},
 						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookFail}},
+						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookStop}},
 					}},
 					"then": "$steps",
 					"else": "$$REMOVE",
@@ -1763,6 +1778,7 @@ func (s *store) getStepsDetailsPipeline(steps StepsRequest) []bson.M {
 					"if": bson.M{"$or": []bson.M{
 						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookComplete}},
 						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookFail}},
+						{"$eq": bson.A{"$steps._t", types.AlarmStepWebhookStop}},
 					}},
 					"then": 1,
 					"else": 0,
@@ -1804,7 +1820,7 @@ func (s *store) getStepsDetailsPipeline(steps StepsRequest) []bson.M {
 								{
 									"case": bson.M{"$and": []bson.M{
 										{"$eq": bson.A{"$start_step_count", "$complete_step_count"}},
-										{"$eq": bson.A{"$ticket_step._t", types.AlarmStepDeclareTicketFail}},
+										{"$in": bson.A{"$ticket_step._t", bson.A{types.AlarmStepDeclareTicketFail, types.AlarmStepWebhookStop}}},
 									}},
 									"then": bson.M{"$mergeObjects": bson.A{
 										"$ticket_step",

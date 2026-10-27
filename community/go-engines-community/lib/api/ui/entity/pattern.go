@@ -83,8 +83,10 @@ func (p searchPattern) ToMongoQuery() (bson.M, map[string]struct{}, map[string]s
 			switch cond.Field {
 			case "_id", "name", "type", "category", "component", "connector",
 				"import_source", "pbehavior_info.name", "pbehavior_info.reason",
-				"pbehavior_info.type", "pbehavior_info.canonical_type":
+				"pbehavior_info.type", "pbehavior_info.canonical_type", "pause.author", "pause.initiator":
 				condQueries[j], err = cond.Condition.StringToMongoQuery(cond.Field, false)
+			case "pause":
+				condQueries[j], err = cond.Condition.RefToMongoQuery(cond.Field)
 			case "impact_level":
 				condQueries[j], err = cond.Condition.IntToMongoQuery(cond.Field, true)
 			case "impact_state", "state", "status":

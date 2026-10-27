@@ -33,6 +33,8 @@ const (
 	AlarmChangeTypePbhLeaveAndEnter  AlarmChangeType = "pbhleaveandenter"
 	AlarmChangeTypeUpdateStatus      AlarmChangeType = "changestatus"
 	AlarmChangeTypeActivate          AlarmChangeType = "activate"
+	AlarmChangeTypePause             AlarmChangeType = "pause"
+	AlarmChangeTypeResume            AlarmChangeType = "resume"
 
 	AlarmChangeTypeWebhookStart                 AlarmChangeType = "webhookstart"
 	AlarmChangeTypeWebhookComplete              AlarmChangeType = "webhookcomplete"

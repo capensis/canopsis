@@ -10,6 +10,7 @@ import {
   PATTERN_CONDITIONS,
   PATTERN_OPTIMIZATION_STATUSES,
   PATTERNS_FIELDS,
+  SERVICE_WEATHER_PATTERN_FIELDS,
 } from '@/constants';
 
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
@@ -65,7 +66,7 @@ const stubs = {
   'c-entity-patterns-field': {
     name: 'CEntityPatternsField',
     props: ['patterns', 'attributes', 'entityCounter'],
-    emits: ['update:value', 'show:entities'],
+    emits: ['update:patterns', 'show:entities'],
     template: '<div />',
   },
   'c-pbehavior-patterns-field': true,
@@ -110,6 +111,8 @@ const selectEntityPatternsField = wrapper =>
 const selectPbehaviorPatternsField = wrapper => wrapper.find('c-pbehavior-patterns-field-stub');
 const selectEventFilterPatternsField = wrapper =>
   wrapper.find('c-event-filter-patterns-field-stub');
+const selectServiceWeatherPatternsField = wrapper =>
+  wrapper.find('c-service-weather-patterns-field-stub');
 const selectTryOptimization = wrapper => wrapper.findComponent({ name: 'PatternTryOptimization' });
 const selectOptimizationProgress = wrapper => wrapper.findComponent({ name: 'PatternProgress' });
 const selectPatternFieldSuggestionsWrapper = wrapper =>
@@ -388,11 +391,47 @@ describe('c-patterns-field', () => {
       ],
     });
 
-    selectEventFilterPatternsField(wrapper).triggerCustomEvent('update:value', eventFilterPattern);
+    selectEventFilterPatternsField(wrapper).triggerCustomEvent('update:patterns', eventFilterPattern);
 
     expect(wrapper).toEmitInput({
       ...patterns,
       event_pattern: eventFilterPattern,
+    });
+  });
+
+  test('Service weather pattern changed after trigger service weather patterns field', () => {
+    const serviceWeatherPattern = patternToForm({
+      weather_service_pattern: [
+        [
+          {
+            field: SERVICE_WEATHER_PATTERN_FIELDS.state,
+            cond: {
+              type: PATTERN_CONDITIONS.equal,
+              value: 1,
+            },
+          },
+        ],
+      ],
+    });
+    const value = {
+      ...patterns,
+      weather_service_pattern: patternToForm(),
+    };
+    const wrapper = factory({
+      propsData: {
+        value,
+        withServiceWeather: true,
+      },
+    });
+
+    selectServiceWeatherPatternsField(wrapper).triggerCustomEvent(
+      'update:patterns',
+      serviceWeatherPattern,
+    );
+
+    expect(wrapper).toEmitInput({
+      ...value,
+      weather_service_pattern: serviceWeatherPattern,
     });
   });
 

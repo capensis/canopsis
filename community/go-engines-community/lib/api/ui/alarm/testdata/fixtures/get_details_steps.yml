@@ -12063,6 +12063,7 @@ periodical_alarm:
       infos: {}
       inactive_duration: 0
       snooze_duration: 0
+      pause_duration: 0
       pbh_inactive_duration: 0
       activation_date: 1776325433
       state_changes_since_status_update: 0

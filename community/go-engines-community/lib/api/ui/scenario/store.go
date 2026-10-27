@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"maps"
+	"slices"
 	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
@@ -27,6 +28,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/webhook"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/userprovider"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -73,6 +76,7 @@ type store struct {
 	decoder                   encoding.Decoder
 	defaultSearchByFields     []string
 	defaultSortBy             string
+	userRoleReader            security.UserRoleReader
 	outputTplVars             []template.VarResponse
 	authorTplVars             []template.VarResponse
 	whTplVars                 []template.VarResponse
@@ -141,6 +145,12 @@ func NewStore(
 		template.VarResponse{Name: "responseFieldFromPreviousSteps", Value: "{{ index .Response \"%field_name%\" }}"},
 		template.VarResponse{Name: "responseFieldFromStep", Value: "{{ index .ResponseMap \"%N%.%field_name%\" }}"},
 	)
+	userRolesTplVar := template.VarResponse{
+		Name:  "userRoles",
+		Value: "{{ range .AdditionalData.UserRoles }}{{ . }} {{ end }}",
+	}
+	firstWhTplVars = append(firstWhTplVars, userRolesTplVar)
+	whTplVars = append(whTplVars, userRolesTplVar)
 
 	return &store{
 		dbClient:                  db,
@@ -161,6 +171,7 @@ func NewStore(
 		decoder:                   decoder,
 		defaultSearchByFields:     []string{"_id", "name", "author.name"},
 		defaultSortBy:             "created",
+		userRoleReader:            userprovider.NewRoleNamesReader(db),
 		outputTplVars:             outputTplVars,
 		authorTplVars:             authorTplVars,
 		firstWhTplVars:            firstWhTplVars,
@@ -385,7 +396,7 @@ func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[s
 		RuleName:  r.Rule.Name,
 	}
 
-	return s.validateActionTpls(r, *event, *alarm, additionalData, whTestData, tsTestData)
+	return s.validateActionTpls(ctx, r, *event, *alarm, additionalData, whTestData, tsTestData)
 }
 
 func (s *store) GetTemplateVars(ctx context.Context) (TemplateVarsResponse, error) {
@@ -678,6 +689,7 @@ func (s *store) findAlarm(ctx context.Context, entityID string) (webhook.TplAlar
 }
 
 func (s *store) validateActionTpls(
+	ctx context.Context,
 	r TemplateRequest,
 	event types.Event,
 	alarm webhook.TplAlarm,
@@ -686,6 +698,7 @@ func (s *store) validateActionTpls(
 	tsTestData map[int]template.ResponseTestData,
 ) (map[string]template.ValidateResponse, error) {
 	response := make(map[string]template.ValidateResponse)
+	roleNamesByUserID := make(map[string][]string)
 	whResponse := make(map[string]any)
 	whResponseMap := make(map[string]any)
 	whHeader := make(map[string]string)
@@ -708,12 +721,16 @@ func (s *store) validateActionTpls(
 
 		switch a.Type {
 		case types.ActionTypeWebhook:
+			templateAdditionalData, err := s.prepareTemplateAdditionalData(ctx, additionalData, roleNamesByUserID)
+			if err != nil {
+				return nil, fmt.Errorf("failed to prepare webhook template user roles: %w", err)
+			}
 			whResponseTplVars := webhook.ResponseTplVars{
 				Header:      whHeader,
 				Response:    whResponse,
 				ResponseMap: whResponseMap,
 			}
-			whTplData := webhook.NewTplData(false, []webhook.TplAlarm{alarm}, additionalData, whResponseTplVars)
+			whTplData := webhook.NewTplData(false, []webhook.TplAlarm{alarm}, templateAdditionalData, whResponseTplVars)
 
 			if a.Parameters.Request == nil {
 				return nil, validation.NewSingleError("required", "Request", "Rule.Actions."+strconv.Itoa(i)+".Parameters.Request", r)
@@ -853,6 +870,38 @@ func (s *store) validateActionTpls(
 	return response, nil
 }
 
+func (s *store) prepareTemplateAdditionalData(
+	ctx context.Context,
+	additionalData types.AdditionalData,
+	roleNamesByUserID map[string][]string,
+) (webhook.TemplateAdditionalData, error) {
+	if additionalData.User == "" {
+		return webhook.PrepareAdditionalData(ctx, nil, additionalData)
+	}
+
+	if roleNames, ok := roleNamesByUserID[additionalData.User]; ok {
+		roleNames = slices.Clone(roleNames)
+		if roleNames == nil {
+			roleNames = []string{}
+		}
+		return webhook.TemplateAdditionalData{
+			AdditionalData: additionalData,
+			UserRoles:      roleNames,
+		}, nil
+	}
+
+	templateData, err := webhook.PrepareAdditionalData(ctx, s.userRoleReader, additionalData)
+	if err != nil {
+		return webhook.TemplateAdditionalData{}, fmt.Errorf("failed to resolve roles for user %q: %w", additionalData.User, err)
+	}
+
+	roleNamesByUserID[additionalData.User] = slices.Clone(templateData.UserRoles)
+	if roleNamesByUserID[additionalData.User] == nil {
+		roleNamesByUserID[additionalData.User] = []string{}
+	}
+	return templateData, nil
+}
+
 func (s *store) validateAuthorTpl(
 	a TemplateActionRequest,
 	event types.Event,
@@ -865,10 +914,10 @@ func (s *store) validateAuthorTpl(
 
 		return nil, additionalData, nil
 	}
+	additionalData.User = ""
 
 	if a.Parameters.Author == "" {
 		additionalData.Author = canopsis.DefaultEventAuthor
-		additionalData.User = ""
 
 		return &template.ValidateResponse{IsValid: true}, additionalData, nil
 	}
@@ -884,7 +933,6 @@ func (s *store) validateAuthorTpl(
 			return nil, additionalData, err
 		}
 
-		additionalData.User = ""
 	}
 
 	return &res, additionalData, nil
@@ -897,21 +945,24 @@ func (s *store) validateEditRequest(ctx context.Context, r EditRequest) error {
 	pbhReasonIDs := make([]string, 0)
 	tokenRuleIDs := make([]string, 0)
 	for _, a := range r.Actions {
-		if a.Parameters.Type != "" {
-			pbhTypeIDs = append(pbhTypeIDs, a.Parameters.Type)
-		}
+		switch a.Type {
+		case types.ActionTypePbehavior:
+			if a.Parameters.Type != "" {
+				pbhTypeIDs = append(pbhTypeIDs, a.Parameters.Type)
+			}
 
-		if a.Parameters.Reason != "" {
-			pbhReasonIDs = append(pbhReasonIDs, a.Parameters.Reason)
-		}
+			if a.Parameters.Reason != "" {
+				pbhReasonIDs = append(pbhReasonIDs, a.Parameters.Reason)
+			}
+		case types.ActionTypeWebhook:
+			if a.Parameters.AuthToken != nil && a.Parameters.AuthToken.Rule != "" {
+				tokenRuleIDs = append(tokenRuleIDs, a.Parameters.AuthToken.Rule)
+			}
 
-		if a.Parameters.AuthToken != nil && a.Parameters.AuthToken.Rule != "" {
-			tokenRuleIDs = append(tokenRuleIDs, a.Parameters.AuthToken.Rule)
-		}
-
-		if a.Parameters.DeclareTicket != nil && a.Parameters.DeclareTicket.CheckTicketStatus != nil &&
-			a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken != nil && a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule != "" {
-			tokenRuleIDs = append(tokenRuleIDs, a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule)
+			if a.Parameters.DeclareTicket != nil && a.Parameters.DeclareTicket.CheckTicketStatus != nil &&
+				a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken != nil && a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule != "" {
+				tokenRuleIDs = append(tokenRuleIDs, a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule)
+			}
 		}
 	}
 
@@ -954,22 +1005,25 @@ func (s *store) validateEditRequest(ctx context.Context, r EditRequest) error {
 	}
 
 	for i, a := range r.Actions {
-		if a.Parameters.Type != "" && !foundTypes[a.Parameters.Type] {
-			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Type", "Actions."+strconv.Itoa(i)+".Parameters.Type"))
-		}
+		switch a.Type {
+		case types.ActionTypePbehavior:
+			if a.Parameters.Type != "" && !foundTypes[a.Parameters.Type] {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Type", "Actions."+strconv.Itoa(i)+".Parameters.Type"))
+			}
 
-		if a.Parameters.Reason != "" && !foundReasons[a.Parameters.Reason] {
-			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Reason", "Actions."+strconv.Itoa(i)+".Parameters.Reason"))
-		}
+			if a.Parameters.Reason != "" && !foundReasons[a.Parameters.Reason] {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Reason", "Actions."+strconv.Itoa(i)+".Parameters.Reason"))
+			}
+		case types.ActionTypeWebhook:
+			if a.Parameters.AuthToken != nil && a.Parameters.AuthToken.Rule != "" && !foundTokenRules[a.Parameters.AuthToken.Rule] {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Rule", "Actions."+strconv.Itoa(i)+".Parameters.AuthToken.Rule"))
+			}
 
-		if a.Parameters.AuthToken != nil && a.Parameters.AuthToken.Rule != "" && !foundTokenRules[a.Parameters.AuthToken.Rule] {
-			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Rule", "Actions."+strconv.Itoa(i)+".Parameters.AuthToken.Rule"))
-		}
-
-		if a.Parameters.DeclareTicket != nil && a.Parameters.DeclareTicket.CheckTicketStatus != nil &&
-			a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken != nil && a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule != "" &&
-			!foundTokenRules[a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule] {
-			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Rule", "Actions."+strconv.Itoa(i)+".Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule"))
+			if a.Parameters.DeclareTicket != nil && a.Parameters.DeclareTicket.CheckTicketStatus != nil &&
+				a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken != nil && a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule != "" &&
+				!foundTokenRules[a.Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule] {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Rule", "Actions."+strconv.Itoa(i)+".Parameters.DeclareTicket.CheckTicketStatus.AuthToken.Rule"))
+			}
 		}
 	}
 
@@ -1009,20 +1063,48 @@ func getNestedObjectsPipeline() []bson.M {
 			"preserveNullAndEmptyArrays": true,
 			"includeArrayIndex":          "action_index",
 		}},
+		{"$addFields": bson.M{
+			"pbehavior_type": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$actions.type", types.ActionTypePbehavior}},
+				"then": "$actions.parameters.type",
+				"else": nil,
+			}},
+			"pbehavior_reason": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$actions.type", types.ActionTypePbehavior}},
+				"then": "$actions.parameters.reason",
+				"else": nil,
+			}},
+		}},
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorTypeMongoCollection,
-			"localField":   "actions.parameters.type",
+			"localField":   "pbehavior_type",
 			"foreignField": "_id",
-			"as":           "actions.parameters.type",
+			"as":           "pbehavior_type",
 		}},
-		{"$unwind": bson.M{"path": "$actions.parameters.type", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$pbehavior_type", "preserveNullAndEmptyArrays": true}},
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorReasonMongoCollection,
-			"localField":   "actions.parameters.reason",
+			"localField":   "pbehavior_reason",
 			"foreignField": "_id",
-			"as":           "actions.parameters.reason",
+			"as":           "pbehavior_reason",
 		}},
-		{"$unwind": bson.M{"path": "$actions.parameters.reason", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$pbehavior_reason", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"actions.parameters.type": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$actions.type", types.ActionTypePbehavior}},
+				"then": "$pbehavior_type",
+				"else": "$actions.parameters.type",
+			}},
+			"actions.parameters.reason": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$actions.type", types.ActionTypePbehavior}},
+				"then": "$pbehavior_reason",
+				"else": "$actions.parameters.reason",
+			}},
+		}},
+		{"$project": bson.M{
+			"pbehavior_type":   0,
+			"pbehavior_reason": 0,
+		}},
 		{"$sort": bson.M{"action_index": 1}},
 		{"$group": bson.M{
 			"_id":     "$_id",

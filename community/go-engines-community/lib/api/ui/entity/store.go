@@ -1,28 +1,30 @@
 package entity
 
 import (
-	"cmp"
 	"context"
 	"errors"
 	"fmt"
 	"strings"
 	"time"
 
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/statesettings"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/perfdata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -35,6 +37,8 @@ type Store interface {
 	Export(ctx context.Context, t export.Task) (export.DataCursor, error)
 	CheckStateSetting(ctx context.Context, r CheckStateSettingRequest) (StateSettingResponse, error)
 	GetStateSetting(ctx context.Context, id string) (StateSettingResponse, error)
+	Pause(ctx context.Context, r PauseRequest, userID, username string) error
+	Resume(ctx context.Context, r ResumeRequest, userID, username string) error
 }
 
 type store struct {
@@ -44,17 +48,25 @@ type store struct {
 	stateSettingsCollection  mongo.DbCollection
 	entityInfoPropCollection mongo.DbCollection
 	timezoneConfigProvider   config.TimezoneConfigProvider
+	userInterfaceAdapter     config.UserInterfaceAdapter
 	authorProvider           author.Provider
+	encoder                  encoding.Encoder
 	decoder                  encoding.Decoder
 	transformer              patternfields.Transformer
+	amqpPublisher            libamqp.Publisher
+	eventGenerator           event.Generator
 }
 
 func NewStore(
 	db, dbExport mongo.DbClient,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	userInterfaceAdapter config.UserInterfaceAdapter,
 	authorProvider author.Provider,
 	transformer patternfields.Transformer,
+	encoder encoding.Encoder,
 	decoder encoding.Decoder,
+	amqpPublisher libamqp.Publisher,
+	eventGenerator event.Generator,
 ) Store {
 	return &store{
 		db:                       db,
@@ -63,9 +75,13 @@ func NewStore(
 		stateSettingsCollection:  db.Collection(mongo.StateSettingsMongoCollection),
 		entityInfoPropCollection: db.Collection(mongo.EntityInfosPropertyCollection),
 		timezoneConfigProvider:   timezoneConfigProvider,
+		userInterfaceAdapter:     userInterfaceAdapter,
 		authorProvider:           authorProvider,
+		encoder:                  encoder,
 		decoder:                  decoder,
 		transformer:              transformer,
+		amqpPublisher:            amqpPublisher,
+		eventGenerator:           eventGenerator,
 	}
 }
 
@@ -404,6 +420,11 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 		return nil, err
 	}
 
+	timeFormat, err := export.ResolveTimeFormat(ctx, t.TimeFormat, s.userInterfaceAdapter)
+	if err != nil {
+		return nil, err
+	}
+
 	now := datetime.NewCpsTime()
 	pipeline, err := s.getQueryBuilder().CreateOnlyListAggregationPipeline(ctx, ListRequest{
 		BaseFilterRequest: r,
@@ -437,7 +458,6 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	}
 
 	location := s.timezoneConfigProvider.Get().Location
-	timeFormat := validation.GetRealFormatTime(cmp.Or(t.TimeFormat, validation.DefaultTimeFormat))
 	timestampPropsCache := map[string]bool{}
 
 	return export.NewMongoCursor(cursor, t.Fields.Fields(), func(k string, v any) (any, error) {
@@ -675,6 +695,37 @@ func (s *store) GetStateSetting(ctx context.Context, id string) (StateSettingRes
 	return response, nil
 }
 
+func (s *store) Pause(ctx context.Context, r PauseRequest, userID, username string) error {
+	entity, err := s.findEntity(ctx, bson.M{"_id": r.ID, "pause": nil})
+	if err != nil {
+		return err
+	}
+
+	event, err := s.genEvent(types.EventTypePause, entity, r.Comment, username, userID)
+	if err != nil {
+		return err
+	}
+
+	event.Inherited = r.Inherited
+	event.PauseType = r.Type
+
+	return s.sendEvent(ctx, event)
+}
+
+func (s *store) Resume(ctx context.Context, r ResumeRequest, userID, username string) error {
+	entity, err := s.findEntity(ctx, bson.M{"_id": r.ID, "pause": bson.M{"$ne": nil}})
+	if err != nil {
+		return err
+	}
+
+	event, err := s.genEvent(types.EventTypeResume, entity, r.Comment, username, userID)
+	if err != nil {
+		return err
+	}
+
+	return s.sendEvent(ctx, event)
+}
+
 func (s *store) fillConnectorType(result *AggregationResult) {
 	if result == nil {
 		return
@@ -712,6 +763,66 @@ func (s *store) getDefaultStateSettingForService(ctx context.Context) (StateSett
 	}
 
 	return getStateSettingResponse(stateSetting), nil
+}
+
+func (s *store) findEntity(ctx context.Context, match bson.M) (types.Entity, error) {
+	if match == nil {
+		match = bson.M{}
+	}
+
+	match["v.resolved"] = nil
+	entity := types.Entity{}
+	err := s.mainCollection.FindOne(ctx, match).Decode(&entity)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return entity, httperror.ErrNotFound
+		}
+
+		return entity, err
+	}
+
+	return entity, nil
+}
+
+func (s *store) genEvent(
+	eventType string,
+	entity types.Entity,
+	output string,
+	username, userID string,
+) (types.Event, error) {
+	event, err := s.eventGenerator.Generate(entity)
+	if err != nil {
+		return event, fmt.Errorf("cannot generate event: %w", err)
+	}
+
+	event.EventType = eventType
+	event.Timestamp = datetime.NewCpsTime()
+	event.Output = output
+	event.Author = username
+	event.UserID = userID
+	event.Initiator = types.InitiatorUser
+
+	return event, nil
+}
+
+func (s *store) sendEvent(ctx context.Context, event types.Event) error {
+	body, err := s.encoder.Encode(event)
+	if err != nil {
+		return err
+	}
+
+	return s.amqpPublisher.PublishWithContext(
+		ctx,
+		canopsis.DefaultExchangeName,
+		canopsis.FIFOQueueName,
+		false,
+		false,
+		amqp.Publishing{
+			ContentType:  canopsis.JsonContentType,
+			Body:         body,
+			DeliveryMode: amqp.Persistent,
+		},
+	)
 }
 
 func getStateSettingResponse(stateSetting statesetting.StateSetting) StateSettingResponse {

@@ -194,6 +194,8 @@ func getEntityPatternGroupMongoQueries(p pattern.Entity, prefix string) ([]bson.
 				condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField, false)
 			} else if _, ok := emptyEntity.GetTimeField(cond.Field); ok {
 				condQueries[j], err = cond.Condition.TimeToMongoQuery(mongoField, now)
+			} else if _, ok := emptyEntity.GetRefField(cond.Field); ok {
+				condQueries[j], err = cond.Condition.RefToMongoQuery(mongoField)
 			} else {
 				err = pattern.ErrUnsupportedField
 			}

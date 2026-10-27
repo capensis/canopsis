@@ -25,6 +25,7 @@ import (
 type Store interface {
 	Find(ctx context.Context, r ListRequest, userID string, requestRoles []string) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*User, error)
+	GetTopByActiveConnects(ctx context.Context, userID string, requestRoles []string) (*User, error)
 	Insert(ctx context.Context, r CreateRequest, requestRoles []string) (*User, error)
 	Update(ctx context.Context, r BulkUpdateRequestItem, userID string, requestRoles []string) (*User, error)
 	Patch(ctx context.Context, r BulkPatchRequestItem, userID string, requestRoles []string) (*User, error)
@@ -62,7 +63,6 @@ func NewStore(
 
 		defaultSearchByFields: []string{"_id", "name", "firstname", "lastname", "roles.name"},
 		defaultSortBy:         "name",
-		dupErrorParser:        validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -89,7 +89,6 @@ type store struct {
 
 	defaultSearchByFields []string
 	defaultSortBy         string
-	dupErrorParser        validation.DuplicateErrorParser
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest, curUserID string, requestRoles []string) (*AggregationResult, error) {
@@ -165,16 +164,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, curUserID string, reque
 		activeConnects := conns[res.Data[i].ID]
 		res.Data[i].ActiveConnects = &activeConnects
 		if r.WithFlags {
-			resAdminUser := false
-			for _, role := range res.Data[i].Roles {
-				if role.ID == security.RoleAdmin {
-					resAdminUser = true
-					break
-				}
-			}
-
-			deletable := res.Data[i].ID != curUserID && (!resAdminUser || isAdminRequest)
-			res.Data[i].Deletable = &deletable
+			setDeletable(&res.Data[i], curUserID, isAdminRequest)
 		}
 
 		idpFields, _, ok := s.securityConfig.GetIdpFieldsExtraRolesAllowed(res.Data[i].Source)
@@ -213,12 +203,44 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 
 		return user, nil
 	}
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
 
 	return nil, nil
 }
 
+func (s *store) GetTopByActiveConnects(ctx context.Context, userID string, requestRoles []string) (*User, error) {
+	connections, err := s.websocketStore.GetTopConnectedUser(ctx)
+	if err != nil || connections == nil {
+		return nil, err
+	}
+
+	user, err := s.GetOneBy(ctx, connections.UserID)
+	if err != nil || user == nil || !user.Enabled {
+		return nil, err
+	}
+
+	user.ActiveConnects = &connections.Count
+	setDeletable(user, userID, slices.Contains(requestRoles, security.RoleAdmin))
+	return user, nil
+}
+
+func setDeletable(user *User, curUserID string, isAdminRequest bool) {
+	resAdminUser := false
+	for _, role := range user.Roles {
+		if role.ID == security.RoleAdmin {
+			resAdminUser = true
+			break
+		}
+	}
+
+	deletable := user.ID != curUserID && (!resAdminUser || isAdminRequest)
+	user.Deletable = &deletable
+}
+
 func (s *store) Insert(ctx context.Context, r CreateRequest, requestRoles []string) (*User, error) {
-	insertDoc, err := r.getBson(s.passwordEncoder)
+	insertDoc, id, err := r.getBson(s.passwordEncoder)
 	if err != nil {
 		return nil, err
 	}
@@ -238,14 +260,10 @@ func (s *store) Insert(ctx context.Context, r CreateRequest, requestRoles []stri
 
 		_, err = s.userCollection.InsertOne(ctx, insertDoc)
 		if err != nil {
-			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err, Role{})
-			}
-
 			return err
 		}
 
-		user, err = s.GetOneBy(ctx, r.Name)
+		user, err = s.GetOneBy(ctx, id)
 
 		return err
 	})
@@ -313,10 +331,6 @@ func (s *store) Update(ctx context.Context, r BulkUpdateRequestItem, curUserID s
 			bson.M{"$set": updateDoc},
 		)
 		if err != nil || res.MatchedCount == 0 {
-			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err, Role{})
-			}
-
 			return err
 		}
 
@@ -406,10 +420,6 @@ func (s *store) Patch(ctx context.Context, r BulkPatchRequestItem, curUserID str
 			bson.M{"$set": updateDoc},
 		)
 		if err != nil || res.MatchedCount == 0 {
-			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err, Role{})
-			}
-
 			return err
 		}
 
