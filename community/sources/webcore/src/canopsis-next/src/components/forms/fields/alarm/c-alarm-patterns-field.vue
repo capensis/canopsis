@@ -29,7 +29,7 @@
 import { isArray, keyBy } from 'lodash';
 
 import {
-  ALARM_EVENT_INITIATORS,
+  EVENT_INITIATORS,
   ALARM_FIELDS,
   ALARM_PATTERN_FIELDS,
   BASIC_ENTITY_TYPES,
@@ -357,7 +357,7 @@ export default {
             const isMultiple = isArray(rule?.value);
 
             return {
-              items: Object.values(ALARM_EVENT_INITIATORS),
+              items: Object.values(EVENT_INITIATORS),
               chips: isMultiple,
               multiple: isMultiple,
               closableChips: isMultiple,
