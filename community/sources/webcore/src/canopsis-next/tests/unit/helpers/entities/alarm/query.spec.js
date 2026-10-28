@@ -1,5 +1,5 @@
 import { PAGINATION_LIMIT } from '@/config';
-import { ALARMS_OPENED_VALUES } from '@/constants';
+import { ALARMS_OPENED_VALUES, SORT_ORDERS } from '@/constants';
 
 import { convertAlarmUserPreferenceToQuery, convertAlarmWidgetToQuery } from '@/helpers/entities/alarm/query';
 
@@ -40,6 +40,28 @@ describe('convertAlarmUserPreferenceToQuery', () => {
 });
 
 describe('convertAlarmWidgetToQuery', () => {
+  it('should apply an infos sort template to the corresponding widget column', () => {
+    const infosColumn = 'v.infos.rule.dictionary';
+    const widget = {
+      parameters: {
+        usedAlarmProperties: [],
+        widgetColumns: [
+          { value: infosColumn },
+          { value: 'v.component-suffix' },
+        ],
+        sort: [
+          { sort_by: 'v.infos', sort: SORT_ORDERS.asc.toLowerCase() },
+          { sort_by: 'v.component', sort: SORT_ORDERS.desc.toLowerCase() },
+        ],
+      },
+    };
+
+    const result = convertAlarmWidgetToQuery(widget);
+
+    expect(result.sortBy).toEqual([infosColumn, 'v.component']);
+    expect(result.sortDesc).toEqual([false, true]);
+  });
+
   it('should convert widget with \'AlarmsList\' type to a query object with default parameters and isCorrelationEnabled', () => {
     const widget = {
       parameters: {
