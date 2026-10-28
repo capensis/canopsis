@@ -50,7 +50,7 @@
 <script>
 import { computed, ref } from 'vue';
 
-import { parseRawHttp } from '@/helpers/request';
+import { maskSensitiveHttpHeaders, parseRawHttp } from '@/helpers/request';
 
 import { useI18n } from '@/hooks/i18n';
 import { usePopups } from '@/hooks/popups';
@@ -85,7 +85,7 @@ export default {
     const openedItems = ref([props.titlePrefix]);
     const parsedRaw = computed(() => {
       try {
-        return parseRawHttp(props.raw);
+        return maskSensitiveHttpHeaders(parseRawHttp(props.raw));
       } catch (error) {
         console.error(error);
 

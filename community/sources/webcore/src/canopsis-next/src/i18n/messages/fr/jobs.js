@@ -105,7 +105,7 @@ export default {
       'Job pour <strong>{ruleName}</strong> / <strong>Numéro de ticket {ticketNumber}</strong> mis en pause | {count} jobs mis en pause',
     pauseFailed:
       'Échec de mise en pause du job pour <strong>{ruleName}</strong> / <strong>Numéro de ticket {ticketNumber}</strong> | {count} jobs n\'ont pas pu être mis en pause',
-    stopped: 'Job pour <strong>{ruleName}</strong> arrêté | {count} jobs arrêtés',
+    stopped: 'Job <strong>{jobName}</strong> arrêté | {count} jobs arrêtés',
     stopFailed: 'Le job n\'a pas pu être arrêté | {count} jobs n\'ont pas pu être arrêtés',
   },
 };
