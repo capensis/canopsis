@@ -20,7 +20,7 @@
         </div>
       </c-alert>
       <widget-template-sort-columns-form
-        :model-value="modelValue"
+        :model-value="preparedModelValue"
         :items="columns"
         @update:model-value="updateValue"
       />
@@ -33,7 +33,10 @@ import { computed } from 'vue';
 
 import { ALARM_FIELDS_TO_LABELS_KEYS } from '@/constants';
 
-import { getWidgetColumnLabel } from '@/helpers/entities/widget/list';
+import {
+  findWidgetColumnBySortBy,
+  getWidgetColumnLabel,
+} from '@/helpers/entities/widget/list';
 
 import { useWidgetTemplateField } from '@/hooks/widget/widget-template';
 
@@ -69,7 +72,11 @@ export default {
   emits: ['update:modelValue', 'update:template'],
 
   setup(props, { emit }) {
-    const { updateTemplate, updateValue } = useWidgetTemplateField(props, 'sort_columns', emit);
+    const { updateTemplate: updateTemplateField, updateValue } = useWidgetTemplateField(
+      props,
+      'sort_columns',
+      emit,
+    );
 
     const selectedTemplate = computed(() => {
       if (!props.template || !props.templates.length) {
@@ -79,16 +86,34 @@ export default {
       return props.templates.find(template => template._id === props.template);
     });
 
-    const currentColumnValues = computed(() => props.columns.map(column => column.value));
+    const findCurrentColumn = sortBy => findWidgetColumnBySortBy(props.columns, sortBy);
+    const prepareSortColumns = (sortColumns = []) => sortColumns.map(sortColumn => ({
+      ...sortColumn,
+      sort_by: findCurrentColumn(sortColumn.sort_by)?.value ?? sortColumn.sort_by,
+    }));
+
+    const preparedModelValue = computed(() => prepareSortColumns(props.modelValue));
+
+    const updateTemplate = (template) => {
+      if (!template?.sort_columns) {
+        updateTemplateField(template);
+
+        return;
+      }
+
+      updateTemplateField({
+        ...template,
+        sort_columns: prepareSortColumns(template.sort_columns),
+      });
+    };
+
     const missingColumns = computed(() => {
       if (!selectedTemplate.value?.sort_columns) {
         return [];
       }
 
       return selectedTemplate.value.sort_columns
-        .filter(
-          sortColumn => sortColumn.sort_by && !currentColumnValues.value.includes(sortColumn.sort_by),
-        )
+        .filter(sortColumn => sortColumn.sort_by && !findCurrentColumn(sortColumn.sort_by))
         .map(sortColumn => ({
           ...sortColumn,
           label: getWidgetColumnLabel({ value: sortColumn.sort_by }, ALARM_FIELDS_TO_LABELS_KEYS),
@@ -97,6 +122,7 @@ export default {
 
     return {
       missingColumns,
+      preparedModelValue,
       updateValue,
       updateTemplate,
     };

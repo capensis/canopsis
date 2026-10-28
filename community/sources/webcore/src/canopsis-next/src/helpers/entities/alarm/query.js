@@ -12,6 +12,7 @@ import {
 import { isResolvedAlarm } from '@/helpers/entities/alarm/form';
 import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
 import { convertSortToRequest } from '@/helpers/entities/shared/query';
+import { findWidgetColumnBySortBy } from '@/helpers/entities/widget/list';
 import { getTemplateVariables } from '@/helpers/handlebars/variables';
 import { sanitizeHtml } from '@/helpers/html';
 
@@ -89,6 +90,7 @@ export function convertAlarmWidgetToQuery(widget) {
     usedAlarmProperties,
     isCorrelationEnabled,
     sort = [],
+    widgetColumns = [],
   } = widget.parameters;
 
   const query = {
@@ -126,7 +128,11 @@ export function convertAlarmWidgetToQuery(widget) {
   if (isArray(sort) && sort.length > 0) {
     const lowerCasedDesc = SORT_ORDERS.desc.toLowerCase();
 
-    query.sortBy = sort.map(column => column.sort_by).filter(Boolean);
+    query.sortBy = sort
+      .map(({ sort_by: sortBy }) =>
+        (findWidgetColumnBySortBy(widgetColumns, sortBy)?.value ?? sortBy),
+      )
+      .filter(Boolean);
     query.sortDesc = sort.map(column => column.sort === lowerCasedDesc);
   }
 
