@@ -45,7 +45,12 @@ export default {
         sortBy: [],
         sortDesc: [],
       },
-      onUpdate: fetchQuery => fetchApiTokensList({ params: getQueryForList(fetchQuery) }),
+      onUpdate: fetchQuery => fetchApiTokensList({
+        params: {
+          ...getQueryForList(fetchQuery),
+          active: true,
+        },
+      }),
     });
 
     const removeTokens = async (tokens) => {
