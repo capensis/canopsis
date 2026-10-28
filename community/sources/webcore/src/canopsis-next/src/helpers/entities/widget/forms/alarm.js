@@ -1,4 +1,4 @@
-import { cloneDeep, map } from 'lodash';
+import { cloneDeep, isPlainObject, map } from 'lodash';
 
 import { EXPAND_DEFAULT_MAX_LETTERS, PAGINATION_LIMIT } from '@/config';
 import {
@@ -612,15 +612,21 @@ export const getAlarmsListWidgetColumnComponentGetter = (
 
   const maxLetters = isCellContentTruncated ? Infinity : EXPAND_DEFAULT_MAX_LETTERS;
 
-  return context => ({
-    bind: {
-      is: 'c-ellipsis',
-      class: 'alarm-column-cell__text',
-      title: context.value,
-      text: context.value,
-      maxLetters,
-    },
-  });
+  return (context) => {
+    const text = isPlainObject(context.value)
+      ? JSON.stringify(context.value)
+      : context.value;
+
+    return {
+      bind: {
+        is: 'c-ellipsis',
+        class: 'alarm-column-cell__text',
+        title: text,
+        text,
+        maxLetters,
+      },
+    };
+  };
 };
 
 /**

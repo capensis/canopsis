@@ -177,7 +177,7 @@ export default {
     const firstSelectedStatus = computed(() => tableElement.value?.selectedItems?.[0]?.status);
     const isDisabledItem = (item) => {
       if (!isTicketStatusJob.value) {
-        return item.status !== JOB_EXECUTION_STATUS.running;
+        return item.status !== JOB_EXECUTION_STATUS.running || item.stopped;
       }
 
       return item.status === JOB_STATUS.stopped ||
