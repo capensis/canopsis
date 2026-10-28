@@ -24,7 +24,7 @@
       :depth="depth"
     >
       <c-enabled-field
-        :value="multiple"
+        :model-value="multiple"
         :label="$t('scenario.allowMultipleUrls')"
         :disabled="disabled"
         @update:model-value="updateMultiple"
