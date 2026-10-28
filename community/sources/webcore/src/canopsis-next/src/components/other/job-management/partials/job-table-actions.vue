@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isRunning">
+  <div v-if="isRunning" class="d-flex align-center flex-nowrap">
     <c-action-btn
       :tooltip="t('jobs.actions.stopJob')"
       :disabled-button="stopPending"
@@ -59,7 +59,8 @@ export default {
     const preparedItems = computed(() => (props.item ? [props.item] : props.items));
     const isRunning = computed(
       () => preparedItems.value.length > 0 && preparedItems.value.every(
-        item => item.status === JOB_EXECUTION_STATUS.running,
+        item => item.status === JOB_EXECUTION_STATUS.running &&
+          !item.stopped,
       ),
     );
     const withStopPendingJobs = computed(() => props.jobType !== JOBS_TABS.authToken);
@@ -75,15 +76,16 @@ export default {
       }
 
       if (successItems.length) {
+        const firstSuccessId = successItems[0]?.item?._id ?? successItems[0]?.id;
         const firstItem = preparedItems.value.find(
-          item => item._id === successItems[0]?.item?._id,
-        );
+          item => item._id === firstSuccessId,
+        ) ?? preparedItems.value[0];
 
         popups.info({
-          text: t('jobs.popups.stopped', successItems.length, {
+          text: t('jobs.popups.stopped', {
             count: successItems.length,
-            ruleName: firstItem?.rule_name ?? '',
-          }),
+            jobName: firstItem?.rule_name ?? '',
+          }, successItems.length),
         });
       }
     };

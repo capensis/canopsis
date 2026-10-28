@@ -17,7 +17,7 @@
 
         <template #actions>
           <slot name="actions">
-            <v-icon :icon="icon" />
+            <v-icon :icon="displayedIcon" />
           </slot>
         </template>
       </v-expansion-panel-title>
@@ -72,6 +72,7 @@ const props = defineProps({
 });
 
 const localExpanded = ref(props.expanded ? 0 : undefined);
+const displayedIcon = computed(() => (localExpanded.value === 0 ? 'expand_less' : props.icon));
 
 const { hasChildrenError } = useValidationChildren();
 
