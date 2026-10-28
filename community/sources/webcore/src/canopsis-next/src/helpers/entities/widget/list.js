@@ -30,6 +30,18 @@ export const getWidgetColumnLabel = (column = {}, labelsMap = {}) => {
 };
 
 /**
+ * Find a widget column corresponding to a sort field.
+ * Infos sort templates contain a root field, while widget columns contain a concrete infos path.
+ *
+ * @param {WidgetColumn[]} [columns=[]]
+ * @param {string} [sortBy='']
+ * @returns {WidgetColumn|undefined}
+ */
+export const findWidgetColumnBySortBy = (columns = [], sortBy = '') => columns.find(({ value }) => (
+  getInfosWidgetColumn(sortBy) ? value?.startsWith(sortBy) : value === sortBy
+));
+
+/**
  * Get sortable property for widget column for table
  *
  * @param {WidgetColumn} [column = {}]
