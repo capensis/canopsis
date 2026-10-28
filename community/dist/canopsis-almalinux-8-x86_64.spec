@@ -6,7 +6,7 @@ Summary: Canopsis community edition
 License: AGPL-3.0-only
 Source0: https://git.canopsis.net/canopsis/canopsis-pro/-/archive/%{version_upstream}/canopsis.tar.gz
 
-BuildRequires: make >= 3.81, gcc, systemd-rpm-macros
+BuildRequires: make >= 3.81, gcc, systemd-rpm-macros, wget, curl, tar
 
 Requires: canopsis-common = %{version_safe} 
 Conflicts: canopsis-pro
