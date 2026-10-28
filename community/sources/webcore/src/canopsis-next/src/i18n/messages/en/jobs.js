@@ -105,7 +105,7 @@ export default {
       'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> paused | {count} jobs paused',
     pauseFailed:
       'Job for <strong>{ruleName}</strong> / <strong>Ticket number {ticketNumber}</strong> failed to pause | {count} jobs failed to pause',
-    stopped: 'Job for <strong>{ruleName}</strong> stopped | {count} jobs stopped',
+    stopped: 'Job <strong>{jobName}</strong> stopped | {count} jobs stopped',
     stopFailed: 'Job failed to stop | {count} jobs failed to stop',
   },
 };

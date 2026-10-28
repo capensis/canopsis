@@ -1,5 +1,6 @@
 import { generateShallowRenderer } from '@unit/utils/vue';
 
+import { EXPAND_DEFAULT_MAX_LETTERS } from '@/config';
 import { ALARM_FIELDS, DATETIME_FORMATS } from '@/constants';
 
 import { convertDateToString } from '@/helpers/date/date';
@@ -149,6 +150,22 @@ describe('alarm-column-cell', () => {
     const ellipsis = selectEllipsis(wrapper);
 
     expect(ellipsis.attributes('text')).toBe('02/01/1970');
+  });
+
+  it('Plain object field is converted to JSON for ellipsis', () => {
+    const value = {
+      first: 'value',
+      nested: { second: 2 },
+    };
+    const getComponent = getAlarmsListWidgetColumnComponentGetter({ value: 'custom_field' });
+
+    expect(getComponent({ value }).bind).toEqual({
+      is: 'c-ellipsis',
+      class: 'alarm-column-cell__text',
+      title: JSON.stringify(value),
+      text: JSON.stringify(value),
+      maxLetters: EXPAND_DEFAULT_MAX_LETTERS,
+    });
   });
 
   it('Applies filter class when column has isFilter set to true', async () => {

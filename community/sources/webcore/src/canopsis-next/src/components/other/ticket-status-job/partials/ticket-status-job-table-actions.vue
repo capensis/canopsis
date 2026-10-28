@@ -1,43 +1,37 @@
 <template>
-  <v-row v-if="item || !isStopped" density="compact">
-    <v-col v-if="item" cols="auto">
-      <c-action-btn
-        :tooltip="t('jobs.actions.editJob')"
-        icon="edit"
-        @click="edit"
-      />
-    </v-col>
+  <div v-if="item || !isStopped" class="d-flex align-center flex-nowrap ga-1">
+    <c-action-btn
+      v-if="item"
+      :tooltip="t('jobs.actions.editJob')"
+      icon="edit"
+      @click="edit"
+    />
 
     <template v-if="!isStopped && isRunning">
-      <v-col cols="auto">
-        <c-action-btn
-          :tooltip="t('jobs.actions.pauseJob')"
-          :disabled-button="pausePending"
-          :loading="pausePending"
-          icon="pause"
-          @click="pause"
-        />
-      </v-col>
-      <v-col cols="auto">
-        <c-action-btn
-          :tooltip="t('jobs.actions.repeatJob')"
-          :disabled-button="repeatPending"
-          :loading="repeatPending"
-          icon="refresh"
-          @click="repeat"
-        />
-      </v-col>
-    </template>
-    <v-col v-else-if="!isStopped" cols="auto">
       <c-action-btn
-        :tooltip="t('jobs.actions.startJob')"
-        :disabled-button="playPending"
-        :loading="playPending"
-        icon="play_arrow"
-        @click="play"
+        :tooltip="t('jobs.actions.pauseJob')"
+        :disabled-button="pausePending"
+        :loading="pausePending"
+        icon="pause"
+        @click="pause"
       />
-    </v-col>
-  </v-row>
+      <c-action-btn
+        :tooltip="t('jobs.actions.repeatJob')"
+        :disabled-button="repeatPending"
+        :loading="repeatPending"
+        icon="refresh"
+        @click="repeat"
+      />
+    </template>
+    <c-action-btn
+      v-else-if="!isStopped"
+      :tooltip="t('jobs.actions.startJob')"
+      :disabled-button="playPending"
+      :loading="playPending"
+      icon="play_arrow"
+      @click="play"
+    />
+  </div>
 </template>
 
 <script>
