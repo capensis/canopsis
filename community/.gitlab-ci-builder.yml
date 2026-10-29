@@ -80,6 +80,11 @@ build_rpm:
   rules:
     - if: $CI_COMMIT_TAG && $CI_PROJECT_NAME == "canopsis-pro"
 
+# The rpm-sign template sets a global DIST without el10, which overrides ours
+sign_rpm:
+  variables:
+    DIST: "almalinux-8-x86_64 almalinux-9-x86_64 almalinux-10-x86_64"
+
 release-rpm:
   stage: release
   tags:
