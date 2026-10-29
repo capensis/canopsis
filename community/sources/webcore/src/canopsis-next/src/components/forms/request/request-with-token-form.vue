@@ -9,6 +9,7 @@
     :payload-variables="payloadVariables"
     :url-variables="urlVariables"
     :depth="depth"
+    indented-rows
     with-auth-token
     @update:form="updateField('request', $event)"
     @update:auth-token="updateAuthToken"
