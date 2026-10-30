@@ -1,6 +1,6 @@
 <template>
   <v-rating
-    :model-value="modelValue"
+    :model-value="3.5"
     :readonly="readonly"
     :hover="hover"
     class="layout"
@@ -8,7 +8,13 @@
     density="comfortable"
     half-increments
     @update:model-value="$emit('update:modelValue', $event)"
-  />
+  >
+    <template #item="{ props: itemProps }">
+      <v-btn v-bind="itemProps">
+        <c-icon :icon="itemProps.icon" :no-fill="itemProps.icon === '$ratingEmpty'" />
+      </v-btn>
+    </template>
+  </v-rating>
 </template>
 
 <script>

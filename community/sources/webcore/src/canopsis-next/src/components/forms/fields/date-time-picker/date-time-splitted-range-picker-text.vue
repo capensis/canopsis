@@ -1,22 +1,20 @@
 <template>
-  <c-layout class="date-time-splitted-range-picker-field">
-    <div class="date-time-splitted-range-picker-field__start">
+  <v-row class="date-time-splitted-range-picker-field">
+    <v-col class="date-time-splitted-range-picker-field__start">
       <date-time-splitted-picker-text :value="start" :full-day="fullDay" :label="startLabel" />
-    </div>
-    <template v-if="!noEnding">
+    </v-col>
+    <v-col v-if="!noEnding" class="date-time-splitted-range-picker-field__end">
       <div class="date-time-splitted-range-picker-field__time-dash">
         -
       </div>
-      <div class="date-time-splitted-range-picker-field__end">
-        <date-time-splitted-picker-text
-          :value="end"
-          :full-day="fullDay"
-          :label="endLabel"
-          reverse
-        />
-      </div>
-    </template>
-  </c-layout>
+      <date-time-splitted-picker-text
+        :value="end"
+        :full-day="fullDay"
+        :label="endLabel"
+        reverse
+      />
+    </v-col>
+  </v-row>
 </template>
 
 <script>

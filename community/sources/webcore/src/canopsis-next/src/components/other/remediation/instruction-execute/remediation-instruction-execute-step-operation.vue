@@ -28,6 +28,7 @@
       <v-expand-transition>
         <c-layout
           v-if="isShownDetails"
+          class="pb-2"
           gap="4"
           column
         >

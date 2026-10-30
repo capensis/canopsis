@@ -15,6 +15,7 @@ import { computed, nextTick, onMounted, ref } from 'vue';
 import { COLORS } from '@/config';
 import { DATETIME_FORMATS } from '@/constants';
 
+import { getMostReadableTextColor } from '@/helpers/color';
 import {
   convertDateToDateObjectByTimezone,
   convertDateToString,
@@ -58,6 +59,7 @@ const events = computed(() => timespans.value.map((timespan, index) => {
       timed: isTimed.value,
       name: `${fromString} - ${toString}`,
       color: COLORS.secondary,
+      iconColor: getMostReadableTextColor(COLORS.secondary, { level: 'AA', size: 'large' }),
     };
   }),
 );
