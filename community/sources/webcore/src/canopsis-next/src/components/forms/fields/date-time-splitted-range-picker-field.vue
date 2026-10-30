@@ -1,6 +1,6 @@
 <template>
-  <c-layout class="date-time-splitted-range-picker-field">
-    <div class="date-time-splitted-range-picker-field__start">
+  <v-row class="date-time-splitted-range-picker-field">
+    <v-col class="date-time-splitted-range-picker-field__start">
       <date-time-splitted-picker-field
         :value="start"
         :full-day="fullDay"
@@ -12,29 +12,27 @@
         :hide-details="hideDetails"
         @update:value="$emit('update:start', $event)"
       />
-    </div>
-    <template v-if="!noEnding">
+    </v-col>
+    <v-col v-if="!noEnding" class="date-time-splitted-range-picker-field__end">
       <div class="date-time-splitted-range-picker-field__time-dash">
         -
       </div>
-      <div class="date-time-splitted-range-picker-field__end">
-        <date-time-splitted-picker-field
-          :value="end"
-          :full-day="fullDay"
-          :disabled="disabled"
-          :control-variant="controlVariant"
-          :label="endLabel"
-          :name="`${name}_end`"
-          :min="endMin"
-          :max="endMax"
-          :rules="endRules"
-          :hide-details="hideDetails"
-          reverse
-          @update:value="$emit('update:end', $event)"
-        />
-      </div>
-    </template>
-  </c-layout>
+      <date-time-splitted-picker-field
+        :value="end"
+        :full-day="fullDay"
+        :disabled="disabled"
+        :control-variant="controlVariant"
+        :label="endLabel"
+        :name="`${name}_end`"
+        :min="endMin"
+        :max="endMax"
+        :rules="endRules"
+        :hide-details="hideDetails"
+        reverse
+        @update:value="$emit('update:end', $event)"
+      />
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -110,6 +108,7 @@ export default {
   --dash-width: 26px;
 
   &__time-dash {
+    flex: 0 0 var(--dash-width);
     width: var(--dash-width);
     line-height: 68px;
     text-align: center;
@@ -117,8 +116,18 @@ export default {
 
   &__start,
   &__end {
-    width: calc(50% - calc(var(--dash-width) / 2));
-    max-width: calc(50% - calc(var(--dash-width) / 2));
+    flex: 1 1 224px;
+    min-width: 0;
+  }
+
+  &__end {
+    display: flex;
+    flex-basis: calc(224px + var(--dash-width));
+
+    > :last-child {
+      flex: 1;
+      min-width: 0;
+    }
   }
 }
 </style>
