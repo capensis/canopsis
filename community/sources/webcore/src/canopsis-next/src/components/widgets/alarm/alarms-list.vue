@@ -155,7 +155,7 @@ import { LIVE_REPORTING_QUICK_RANGES, MODALS, USER_PERMISSIONS } from '@/constan
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
 import { setSeveralFields } from '@/helpers/immutable';
-import { selectedToQuery, widgetToExportQueryColumns } from '@/helpers/entities/widget/query';
+import { widgetToExportQueryColumns } from '@/helpers/entities/widget/query';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -441,7 +441,6 @@ export default {
         exportCsvSeparator,
         exportCsvDatetimeFormat,
       } = this.widget.parameters;
-      const { selected = [] } = this.$refs.alarmsTable;
 
       return {
         ...pick(query, [
@@ -470,7 +469,7 @@ export default {
         time_format: isObject(exportCsvDatetimeFormat)
           ? exportCsvDatetimeFormat.value
           : exportCsvDatetimeFormat,
-        search: selectedToQuery(selected, query.search),
+        search: query.search,
       };
     },
 
