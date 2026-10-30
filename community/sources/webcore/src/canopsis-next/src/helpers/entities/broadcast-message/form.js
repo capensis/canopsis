@@ -6,7 +6,6 @@ import {
   BROADCAST_MESSAGE_VIEWS,
   BROADCAST_MESSAGE_VIEWS_FORM_BLOCKS,
   DEFAULT_BROADCAST_MESSAGE_VIEWS_FORM,
-  MIN_PRIORITY,
 } from '@/constants';
 
 import { convertDateToDateObject, convertDateToTimestamp } from '@/helpers/date/date';
@@ -98,7 +97,7 @@ export const viewsArrayToViewsForm = (views = [], treeItems = {}) => {
 export const messageToForm = (broadcastMessage = {}) => ({
   message: broadcastMessage?.message || '',
   color: broadcastMessage?.color || DEFAULT_BROADCAST_MESSAGE_COLOR,
-  priority: broadcastMessage?.priority ?? MIN_PRIORITY,
+  priority: broadcastMessage?.priority ?? 1,
   closable: broadcastMessage?.closable ?? true,
   start: convertDateToDateObject(broadcastMessage?.start),
   end: convertDateToDateObject(broadcastMessage?.end),
