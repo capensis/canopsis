@@ -1,5 +1,5 @@
 <template>
-  <v-autocomplete
+  <c-autocomplete
     :model-value="value"
     :items="filters"
     :label="label || $t('common.filters')"
