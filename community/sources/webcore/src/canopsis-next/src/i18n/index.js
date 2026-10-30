@@ -1,17 +1,20 @@
 import { merge } from 'lodash';
+// Register the locale on the same ESM Moment instance used by moment-timezone.
+import 'moment/dist/locale/fr';
 import { createI18n } from 'vue-i18n';
 
 import { DEFAULT_LOCALE } from '@/config';
 
 import { featuresService } from '@/services/features';
 
-import { updateDateLocaleMessages } from '@/helpers/date/date';
+import { setDateLocale, updateDateLocaleMessages } from '@/helpers/date/date';
 
 import { FEATURES_SERVICE_KEYS } from '@/constants/features';
 
 import durationFrMessages from './duration-fr';
 import messages from './messages';
 
+setDateLocale(DEFAULT_LOCALE);
 updateDateLocaleMessages('fr', durationFrMessages);
 
 export const i18n = createI18n({

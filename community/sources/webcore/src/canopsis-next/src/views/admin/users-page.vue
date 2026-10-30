@@ -2,14 +2,16 @@
   <c-page
     :creatable="hasCreateAccess"
     :create-tooltip="t('modals.createUser.create.title')"
-    @refresh="fetchUsersListWithPreviousParams"
+    @refresh="refresh"
     @create="showCreateUserModal"
   >
-    <users />
+    <users ref="usersElement" />
   </c-page>
 </template>
 
 <script>
+import { ref } from 'vue';
+
 import { MODALS, USER_PERMISSIONS } from '@/constants';
 
 import { useCRUDPermissions } from '@/hooks/auth';
@@ -27,8 +29,11 @@ export default {
   setup() {
     const modals = useModals();
     const { t } = useI18n();
-    const { fetchUsersListWithPreviousParams, createUser } = useUser();
+    const usersElement = ref(null);
+    const { createUser } = useUser();
     const { hasCreateAccess } = useCRUDPermissions(USER_PERMISSIONS.technical.user);
+
+    const refresh = () => usersElement.value?.fetchList();
 
     const showCreateUserModal = () => {
       modals.show({
@@ -37,7 +42,7 @@ export default {
           action: async (data) => {
             await createUser({ data });
 
-            await fetchUsersListWithPreviousParams();
+            await refresh();
           },
         },
       });
@@ -46,7 +51,8 @@ export default {
     return {
       hasCreateAccess,
       t,
-      fetchUsersListWithPreviousParams,
+      usersElement,
+      refresh,
       showCreateUserModal,
     };
   },
