@@ -1,5 +1,5 @@
 <template>
-  <v-autocomplete
+  <c-autocomplete
     :model-value="value"
     :items="availableParameters"
     :label="label || $t('kpi.metrics.parameter')"
@@ -7,6 +7,7 @@
     :multiple="isMultiple"
     :hide-details="hideDetails"
     :return-object="false"
+    :item-props="getItemProps"
     item-title="text"
     item-value="value"
     @update:model-value="$emit('update:value', $event)"
@@ -21,7 +22,7 @@
         {{ getItemText(item) }}
       </template>
     </template>
-  </v-autocomplete>
+  </c-autocomplete>
 </template>
 
 <script>
@@ -84,6 +85,10 @@ export default {
   },
 
   methods: {
+    getItemProps({ disabled }) {
+      return { disabled };
+    },
+
     isActiveValue(value) {
       return this.isMultiple ? this.value.includes(value) : this.value === value;
     },
