@@ -57,8 +57,12 @@
           top
           small
         />
-        {{ item.inputTokensUsed }}
+        {{ n(item.inputTokensUsed) }}
       </c-layout>
+    </template>
+
+    <template #output_tokens="{ item }">
+      {{ n(item.output_tokens ?? 0) }}
     </template>
 
     <template #usage>
@@ -127,7 +131,7 @@ export default {
   },
 
   setup(props) {
-    const { t, te } = useI18n();
+    const { t, te, n } = useI18n();
     const modals = useModals();
     const popups = usePopups();
     const { fetchLlmHistoryWithoutStore, fetchLlmChatsWithoutStore } = useLlm();
@@ -224,9 +228,9 @@ export default {
             : t(`llm.promptsHistory.contextTitles.${context}`),
           inputTokensUsed: inputTokens + cacheWriteTokens + cacheReadTokens,
           inputTokensTooltip: t('llm.promptsHistory.inputTokensTooltip', {
-            inputTokens,
-            cacheWriteTokens,
-            cacheReadTokens,
+            inputTokens: n(inputTokens),
+            cacheWriteTokens: n(cacheWriteTokens),
+            cacheReadTokens: n(cacheReadTokens),
           }),
         };
       }),
@@ -284,6 +288,7 @@ export default {
       headers,
 
       t,
+      n,
       updateOptions,
       onlyOffTopicChange,
       formatDate,

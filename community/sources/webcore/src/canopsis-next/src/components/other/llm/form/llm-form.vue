@@ -47,6 +47,7 @@
               :model-value="form.model"
               :items="models"
               :loading="modelsPending"
+              :disabled="!isNew"
               name="model"
               required
               @update:model-value="updateField('model', $event)"
