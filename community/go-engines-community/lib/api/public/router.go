@@ -362,6 +362,9 @@ func RegisterDocs(r chi.Router, s Services) error {
 		return fmt.Errorf("cannot read swagger: %w", err)
 	}
 
+	r.Get(Prefix+"/docs", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, Prefix+"/docs/", http.StatusMovedPermanently)
+	})
 	r.Get(Prefix+"/docs/*", func(w http.ResponseWriter, r *http.Request) {
 		path := chi.URLParam(r, "*")
 		if path == "swagger.yaml" {
