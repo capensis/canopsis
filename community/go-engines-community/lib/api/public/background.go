@@ -57,6 +57,12 @@ func AddBackground(
 	})
 
 	g.Go(func() error {
+		s.Enforcer.StartAutoLoadPolicy(ctx, opts.PeriodicalWaitTime)
+
+		return nil
+	})
+
+	g.Go(func() error {
 		ticker := time.NewTicker(opts.PeriodicalWaitTime)
 		defer ticker.Stop()
 
