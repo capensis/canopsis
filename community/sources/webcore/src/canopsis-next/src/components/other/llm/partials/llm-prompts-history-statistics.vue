@@ -3,7 +3,7 @@
     <v-col cols="auto">
       <llm-prompts-history-statistic-big-block
         :title="t('llm.promptsHistory.statistics.totalInputTokens')"
-        :value="statistics.input_tokens"
+        :value="n(statistics.input_tokens)"
         :period="period"
         color="info"
       >
@@ -15,7 +15,7 @@
           >
             <llm-prompts-history-statistic-small-block
               :title="item.title"
-              :value="item.value"
+              :value="n(item.value)"
               :percent="item.percent"
             />
           </v-col>
@@ -26,7 +26,7 @@
     <v-col cols="auto">
       <llm-prompts-history-statistic-big-block
         :title="t('llm.promptsHistory.statistics.totalOutputTokens')"
-        :value="statistics.output_tokens"
+        :value="n(statistics.output_tokens)"
         :period="period"
         color="warning"
       />
@@ -73,7 +73,7 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n();
+    const { t, n } = useI18n();
     const { fetchLlmStatsWithoutStore } = useLlm();
     const statistics = ref({ ...DEFAULT_STATISTICS });
 
@@ -127,6 +127,7 @@ export default {
 
     return {
       t,
+      n,
       statistics,
       period,
       inputItems,
