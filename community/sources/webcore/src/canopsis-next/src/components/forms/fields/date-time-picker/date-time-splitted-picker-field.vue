@@ -182,9 +182,10 @@ export default {
 
     .v-field {
       font-size: 16px !important;
+      padding-inline: 0;
 
       .v-field__input {
-        padding: 0;
+        padding-inline: 0;
       }
     }
   }
