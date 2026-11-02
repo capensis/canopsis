@@ -1,5 +1,5 @@
 <template>
-  <v-combobox
+  <c-combobox
     v-model:search="search"
     ref="combobox"
     :model-value="value"
@@ -16,6 +16,7 @@
     append-icon=""
     variant="underlined"
     hide-details
+    standalone
   />
 </template>
 
