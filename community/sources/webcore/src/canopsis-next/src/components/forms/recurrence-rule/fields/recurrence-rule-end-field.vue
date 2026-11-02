@@ -1,5 +1,10 @@
 <template>
-  <c-radio-group :model-value="type" :label="t('common.end')" @update:model-value="updateType">
+  <c-radio-group
+    :model-value="type"
+    :label="t('common.end')"
+    class="recurrence-rule-end-field"
+    @update:model-value="updateType"
+  >
     <v-radio :value="types.never" color="primary">
       <template #label>
         {{ t('recurrenceRule.never') }}
@@ -8,7 +13,7 @@
 
     <v-radio :value="types.date" class="mb-0" color="primary">
       <template #label>
-        <c-layout gap="4" align="center">
+        <c-layout gap="4" align="center" fill>
           <span>{{ t('recurrenceRule.on') }}</span>
 
           <date-time-splitted-picker-field
@@ -16,6 +21,7 @@
             :rules="dateTimeSplittedRules"
             :placeholder="t('common.date')"
             :disabled="!isDateType"
+            class="recurrence-rule-end-field__until"
             name="until"
             @update:value="updateModelField('until', $event)"
           />
@@ -107,7 +113,17 @@ const updateType = (value) => {
 </script>
 
 <style lang="scss" scoped>
+.recurrence-rule-end-field :deep(.v-radio > .v-label) {
+  flex: 1;
+  min-width: 0;
+}
+
 .recurrence-rule-end-field__count {
+  flex: 0 0 96px;
   width: 96px;
+}
+
+.recurrence-rule-end-field__until {
+  flex: 0 1 224px;
 }
 </style>
