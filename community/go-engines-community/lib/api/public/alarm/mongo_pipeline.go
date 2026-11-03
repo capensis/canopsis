@@ -111,7 +111,7 @@ func ListPipeline(r ListRequest, now datetime.CpsTime) (beforeLimit []bson.M, af
 		alarmMatches = append(alarmMatches, search)
 	}
 
-	beforeLimit, afterLimit = buildPipeline(r.Resolution, alarmMatches, entityMatches, sortNeedsEntity, now)
+	beforeLimit, afterLimit = buildPipeline(r.Resolution, alarmMatches, entityMatches, nil, sortNeedsEntity, now)
 
 	return beforeLimit, afterLimit, sort, nil
 }
@@ -160,19 +160,23 @@ func SearchPipeline(r SearchRequest, now datetime.CpsTime) (beforeLimit []bson.M
 		entityMatches = append(entityMatches, q)
 	}
 
-	beforeLimit, afterLimit = buildPipeline(r.Resolution, alarmMatches, entityMatches, sortNeedsEntity, now)
+	beforeLimit, afterLimit = buildPipeline(r.Resolution, alarmMatches, entityMatches, r.AlarmPattern.GetMongoFields(""), sortNeedsEntity, now)
 
 	return beforeLimit, afterLimit, sort, nil
 }
 
-// buildPipeline lays out the stages: alarm-only matches first, then the entity
+// buildPipeline lays out the stages: computed alarm fields and alarm-only matches first, then the entity
 // join followed by the matches that need it. The join stays before the limit
 // only if sorting needs it, otherwise it is projected away and redone after the
 // limit, so fewer documents are joined.
-func buildPipeline(resolution string, alarmMatches, entityMatches []bson.M, sortNeedsEntity bool, now datetime.CpsTime) (beforeLimit, afterLimit []bson.M) {
+func buildPipeline(resolution string, alarmMatches, entityMatches []bson.M, computedFields bson.M, sortNeedsEntity bool, now datetime.CpsTime) (beforeLimit, afterLimit []bson.M) {
 	lookup := entityLookup(resolution)
 
 	beforeLimit = []bson.M{defaultFilter()}
+	if len(computedFields) > 0 {
+		beforeLimit = append(beforeLimit, bson.M{"$addFields": computedFields})
+	}
+
 	for _, q := range alarmMatches {
 		if len(q) > 0 {
 			beforeLimit = append(beforeLimit, bson.M{"$match": q})
