@@ -1,6 +1,7 @@
+import { generateShallowRenderer } from '@unit/utils/vue';
 import { cloneDeep } from 'lodash';
 
-import { DATETIME_FORMATS } from '@/constants';
+import { TIME_UNITS } from '@/constants';
 
 import { toSeconds } from '@/helpers/date/duration';
 
@@ -12,7 +13,7 @@ describe('widget-periodic-refresh', () => {
       periodic_refresh: {
         enabled: true,
         value: 10,
-        unit: DATETIME_FORMATS.second,
+        unit: TIME_UNITS.second,
       },
     },
   };
@@ -32,6 +33,7 @@ describe('widget-periodic-refresh', () => {
       intervalDelay: null,
       periodicRefreshSeconds: 10,
       fetchList: vi.fn(),
+      resetPeriodicRefresh: widgetPeriodicRefreshMixin.methods.resetPeriodicRefresh,
     };
   });
 
@@ -60,9 +62,9 @@ describe('widget-periodic-refresh', () => {
 
       mockContext.widget.parameters.periodic_refresh = {
         value: 5,
-        unit: DATETIME_FORMATS.minute,
+        unit: TIME_UNITS.minute,
       };
-      expect(periodicRefreshSeconds.call(mockContext)).toBe(toSeconds(5, DATETIME_FORMATS.minute));
+      expect(periodicRefreshSeconds.call(mockContext)).toBe(toSeconds(5, TIME_UNITS.minute));
 
       mockContext.widget.parameters.periodic_refresh = undefined;
       expect(periodicRefreshSeconds.call(mockContext)).toBe(toSeconds(undefined, undefined));
@@ -201,7 +203,7 @@ describe('widget-periodic-refresh', () => {
   describe('watchers', () => {
     test('Should start periodic refresh when enabled and has value', () => {
       const watcher =
-        widgetPeriodicRefreshMixin.watch['widget.parameters.periodic_refresh'].handler;
+        widgetPeriodicRefreshMixin.watch.periodicRefreshSettings.handler;
       const context = {
         ...mockContext,
         periodicRefreshSeconds: 10,
@@ -212,7 +214,7 @@ describe('widget-periodic-refresh', () => {
       const newValue = {
         enabled: true,
         value: 10,
-        unit: DATETIME_FORMATS.second,
+        unit: TIME_UNITS.second,
       };
 
       watcher.call(context, newValue, {});
@@ -220,9 +222,9 @@ describe('widget-periodic-refresh', () => {
       expect(context.startPeriodicRefresh).toHaveBeenCalled();
     });
 
-    test('Should not start periodic refresh when paused', () => {
+    test('Should reset the delay without starting periodic refresh when paused', () => {
       const watcher =
-        widgetPeriodicRefreshMixin.watch['widget.parameters.periodic_refresh'].handler;
+        widgetPeriodicRefreshMixin.watch.periodicRefreshSettings.handler;
       const context = {
         ...mockContext,
         activeViewPeriodicRefreshPaused: true,
@@ -233,18 +235,19 @@ describe('widget-periodic-refresh', () => {
       const newValue = {
         enabled: true,
         value: 10,
-        unit: DATETIME_FORMATS.second,
+        unit: TIME_UNITS.second,
       };
 
       watcher.call(context, newValue, {});
 
       expect(context.startPeriodicRefresh).not.toHaveBeenCalled();
       expect(context.stopPeriodicRefresh).not.toHaveBeenCalled();
+      expect(context.intervalDelay).toBe(10000);
     });
 
     test('Should stop periodic refresh when disabled', () => {
       const watcher =
-        widgetPeriodicRefreshMixin.watch['widget.parameters.periodic_refresh'].handler;
+        widgetPeriodicRefreshMixin.watch.periodicRefreshSettings.handler;
       const context = {
         ...mockContext,
         stopPeriodicRefresh: vi.fn(),
@@ -253,7 +256,7 @@ describe('widget-periodic-refresh', () => {
       const newValue = {
         enabled: false,
         value: 10,
-        unit: DATETIME_FORMATS.second,
+        unit: TIME_UNITS.second,
       };
 
       watcher.call(context, newValue, {});
@@ -263,7 +266,7 @@ describe('widget-periodic-refresh', () => {
 
     test('Should restart periodic refresh when value changes', () => {
       const watcher =
-        widgetPeriodicRefreshMixin.watch['widget.parameters.periodic_refresh'].handler;
+        widgetPeriodicRefreshMixin.watch.periodicRefreshSettings.handler;
       const context = {
         ...mockContext,
         periodicRefreshInterval: setInterval(() => {}, 1000),
@@ -275,24 +278,24 @@ describe('widget-periodic-refresh', () => {
       const newValue = {
         enabled: true,
         value: 15,
-        unit: DATETIME_FORMATS.second,
+        unit: TIME_UNITS.second,
       };
 
       const oldValue = {
         enabled: true,
         value: 10,
-        unit: DATETIME_FORMATS.second,
+        unit: TIME_UNITS.second,
       };
 
       watcher.call(context, newValue, oldValue);
 
-      expect(context.stopPeriodicRefresh).toHaveBeenCalled();
       expect(context.startPeriodicRefresh).toHaveBeenCalled();
+      expect(context.intervalDelay).toBe(15000);
     });
 
     test('Should not restart periodic refresh when periodicRefreshSeconds is zero', () => {
       const watcher =
-        widgetPeriodicRefreshMixin.watch['widget.parameters.periodic_refresh'].handler;
+        widgetPeriodicRefreshMixin.watch.periodicRefreshSettings.handler;
       const context = {
         ...mockContext,
         periodicRefreshSeconds: 0,
@@ -303,7 +306,7 @@ describe('widget-periodic-refresh', () => {
       const newValue = {
         enabled: true,
         value: 0,
-        unit: DATETIME_FORMATS.second,
+        unit: TIME_UNITS.second,
       };
 
       watcher.call(context, newValue, {});
@@ -337,6 +340,106 @@ describe('widget-periodic-refresh', () => {
 
       expect(context.resumePriodicRefresh).toHaveBeenCalled();
       expect(context.pausePriodicRefresh).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('settings changes', () => {
+    const fetchList = vi.fn();
+    const factory = generateShallowRenderer({
+      mixins: [widgetPeriodicRefreshMixin],
+      props: {
+        widget: { type: Object, required: true },
+        paused: { type: Boolean, default: false },
+      },
+      computed: {
+        activeViewPeriodicRefreshPaused() {
+          return this.paused;
+        },
+      },
+      methods: { fetchList },
+      template: '<div />',
+    });
+
+    test.each([
+      [{ value: 20 }, 20000],
+      [{ unit: TIME_UNITS.minute }, 600000],
+    ])('Should restart the timer after changing settings in place: %j', async (settings, delay) => {
+      const wrapper = factory({ props: { widget: cloneDeep(mockWidget) } });
+
+      vi.advanceTimersByTime(3000);
+      Object.assign(wrapper.vm.widget.parameters.periodic_refresh, settings);
+      await wrapper.vm.$nextTick();
+
+      vi.advanceTimersByTime(delay - 1);
+
+      expect(fetchList).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(1);
+
+      expect(fetchList).toHaveBeenCalledTimes(1);
+    });
+
+    test('Should restart the timer when saved settings replace the widget', async () => {
+      const wrapper = factory({ props: { widget: cloneDeep(mockWidget) } });
+
+      vi.advanceTimersByTime(3000);
+      await wrapper.setProps({
+        widget: {
+          parameters: {
+            periodic_refresh: { enabled: true, value: 20, unit: TIME_UNITS.second },
+          },
+        },
+      });
+      vi.advanceTimersByTime(19999);
+
+      expect(fetchList).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(1);
+
+      expect(fetchList).toHaveBeenCalledTimes(1);
+    });
+
+    test('Should reset a paused timer and wait for an explicit resume', async () => {
+      const wrapper = factory({ props: { widget: cloneDeep(mockWidget) } });
+
+      vi.advanceTimersByTime(3000);
+      await wrapper.setProps({ paused: true });
+
+      const interval = wrapper.vm.periodicRefreshInterval;
+
+      wrapper.vm.widget.parameters.periodic_refresh.value = 20;
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.intervalDelay).toBe(20000);
+      expect(wrapper.vm.periodicRefreshInterval).toBe(interval);
+      expect(vi.getTimerCount()).toBe(0);
+
+      vi.advanceTimersByTime(30000);
+
+      expect(fetchList).not.toHaveBeenCalled();
+
+      await wrapper.setProps({ paused: false });
+      vi.advanceTimersByTime(19999);
+
+      expect(fetchList).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(1);
+
+      expect(fetchList).toHaveBeenCalledTimes(1);
+    });
+
+    test('Should reset the delay without starting a stopped timer', async () => {
+      const wrapper = factory({ props: { widget: cloneDeep(mockWidget) } });
+
+      wrapper.vm.stopPeriodicRefresh();
+      wrapper.vm.widget.parameters.periodic_refresh.value = 20;
+      await wrapper.vm.$nextTick();
+      vi.advanceTimersByTime(30000);
+
+      expect(wrapper.vm.intervalDelay).toBe(20000);
+      expect(wrapper.vm.periodicRefreshInterval).toBeNull();
+      expect(fetchList).not.toHaveBeenCalled();
+      expect(vi.getTimerCount()).toBe(0);
     });
   });
 
