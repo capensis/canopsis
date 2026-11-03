@@ -303,6 +303,7 @@ type TokenHistory struct {
 	ExpirationDuration datetime.DurationWithUnit `bson:"expiration_duration" json:"expiration_duration"`
 	Token              string                    `bson:"token,omitempty" json:"token,omitempty"`
 	ExpiredAt          datetime.MicroTime        `bson:"expired_at,omitempty" json:"expired_at,omitzero"`
+	Invalidated        *bool                     `bson:"invalidated,omitempty" json:"-"` // nil is legacy, false is tracked, true was rejected by a server.
 	LastUsedAt         *datetime.MicroTime       `bson:"last_used_at,omitempty" json:"last_used_at,omitempty"`
 
 	// Cmd, CmdByUsername, CmdByUserID fields are required for the job management feature, don't use it in other places.
