@@ -1,14 +1,40 @@
 import DOMPurify from 'dompurify';
 import linkifyHtmlLib from 'linkify-html';
 import { registerCustomProtocol } from 'linkifyjs';
-import { escape, unescape } from 'lodash';
 
 import { DEFAULT_SANITIZE_OPTIONS, DEFAULT_LINKIFY_OPTIONS, LINKIFY_PROTOCOLS } from '@/config';
 
-import { uid } from '@/helpers/uid';
+import { TEMPLATE_VUE_ATTRIBUTES } from '@/constants/sanitize';
+
+const VUE_ATTRIBUTE = /^(?:v-|:|\.|@|#|data-v-)/i;
+const UNSAFE_TEMPLATE_ATTRIBUTE = /^(?:on|is$|tag$|ref$|innerhtml$|textcontent$|srcdoc$|slot$|slot-scope$|inline-template$)/i;
+
+DOMPurify.addHook('uponSanitizeAttribute', (node, hookEvent) => {
+  const data = hookEvent;
+  const { attrName, attrValue } = data;
+
+  if (VUE_ATTRIBUTE.test(attrName)) {
+    const name = attrName
+      .replace(/^data-v-bind-/, ':')
+      .replace(/^data-v-on-/, '@');
+    const allowed = TEMPLATE_VUE_ATTRIBUTES[node.localName];
+
+    data.keepAttr = Boolean(allowed && Object.hasOwn(allowed, name) && allowed[name] === attrValue);
+
+    if (data.keepAttr) {
+      /**
+       * Encoded event names may contain a colon (e.g. @update:options).
+       * Approve only the exact pair above; ordinary data-attribute rules reject those names.
+       */
+      data.allowedAttributes[attrName] = true;
+    }
+  } else if (UNSAFE_TEMPLATE_ATTRIBUTE.test(attrName)) {
+    data.keepAttr = false;
+  }
+});
 
 /**
- * Encodes Vue template attributes so DOMPurify does not strip them during sanitization.
+ * Encodes Vue attributes for DOMPurify. The hook above validates their tag, name and value.
  *
  * Replaces `:attr` with `data-v-bind-attr` and `@event` with `data-v-on-event`.
  *
@@ -35,9 +61,6 @@ export const decodeVueAttributes = (html = '') =>
     .replace(/(\s)data-v-on-([^\s=>/]+)(?=\s*=)/g, '$1@$2');
 
 LINKIFY_PROTOCOLS.forEach(registerCustomProtocol);
-
-const COMMENT_REGEX = /<!--([\s\S]*?)-->/g;
-const COMMENT_DIV_REGEX = /<div class="html-comment"[^>]*data-c="([^"]+)"[^>]*><\/div>/g;
 
 const SANITIZE_HTML_CACHE_LIMIT = 500;
 const SANITIZE_HTML_MAX_CACHEABLE_LENGTH = 20_000;
@@ -77,40 +100,11 @@ const cacheSanitizedHtml = (html, sanitizedHtml) => {
 };
 
 /**
- * Replaces HTML comments with placeholder elements so DOMPurify preserves them.
+ * Sanitizes HTML while preserving helper attributes and allowed HTML comments.
  *
- * Each comment is base64-encoded, escaped, and stored in a `div.html-comment` element.
- *
- * @param {string} [html = ''] - HTML string that may contain comments.
- * @returns {string} HTML with comments replaced by placeholder divs.
- */
-export const replaceHtmlComments = (html = '') =>
-  html.replace(COMMENT_REGEX, (_, content) => {
-    const encoded = btoa(content);
-    const safe = escape(encoded);
-    const id = uid('cmt_');
-
-    return `<div class="html-comment" data-id="${id}" data-c="${safe}"></div>`;
-  });
-
-/**
- * Restores HTML comments from placeholder elements created by {@link replaceHtmlComments}.
- *
- * @param {string} [html = ''] - HTML string with comment placeholder divs.
- * @returns {string} HTML with original comments restored.
- */
-export const restoreHtmlComments = (html = '') =>
-  html.replace(COMMENT_DIV_REGEX, (_, encodedEscaped) => {
-    const encoded = unescape(encodedEscaped);
-    const content = atob(encoded);
-
-    return `<!--${content}-->`;
-  });
-
-/**
- * Sanitizes HTML while preserving Vue attributes and comments.
- *
- * Pipeline: encode Vue attributes → replace comments → DOMPurify → restore comments → decode Vue attributes.
+ * Use sanitizeVueTemplate after Handlebars compilation before passing HTML to Vue.
+ * DOMPurify preserves safe comments via #comment in the allowlist. Do not decode
+ * comment placeholders or restore untrusted markup after sanitization.
  *
  * @param {string} [html = ''] - Raw HTML to sanitize.
  * @param {import('dompurify').Config} [options = DEFAULT_SANITIZE_OPTIONS] - DOMPurify configuration.
@@ -126,9 +120,7 @@ export const sanitizeHtml = (html = '', options = DEFAULT_SANITIZE_OPTIONS) => {
   }
 
   const sanitizedHtml = decodeVueAttributes(
-    restoreHtmlComments(
-      DOMPurify.sanitize(replaceHtmlComments(encodeVueAttributes(html)), options),
-    ),
+    DOMPurify.sanitize(encodeVueAttributes(html), options),
   );
 
   if (cacheable) {
@@ -137,6 +129,18 @@ export const sanitizeHtml = (html = '', options = DEFAULT_SANITIZE_OPTIONS) => {
 
   return sanitizedHtml;
 };
+
+/**
+ * Sanitizes compiled Handlebars output for the Vue template boundary.
+ * HTML entities keep interpolation delimiters as literal text in Vue's parser.
+ * Do this last: another HTML normalization pass would decode them back to {{.
+ *
+ * @param {string} [html = '']
+ * @param {import('dompurify').Config} [options = DEFAULT_SANITIZE_OPTIONS]
+ * @returns {string}
+ */
+export const sanitizeVueTemplate = (html = '', options = DEFAULT_SANITIZE_OPTIONS) =>
+  sanitizeHtml(html, options).replace(/\{\{/g, '&#123;&#123;');
 
 /**
  * Converts plain-text URLs in HTML into clickable anchor tags.
