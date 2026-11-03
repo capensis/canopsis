@@ -161,8 +161,10 @@ export default {
       updateContentInUserPreference,
     });
 
+    const periodicRefresh = computed(() => props.widget.parameters.periodic_refresh);
+
     useWidgetPeriodicRefresh({
-      options: toRef(props.widget.parameters, 'periodic_refresh'),
+      options: periodicRefresh,
       handler: fetchItemWithRecords,
     });
 

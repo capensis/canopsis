@@ -65,6 +65,6 @@ export const usePeriodicRefreshBasicWatchers = ({ enabled, delay, start, reset, 
 
   watch(delay, (value, oldValue) => value !== oldValue && reset?.());
 
-  onMounted(() => unref(enabled) && stop?.());
+  onMounted(() => unref(enabled) && start?.());
   onBeforeUnmount(stop);
 };

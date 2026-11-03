@@ -30,9 +30,9 @@ export default {
   },
   versionDescriptionTooltip: 'Tooltip popup on version banner',
   defaultVersionDescription: `<div>
-  <div>Edition:<strong> {'{{ edition }}'}</strong></div>
-  <div>Serial name:<strong> {'{{ serialName }}'}</strong></div>
-  <div>Version updated:<strong> {'{{ timestamp versionUpdated }}'}</strong></div>
+  <div>Edition:<strong> {{ edition }}</strong></div>
+  <div>Serial name:<strong> {{ serialName }}</strong></div>
+  <div>Version updated:<strong> {{ timestamp versionUpdated }}</strong></div>
 </div>`,
   tooltips: {
     dateFormat: 'This will be applied to all datetime/timestamp columns and inputs in Canopsis',
