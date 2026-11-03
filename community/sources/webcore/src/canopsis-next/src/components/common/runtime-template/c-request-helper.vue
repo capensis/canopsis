@@ -9,7 +9,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { RESPONSE_STATUSES } from '@/constants';
 
-import { sanitizeHtml } from '@/helpers/html';
+import { sanitizeVueTemplate } from '@/helpers/html';
 
 import { useI18n } from '@/hooks/i18n';
 import { usePendingHandler } from '@/hooks/query/pending';
@@ -88,7 +88,7 @@ export default {
         /**
          * We need to use `all-inherit` class here because we may have multiple root elements in the response html
          */
-        template.value = `<div class="all-inherit">${sanitizeHtml(html)}</div>`;
+        template.value = sanitizeVueTemplate(`<div class="all-inherit">${html}</div>`);
       } catch (err) {
         /**
          * Ignore cancelled requests

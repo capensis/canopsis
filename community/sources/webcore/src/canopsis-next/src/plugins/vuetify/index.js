@@ -1,5 +1,5 @@
 import { createVuetify } from 'vuetify';
-import { VExpansionPanels } from 'vuetify/components';
+import { VChip, VExpansionPanels, VIcon, VRow } from 'vuetify/components';
 
 import { DEFAULT_THEME_COLORS } from '@/config';
 
@@ -12,6 +12,11 @@ const { definition } = createCanopsisVuetifyTheme(DEFAULT_THEME_COLORS);
 export const CANOPSIS_THEME_NAME = 'canopsis';
 
 export const vuetify = createVuetify({
+  /**
+   * Runtime templates need global registration; Vite auto-imports only cover SFCs.
+   */
+  components: { VChip, VIcon, VRow },
+
   defaults: {
     VAutocomplete: {
       color: 'primary',
