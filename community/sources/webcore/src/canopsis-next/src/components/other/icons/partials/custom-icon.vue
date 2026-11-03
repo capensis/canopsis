@@ -7,16 +7,7 @@ import { computed } from 'vue';
 
 import { sanitizeHtml } from '@/helpers/html';
 
-const CUSTOM_ICON_SANITIZE_OPTIONS = {
-  USE_PROFILES: {
-    svg: true,
-    svgFilters: true,
-  },
-
-  ADD_ATTR: ['class', 'style', 'viewBox', 'xmlns'],
-
-  FORBID_TAGS: ['script', 'foreignObject', 'iframe', 'object', 'embed'],
-};
+import { CUSTOM_ICON_SANITIZE_OPTIONS } from '@/constants/sanitize';
 
 export default {
   props: {
