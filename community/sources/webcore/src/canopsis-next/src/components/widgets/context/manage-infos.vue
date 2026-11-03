@@ -12,7 +12,7 @@
       :no-data-text="t('entity.emptyInfos')"
       item-value="name"
     >
-      <template #item="{ item, index }">
+      <template #item="{ item }">
         <tr>
           <td>{{ getInfoItem(item).name }}</td>
           <td>{{ getInfoItem(item).description }}</td>
@@ -21,11 +21,11 @@
             <c-layout>
               <c-action-btn
                 type="edit"
-                @click="showEditInfoModal(index, getInfoItem(item))"
+                @click="showEditInfoModal(getInfoItem(item))"
               />
               <c-action-btn
                 type="delete"
-                @click="removeItemFromArray(index)"
+                @click="removeInfo(getInfoItem(item))"
               />
             </c-layout>
           </td>
@@ -76,6 +76,8 @@ export default {
     ]);
 
     const getInfoItem = item => item?.raw ?? item;
+    const getInfoIndex = info => props.infos.findIndex(({ name }) => name === info.name);
+    const removeInfo = info => removeItemFromArray(getInfoIndex(info));
 
     /**
      * Opens the create entity info modal. On submit, adds the new info to the infos array.
@@ -89,22 +91,17 @@ export default {
     });
 
     /**
-     * Opens the edit entity info modal for the given item. On submit, updates the info at the given index.
+     * Opens the edit entity info modal for the given item. On submit, updates the info with the original name.
      *
-     * @param {number} index - Index of the info item in the infos array
      * @param {Object} info - The entity info object to edit (name, description, value)
      */
-    const showEditInfoModal = (index, info) => modals.show({
+    const showEditInfoModal = info => modals.show({
       name: MODALS.createEntityInfo,
       config: {
         infos: props.infos,
         entityInfo: info,
         title: t('modals.createEntityInfo.edit.title'),
-        action: (editedInfo) => {
-          const realIndex = (options.value.page - 1) * options.value.itemsPerPage + index;
-
-          updateItemInArray(realIndex, editedInfo);
-        },
+        action: editedInfo => updateItemInArray(getInfoIndex(info), editedInfo),
       },
     });
 
@@ -115,7 +112,7 @@ export default {
       getInfoItem,
       showAddInfoModal,
       showEditInfoModal,
-      removeItemFromArray,
+      removeInfo,
     };
   },
 };

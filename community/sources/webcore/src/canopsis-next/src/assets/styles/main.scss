@@ -30,7 +30,7 @@ html {
   background-color: var(--v-application-background-base);
 }
 
-a {
+a:not(.v-btn) {
   color: var(--v-primary-base);
 }
 
@@ -474,7 +474,7 @@ kbd {
       overflow: visible;
 
       &:after {
-        content: ' ';
+        content: " ";
         background: rgba(0, 0, 0, 0.12);
         position: absolute;
         right: 0;
@@ -510,7 +510,7 @@ kbd {
     z-index: 1;
 
     &:after {
-      content: ' ';
+      content: " ";
       position: absolute;
       transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
       top: 0;
@@ -571,32 +571,20 @@ kbd {
       }
 
       &:nth-of-type(even) {
-        background-color: var(
-          --c-table-shift-row-color,
-          var(--c-table-row-color, rgb(var(--v-theme-surface)))
-        );
+        background-color: var(--c-table-shift-row-color, var(--c-table-row-color, rgb(var(--v-theme-surface))));
 
         > th,
         > td {
-          background-color: var(
-            --c-table-shift-row-color,
-            var(--c-table-row-color, rgb(var(--v-theme-surface)))
-          );
+          background-color: var(--c-table-shift-row-color, var(--c-table-row-color, rgb(var(--v-theme-surface))));
         }
       }
 
       &:hover {
-        background-color: var(
-          --c-table-hover-row-color,
-          var(--c-table-row-color, rgb(var(--v-theme-surface)))
-        );
+        background-color: var(--c-table-hover-row-color, var(--c-table-row-color, rgb(var(--v-theme-surface))));
 
         > th,
         > td {
-          background-color: var(
-            --c-table-hover-row-color,
-            var(--c-table-row-color, rgb(var(--v-theme-surface)))
-          );
+          background-color: var(--c-table-hover-row-color, var(--c-table-row-color, rgb(var(--v-theme-surface))));
         }
       }
     }
