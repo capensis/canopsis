@@ -62,7 +62,7 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n();
+    const { t, tm } = useI18n();
     const modals = useModals();
     const popups = usePopups();
     const isFormLoading = ref(true);
@@ -75,7 +75,7 @@ export default {
     const buildForm = appInfoValue => ({
       ...userInterfaceToForm(appInfoValue),
       version_description:
-        appInfoValue?.version_description || t('userInterface.defaultVersionDescription'),
+        appInfoValue?.version_description || tm('userInterface.defaultVersionDescription'),
     });
 
     const form = useForm({

@@ -15,6 +15,8 @@ export const useActiveViewStore = defineStore('activeView', () => {
   const editingOffHandlers = ref([]);
   const periodicRefreshPaused = ref(false);
 
+  const itemId = computed(() => item.value?._id);
+
   const isKioskScreenMode = computed(() =>
     [VIEW_SCREEN_MODES.kiosk, VIEW_SCREEN_MODES.kioskFullscreen].includes(screenMode.value),
   );
@@ -106,6 +108,7 @@ export const useActiveViewStore = defineStore('activeView', () => {
     screenMode,
     editingOffHandlers,
     periodicRefreshPaused,
+    itemId,
     isKioskScreenMode,
 
     registerEditingOffHandler,

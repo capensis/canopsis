@@ -59,13 +59,19 @@ export const useWidgetPeriodicRefresh = ({ options, handler }) => {
     }
   };
 
+  const resetRefresh = () => {
+    if (timer) {
+      startRefresh();
+    }
+  };
+
   usePeriodicRefreshChild({ handler: tick });
 
   usePeriodicRefreshBasicWatchers({
     enabled,
     delay,
     start: startRefresh,
-    reset: startRefresh,
-    stop: startRefresh,
+    reset: resetRefresh,
+    stop: stopRefresh,
   });
 };
