@@ -33,6 +33,7 @@ type EventPublisher interface {
 
 type EntityConfiguration struct {
 	Name           string                `json:"name" binding:"required"`
+	Description    *string               `json:"description"`
 	Component      string                `json:"component"`
 	Upstream       *string               `json:"upstream"`
 	EntityPattern  pattern.Entity        `json:"entity_pattern"`
@@ -52,6 +53,7 @@ type EntityConfiguration struct {
 type Entity struct {
 	ID                string                `bson:"_id"`
 	Name              string                `bson:"name"`
+	Description       *string               `bson:"description,omitempty"`
 	Component         string                `bson:"component,omitempty"`
 	Services          []string              `bson:"services,omitempty"`
 	Upstream          *string               `bson:"upstream,omitempty"`
