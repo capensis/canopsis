@@ -143,10 +143,17 @@ type ActionRequest struct {
 	Comment                  string            `json:"comment"`
 	DropScenarioIfNotMatched *bool             `json:"drop_scenario_if_not_matched" binding:"required"`
 	EmitTriggerSuccess       *bool             `json:"emit_trigger_success" binding:"required"`
-	EmitTriggerFail          *bool             `json:"emit_trigger_fail"`
+	// EmitTriggerFail is required for webhook actions with
+	// parameters.declare_ticket. For other actions, false is treated as unset and
+	// true is rejected.
+	EmitTriggerFail *bool `json:"emit_trigger_fail"`
 
 	patternfields.EntityRequest `bson:",inline"`
 	patternfields.AlarmRequest  `bson:",inline"`
+}
+
+func (r ActionRequest) requiresEmitTriggerFail() bool {
+	return r.Type == types.ActionTypeWebhook && r.Parameters.DeclareTicket != nil
 }
 
 type Scenario struct {

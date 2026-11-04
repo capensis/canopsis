@@ -6420,6 +6420,10 @@ definitions:
       drop_scenario_if_not_matched:
         type: boolean
       emit_trigger_fail:
+        description: |-
+          EmitTriggerFail is required for webhook actions with
+          parameters.declare_ticket. For other actions, false is treated as unset and
+          true is rejected.
         type: boolean
       emit_trigger_success:
         type: boolean
