@@ -348,6 +348,16 @@ type DeclareTicket struct {
 	CustomFields      map[string]string  `bson:",inline"`
 }
 
+// InvalidStringFieldTypeError reports a declare-ticket field whose value is not a string.
+// The scenario API uses the field name to return a structured validation error.
+type InvalidStringFieldTypeError struct {
+	Field string
+}
+
+func (e *InvalidStringFieldTypeError) Error() string {
+	return "invalid type of " + e.Field
+}
+
 func (t *DeclareTicket) UnmarshalJSON(b []byte) error {
 	m := make(map[string]any)
 
@@ -396,7 +406,7 @@ func (t *DeclareTicket) UnmarshalJSON(b []byte) error {
 	for k, v := range m {
 		strVal, ok := v.(string)
 		if !ok {
-			return fmt.Errorf("invalid type of %s", k)
+			return &InvalidStringFieldTypeError{Field: k}
 		}
 
 		switch k {
