@@ -521,6 +521,11 @@ func (s *store) transformActionRequestToModel(ctx context.Context, r EditRequest
 			continue
 		}
 
+		emitTriggerFail := ar.EmitTriggerFail
+		if emitTriggerFail != nil && !*emitTriggerFail && !ar.requiresEmitTriggerFail() {
+			emitTriggerFail = nil
+		}
+
 		actions[idx] = libaction.Action{
 			Type:                     ar.Type,
 			Comment:                  ar.Comment,
@@ -531,8 +536,8 @@ func (s *store) transformActionRequestToModel(ctx context.Context, r EditRequest
 			EmitTriggerSuccess:       *ar.EmitTriggerSuccess,
 		}
 
-		if ar.EmitTriggerFail != nil {
-			actions[idx].EmitTriggerFail = *ar.EmitTriggerFail
+		if emitTriggerFail != nil {
+			actions[idx].EmitTriggerFail = *emitTriggerFail
 		}
 	}
 
