@@ -6,6 +6,8 @@
   />
 </template>
 <script>
+import { sanitizeSvg } from '@/helpers/html';
+
 export default {
   inject: ['$system'],
   props: {
@@ -22,7 +24,7 @@ export default {
     preparedContent() {
       const element = document.createElement('div');
 
-      element.innerHTML = this.content;
+      element.innerHTML = sanitizeSvg(this.content);
 
       const svg = element.getElementsByTagName('svg')[0];
 
