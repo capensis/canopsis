@@ -29,10 +29,10 @@ func (v *Validator) ValidateActionRequest(sl validator.StructLevel) {
 
 	if r.Type != "" {
 		if r.EmitTriggerFail == nil {
-			if r.Type == types.ActionTypeWebhook && r.Parameters.DeclareTicket != nil {
+			if r.requiresEmitTriggerFail() {
 				sl.ReportError(r.EmitTriggerFail, "EmitTriggerFail", "EmitTriggerFail", "required", "")
 			}
-		} else if r.Type != types.ActionTypeWebhook || r.Parameters.DeclareTicket == nil {
+		} else if !r.requiresEmitTriggerFail() && *r.EmitTriggerFail {
 			sl.ReportError(r.EmitTriggerFail, "EmitTriggerFail", "EmitTriggerFail", "must_be_empty", "")
 		}
 
