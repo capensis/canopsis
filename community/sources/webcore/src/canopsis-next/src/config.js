@@ -51,7 +51,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
   ]),
   allowedAttributes: {
     '*': [
-      'style', 'title', 'class', 'id', 'v-if', 'name', 'autoplay', 'colspan', 'controls', 'dir', 'align', 'width',
+      'style', 'title', 'class', 'id', 'name', 'autoplay', 'colspan', 'controls', 'dir', 'align', 'width',
       'height', 'role',
     ],
     a: ['href', 'name', 'target'],
@@ -66,9 +66,9 @@ export const DEFAULT_SANITIZE_OPTIONS = {
     ],
     'c-entity-tags-chips': [':entity', 'inline-count'],
     'c-copy-wrapper': ['value'],
-    'c-links-list': [':links', ':category'],
+    'c-links-list': [':links', 'category'],
     'v-icon': [
-      'color', 'dark', 'dense', 'disabled', 'large', 'light', 'right', 'size', 'small', 'tag', 'x-large', 'x-small',
+      'color', 'dark', 'dense', 'disabled', 'large', 'light', 'right', 'size', 'small', 'x-large', 'x-small',
     ],
     'service-entities-list': [
       ':service', ':service-entities', ':widget-parameters', ':options', ':total-items', ':actions-requests',

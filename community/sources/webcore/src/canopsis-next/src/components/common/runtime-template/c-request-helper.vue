@@ -9,7 +9,7 @@ import axios from 'axios';
 
 import { RESPONSE_STATUSES } from '@/constants';
 
-import { sanitizeHtml } from '@/helpers/html';
+import { sanitizeVueTemplate } from '@/helpers/html';
 
 import { useI18n } from '@/hooks/i18n';
 import { usePendingHandler } from '@/hooks/query/pending';
@@ -88,7 +88,7 @@ export default {
         /**
          * We need to use `all-inherit` class here because we may have multiple root elements in the response html
          */
-        template.value = `<div class="all-inherit">${sanitizeHtml(html)}</div>`;
+        template.value = sanitizeVueTemplate(`<div class="all-inherit">${html}</div>`);
       } catch (err) {
         /**
          * Ignore cancelled requests
@@ -103,13 +103,13 @@ export default {
 
         switch (status) {
           case RESPONSE_STATUSES.unauthorized:
-            template.value = `<div class="all-inherit">${t('handlebars.requestHelper.errors.unauthorized')}</div>`;
+            template.value = sanitizeVueTemplate(`<div class="all-inherit">${t('handlebars.requestHelper.errors.unauthorized')}</div>`);
             break;
           case RESPONSE_STATUSES.timeout:
-            template.value = `<div class="all-inherit">${t('handlebars.requestHelper.errors.timeout')}</div>`;
+            template.value = sanitizeVueTemplate(`<div class="all-inherit">${t('handlebars.requestHelper.errors.timeout')}</div>`);
             break;
           default:
-            template.value = `<div class="all-inherit">${t('handlebars.requestHelper.errors.other')}</div>`;
+            template.value = sanitizeVueTemplate(`<div class="all-inherit">${t('handlebars.requestHelper.errors.other')}</div>`);
         }
       } finally {
         cancelTokenSource = null;
