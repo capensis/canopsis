@@ -26,6 +26,8 @@ FROM nginxinc/nginx-unprivileged:${NGINX_VERSION}
 
 USER root
 
+RUN apt update && apt upgrade -y && rm -rf /var/lib/apt/lists/*
+
 # Certificate mount point
 RUN mkdir -p /etc/nginx/ssl && chmod 0755 /etc/nginx/ssl
 
