@@ -10,6 +10,26 @@ describe('c-list', () => {
     attachTo: document.body,
   });
 
+  test.each([
+    [[], [false, false]],
+    [[{ value: 'author' }], [true, false]],
+    [[{ value: 'author.display_name' }], [true, false]],
+    [[{ value: 'author_name' }], [false, false]],
+  ])('List item active props are Boolean for selection %j', (value, expected) => {
+    const wrapper = factory({
+      propsData: {
+        value,
+        items: [{ value: 'author' }, { value: 'pattern' }],
+        returnObject: true,
+      },
+    });
+
+    const activeItems = wrapper.findAllComponents({ name: 'VListItem' })
+      .map(item => item.props('active'));
+
+    expect(activeItems).toEqual(expected);
+  });
+
   test('Item selected after click on list item', () => {
     const value = Faker.datatype.string();
 
