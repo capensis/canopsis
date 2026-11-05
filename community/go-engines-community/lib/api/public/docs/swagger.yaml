@@ -25,7 +25,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/limit'
-        - $ref: '#/components/parameters/sort'
+        - $ref: 'fields_swagger.yaml#/parameters/alarm.Sort'
         - $ref: '#/components/parameters/resolution'
         - name: search
           in: query
@@ -33,15 +33,7 @@ paths:
           schema:
             type: string
             maxLength: 10000
-        - name: search_by
-          in: query
-          style: form
-          explode: true
-          description: restrict the full text search to these fields
-          schema:
-            type: array
-            items:
-              type: string
+        - $ref: 'fields_swagger.yaml#/parameters/alarm.SearchBy'
         - name: type
           in: query
           style: form
@@ -161,11 +153,11 @@ paths:
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/alarm.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
   /alarms/search:
     post:
@@ -182,7 +174,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/alarm.SearchRequest'
+              allOf:
+                - $ref: 'schemas_swagger.yaml#/definitions/alarm.SearchRequest'
+                - type: object
+                  properties:
+                    sort:
+                      $ref: 'fields_swagger.yaml#/definitions/alarm.Sort'
             examples:
               critical:
                 summary: Critical alarms of a component
@@ -266,11 +263,11 @@ paths:
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/alarm.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
   /alarms/{id}/steps:
     get:
@@ -286,7 +283,7 @@ paths:
         - $ref: '#/components/parameters/id'
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/limit'
-        - $ref: '#/components/parameters/sort'
+        - $ref: 'fields_swagger.yaml#/parameters/alarm.StepSort'
         - name: type
           in: query
           style: form
@@ -372,13 +369,13 @@ paths:
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/alarm.Step'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
   /alarm-exports:
     post:
@@ -399,7 +396,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/alarmexport.Request'
+              allOf:
+                - $ref: 'schemas_swagger.yaml#/definitions/alarmexport.Request'
+                - type: object
+                  properties:
+                    sort:
+                      $ref: 'fields_swagger.yaml#/definitions/alarm.Sort'
             examples:
               csv:
                 summary: CSV
@@ -450,11 +452,11 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/asyncjob.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
   /alarm-exports/{id}:
     get:
       tags:
@@ -477,11 +479,11 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/asyncjob.Response'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
   /alarm-exports/{id}/download:
     get:
       tags:
@@ -514,11 +516,11 @@ paths:
                 type: string
                 format: binary
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
   /event:
     post:
@@ -692,11 +694,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/event.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
   /entities:
     get:
@@ -711,21 +713,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/limit'
-        - $ref: '#/components/parameters/sort'
+        - $ref: 'fields_swagger.yaml#/parameters/entity.Sort'
         - name: search
           in: query
           description: full text search
           schema:
             type: string
-        - name: search_by
-          in: query
-          style: form
-          explode: true
-          description: restrict the full text search to these fields
-          schema:
-            type: array
-            items:
-              type: string
+        - $ref: 'fields_swagger.yaml#/parameters/entity.SearchBy'
         - name: enabled
           in: query
           description: filter by enabled state
@@ -801,11 +795,11 @@ paths:
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/entity.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
   /entities/search:
     post:
@@ -822,7 +816,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/entity.SearchRequest'
+              allOf:
+                - $ref: 'schemas_swagger.yaml#/definitions/entity.SearchRequest'
+                - type: object
+                  properties:
+                    sort:
+                      $ref: 'fields_swagger.yaml#/definitions/entity.Sort'
             examples:
               resources:
                 summary: Resources of a component
@@ -876,11 +875,11 @@ paths:
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/entity.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
   /entity-exports:
     post:
@@ -901,7 +900,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/entityexport.Request'
+              allOf:
+                - $ref: 'schemas_swagger.yaml#/definitions/entityexport.Request'
+                - type: object
+                  properties:
+                    sort:
+                      $ref: 'fields_swagger.yaml#/definitions/entity.Sort'
             examples:
               csv:
                 summary: CSV
@@ -948,11 +952,11 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/asyncjob.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
   /entity-exports/{id}:
     get:
       tags:
@@ -975,11 +979,11 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/asyncjob.Response'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
   /entity-exports/{id}/download:
     get:
       tags:
@@ -1012,11 +1016,11 @@ paths:
                 type: string
                 format: binary
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
   /entity-imports:
     post:
@@ -1122,13 +1126,13 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/asyncjob.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
         '413':
-          $ref: '#/components/schemas/RequestEntityTooLarge'
+          $ref: '#/components/responses/RequestEntityTooLarge'
   /entity-imports/{id}:
     get:
       tags:
@@ -1151,11 +1155,11 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/asyncjob.Response'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
   /entities/pause:
     post:
@@ -1193,13 +1197,13 @@ paths:
         required: true
       responses:
         '204':
-          $ref: '#/components/schemas/NoContent'
+          $ref: '#/components/responses/NoContent'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
   /entities/resume:
     post:
       tags:
@@ -1227,13 +1231,13 @@ paths:
         required: true
       responses:
         '204':
-          $ref: '#/components/schemas/NoContent'
+          $ref: '#/components/responses/NoContent'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
   /bulk/entities/pause:
     post:
@@ -1282,11 +1286,11 @@ paths:
                   items:
                     $ref: '#/components/schemas/BulkResponseItem'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
   /bulk/entities/resume:
     post:
       tags:
@@ -1331,11 +1335,11 @@ paths:
                   items:
                     $ref: '#/components/schemas/BulkResponseItem'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
   /pbehaviors:
     get:
@@ -1404,11 +1408,11 @@ paths:
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     post:
       tags:
         - pbehaviors
@@ -1533,11 +1537,11 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
   /pbehaviors/{id}:
     get:
       tags:
@@ -1558,11 +1562,11 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     put:
       tags:
         - pbehaviors
@@ -1620,13 +1624,13 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     delete:
       tags:
         - pbehaviors
@@ -1640,13 +1644,13 @@ paths:
         - $ref: '#/components/parameters/id'
       responses:
         '204':
-          $ref: '#/components/schemas/NoContent'
+          $ref: '#/components/responses/NoContent'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     patch:
       tags:
         - pbehaviors
@@ -1681,13 +1685,13 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
   /bulk/pbehaviors:
     put:
@@ -1754,11 +1758,11 @@ paths:
                   items:
                     $ref: '#/components/schemas/BulkResponseItem'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     post:
       tags:
         - pbehaviors
@@ -1822,11 +1826,11 @@ paths:
                   items:
                     $ref: '#/components/schemas/BulkResponseItem'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     delete:
       tags:
         - pbehaviors
@@ -1866,11 +1870,11 @@ paths:
                   items:
                     $ref: '#/components/schemas/BulkResponseItem'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     patch:
       tags:
         - pbehaviors
@@ -1916,11 +1920,11 @@ paths:
                   items:
                     $ref: '#/components/schemas/BulkResponseItem'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
   /bulk/connector-pbehaviors:
     post:
@@ -1969,11 +1973,11 @@ paths:
                   items:
                     $ref: '#/components/schemas/BulkResponseItem'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     delete:
       tags:
         - pbehaviors
@@ -2017,11 +2021,11 @@ paths:
                   items:
                     $ref: '#/components/schemas/BulkResponseItem'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     put:
       tags:
         - pbehaviors
@@ -2077,11 +2081,11 @@ paths:
                   items:
                     $ref: '#/components/schemas/BulkResponseItem'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
   /pbehavior-reasons:
     get:
@@ -2113,11 +2117,11 @@ paths:
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     post:
       tags:
         - pbehavior-reasons
@@ -2150,11 +2154,11 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
   /pbehavior-reasons/{id}:
     get:
       tags:
@@ -2175,11 +2179,11 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     put:
       tags:
         - pbehavior-reasons
@@ -2214,13 +2218,13 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     delete:
       tags:
         - pbehavior-reasons
@@ -2234,15 +2238,15 @@ paths:
         - $ref: '#/components/parameters/id'
       responses:
         '204':
-          $ref: '#/components/schemas/NoContent'
+          $ref: '#/components/responses/NoContent'
         '409':
-          $ref: '#/components/schemas/Conflict'
+          $ref: '#/components/responses/Conflict'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
   /pbehavior-types:
     get:
@@ -2288,11 +2292,11 @@ paths:
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     post:
       tags:
         - pbehavior-types
@@ -2328,11 +2332,11 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
   /pbehavior-types/{id}:
     get:
       tags:
@@ -2353,11 +2357,11 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.Response'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     put:
       tags:
         - pbehavior-types
@@ -2395,13 +2399,13 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/pbehaviortype.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     delete:
       tags:
         - pbehavior-types
@@ -2415,15 +2419,15 @@ paths:
         - $ref: '#/components/parameters/id'
       responses:
         '204':
-          $ref: '#/components/schemas/NoContent'
+          $ref: '#/components/responses/NoContent'
         '409':
-          $ref: '#/components/schemas/Conflict'
+          $ref: '#/components/responses/Conflict'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
   /users:
     get:
@@ -2478,11 +2482,11 @@ paths:
                         items:
                           $ref: 'schemas_swagger.yaml#/definitions/user.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     post:
       tags:
         - users
@@ -2523,11 +2527,11 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/user.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
   /users/{id}:
     get:
@@ -2549,11 +2553,11 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/user.Response'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     put:
       tags:
         - users
@@ -2594,13 +2598,13 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/user.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     patch:
       tags:
         - users
@@ -2636,13 +2640,13 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/user.Response'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     delete:
       tags:
         - users
@@ -2659,13 +2663,13 @@ paths:
         - $ref: '#/components/parameters/id'
       responses:
         '204':
-          $ref: '#/components/schemas/NoContent'
+          $ref: '#/components/responses/NoContent'
         '404':
-          $ref: '#/components/schemas/NotFound'
+          $ref: '#/components/responses/NotFound'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
   /bulk/users:
     post:
@@ -2716,11 +2720,11 @@ paths:
                   items:
                     $ref: '#/components/schemas/BulkResponseItem'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     put:
       tags:
         - users
@@ -2768,11 +2772,11 @@ paths:
                   items:
                     $ref: '#/components/schemas/BulkResponseItem'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     patch:
       tags:
         - users
@@ -2817,11 +2821,11 @@ paths:
                   items:
                     $ref: '#/components/schemas/BulkResponseItem'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
     delete:
       tags:
         - users
@@ -2861,11 +2865,11 @@ paths:
                   items:
                     $ref: '#/components/schemas/BulkResponseItem'
         '400':
-          $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/schemas/Unauthorized'
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/schemas/Forbidden'
+          $ref: '#/components/responses/Forbidden'
 
 components:
   parameters:
@@ -2999,6 +3003,7 @@ components:
       properties:
         data:
           type: array
+          items: {}
         meta:
           type: object
           properties:
@@ -3029,6 +3034,7 @@ components:
           type: string
       type: object
 
+  responses:
     NoContent:
       description: No Content
     NotFound:
