@@ -3225,6 +3225,8 @@ definitions:
     type: object
   eventfilter.ExternalDataParametersRequest:
     properties:
+      auth_token:
+        $ref: '#/definitions/request.WebhookAuthToken'
       on_mismatch:
         description: |-
           Possible values.
@@ -3278,6 +3280,8 @@ definitions:
     type: object
   eventfilter.ExternalDataParametersResponse:
     properties:
+      auth_token:
+        $ref: '#/definitions/request.WebhookAuthToken'
       on_mismatch:
         type: integer
       optional:
