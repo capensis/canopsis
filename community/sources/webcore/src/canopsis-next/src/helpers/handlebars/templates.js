@@ -1,4 +1,5 @@
 import { useAuthStore } from '@/stores/modules/auth';
+import { useTemplateVarsStore } from '@/stores/modules/template-vars';
 
 import { Handlebars } from './handlebars';
 import { normalizeHandlebarsNbsp } from './normalize';
@@ -45,9 +46,10 @@ export function unregisterTemplate(id, instance = Handlebars) {
  */
 export async function runTemplate(id, context, instance = Handlebars) {
   const authStore = useAuthStore();
+  const templateVarsStore = useTemplateVarsStore();
 
   const preparedContext = {
-    //env: store.getters['template/vars/items'] ?? {}, // TODO: continue
+    env: templateVarsStore.items ?? {},
     user: authStore.currentUser ?? {},
 
     ...context,

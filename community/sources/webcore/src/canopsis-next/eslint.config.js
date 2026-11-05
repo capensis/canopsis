@@ -1,10 +1,10 @@
 import pluginVitest from '@vitest/eslint-plugin';
+import { globalIgnores } from 'eslint/config';
 import skipFormatting from 'eslint-config-prettier/flat';
 import pluginOxlint from 'eslint-plugin-oxlint';
 import perfectionist from 'eslint-plugin-perfectionist';
 import pluginPlaywright from 'eslint-plugin-playwright';
 import pluginVue from 'eslint-plugin-vue';
-import { globalIgnores } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 
 const vueTsRecommended = tseslint.configs.recommended.map((config) => {
@@ -190,78 +190,38 @@ export default tseslint.config(
         {
           type: 'natural',
           order: 'asc',
-          internalPattern: ['^@/.*'],
-          customGroups: [
-            {
-              groupName: 'internal-config-constants',
-              elementNamePattern: '^@/(config|constants)$',
+          'internal-pattern': ['@/**'],
+          'custom-groups': {
+            value: {
+              'internal-config-constants': '@/{config,constants}',
+              'internal-plugins': ['@/plugins', '@/plugins/**'],
+              'internal-services': ['@/services', '@/services/**'],
+              'internal-core': '@/{store,stores,i18n,filters,router}',
+              'internal-store': '@/{store,stores}/**',
+              'internal-helpers': '@/helpers/**',
+              'internal-mixins-hooks': '@/{mixins,hooks}/**',
+              'internal-component-hooks': '@/components/**/hooks/**',
+              'internal-components': '@/components/**',
             },
-            {
-              groupName: 'internal-plugins',
-              elementNamePattern: '^@/plugins(/.*)?$',
-            },
-            {
-              groupName: 'internal-services',
-              elementNamePattern: '^@/services(/.*)?$',
-            },
-            {
-              groupName: 'internal-core',
-              elementNamePattern: '^@/(store|stores|i18n|filters|router)$',
-            },
-            {
-              groupName: 'internal-store',
-              elementNamePattern: '^@/(store|stores)/.*$',
-            },
-            {
-              groupName: 'internal-helpers',
-              elementNamePattern: '^@/helpers/.*$',
-            },
-            {
-              groupName: 'internal-mixins-hooks',
-              elementNamePattern: '^@/(mixins|hooks)/.*$',
-            },
-            {
-              groupName: 'internal-component-hooks',
-              elementNamePattern: '^@/components/.*/hooks/.*$',
-            },
-            {
-              groupName: 'internal-components',
-              elementNamePattern: '^@/components/.*$',
-            },
-          ],
+          },
           groups: [
             'builtin',
-            { newlinesBetween: 1 },
             'external',
-            { newlinesBetween: 1 },
             'internal-config-constants',
-            { newlinesBetween: 1 },
             'internal-plugins',
-            { newlinesBetween: 1 },
             'internal-services',
-            { newlinesBetween: 1 },
             'internal-core',
-            { newlinesBetween: 1 },
             'internal-store',
-            { newlinesBetween: 1 },
             'internal-helpers',
-            { newlinesBetween: 1 },
             'internal-mixins-hooks',
-            { newlinesBetween: 1 },
             'internal-component-hooks',
-            { newlinesBetween: 1 },
             'internal-components',
-            { newlinesBetween: 1 },
             'internal',
-            { newlinesBetween: 1 },
             'parent',
-            { newlinesBetween: 1 },
             'sibling',
-            { newlinesBetween: 1 },
             'index',
           ],
-          newlinesBetween: 1,
-          sortSideEffects: false,
+          'newlines-between': 'always',
         },
       ],
       'vue/valid-next-tick': 'off',
