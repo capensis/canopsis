@@ -1,6 +1,10 @@
 import { h } from 'vue';
 import { aliases as mdAliases, md } from 'vuetify/iconsets/md';
 
+import { sanitizeHtml } from '@/helpers/html';
+
+import { CUSTOM_ICON_SANITIZE_OPTIONS } from '@/constants/sanitize';
+
 const OUTLINED_ICON_SUFFIX = '_outline';
 
 const staticIconModules = import.meta.glob('@/assets/images/*.svg', {
@@ -108,7 +112,7 @@ export const registerCustomIcon = (name, template, meta = {}) => {
   customIconsRegistry[name] = {
     meta,
     component: {
-      template,
+      template: sanitizeHtml(template, CUSTOM_ICON_SANITIZE_OPTIONS),
     },
   };
 

@@ -18,10 +18,16 @@ export const handlebarsLinksHelperCreator = (linksPath, right) => ({
   },
   beforeCreate() {
     registerHelper('links', ({ hash }) => {
-      const category = hash.category ? `'${hash.category}'` : undefined;
+      /**
+       * Handlebars has already resolved variables in hash.category. The old Vue
+       * binding wrapped this value in quotes, so it was a string literal, not a lookup.
+       */
+      const categoryAttribute = hash.category
+        ? `category="${Handlebars.escapeExpression(String(hash.category))}"`
+        : '';
 
       return new Handlebars.SafeString(`
-          <c-links-list v-if="links && hasAccessForLinks" :links="links" :category="${category}" />
+          <c-links-list v-if="links && hasAccessForLinks" :links="links" ${categoryAttribute} />
         `);
     });
   },
