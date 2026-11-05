@@ -4,8 +4,6 @@ import {
   unregisterCustomIcon,
 } from '@/plugins/vuetify/icons';
 
-import { normalizeHtml } from '@/helpers/html';
-
 export const vuetifyCustomIconsBaseMixin = {
   methods: {
     hasIconInVuetify(name) {
@@ -13,7 +11,7 @@ export const vuetifyCustomIconsBaseMixin = {
     },
 
     registerIconInVuetify(name, template, meta = {}) {
-      registerCustomIcon(name, normalizeHtml(template), meta);
+      registerCustomIcon(name, template, meta);
     },
 
     unregisterIconFromVuetify(name) {
