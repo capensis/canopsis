@@ -179,7 +179,7 @@ export default {
      */
     const isActiveItem = (item = {}) => props.value === item[props.itemValue] ||
       (isArray(props.value) &&
-        props.value.find?.((selectedItem) => {
+        props.value.some((selectedItem) => {
           const selectedValue = String(getValue(selectedItem) ?? '');
           const value = String(getValue(item) ?? '');
 
