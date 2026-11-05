@@ -155,15 +155,16 @@ export const linkifyHtml = (html = '', options = DEFAULT_LINKIFY_OPTIONS) =>
   linkifyHtmlLib(html, options);
 
 /**
- * Normalizes HTML by parsing and re-serializing it through the browser DOM.
+ * Normalizes HTML in an inert document without activating resource event handlers.
  *
- * Useful for canonicalizing markup before registration or comparison (e.g. custom Vuetify icons).
+ * This does not sanitize the result. Sanitize untrusted markup before rendering it.
  *
  * @param {string} [html = ''] - HTML string to normalize.
  * @returns {string} Browser-normalized HTML.
  */
 export const normalizeHtml = (html = '') => {
-  const element = document.createElement('div');
+  const inertDocument = document.implementation.createHTMLDocument('');
+  const element = inertDocument.createElement('div');
 
   element.innerHTML = html;
 
