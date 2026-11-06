@@ -1,4 +1,8 @@
+import { mapActions, mapState } from 'pinia';
+
 import { MODALS, ROUTES_NAMES } from '@/constants';
+
+import { useActiveViewStore } from '@/stores/modules/active-view';
 
 import { entitiesViewMixin } from '@/mixins/entities/view';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
@@ -22,6 +26,10 @@ export default {
     },
   },
   computed: {
+    ...mapState(useActiveViewStore, {
+      activeViewId: 'itemId',
+    }),
+
     viewLink() {
       const { view } = this;
       const link = {
@@ -49,6 +57,10 @@ export default {
     },
   },
   methods: {
+    ...mapActions(useActiveViewStore, {
+      fetchActiveView: 'fetch',
+    }),
+
     showEditViewModal() {
       this.$modals.show({
         name: MODALS.createView,
@@ -59,6 +71,10 @@ export default {
           submittable: this.view.is_private || this.hasUpdateViewAccess,
           action: async (data) => {
             await this.updateViewWithPopup({ id: this.view._id, data });
+
+            if (this.activeViewId === this.view._id) {
+              await this.fetchActiveView();
+            }
 
             return this.fetchAllGroupsListWithWidgetsWithCurrentUser();
           },

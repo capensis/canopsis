@@ -20,7 +20,7 @@
           color="white"
         >
           <span class="refresh-btn">
-            {{ periodicRefreshProgress }}
+            {{ periodicRefreshProgressLabel }}
           </span>
         </v-progress-circular>
       </v-btn>
@@ -32,7 +32,11 @@
 <script>
 import { DATETIME_FORMATS } from '@/constants';
 
-import { convertDurationToString, durationToSeconds } from '@/helpers/date/duration';
+import {
+  convertDurationToMaxUnitDurationString,
+  convertDurationToString,
+  durationToSeconds,
+} from '@/helpers/date/duration';
 import { uid } from '@/helpers/uid';
 
 import { activeViewMixin } from '@/mixins/active-view';
@@ -64,6 +68,10 @@ export default {
         this.periodicRefreshProgress,
         DATETIME_FORMATS.refreshFieldFormat,
       );
+    },
+
+    periodicRefreshProgressLabel() {
+      return convertDurationToMaxUnitDurationString(this.periodicRefreshProgress);
     },
 
     periodicRefreshProgressValue() {

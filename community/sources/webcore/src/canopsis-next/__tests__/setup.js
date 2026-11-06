@@ -684,6 +684,7 @@ vi.mock('@/stores/modules/active-view', async () => {
     useActiveViewStore: defineStore('activeView', {
       getters: {
         item: () => getter('activeView/item', {}),
+        itemId: () => getter('activeView/item', {})?._id,
         pending: () => false,
         editing: () => getter('activeView/editing', false),
         editingProcess: () => false,
