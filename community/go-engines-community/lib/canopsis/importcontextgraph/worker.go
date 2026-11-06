@@ -667,6 +667,7 @@ func (w *worker) mergeEntity(c EntityConfiguration, oldEntity Entity, id, catego
 	e := Entity{
 		ID:             id,
 		Name:           c.Name,
+		Description:    c.Description,
 		Component:      c.Component,
 		CategoryID:     categoryID,
 		Services:       []string{},
