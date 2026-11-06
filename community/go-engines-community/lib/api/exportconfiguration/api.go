@@ -73,7 +73,7 @@ func NewApi(client mongo.DbClient, errorResponder httperror.Responder, logger ze
 			"entity_infos_property":      mongo.EntityInfosPropertyCollection,
 			"template_data":              mongo.TemplateTestDataCollection,
 			"template_test":              mongo.TemplateTestCollection,
-			"webhook_token_rule":         mongo.WebhookTokenHistoryCollection,
+			"webhook_token_rule":         mongo.WebhookTokenRuleCollection,
 		},
 	}
 }
