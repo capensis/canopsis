@@ -96,6 +96,52 @@ describe('map', () => {
     $periodicRefresh.unregisterChild.mockClear();
   });
 
+  it('Restarts periodic refresh when only the unit changes', () => {
+    const context = {
+      visible: true,
+      periodicRefreshInterval: 1,
+      periodicRefreshSeconds: 600,
+      startPeriodicRefresh: vi.fn(),
+      stopPeriodicRefresh: vi.fn(),
+      resetPeriodicRefresh: MapWidget.methods.resetPeriodicRefresh,
+    };
+
+    MapWidget.watch.periodicRefreshSettings.handler.call(
+      context,
+      { enabled: true, value: 10, unit: 'm' },
+      { enabled: true, value: 10, unit: 's' },
+    );
+
+    expect(context.startPeriodicRefresh).toHaveBeenCalledTimes(1);
+    expect(context.intervalDelay).toBe(600000);
+  });
+
+  it.each([
+    [true, 1],
+    [false, undefined],
+  ])('Resets the map delay without starting a paused or stopped timer (%s)', (paused, interval) => {
+    const context = {
+      visible: true,
+      activeViewPeriodicRefreshPaused: paused,
+      periodicRefreshInterval: interval,
+      periodicRefreshSeconds: 600,
+      resetPeriodicRefresh: MapWidget.methods.resetPeriodicRefresh,
+      startPeriodicRefresh: vi.fn(),
+      stopPeriodicRefresh: vi.fn(),
+    };
+
+    MapWidget.watch.periodicRefreshSettings.handler.call(
+      context,
+      { enabled: true, value: 10, unit: 'm' },
+      { enabled: true, value: 10, unit: 's' },
+    );
+
+    expect(context.intervalDelay).toBe(600000);
+    expect(context.periodicRefreshInterval).toBe(interval);
+    expect(context.startPeriodicRefresh).not.toHaveBeenCalled();
+    expect(context.stopPeriodicRefresh).not.toHaveBeenCalled();
+  });
+
   it('Register and unregister editing off handler is working', async () => {
     const wrapper = factory({
       propsData: {
