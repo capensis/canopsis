@@ -12,6 +12,7 @@ import { RESPONSE_STATUSES } from '@/constants';
 import { sanitizeVueTemplate } from '@/helpers/html';
 
 import { useI18n } from '@/hooks/i18n';
+import { usePeriodicRefreshChild } from '@/hooks/periodic-refresh';
 import { usePendingHandler } from '@/hooks/query/pending';
 
 export default {
@@ -115,6 +116,8 @@ export default {
         cancelTokenSource = null;
       }
     });
+
+    usePeriodicRefreshChild({ handler: sendRequest });
 
     onMounted(sendRequest);
 
