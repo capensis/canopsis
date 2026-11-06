@@ -1,7 +1,7 @@
 import { createButtonStub } from '@unit/stubs/button';
 import { generateShallowRenderer } from '@unit/utils/vue';
 
-import { DATETIME_FORMATS } from '@/constants';
+import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
 
 import ViewPeriodicRefreshBtn from '@/components/other/view/partials/view-periodic-refresh-btn.vue';
 
@@ -61,6 +61,162 @@ describe('view-periodic-refresh-btn', () => {
 
     test('Should return false for periodicRefreshFullPaused when not paused', () => {
       expect(getPeriodicRefreshFullPaused(false, false)).toBe(false);
+    });
+  });
+
+  describe('countdown display', () => {
+    const countdownFactory = generateShallowRenderer(ViewPeriodicRefreshBtn, {
+      stubs: {
+        ...stubs,
+        'c-tooltip': {
+          template: '<div><slot name="activator" :props="{}" /><slot /></div>',
+        },
+      },
+      global: {
+        provide: {
+          $periodicRefresh: mockPeriodicRefresh,
+        },
+      },
+      store: {
+        getters: {
+          'activeView/item': createViewWithPeriodicRefresh(true, 30, TIME_UNITS.hour),
+          'activeView/periodicRefreshPaused': false,
+          'navigation/isEditingMode': false,
+        },
+      },
+    });
+
+    test.each([
+      [107993, '1d'],
+      [86400, '1d'],
+      [86399, '23h'],
+      [3600, '1h'],
+      [3599, '59m'],
+      [60, '1m'],
+      [59, '59s'],
+      [0, '0s'],
+    ])('Should display %i seconds as %s', async (seconds, label) => {
+      const wrapper = countdownFactory();
+
+      await wrapper.setData({ periodicRefreshProgress: seconds });
+
+      expect(wrapper.find('.refresh-btn').text()).toBe(label);
+    });
+
+    test('Should retain the detailed tooltip and progress while the label changes units', async () => {
+      const wrapper = countdownFactory();
+
+      await wrapper.setData({ periodicRefreshProgress: 86400 });
+
+      expect(wrapper.find('.refresh-btn').text()).toBe('1d');
+
+      vi.advanceTimersByTime(1000);
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.find('.refresh-btn').text()).toBe('23h');
+      expect(wrapper.vm.tooltipContent).toBe('23 hrs 59 mins 59 secs');
+      expect(wrapper.vm.periodicRefreshProgressValue).toBeCloseTo(86399 / 1080);
+      expect(mockPeriodicRefresh.notify).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('interval changes', () => {
+    const intervalFactory = generateShallowRenderer({
+      extends: ViewPeriodicRefreshBtn,
+      props: {
+        settings: { type: Object, required: true },
+        paused: { type: Boolean, default: false },
+        navigationEditing: { type: Boolean, default: false },
+      },
+      computed: {
+        view() {
+          return { periodic_refresh: this.settings };
+        },
+        activeViewPeriodicRefreshPaused() {
+          return this.paused;
+        },
+        isNavigationEditingMode() {
+          return this.navigationEditing;
+        },
+      },
+    }, {
+      stubs: {
+        ...stubs,
+        'c-tooltip': {
+          template: '<div><slot name="activator" :props="{}" /><slot /></div>',
+        },
+      },
+      global: {
+        provide: { $periodicRefresh: mockPeriodicRefresh },
+        mocks: { $popups: mockPopups },
+      },
+      props: {
+        settings: createViewWithPeriodicRefresh(true, 30, TIME_UNITS.hour).periodic_refresh,
+      },
+    });
+
+    test.each([
+      [5, TIME_UNITS.hour, '5h', '5 hrs'],
+      [30, TIME_UNITS.minute, '30m', '30 mins'],
+    ])('Should immediately reset the counter to %i %s when saved', async (value, unit, label, tooltip) => {
+      const wrapper = intervalFactory();
+      const interval = wrapper.vm.periodicRefreshInterval;
+
+      vi.advanceTimersByTime(1500);
+      await wrapper.setProps({ settings: { enabled: true, value, unit } });
+
+      expect(wrapper.find('.refresh-btn').text()).toBe(label);
+      expect(wrapper.vm.tooltipContent).toBe(tooltip);
+      expect(wrapper.vm.periodicRefreshProgressValue).toBe(100);
+      expect(wrapper.vm.periodicRefreshInterval).toBe(interval);
+
+      const progress = wrapper.vm.periodicRefreshProgress;
+
+      vi.advanceTimersByTime(500);
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.periodicRefreshProgress).toBe(progress - 1);
+
+      vi.advanceTimersByTime(500);
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.periodicRefreshProgress).toBe(progress - 1);
+      expect(mockPeriodicRefresh.notify).not.toHaveBeenCalled();
+    });
+
+    test.each(['paused', 'navigationEditing'])('Should reset the counter while %s without resuming', async (pauseProp) => {
+      const wrapper = intervalFactory();
+
+      await wrapper.setProps({ [pauseProp]: true });
+      await wrapper.setProps({ settings: { enabled: true, value: 5, unit: TIME_UNITS.minute } });
+
+      expect(wrapper.find('.refresh-btn').text()).toBe('5m');
+      expect(wrapper.vm.periodicRefreshProgressValue).toBe(100);
+
+      vi.advanceTimersByTime(2000);
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.periodicRefreshProgress).toBe(300);
+      expect(wrapper.vm.periodicRefreshInterval).toBeUndefined();
+
+      await wrapper.setProps({ [pauseProp]: false });
+      vi.advanceTimersByTime(1000);
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.periodicRefreshProgress).toBe(299);
+    });
+
+    test('Should reset the counter without starting a stopped timer', async () => {
+      const wrapper = intervalFactory();
+
+      wrapper.vm.stopPeriodicRefreshInterval();
+      await wrapper.setProps({ settings: { enabled: true, value: 5, unit: TIME_UNITS.minute } });
+      vi.advanceTimersByTime(2000);
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.find('.refresh-btn').text()).toBe('5m');
+      expect(wrapper.vm.periodicRefreshInterval).toBeUndefined();
+      expect(wrapper.vm.periodicRefreshProgress).toBe(300);
     });
   });
 

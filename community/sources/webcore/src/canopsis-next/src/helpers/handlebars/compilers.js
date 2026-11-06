@@ -1,4 +1,5 @@
 import { useAuthStore } from '@/stores/modules/auth';
+import { useTemplateVarsStore } from '@/stores/modules/template-vars';
 
 import { Handlebars } from './handlebars';
 import { normalizeHandlebarsNbsp } from './normalize';
@@ -13,10 +14,11 @@ import { normalizeHandlebarsNbsp } from './normalize';
  */
 export async function compile(template, context = {}, instance = Handlebars) {
   const authStore = useAuthStore();
+  const templateVarsStore = useTemplateVarsStore();
 
   const handleBarFunction = instance.compile(normalizeHandlebarsNbsp(template ?? ''));
   const preparedContext = {
-    //env: store.getters['template/vars/items'] ?? {}, // TODO: continue
+    env: templateVarsStore.items ?? {},
     user: authStore.currentUser ?? {},
 
     ...context,
