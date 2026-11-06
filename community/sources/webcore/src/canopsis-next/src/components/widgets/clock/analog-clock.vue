@@ -47,6 +47,7 @@
         y2="34"
       />
       <line
+        v-if="showSeconds"
         :transform="`rotate(${secondAngle} 100 100)`"
         class="analog-clock__hand analog-clock__hand--second"
         x1="100"
@@ -72,6 +73,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  showSeconds: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const ticks = Array.from({ length: 60 }, (_, index) => index);
@@ -81,7 +86,7 @@ const hours = computed(() => props.date.hours() % 12 + minutes.value / 60);
 const secondAngle = computed(() => seconds.value * 6);
 const minuteAngle = computed(() => minutes.value * 6);
 const hourAngle = computed(() => hours.value * 30);
-const accessibleTime = computed(() => props.date.format('HH:mm:ss'));
+const accessibleTime = computed(() => props.date.format(props.showSeconds ? 'HH:mm:ss' : 'HH:mm'));
 const dateTime = computed(() => props.date.format());
 </script>
 

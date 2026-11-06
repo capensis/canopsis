@@ -5,7 +5,11 @@
     </h3>
 
     <div class="clock-card__display">
-      <analog-clock v-if="display === CLOCK_DISPLAY_TYPES.analog" :date="date" />
+      <analog-clock
+        v-if="display === CLOCK_DISPLAY_TYPES.analog"
+        :date="date"
+        :show-seconds="showSeconds"
+      />
       <seven-segment-clock
         v-else-if="display === CLOCK_DISPLAY_TYPES.sevenSegments"
         :date="date"
