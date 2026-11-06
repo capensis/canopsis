@@ -1,6 +1,9 @@
 package scenario
 
 import (
+	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
@@ -11,8 +14,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/dbexport"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui/response"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/webhook"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
+	ginbinding "github.com/gin-gonic/gin/binding"
 )
 
 type API interface {
@@ -88,7 +94,7 @@ func (a *api) Get(c *gin.Context) {
 // @Success 201 {object} Scenario
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
-	if err := binding.Bind(c, &request); err != nil {
+	if err := bindScenarioRequest(c, &request); err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -130,7 +136,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	if err := binding.Bind(c, &request); err != nil {
+	if err := bindScenarioRequest(c, &request); err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -150,6 +156,80 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, newScenario)
+}
+
+func bindScenarioRequest(c *gin.Context, request any) error {
+	err := c.ShouldBindBodyWith(request, ginbinding.JSON)
+	if err == nil {
+		return nil
+	}
+
+	if body, ok := c.Get(gin.BodyBytesKey); ok {
+		if bodyBytes, ok := body.([]byte); ok {
+			if err := invalidCustomFieldError(err, bodyBytes, request); err != nil {
+				return err
+			}
+		}
+	}
+
+	return validation.ConvertValErr(err, request)
+}
+
+func bindScenarioBulkItem(body []byte, request any) error {
+	err := json.Unmarshal(body, request)
+	if err == nil {
+		return nil
+	}
+
+	if fieldErr := invalidCustomFieldError(err, body, request); fieldErr != nil {
+		return fieldErr
+	}
+
+	return validation.NewInvalidRequestBodyError(err)
+}
+
+func invalidCustomFieldError(err error, body []byte, request any) error {
+	stringFieldErr, ok := errors.AsType[*webhook.InvalidStringFieldTypeError](err)
+	if !ok {
+		return nil
+	}
+
+	namespace := invalidCustomFieldNamespace(body, stringFieldErr.Field)
+	if namespace == "" {
+		return nil
+	}
+
+	return validation.NewSingleError("value_string", stringFieldErr.Field, namespace, request)
+}
+
+func invalidCustomFieldNamespace(body []byte, field string) string {
+	var request struct {
+		Actions []struct {
+			Parameters struct {
+				DeclareTicket map[string]json.RawMessage `json:"declare_ticket"`
+			} `json:"parameters"`
+		} `json:"actions"`
+	}
+	if err := json.Unmarshal(body, &request); err != nil {
+		return ""
+	}
+
+	for i, action := range request.Actions {
+		rawValue, ok := action.Parameters.DeclareTicket[field]
+		if !ok {
+			continue
+		}
+
+		var value any
+		if err := json.Unmarshal(rawValue, &value); err != nil {
+			continue
+		}
+		if _, ok := value.(string); !ok {
+			return fmt.Sprintf("Actions[%d].Parameters.DeclareTicket.CustomFields[%s]", i, field)
+		}
+	}
+
+	return ""
 }
 
 func (a *api) Delete(c *gin.Context) {
@@ -179,20 +259,20 @@ func (a *api) Delete(c *gin.Context) {
 // BulkCreate
 // @Param body body []CreateRequest true "body"
 func (a *api) BulkCreate(c *gin.Context) {
-	bulk.Handler(c, func(request CreateRequest) (string, error) {
+	bulk.HandlerWithItemBinder(c, func(request CreateRequest) (string, error) {
 		scenario, err := a.store.Insert(c, request)
 		if err != nil {
 			return "", err
 		}
 
 		return scenario.ID, nil
-	}, a.errorResponder)
+	}, bindScenarioBulkItem, a.errorResponder)
 }
 
 // BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
 func (a *api) BulkUpdate(c *gin.Context) {
-	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
+	bulk.HandlerWithItemBinder(c, func(request BulkUpdateRequestItem) (string, error) {
 		scenario, err := a.store.Update(c, UpdateRequest(request))
 		if err != nil {
 			return "", err
@@ -203,7 +283,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		}
 
 		return scenario.ID, nil
-	}, a.errorResponder)
+	}, bindScenarioBulkItem, a.errorResponder)
 }
 
 // BulkDelete
