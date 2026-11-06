@@ -40,16 +40,15 @@
       />
     </widget-settings-item>
 
-    <template v-if="hasDigitalSettings">
-      <field-switcher
-        v-model="form.parameters.is_12_hour_format"
-        :title="t('clock.fields.use12HourFormat')"
-      />
-      <field-switcher
-        v-model="form.parameters.show_seconds"
-        :title="t('clock.fields.showSeconds')"
-      />
-    </template>
+    <field-switcher
+      v-if="hasDigitalSettings"
+      v-model="form.parameters.is_12_hour_format"
+      :title="t('clock.fields.use12HourFormat')"
+    />
+    <field-switcher
+      v-model="form.parameters.show_seconds"
+      :title="t('clock.fields.showSeconds')"
+    />
 
     <field-switcher v-model="form.parameters.show_date" :title="t('clock.fields.showDate')" />
     <field-switcher
