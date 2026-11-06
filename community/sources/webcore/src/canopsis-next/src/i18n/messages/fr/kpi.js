@@ -16,7 +16,7 @@ export default {
   autoAdd: 'Ajout automatique',
   addExternal: 'Ajouter externe',
   tabs: {
-    collectionSettings: 'Paramètres d\'évaluation',
+    collectionSettings: 'Paramètres de collecte',
     ratingSettings: 'Paramètres d\'évaluation',
   },
 
