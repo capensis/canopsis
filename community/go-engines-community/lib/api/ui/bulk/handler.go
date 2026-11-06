@@ -39,6 +39,25 @@ func Handler[T any](
 	f func(T) (string, error),
 	responder response.ErrorResponder,
 ) {
+	HandlerWithItemBinder(c, f, func(body []byte, request any) error {
+		if err := json.Unmarshal(body, request); err != nil {
+			return validation.NewInvalidRequestBodyError(err)
+		}
+
+		return nil
+	}, responder)
+}
+
+// HandlerWithItemBinder parses and validates a bulk request using binder for
+// each item, then calls f for each valid item. The binder decodes one object
+// into request; HandlerWithItemBinder performs the standard struct validation
+// after the binder succeeds.
+func HandlerWithItemBinder[T any](
+	c *gin.Context,
+	f func(T) (string, error),
+	binder func(body []byte, request any) error,
+	responder response.ErrorResponder,
+) {
 	raw, err := c.GetRawData()
 	if err != nil {
 		responder.Respond(c, err)
@@ -63,7 +82,7 @@ func Handler[T any](
 	var ar fastjson.Arena
 	res := ar.NewArray()
 	for idx, item := range items {
-		req, err := validateItem[T](item)
+		req, err := validateItemWithBinder[T](item, binder)
 		if err != nil {
 			res.SetArrayItem(idx, getErrResponseItem(c, err, item, responder, &ar))
 			continue
@@ -184,15 +203,25 @@ func HandlerWithGrouping[T any](
 }
 
 func validateItem[T any](item *fastjson.Value) (T, error) {
+	return validateItemWithBinder[T](item, func(body []byte, request any) error {
+		if err := json.Unmarshal(body, request); err != nil {
+			return validation.NewInvalidRequestBodyError(err)
+		}
+
+		return nil
+	})
+}
+
+func validateItemWithBinder[T any](item *fastjson.Value, binder func(body []byte, request any) error) (T, error) {
 	var r T
 	obj, err := item.Object()
 	if err != nil {
 		return r, validation.NewInvalidRequestBodyError(err)
 	}
 
-	err = json.Unmarshal(obj.MarshalTo(nil), &r)
+	err = binder(obj.MarshalTo(nil), &r)
 	if err != nil {
-		return r, validation.NewInvalidRequestBodyError(err)
+		return r, err
 	}
 
 	err = binding.ValidateStruct(r)
