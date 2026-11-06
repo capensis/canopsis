@@ -181,6 +181,10 @@ export default {
       return [this.query.filter, this.query.lockedFilter].flat().filter(Boolean);
     },
 
+    periodicRefreshSettings() {
+      return { ...this.widget.parameters.periodic_refresh };
+    },
+
     periodicRefreshEnabled() {
       return this.widget.parameters.periodic_refresh?.enabled;
     },
@@ -193,21 +197,26 @@ export default {
   },
 
   watch: {
-    'widget.parameters.periodic_refresh': {
+    periodicRefreshSettings: {
       immediate: true,
       handler(value, oldValue) {
         const periodicRefresh = value;
         const oldPeriodicRefresh = oldValue ?? {};
+        const valueIsChanged = periodicRefresh?.value !== oldPeriodicRefresh.value;
+        const unitIsChanged = periodicRefresh?.unit !== oldPeriodicRefresh.unit;
+
+        if (valueIsChanged || unitIsChanged) {
+          this.resetPeriodicRefresh();
+        }
 
         if (this.activeViewPeriodicRefreshPaused || !this.visible) {
           return;
         }
 
         if (periodicRefresh?.enabled && periodicRefresh?.value) {
-          const valueIsChanged = periodicRefresh.value !== oldPeriodicRefresh.value;
           const enabledIsChanged = periodicRefresh.enabled !== oldPeriodicRefresh.enabled;
 
-          if (valueIsChanged || enabledIsChanged) {
+          if (enabledIsChanged) {
             if (this.periodicRefreshInterval) {
               this.stopPeriodicRefresh();
             }
@@ -413,6 +422,18 @@ export default {
           },
         },
       });
+    },
+
+    resetPeriodicRefresh() {
+      this.intervalDelay = this.periodicRefreshSeconds * 1000;
+
+      if (
+        this.periodicRefreshInterval &&
+        !this.activeViewPeriodicRefreshPaused &&
+        this.visible
+      ) {
+        this.startPeriodicRefresh();
+      }
     },
 
     startPeriodicRefresh() {
