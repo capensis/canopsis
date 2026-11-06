@@ -36,7 +36,13 @@ export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
 export const PAGINATION_TOTAL_VISIBLE = 7;
 
 export const DEFAULT_SANITIZE_OPTIONS = {
+  /**
+   * Keep leading Handlebars condition comments inside the sanitized HTML fragment.
+   */
+  FORCE_BODY: true,
+
   ADD_TAGS: [
+    '#comment',
     'h1',
     'h2',
     'u',
@@ -87,7 +93,6 @@ export const DEFAULT_SANITIZE_OPTIONS = {
     'title',
     'class',
     'id',
-    'v-if',
     'name',
     'autoplay',
     'colspan',
@@ -107,6 +112,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
     'face',
     'direction',
     'to',
+    'category',
 
     'data-id',
     'data-c',
@@ -114,25 +120,6 @@ export const DEFAULT_SANITIZE_OPTIONS = {
     'timezone',
     'realtime',
     'offset',
-
-    ':alarm',
-    ':selected-tags',
-    ':entity',
-    ':links',
-    ':category',
-    ':service',
-    ':service-entities',
-    ':widget-parameters',
-    ':options',
-    ':total-items',
-    ':actions-requests',
-    ':execution',
-
-    '@select',
-    '@close',
-    '@refresh',
-    '@update:options',
-    '@add:action',
 
     'value',
     'name-filter',
@@ -151,13 +138,17 @@ export const DEFAULT_SANITIZE_OPTIONS = {
     'light',
     'right',
     'small',
-    'tag',
     'x-large',
     'x-small',
     'text-color',
   ],
 
   ALLOW_DATA_ATTR: true,
+
+  /**
+   * Clock formats such as HH:mm:ss are data, not URLs with an unknown protocol.
+   */
+  ADD_URI_SAFE_ATTR: ['format'],
 
   ADD_DATA_URI_TAGS: ['img', 'video', 'audio'],
 };
@@ -205,7 +196,9 @@ export const POPUP_TICK_DELAY = 100;
 
 export const SIDE_BAR_WIDTH = 250;
 
-/** Default width (px) for plugin sidebars when `config.width` is omitted */
+/**
+ * Default width (px) for plugin sidebars when `config.width` is omitted
+ */
 export const DEFAULT_SIDEBAR_DRAWER_WIDTH = 450;
 
 export const TOP_BAR_HEIGHT = 48;
