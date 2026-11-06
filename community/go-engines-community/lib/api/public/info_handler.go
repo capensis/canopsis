@@ -17,7 +17,7 @@ func infoHandler(responder response.Responder) func(w http.ResponseWriter, r *ht
 			"build":    bi.Edition + " " + bi.Version + " " + bi.VcsRevision,
 			"build_at": bi.Date.Format(time.RFC3339),
 			"links": map[string]string{
-				"docs": Prefix + "/docs",
+				"docs": Prefix + "/docs/",
 			},
 		})
 	}
