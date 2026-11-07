@@ -1,9 +1,9 @@
 package docs
 
 import (
-	"bytes"
 	"embed"
 	"maps"
+	"regexp"
 	"strings"
 
 	"go.yaml.in/yaml/v3"
@@ -12,14 +12,17 @@ import (
 //go:embed static/*
 var UIFiles embed.FS
 
+// generatedDefinitionsRefRegexp matches refs to generated files, e.g. schemas_swagger.yaml#/definitions/ or fields_swagger.yaml#/definitions/.
+var generatedDefinitionsRefRegexp = regexp.MustCompile(`[A-Za-z0-9_]+_swagger\.yaml#/definitions/`)
+
+// generatedParametersRefRegexp matches refs to parameters of generated files, e.g. fields_swagger.yaml#/parameters/.
+var generatedParametersRefRegexp = regexp.MustCompile(`[A-Za-z0-9_]+_swagger\.yaml#/parameters/`)
+
 func MergeContent(contents [][]byte) (map[string]any, error) {
 	var mergedContent map[string]any
 	for _, content := range contents {
-		replacedSchemasContent := bytes.ReplaceAll(
-			content,
-			[]byte(`schemas_swagger.yaml#/definitions/`),
-			[]byte(`#/components/schemas/`),
-		)
+		replacedSchemasContent := generatedDefinitionsRefRegexp.ReplaceAll(content, []byte(`#/components/schemas/`))
+		replacedSchemasContent = generatedParametersRefRegexp.ReplaceAll(replacedSchemasContent, []byte(`#/components/parameters/`))
 		var parsed map[string]any
 		err := yaml.Unmarshal(replacedSchemasContent, &parsed)
 		if err != nil {
@@ -62,6 +65,16 @@ func MergeSchemas(generatedSchemasContents [][]byte, mergedContent map[string]an
 		err := yaml.Unmarshal([]byte(replacedSchemasContent), &parsed)
 		if err != nil {
 			return nil, err
+		}
+
+		if parameters, ok := parsed["parameters"].(map[string]any); ok {
+			if mergedComponents, ok := mergedContent["components"].(map[string]any); ok {
+				if mergedParameters, ok := mergedComponents["parameters"].(map[string]any); ok {
+					maps.Copy(mergedParameters, parameters)
+				} else {
+					mergedComponents["parameters"] = parameters
+				}
+			}
 		}
 
 		if schemas, ok := parsed["definitions"].(map[string]any); ok {

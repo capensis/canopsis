@@ -357,9 +357,17 @@ func RegisterDocs(r chi.Router, s Services) error {
 		return fmt.Errorf("cannot read swagger: %w", err)
 	}
 
-	schemasContent, err := docsFile.ReadFile("docs/schemas_swagger.yaml")
-	if err != nil {
-		return fmt.Errorf("cannot read swagger: %w", err)
+	docFiles := [...]string{
+		"docs/schemas_swagger.yaml",
+		"docs/fields_swagger.yaml",
+	}
+	generatedSchemasContent := make([][]byte, len(docFiles))
+	for i, file := range docFiles {
+		content, err := docsFile.ReadFile(file)
+		if err != nil {
+			return fmt.Errorf("cannot read swagger %s: %w", file, err)
+		}
+		generatedSchemasContent[i] = content
 	}
 
 	r.Get(Prefix+"/docs", func(w http.ResponseWriter, r *http.Request) {
@@ -371,7 +379,7 @@ func RegisterDocs(r chi.Router, s Services) error {
 			publicdocs.GetHandler(
 				s.Responder,
 				s.Logger,
-				[][]byte{schemasContent},
+				generatedSchemasContent,
 				[][]byte{content},
 			)(w, r)
 
