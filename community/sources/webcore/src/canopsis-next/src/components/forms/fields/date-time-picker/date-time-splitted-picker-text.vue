@@ -1,22 +1,20 @@
 <template>
-  <c-layout class="date-time-splitted-field" column>
-    <c-layout :style="rowStyle" gap="2">
-      <div class="date-time-splitted-field__date">
-        <date-picker-text
-          :value="dateValue"
-          :label="!reverse || fullDay ? label : ''"
-          hide-details
-        />
-      </div>
-      <time-picker-text
-        v-if="!fullDay"
-        :value="timeValue"
-        :label="reverse ? label : ''"
-        class="date-time-splitted-field__time"
+  <v-row :style="rowStyle" class="date-time-splitted-field">
+    <v-col class="date-time-splitted-field__date">
+      <date-picker-text
+        :value="dateValue"
+        :label="!reverse || fullDay ? label : ''"
         hide-details
       />
-    </c-layout>
-  </c-layout>
+    </v-col>
+    <v-col v-if="!fullDay" class="date-time-splitted-field__time" cols="auto">
+      <time-picker-text
+        :value="timeValue"
+        :label="reverse ? label : ''"
+        hide-details
+      />
+    </v-col>
+  </v-row>
 </template>
 
 <script>
