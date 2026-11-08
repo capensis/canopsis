@@ -134,11 +134,12 @@ export default {
   }
 
   &__filters {
+    min-width: 120px;
     max-width: 200px;
   }
 
   &__parameters {
-    max-width: 300px;
+    max-width: 500px;
   }
 }
 </style>

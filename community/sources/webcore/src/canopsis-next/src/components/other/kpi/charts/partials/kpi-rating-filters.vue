@@ -1,6 +1,6 @@
 <template>
   <div class="kpi-rating-toolbar">
-    <c-layout class="ml-4 my-4" gap="3" wrap>
+    <v-row class="ml-4 my-4 ga-3 align-end" no-gutters>
       <c-quick-date-interval-field
         :interval="query.interval"
         :min="minDate"
@@ -28,10 +28,9 @@
       />
       <c-items-per-page-field
         :model-value="query.itemsPerPage"
-        class="mt-4"
         @update:model-value="updateQueryField('itemsPerPage', $event)"
       />
-    </c-layout>
+    </v-row>
   </div>
 </template>
 
@@ -104,13 +103,17 @@ export default {
 
 <style scoped lang="scss">
 .kpi-rating-toolbar {
-  &__filters,
+  &__filters {
+    min-width: 120px;
+    max-width: 200px;
+  }
+
   &__criteria {
     max-width: 200px;
   }
 
   &__metric {
-    max-width: 250px;
+    max-width: 500px;
   }
 }
 </style>

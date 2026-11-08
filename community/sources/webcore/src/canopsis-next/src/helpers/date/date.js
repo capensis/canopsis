@@ -391,18 +391,12 @@ export const convertDateToStartOfUnitString = (date, unit, format) =>
   convertDateToString(convertDateToStartOfUnitMoment(date, unit), format);
 
 /**
- * Return moment with start of day timestamp
+ * Return the start of day in local time, preserving the input's wall date.
  *
  * @param {LocalDate} date
  */
-export const convertDateToStartOfDayMoment = (date) => {
-  const startOfMoment = convertDateToStartOfUnitMoment(date, TIME_UNITS.day);
-  /* Format date to string without time and timezone */
-  const formattedStartOfMoment = startOfMoment.format(DATETIME_FORMATS.long);
-
-  /* Format to moment object */
-  return convertDateToMoment(formattedStartOfMoment, DATETIME_FORMATS.long);
-};
+export const convertDateToStartOfDayMoment = date =>
+  moment(convertDateToStartOfUnitMoment(date, TIME_UNITS.day).toArray());
 
 /**
  * Convert date to start of day as timestamp
@@ -436,18 +430,12 @@ export const convertDateToStartOfDayDateObject = date =>
   convertDateToStartOfDayMoment(date).toDate();
 
 /**
- * Return moment with end of day timestamp
+ * Return the end of day in local time, preserving the input's wall date and second precision.
  *
  * @param {LocalDate} date
  */
-export const convertDateToEndOfDayMoment = (date) => {
-  const endOfMoment = convertDateToEndOfUnitMoment(date, TIME_UNITS.day);
-  /* Format date to string without time and timezone */
-  const formattedEndOfMoment = endOfMoment.format(DATETIME_FORMATS.long);
-
-  /* Format to moment object */
-  return convertDateToMoment(formattedEndOfMoment, DATETIME_FORMATS.long);
-};
+export const convertDateToEndOfDayMoment = date =>
+  moment(convertDateToEndOfUnitMoment(date, TIME_UNITS.day).toArray()).millisecond(0);
 
 /**
  * Convert date to end of day as native timestamp
