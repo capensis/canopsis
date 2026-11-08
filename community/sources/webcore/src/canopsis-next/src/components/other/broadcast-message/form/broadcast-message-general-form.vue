@@ -1,7 +1,7 @@
 <template>
   <c-form-block>
     <c-form-block-row :label="t('common.priority')">
-      <c-priority-field v-model="priorityField" required>
+      <c-priority-field v-model="priorityField" :min="1" required>
         <template #append>
           <c-help-icon
             :text="t('broadcastMessage.priorityHelp')"

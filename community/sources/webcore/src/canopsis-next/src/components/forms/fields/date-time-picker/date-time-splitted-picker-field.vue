@@ -1,34 +1,32 @@
 <template>
   <v-input :error-messages="errorMessage ? [errorMessage] : []" :hide-details="hideDetails">
-    <c-layout class="date-time-splitted-field" column>
-      <c-layout :style="rowStyle" gap="2">
-        <div class="date-time-splitted-field__date">
-          <c-date-picker-field
-            :value="dateValue"
-            :label="!reverse || fullDay ? label : ''"
-            :placeholder="placeholder"
-            :error="!!errorMessage"
-            :disabled="disabled"
-            :control-variant="controlVariant"
-            :min="min"
-            :max="max"
-            header-color="primary"
-            hide-details
-            @update:value="updateDate"
-          />
-        </div>
+    <v-row :style="rowStyle" class="date-time-splitted-field">
+      <v-col class="date-time-splitted-field__date">
+        <c-date-picker-field
+          :value="dateValue"
+          :label="!reverse || fullDay ? label : ''"
+          :placeholder="placeholder"
+          :error="!!errorMessage"
+          :disabled="disabled"
+          :control-variant="controlVariant"
+          :min="min"
+          :max="max"
+          header-color="primary"
+          hide-details
+          @update:value="updateDate"
+        />
+      </v-col>
+      <v-col v-if="!fullDay" class="date-time-splitted-field__time" cols="auto">
         <time-picker-field
-          v-if="!fullDay"
           :value="timeValue"
           :label="reverse ? label : ''"
           :error="!!errorMessage"
           :disabled="disabled"
-          class="date-time-splitted-field__time"
           hide-details
           @update:value="updateTime"
         />
-      </c-layout>
-    </c-layout>
+      </v-col>
+    </v-row>
   </v-input>
 </template>
 
@@ -169,21 +167,25 @@ export default {
 
 <style lang="scss">
 .date-time-splitted-field {
+  width: 100%;
+
   &__date {
-    flex: 1;
-    min-width: 90px;
+    flex: 1 1 160px;
+    min-width: 0;
   }
 
   &__time {
     align-self: end;
-    width: 50px;
-    max-width: 50px;
+    flex: 0 0 56px;
+    width: 56px;
+    max-width: 56px;
 
     .v-field {
       font-size: 16px !important;
+      padding-inline: 0;
 
       .v-field__input {
-        padding: 0;
+        padding-inline: 0;
       }
     }
   }

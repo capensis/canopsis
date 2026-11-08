@@ -24,10 +24,10 @@ vi.mock('@/hooks/store/modules/filter', () => ({
 }));
 
 const stubs = {
-  'v-autocomplete': createSelectInputStub('v-autocomplete'),
+  'c-autocomplete': createSelectInputStub('c-autocomplete'),
 };
 
-const selectAutocomplete = wrapper => wrapper.find('.v-autocomplete');
+const selectAutocomplete = wrapper => wrapper.find('select.c-autocomplete');
 
 describe('c-filter-field', () => {
   const factory = generateShallowRenderer(CFilterField, { stubs });
@@ -76,5 +76,17 @@ describe('c-filter-field', () => {
     selectAutocomplete(wrapper).triggerCustomEvent('update:modelValue', newValue);
 
     expect(wrapper).toEmitInput(newValue);
+  });
+
+  it('Filter cleared after clearing the autocomplete', () => {
+    const wrapper = factory({
+      propsData: {
+        value: 'filter-id',
+      },
+    });
+
+    selectAutocomplete(wrapper).triggerCustomEvent('update:modelValue', null);
+
+    expect(wrapper).toEmitInput(null);
   });
 });

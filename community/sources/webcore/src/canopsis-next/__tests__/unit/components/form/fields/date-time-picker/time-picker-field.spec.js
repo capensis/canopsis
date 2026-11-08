@@ -3,21 +3,21 @@ import { generateShallowRenderer } from '@unit/utils/vue';
 import TimePickerField from '@/components/forms/fields/time-picker/time-picker-field.vue';
 
 const stubs = {
-  'v-combobox': {
-    name: 'v-combobox',
+  'c-combobox': {
+    name: 'c-combobox',
     props: ['modelValue', 'items', 'menuProps', 'customFilter'],
     emits: ['update:search'],
     template: `
       <input
         :value="modelValue"
-        class="v-combobox"
+        class="c-combobox"
         @input="$emit('update:search', $event.target.value)"
       />
     `,
   },
 };
 
-const selectCombobox = wrapper => wrapper.findComponent({ name: 'v-combobox' });
+const selectCombobox = wrapper => wrapper.findComponent({ name: 'c-combobox' });
 
 describe('time-picker-field', () => {
   const factory = generateShallowRenderer(TimePickerField, { stubs });
@@ -89,6 +89,25 @@ describe('time-picker-field', () => {
     wrapper.vm.change(newValue);
 
     expect(wrapper).toEmitInput(newValue);
+  });
+
+  test('Time typed into the combobox is emitted', async () => {
+    const wrapper = factory();
+
+    await wrapper.find('input').setValue('13:45');
+
+    expect(wrapper).toEmitInput('13:45');
+  });
+
+  test('Combobox search follows changes to the value', async () => {
+    const wrapper = factory();
+
+    await wrapper.setProps({ value: '12:00' });
+    await wrapper.setProps({ value: '23:59' });
+
+    expect(wrapper.vm.search).toBe('23:59');
+    expect(selectCombobox(wrapper).props('modelValue')).toBe('23:59');
+    expect(wrapper).not.toHaveBeenEmit('update:value');
   });
 
   test('Value changed after trigger change with round hours on the combobox', async () => {

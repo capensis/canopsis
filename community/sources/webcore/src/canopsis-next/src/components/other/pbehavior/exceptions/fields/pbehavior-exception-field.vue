@@ -181,7 +181,7 @@ export default {
 <style lang="scss" scoped>
 .pbehavior-exception-field {
   &__row {
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
   }
 
   &__interval,
@@ -191,7 +191,11 @@ export default {
   }
 
   &__interval {
-    flex-grow: 2;
+    flex: 2 1 488px;
+  }
+
+  &__type {
+    flex: 1 1 180px;
   }
 
   &__actions {
