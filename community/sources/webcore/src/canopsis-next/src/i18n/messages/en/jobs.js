@@ -77,6 +77,7 @@ export default {
   types: {
     [JOB_RULE_TYPES.scenario]: 'Scenario',
     [JOB_RULE_TYPES.declareTicket]: 'Ticket declaration rule',
+    [JOB_RULE_TYPES.eventFilter]: 'Event filter',
   },
   actions: {
     editJob: 'Edit job',
