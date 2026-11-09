@@ -31,8 +31,9 @@ import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
 
 const stubs = {
   AlarmsListTableWithPagination: {
+    name: 'AlarmsListTableWithPagination',
     props: ['query'],
-    emits: ['update:query'],
+    emits: ['update:query', 'update:selected'],
     methods: {
       updateItemsPerPage(itemsPerPage) {
         this.$emit('update:query', {
@@ -925,7 +926,7 @@ describe('alarms-list', () => {
     });
   });
 
-  it('Widget exported after trigger export button', async () => {
+  it.each([0, 1, 3])('Widget exported with %i selected alarms after trigger export button', async (selectedCount) => {
     const originalWindowOpen = window.open;
     window.open = vi.fn();
 
@@ -960,12 +961,27 @@ describe('alarms-list', () => {
 
     updateQuery.mockClear();
 
+    const table = wrapper.findComponent({ name: 'AlarmsListTableWithPagination' });
+    const selectedAlarms = alarms.slice(0, selectedCount);
+
+    table.vm.$emit('update:selected', selectedAlarms);
+    await wrapper.vm.$nextTick();
+
     const exportButton = selectExportButton(wrapper);
 
     exportButton.triggerCustomEvent('click');
 
     expect(createAlarmsListExport).toHaveBeenCalledWith(expect.any(Object), {
       data: {
+        ...(selectedCount ? {
+          alarm_pattern: JSON.stringify([[{
+            field: '_id',
+            cond: {
+              type: 'is_one_of',
+              value: selectedAlarms.map(({ _id }) => _id),
+            },
+          }]]),
+        } : {}),
         filters: defaultQuery.filters,
         search: defaultQuery.search,
         category: defaultQuery.category,
@@ -1003,6 +1019,37 @@ describe('alarms-list', () => {
     );
 
     window.open = originalWindowOpen;
+  });
+
+  it('Exports the full list with its original pattern after clearing selection', async () => {
+    const wrapper = factory({ store, propsData: { widget } });
+    const alarmPattern = JSON.stringify([[{
+      field: 'v.connector',
+      cond: { type: 'eq', value: 'connector' },
+    }]]);
+
+    await flushPromises();
+
+    vi.spyOn(wrapper.vm, 'getQuery').mockImplementation(() => ({ ...defaultQuery, alarm_pattern: alarmPattern }));
+
+    const table = wrapper.findComponent({ name: 'AlarmsListTableWithPagination' });
+
+    table.vm.$emit('update:selected', [alarms[0]]);
+    await wrapper.vm.$nextTick();
+
+    expect(JSON.parse(wrapper.vm.getExportQuery().alarm_pattern)).toEqual([[{
+      field: '_id',
+      cond: { type: 'is_one_of', value: [alarms[0]._id] },
+    }]]);
+
+    table.vm.$emit('update:selected', []);
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.getExportQuery()).toMatchObject({
+      alarm_pattern: alarmPattern,
+      search: defaultQuery.search,
+      filters: defaultQuery.filters,
+    });
   });
 
   /**

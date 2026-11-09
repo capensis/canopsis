@@ -160,6 +160,7 @@
       @update:query="updateTableQuery"
       @update:columns-settings="updateColumnsSettings"
       @update:dense="updateDense"
+      @update:selected="selectedAlarms = $event"
       @select:tag="selectTag"
       @remove:tag="removeTag"
     />
@@ -171,9 +172,11 @@ import { isEqual, isObject, omit, pick } from 'lodash';
 import { mapActions, mapStores } from 'pinia';
 
 import {
+  ALARM_FIELDS,
   LIVE_REPORTING_QUICK_RANGES,
   MODALS,
   USER_PERMISSIONS,
+  PATTERN_CONDITIONS,
   DISPLAY_NAME_TO_WIDGET_GRID_SIZES_KEYS_MAP,
   WIDGET_GRID_SIZES_KEYS,
 } from '@/constants';
@@ -185,7 +188,7 @@ import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { convertAlarmWidgetParametersToActiveColumns } from '@/helpers/entities/alarm/query';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
 import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
-import { selectedToQuery, widgetToExportQueryColumns } from '@/helpers/entities/widget/query';
+import { widgetToExportQueryColumns } from '@/helpers/entities/widget/query';
 import { setSeveralFields } from '@/helpers/immutable';
 
 import { permissionsWidgetsAlarmsListBookmark } from '@/mixins/permissions/widgets/alarms-list/bookmark';
@@ -264,6 +267,7 @@ export default {
   data() {
     return {
       downloading: false,
+      selectedAlarms: [],
     };
   },
   computed: {
@@ -306,10 +310,6 @@ export default {
 
     alarmsPending() {
       return this.alarmStore.getPendingByWidgetId(this.widget._id);
-    },
-
-    selectedAlarms() {
-      return [];
     },
 
     defaultKeepSelectedAfterAction() {
@@ -532,6 +532,16 @@ export default {
       const query = this.getQuery();
       const { exportCsvSeparator, exportCsvDatetimeFormat } = this.preparedWidget.parameters;
 
+      if (this.selectedAlarms.length) {
+        query.alarm_pattern = JSON.stringify([[{
+          field: ALARM_FIELDS.id,
+          cond: {
+            type: PATTERN_CONDITIONS.isOneOf,
+            value: this.selectedAlarms.map(({ _id }) => _id),
+          },
+        }]]);
+      }
+
       return {
         ...pick(query, [
           'category',
@@ -559,7 +569,7 @@ export default {
         time_format: isObject(exportCsvDatetimeFormat)
           ? exportCsvDatetimeFormat.value
           : exportCsvDatetimeFormat,
-        search: selectedToQuery(this.selectedAlarms, query.search),
+        search: query.search ?? '',
       };
     },
 
