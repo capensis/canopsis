@@ -248,7 +248,7 @@ describe('alarms-list-table', () => {
     vi.clearAllMocks();
   });
 
-  test('Alarms selected after trigger table', () => {
+  test('Alarms selected after trigger table', async () => {
     const selectedAlarms = alarms.slice(0, -1);
     const wrapper = factory({
       store,
@@ -262,6 +262,33 @@ describe('alarms-list-table', () => {
 
     expect(wrapper.vm.selectedAlarmIds).toEqual(selectedAlarms.map(({ _id }) => _id));
     expect(wrapper.vm.selectedAlarms).toEqual(selectedAlarms);
+
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted('update:selected').at(-1)).toEqual([selectedAlarms]);
+
+    wrapper.vm.clearSelected();
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted('update:selected').at(-1)).toEqual([[]]);
+  });
+
+  test('Emits the updated selection after selecting all and refreshing alarms', async () => {
+    const wrapper = factory({
+      store,
+      propsData: { alarms, selectable: true },
+    });
+
+    wrapper.vm.toggleAllSelectableAlarms(true);
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted('update:selected').at(-1)).toEqual([alarms]);
+
+    const remainingAlarms = alarms.slice(1);
+
+    await wrapper.setProps({ alarms: remainingAlarms });
+
+    expect(wrapper.emitted('update:selected').at(-1)).toEqual([remainingAlarms]);
   });
 
   test('Applies truncated cells content behavior to the table', () => {
