@@ -1,7 +1,11 @@
+import { useI18n } from 'vue-i18n';
 import { createVuetify } from 'vuetify';
 import { VChip, VExpansionPanels, VIcon, VRow } from 'vuetify/components';
+import { createVueI18nAdapter } from 'vuetify/locale/adapters/vue-i18n';
 
 import { DEFAULT_THEME_COLORS } from '@/config';
+
+import { i18n } from '@/i18n';
 
 import { createCanopsisVuetifyTheme } from '@/helpers/entities/theme/vuetify';
 
@@ -12,6 +16,9 @@ const { definition } = createCanopsisVuetifyTheme(DEFAULT_THEME_COLORS);
 export const CANOPSIS_THEME_NAME = 'canopsis';
 
 export const vuetify = createVuetify({
+  locale: {
+    adapter: createVueI18nAdapter({ i18n, useI18n }),
+  },
   /**
    * Runtime templates need global registration; Vite auto-imports only cover SFCs.
    */
