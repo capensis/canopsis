@@ -8,6 +8,7 @@ import { Handlebars } from '@/helpers/handlebars';
 import { alarmOrEntityTagsHelper } from '@/helpers/handlebars/tags-helper';
 import { sanitizeVueTemplate } from '@/helpers/html';
 
+import CIcon from '@/components/common/icon/c-icon.vue';
 import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 
@@ -38,6 +39,7 @@ const factory = (template, parent = {}, { sanitizeOptions, ...options } = {}) =>
   global: {
     plugins: [vuetify],
     components: {
+      CIcon,
       'c-alarm-tags-chips': componentStub,
       'c-links-list': componentStub,
       'service-entities-list': componentStub,
@@ -109,6 +111,30 @@ describe('sanitized HTML in the unchanged c-runtime-template', () => {
     expect(wrapper.find('i').text()).toBe('home');
     wrapper.unmount();
     expect(window.templateXss).toBeUndefined();
+  });
+
+  it.each(['v-icon', 'c-icon'].flatMap(tag => [
+    `<${tag} @click="${payload}">home</${tag}>`,
+    `<${tag} v-on:click="${payload}">home</${tag}>`,
+    `<${tag} data-v-on-click="${payload}">home</${tag}>`,
+    `<${tag} :size="${payload}">home</${tag}>`,
+    `<${tag} v-bind="${payload}">home</${tag}>`,
+    `<${tag} v-html="${payload}">home</${tag}>`,
+    `<${tag} tag="script" is="script" innerHTML="<img src=x onerror=alert(1)>">home</${tag}>`,
+    `<${tag}>{{ ${payload} }}</${tag}>`,
+  ]))('does not execute untrusted icon attributes or interpolation: %s', async (template) => {
+    const wrapper = factory(template);
+    const icon = wrapper.find('i');
+
+    expect(wrapper.findComponent(CIcon).exists()).toBe(true);
+    await icon.trigger('click');
+    await icon.trigger('load');
+    expect(wrapper.find('script, img').exists()).toBe(false);
+    expect(icon.attributes('tag')).toBeUndefined();
+    expect([undefined, '']).toContain(icon.attributes('is'));
+    expect(wrapper.text()).toBe(template.includes('{{') ? `{{ ${payload} }}` : 'home');
+    expect(window.templateXss).toBeUndefined();
+    wrapper.unmount();
   });
 
   it('does not instantiate arbitrary registered components', () => {
