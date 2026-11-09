@@ -1,5 +1,5 @@
 <template>
-  <v-icon v-bind="iconAttrs" :class="iconClass">
+  <v-icon v-bind="iconAttrs" :class="iconClass" class="overflow-hidden">
     <slot />
   </v-icon>
 </template>
