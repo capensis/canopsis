@@ -27,6 +27,7 @@
       @update:query="updateQuery"
       @update:columns-settings="updateColumnsSettings"
       @update:dense="$emit('update:dense', $event)"
+      @update:selected="$emit('update:selected', $event)"
       @select:tag="$emit('select:tag', $event)"
       @remove:tag="$emit('remove:tag', $event)"
     />
@@ -148,7 +149,7 @@ export default {
     },
   },
 
-  emits: ['update:query', 'update:columns-settings', 'update:dense', 'select:tag', 'remove:tag'],
+  emits: ['update:query', 'update:columns-settings', 'update:dense', 'update:selected', 'select:tag', 'remove:tag'],
 
   computed: {
     totalItems() {
