@@ -121,6 +121,19 @@ describe('real Vue components in Handlebars templates', () => {
     wrapper.unmount();
   });
 
+  it('renders legacy icons through c-icon with size compatibility and overflow clipping', async () => {
+    const wrapper = factory('<v-icon small color="red">home</v-icon>');
+
+    await flushPromises();
+
+    expect(wrapper.findComponent(CIcon).props('small')).toBe(true);
+    expect(wrapper.find('i').classes()).toContain('v-icon--size-small');
+    expect(wrapper.find('i').classes()).toContain('overflow-hidden');
+    expect(wrapper.find('i').classes()).toContain('text-red');
+    expect(wrapper.find('i').text()).toBe('home');
+    wrapper.unmount();
+  });
+
   it('renders the map helper as Vuetify rows and chips', async () => {
     const wrapper = factory('{{map labels color="blue"}}', {
       context: { labels: 'map[first:one second:two]' },

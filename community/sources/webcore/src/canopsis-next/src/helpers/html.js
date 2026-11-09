@@ -9,6 +9,30 @@ import { TEMPLATE_VUE_ATTRIBUTES } from '@/constants/sanitize';
 const VUE_ATTRIBUTE = /^(?:v-|:|\.|@|#|data-v-)/i;
 const UNSAFE_TEMPLATE_ATTRIBUTE = /^(?:on|is$|tag$|ref$|innerhtml$|textcontent$|srcdoc$|slot$|slot-scope$|inline-template$)/i;
 
+DOMPurify.addHook('beforeSanitizeElements', (node, hookEvent, config) => {
+  /**
+   * Replacing an IN_PLACE root moves the new node outside the sanitizer's walk.
+   * Leave node identities unchanged in this mode; sanitizeHtml uses string input.
+   */
+  if (config.IN_PLACE || node.localName !== 'v-icon' || !node.parentNode) {
+    return;
+  }
+
+  const replacement = node.ownerDocument.createElement('c-icon');
+
+  Array.from(node.attributes).forEach((attribute) => {
+    replacement.setAttributeNode(attribute.cloneNode(true));
+  });
+
+  replacement.append(...node.childNodes);
+
+  /**
+   * The DOM iterator visits the replacement next, so DOMPurify validates its
+   * tag, attributes and descendants using the current sanitization options.
+   */
+  node.replaceWith(replacement);
+});
+
 DOMPurify.addHook('uponSanitizeAttribute', (node, hookEvent) => {
   const data = hookEvent;
   const { attrName, attrValue } = data;
@@ -100,7 +124,7 @@ const cacheSanitizedHtml = (html, sanitizedHtml) => {
 };
 
 /**
- * Sanitizes HTML while preserving helper attributes and allowed HTML comments.
+ * Sanitizes HTML, replaces legacy icons and preserves allowed helper attributes and comments.
  *
  * Use sanitizeVueTemplate after Handlebars compilation before passing HTML to Vue.
  * DOMPurify preserves safe comments via #comment in the allowlist. Do not decode
