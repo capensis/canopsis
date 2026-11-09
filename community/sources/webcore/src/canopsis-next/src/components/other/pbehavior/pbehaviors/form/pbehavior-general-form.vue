@@ -106,7 +106,7 @@
           </template>
         </c-form-block-row>
 
-        <c-form-block-row :label="'Pbehavior reason and type'" :depth="depth">
+        <c-form-block-row :label="$t('pbehavior.reasonAndType')" :depth="depth">
           <v-row>
             <v-col cols="6">
               <c-pbehavior-reason-field

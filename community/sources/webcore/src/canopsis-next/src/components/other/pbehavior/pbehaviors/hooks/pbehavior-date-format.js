@@ -25,21 +25,18 @@ export const usePbehaviorDateFormat = () => {
   const timezone = ref(getLocalTimezone());
 
   /**
-   * Formats an interval date string based on whether the item has a recurring rule.
-   * Uses medium format for recurring items and long format for non-recurring items.
+   * Formats an interval date string using the application's date preference.
+   * Uses the configured display format for both recurring and non-recurring items.
    *
    * @function formatIntervalDate
    * @param {Object} item - The item containing date information
    * @param {string|Date} item[field] - The date value to format
-   * @param {boolean} [item.rrule] - Whether the item has a recurring rule
    * @param {string} field - The field name containing the date value
    * @returns {string} Formatted date string according to timezone and format rules
    */
   const formatIntervalDate = (item, field) => {
     const date = item[field];
-    const format = item.rrule ? DATETIME_FORMATS.medium : DATETIME_FORMATS.long;
-
-    return convertDateToTimezoneDateString(date, timezone.value, format);
+    return convertDateToTimezoneDateString(date, timezone.value, DATETIME_FORMATS.long);
   };
 
   /**

@@ -11,7 +11,11 @@ import request from '@/services/request';
 import { getLocalTimezone } from '@/helpers/date/date';
 import { durationToSeconds } from '@/helpers/date/duration';
 
+import { useI18nStore } from './i18n';
+
 export const useAppInfoStore = defineStore('appInfo', () => {
+  const i18nStore = useI18nStore();
+
   const appInfo = ref({});
   const pending = ref(false);
 
@@ -66,7 +70,7 @@ export const useAppInfoStore = defineStore('appInfo', () => {
   const versionDescription = computed(() => appInfo.value.version_description ?? '');
   const notificationDisplayCount = computed(() => appInfo.value.notification_display_count ?? 0);
 
-  const fetchAppInfo = async ({ setGlobalLocale } = {}) => {
+  const fetchAppInfo = async () => {
     try {
       pending.value = true;
 
@@ -76,7 +80,7 @@ export const useAppInfoStore = defineStore('appInfo', () => {
       pending.value = false;
 
       if (nextAppInfo.language) {
-        await setGlobalLocale?.(nextAppInfo.language);
+        i18nStore.setGlobalLocale(nextAppInfo.language);
       }
 
       if (nextAppInfo.popup_timeout) {

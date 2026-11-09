@@ -84,6 +84,7 @@ export default {
   types: {
     [JOB_RULE_TYPES.scenario]: 'Scénario',
     [JOB_RULE_TYPES.declareTicket]: 'Règle de déclaration de ticket',
+    [JOB_RULE_TYPES.eventFilter]: 'Filtre d\'événements',
   },
   tabs: {
     [JOBS_TABS.instructions]: 'Instructions',

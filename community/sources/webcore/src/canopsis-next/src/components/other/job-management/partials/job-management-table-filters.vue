@@ -61,7 +61,10 @@ export default {
         text: t(`jobs.executionStatus.${value}`),
       })),
     );
-    const ruleTypeItems = computed(() => Object.values(JOB_RULE_TYPES).map(value => ({
+    /**
+     * The job-management API currently accepts only these two rule types as filters.
+     */
+    const ruleTypeItems = computed(() => [JOB_RULE_TYPES.scenario, JOB_RULE_TYPES.declareTicket].map(value => ({
         value,
         text: t(`jobs.types.${value}`),
       })),

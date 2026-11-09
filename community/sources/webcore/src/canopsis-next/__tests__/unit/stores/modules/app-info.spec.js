@@ -2,7 +2,10 @@ import { createPinia, setActivePinia } from 'pinia';
 
 import { API_ROUTES } from '@/config';
 
+import { i18n } from '@/i18n';
+
 import { useAppInfoStore } from '@/stores/modules/app-info';
+import { useI18nStore } from '@/stores/modules/i18n';
 
 const { requestGetMock } = vi.hoisted(() => ({
   requestGetMock: vi.fn(),
@@ -21,6 +24,29 @@ describe('app info store', () => {
     setActivePinia(pinia);
 
     requestGetMock.mockReset();
+    i18n.global.locale.value = 'en';
+  });
+
+  afterEach(() => {
+    i18n.global.locale.value = 'en';
+  });
+
+  it('applies the instance language when fetching app info without a callback', async () => {
+    requestGetMock.mockResolvedValue({ language: 'fr' });
+
+    await useAppInfoStore().fetchAppInfo();
+
+    expect(i18n.global.locale.value).toBe('fr');
+    expect(i18n.global.t('common.connect')).toBe('Connexion');
+  });
+
+  it('preserves the personal language when app info is refreshed', async () => {
+    useI18nStore().setPersonalLocale('en');
+    requestGetMock.mockResolvedValue({ language: 'fr' });
+
+    await useAppInfoStore().fetchAppInfo();
+
+    expect(i18n.global.locale.value).toBe('en');
   });
 
   it('exposes the fetched UI date format unchanged', async () => {
