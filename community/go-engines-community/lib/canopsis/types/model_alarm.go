@@ -427,6 +427,8 @@ func (a *Alarm) CanActivate() bool {
 // GetStringField is a magic getter for string fields for easier field retrieving when matching alarm pattern
 func (a *Alarm) GetStringField(f string) (string, bool) {
 	switch f {
+	case "_id":
+		return a.ID, true
 	case "v.display_name":
 		return a.Value.DisplayName, true
 	case "v.output":
