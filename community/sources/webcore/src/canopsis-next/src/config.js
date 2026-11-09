@@ -78,7 +78,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
     'c-copy-wrapper',
     'c-links-list',
     'service-entities-list',
-    'v-icon',
+    'c-icon',
     'v-row',
     'v-chip',
     'c-remediation-instruction-execution-see-details',
