@@ -2,6 +2,7 @@ import { merge } from 'lodash';
 // Register the locale on the same ESM Moment instance used by moment-timezone.
 import 'moment/dist/locale/fr';
 import { createI18n } from 'vue-i18n';
+import { en, fr } from 'vuetify/locale';
 
 import { DEFAULT_LOCALE } from '@/config';
 
@@ -24,5 +25,10 @@ export const i18n = createI18n({
   fallbackLocale: DEFAULT_LOCALE,
   warnHtmlMessage: false,
   warnHtmlInMessage: 'off',
-  messages: merge({}, messages, featuresService.get(FEATURES_SERVICE_KEYS.i18n, {})),
+  messages: merge(
+    {},
+    { en: { $vuetify: en }, fr: { $vuetify: fr } },
+    messages,
+    featuresService.get(FEATURES_SERVICE_KEYS.i18n, {}),
+  ),
 });

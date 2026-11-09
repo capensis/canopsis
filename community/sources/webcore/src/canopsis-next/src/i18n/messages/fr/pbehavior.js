@@ -19,6 +19,7 @@ export default {
   pbehaviorInfo: 'Infos de comportement périodique',
   pbehaviorType: 'Type de comportement périodique',
   pbehaviorReason: 'Raison de comportement périodique',
+  reasonAndType: 'Raison et type de comportement périodique',
   pbehaviorName: 'Nom de comportement périodique',
   pbehaviorCanonicalType: 'Type canonique de comportement périodique',
   rruleEnd: 'Fin de récurrence',

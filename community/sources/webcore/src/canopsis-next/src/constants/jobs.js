@@ -24,6 +24,7 @@ export const JOB_RULE_TYPE = {
 export const JOB_RULE_TYPES = {
   scenario: 0,
   declareTicket: 1,
+  eventFilter: 2,
 };
 
 export const JOBS_TABS = {
