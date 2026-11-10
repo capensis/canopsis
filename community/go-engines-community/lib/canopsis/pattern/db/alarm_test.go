@@ -61,6 +61,23 @@ func TestAlarmPatternToMongoQuery(t *testing.T) {
 		pattern.Alarm{
 			{
 				{
+					Field:     "_id",
+					Condition: pattern.NewStringArrayCondition(pattern.ConditionIsOneOf, []string{"alarm-1", "alarm-2"}),
+				},
+			},
+		},
+		bson.M{"$or": []bson.M{
+			{"$and": []bson.M{
+				{"alarm._id": bson.M{"$in": []string{"alarm-1", "alarm-2"}}},
+			}},
+		}},
+		nil,
+		nil,
+	)
+	f(
+		pattern.Alarm{
+			{
+				{
 					Field:     "v.display_name",
 					Condition: pattern.NewStringCondition(pattern.ConditionNotEqual, "test name"),
 				},
