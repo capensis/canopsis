@@ -5,9 +5,10 @@
     :label="$t('llm.thinkingLevel')"
     :name="name"
     :disabled="disabled || !preparedItems.length"
+    :required="required"
+    :clearable="!required"
     item-title="text"
     item-value="value"
-    clearable
     @update:model-value="$emit('update:modelValue', $event)"
   />
 </template>
@@ -58,7 +59,7 @@ export default {
       () => props.items,
       (newItems) => {
         if (newItems.length && !props.modelValue) {
-          const middleIndex = Math.ceil(newItems.length / 2);
+          const middleIndex = Math.floor(newItems.length / 2);
 
           emit(
             'update:modelValue',
@@ -70,6 +71,7 @@ export default {
           emit('update:modelValue', null);
         }
       },
+      { immediate: true },
     );
 
     return {

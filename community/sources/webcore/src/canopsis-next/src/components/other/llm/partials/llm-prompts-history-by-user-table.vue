@@ -1,7 +1,7 @@
 <template>
   <c-advanced-data-table
     :headers="headers"
-    :items="users"
+    :items="preparedUsers"
     :loading="usersPending"
     :total-items="totalItems"
     :options="options"
@@ -14,6 +14,14 @@
     advanced-pagination
     @update:options="updateOptions"
   >
+    <template #input_tokens="{ item }">
+      {{ n(item.inputTokensUsed) }}
+    </template>
+
+    <template #output_tokens="{ item }">
+      {{ n(item.output_tokens ?? 0) }}
+    </template>
+
     <template #last_used="{ item }">
       {{ formatDate(item.last_used) }}
     </template>
@@ -61,7 +69,7 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n();
+    const { t, n } = useI18n();
     const { fetchLlmUsersWithoutStore } = useLlm();
 
     const {
@@ -88,9 +96,14 @@ export default {
     const totalItems = computed(() => meta.value?.total_count ?? 0);
     const headers = computed(() => [
       { text: t('llm.promptsHistory.columns.userName'), value: 'display_name' },
-      { text: t('llm.promptsHistory.columns.tokensUsed'), value: 'tokens' },
+      { text: t('llm.promptsHistory.columns.inputTokensUsed'), value: 'input_tokens' },
+      { text: t('llm.promptsHistory.columns.outputTokensUsed'), value: 'output_tokens' },
       { text: t('llm.promptsHistory.columns.lastUsed'), value: 'last_used' },
     ]);
+    const preparedUsers = computed(() => users.value.map(user => ({
+      ...user,
+      inputTokensUsed: (user.input_tokens ?? 0) + (user.cache_write_tokens ?? 0) + (user.cache_read_tokens ?? 0),
+    })));
     const formatDate = value => convertDateToString(value, 'long', '-');
 
     useChildObserver({ handler: fetchList, key: '$refresh' });
@@ -99,7 +112,8 @@ export default {
 
     return {
       t,
-      users,
+      n,
+      preparedUsers,
       usersPending,
       totalItems,
       headers,
