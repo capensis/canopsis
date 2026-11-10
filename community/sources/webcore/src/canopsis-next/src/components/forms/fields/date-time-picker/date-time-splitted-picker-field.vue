@@ -181,11 +181,25 @@ export default {
     max-width: 56px;
 
     .v-field {
+      --v-field-padding-top: 8px;
+
+      min-height: 48px;
+      height: 48px;
       font-size: 16px !important;
       padding-inline: 0;
 
+      .v-field__field,
       .v-field__input {
-        padding-inline: 0;
+        min-height: 48px;
+      }
+
+      .v-field__input {
+        align-items: center;
+        padding: 16px 0 0;
+      }
+
+      .v-label.v-field-label--floating {
+        top: 16px;
       }
     }
   }
