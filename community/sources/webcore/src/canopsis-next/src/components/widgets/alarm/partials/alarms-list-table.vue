@@ -371,7 +371,7 @@ export default {
     },
   },
 
-  emits: ['update:query', 'update:columns-settings', 'update:dense', 'select:tag', 'remove:tag'],
+  emits: ['update:query', 'update:columns-settings', 'update:dense', 'update:selected', 'select:tag', 'remove:tag'],
 
   data() {
     return {
@@ -722,6 +722,10 @@ export default {
   },
 
   watch: {
+    selectedAlarms(selectedAlarms) {
+      this.$emit('update:selected', selectedAlarms);
+    },
+
     alarms() {
       this.synchronizeSelectedAlarms();
       this.synchronizeExpandedAlarms();
