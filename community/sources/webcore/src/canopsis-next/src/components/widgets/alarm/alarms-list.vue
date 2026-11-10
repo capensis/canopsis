@@ -150,12 +150,13 @@
 <script>
 import { omit, pick, isObject, isEqual } from 'lodash';
 
-import { LIVE_REPORTING_QUICK_RANGES, MODALS, USER_PERMISSIONS } from '@/constants';
+import { LIVE_REPORTING_QUICK_RANGES, MODALS, PATTERN_CONDITIONS, USER_PERMISSIONS } from '@/constants';
 
+import { mapIds } from '@/helpers/array';
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
 import { setSeveralFields } from '@/helpers/immutable';
-import { selectedToQuery, widgetToExportQueryColumns } from '@/helpers/entities/widget/query';
+import { widgetToExportQueryColumns } from '@/helpers/entities/widget/query';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -437,11 +438,21 @@ export default {
 
     getExportQuery() {
       const query = this.getQuery();
+      const selected = this.$refs.alarmsTable?.selected;
       const {
         exportCsvSeparator,
         exportCsvDatetimeFormat,
       } = this.widget.parameters;
-      const { selected = [] } = this.$refs.alarmsTable;
+
+      if (selected?.length) {
+        query.alarm_pattern = JSON.stringify([[{
+          field: '_id',
+          cond: {
+            type: PATTERN_CONDITIONS.isOneOf,
+            value: mapIds(selected),
+          },
+        }]]);
+      }
 
       return {
         ...pick(query, [
@@ -470,7 +481,7 @@ export default {
         time_format: isObject(exportCsvDatetimeFormat)
           ? exportCsvDatetimeFormat.value
           : exportCsvDatetimeFormat,
-        search: selectedToQuery(selected, query.search),
+        search: query.search,
       };
     },
 
