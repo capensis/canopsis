@@ -19,6 +19,7 @@ export default {
   pbehaviorInfo: 'Pbehavior info',
   pbehaviorType: 'Pbehavior type',
   pbehaviorReason: 'Pbehavior reason',
+  reasonAndType: 'Pbehavior reason and type',
   pbehaviorName: 'Pbehavior name',
   pbehaviorCanonicalType: 'Pbehavior canonical type',
   rruleEnd: 'End of recurrence',
