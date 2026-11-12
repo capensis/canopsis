@@ -6,6 +6,7 @@ import (
 	"context"
 	"os"
 	"os/signal"
+	"syscall"
 
 	api "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/ui"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -23,7 +24,7 @@ import (
 // @version 4.0.0
 func main() {
 	// Graceful shutdown.
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
 	var flags api.Flags
