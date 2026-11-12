@@ -25,7 +25,7 @@
           </ul>
         </div>
       </c-alert>
-      <widget-template-sort-columns-form :value="sortColumns" :items="columns" @input="updateValue" />
+      <widget-template-sort-columns-form :value="preparedSortColumns" :items="columns" @input="updateValue" />
     </v-layout>
   </widget-settings-item>
 </template>
@@ -35,7 +35,7 @@ import { computed } from 'vue';
 
 import { ALARM_FIELDS_TO_LABELS_KEYS } from '@/constants';
 
-import { getWidgetColumnLabel } from '@/helpers/entities/widget/list';
+import { findWidgetColumnBySortBy, getWidgetColumnLabel } from '@/helpers/entities/widget/list';
 
 import { useWidgetTemplateField } from '@/hooks/widget/widget-template';
 
@@ -71,7 +71,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { updateTemplate, updateValue } = useWidgetTemplateField(props, 'sort_columns', emit);
+    const { updateTemplate: updateTemplateField, updateValue } = useWidgetTemplateField(props, 'sort_columns', emit);
 
     const selectedTemplate = computed(() => {
       if (!props.template || !props.templates.length) {
@@ -81,7 +81,26 @@ export default {
       return props.templates.find(t => t._id === props.template);
     });
 
-    const currentColumnValues = computed(() => props.columns.map(column => column.value));
+    const findCurrentColumn = sortBy => findWidgetColumnBySortBy(props.columns, sortBy);
+    const prepareSortColumns = (sortColumns = []) => sortColumns.map(sortColumn => ({
+      ...sortColumn,
+      sort_by: findCurrentColumn(sortColumn.sort_by)?.value ?? sortColumn.sort_by,
+    }));
+
+    const preparedSortColumns = computed(() => prepareSortColumns(props.sortColumns));
+
+    const updateTemplate = (template) => {
+      if (!template?.sort_columns) {
+        updateTemplateField(template);
+
+        return;
+      }
+
+      updateTemplateField({
+        ...template,
+        sort_columns: prepareSortColumns(template.sort_columns),
+      });
+    };
 
     const missingColumns = computed(() => {
       if (!selectedTemplate.value?.sort_columns) {
@@ -89,7 +108,7 @@ export default {
       }
 
       return selectedTemplate.value.sort_columns
-        .filter(sortColumn => sortColumn.sort_by && !currentColumnValues.value.includes(sortColumn.sort_by))
+        .filter(sortColumn => sortColumn.sort_by && !findCurrentColumn(sortColumn.sort_by))
         .map(sortColumn => ({
           ...sortColumn,
           label: getWidgetColumnLabel({ value: sortColumn.sort_by }, ALARM_FIELDS_TO_LABELS_KEYS),
@@ -98,6 +117,7 @@ export default {
 
     return {
       missingColumns,
+      preparedSortColumns,
       updateValue,
       updateTemplate,
     };
