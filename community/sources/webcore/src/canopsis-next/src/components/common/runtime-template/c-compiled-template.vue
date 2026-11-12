@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { sanitizeHtml, linkifyHtml, normalizeHtml } from '@/helpers/html';
+import { sanitizeVueTemplate, linkifyHtml } from '@/helpers/html';
 import { compile, runTemplate, hasTemplate } from '@/helpers/handlebars';
 
 export default {
@@ -76,14 +76,12 @@ export default {
           ? await runTemplate(this.templateId, context)
           : await compile(this.template, context);
 
-        this.compiledTemplate = `<${this.parentElement}>${
-          normalizeHtml(
-            sanitizeHtml(
-              linkifyHtml(compiledTemplate, this.linkifyOptions),
-              this.sanitizeOptions,
-            ),
-          )
-        }</${this.parentElement}>`;
+        const html = linkifyHtml(compiledTemplate, this.linkifyOptions);
+
+        this.compiledTemplate = sanitizeVueTemplate(
+          `<${this.parentElement}>${html}</${this.parentElement}>`,
+          this.sanitizeOptions,
+        );
       } catch (err) {
         console.error(err);
 
