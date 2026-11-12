@@ -11,10 +11,9 @@
       :items="infos"
       :headers="tableHeaders"
       :no-data-text="$t('entity.emptyInfos')"
-      :options.sync="options"
       item-key="name"
     >
-      <template #item="{ item, index }">
+      <template #item="{ item }">
         <tr>
           <td>{{ item.name }}</td>
           <td>{{ item.description }}</td>
@@ -23,11 +22,11 @@
             <v-layout>
               <c-action-btn
                 type="edit"
-                @click="showEditInfoModal(index, item)"
+                @click="showEditInfoModal(item)"
               />
               <c-action-btn
                 type="delete"
-                @click="removeItemFromArray(index)"
+                @click="removeInfo(item)"
               />
             </v-layout>
           </td>
@@ -38,7 +37,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 
 import { MODALS } from '@/constants';
 
@@ -66,8 +65,6 @@ export default {
       removeItemFromArray,
     } = useArrayModelField(props, emit);
 
-    const options = ref({});
-
     const tableHeaders = computed(() => [
       { text: t('common.name'), value: 'name' },
       { text: t('common.description'), value: 'description' },
@@ -87,31 +84,44 @@ export default {
     });
 
     /**
-     * Opens the edit entity info modal for the given item. On submit, updates the info at the given index.
+     * Opens the edit entity info modal for the given item. On submit, finds and updates the info by name.
      *
-     * @param {number} index - Index of the info item in the infos array
      * @param {Object} info - The entity info object to edit (name, description, value)
      */
-    const showEditInfoModal = (index, info) => modals.show({
+    const showEditInfoModal = info => modals.show({
       name: MODALS.createEntityInfo,
       config: {
         infos: props.infos,
         entityInfo: info,
         title: t('modals.createEntityInfo.edit.title'),
         action: (editedInfo) => {
-          const realIndex = (options.value.page - 1) * options.value.itemsPerPage + index;
+          const index = props.infos.findIndex(({ name }) => name === info.name);
 
-          updateItemInArray(realIndex, editedInfo);
+          if (index !== -1) {
+            updateItemInArray(index, editedInfo);
+          }
         },
       },
     });
 
+    /**
+     * Finds and removes the given info by name.
+     *
+     * @param {Object} info - The entity info object to remove
+     */
+    const removeInfo = (info) => {
+      const index = props.infos.findIndex(({ name }) => name === info.name);
+
+      if (index !== -1) {
+        removeItemFromArray(index);
+      }
+    };
+
     return {
-      options,
       tableHeaders,
       showAddInfoModal,
       showEditInfoModal,
-      removeItemFromArray,
+      removeInfo,
     };
   },
 };
