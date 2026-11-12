@@ -33,6 +33,7 @@ describe('confirmation', () => {
   test('Submit action called after trigger submit button', async () => {
     const cancel = jest.fn();
     const action = jest.fn();
+    const validateAll = jest.fn().mockResolvedValue(false);
     const wrapper = factory({
       propsData: {
         modal: {
@@ -44,6 +45,7 @@ describe('confirmation', () => {
       },
       mocks: {
         $modals,
+        $validator: { validateAll },
       },
     });
 
@@ -54,6 +56,7 @@ describe('confirmation', () => {
     await flushPromises();
 
     expect(action).toHaveBeenCalledWith();
+    expect(validateAll).not.toHaveBeenCalled();
     expect($modals.hide).toHaveBeenCalled();
 
     wrapper.destroy();

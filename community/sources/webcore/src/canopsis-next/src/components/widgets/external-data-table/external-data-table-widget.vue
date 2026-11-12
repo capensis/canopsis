@@ -39,10 +39,13 @@
 import { map } from 'lodash';
 import { computed, toRef, onMounted } from 'vue';
 
+import { REFRESH_OBSERVER_KEY } from '@/constants';
+
 import { openUrlInNewTab } from '@/helpers/url';
 import { getExternalDataTableRecordsFileUrl } from '@/helpers/entities/external-data-table/url';
 import { prepareWidgetQuery, selectedToQuery, widgetToExportQueryColumns } from '@/helpers/entities/widget/query';
 
+import { useObserver } from '@/hooks/observer';
 import { useFilePollingWithPending } from '@/hooks/polling';
 import { useExternalDataTable } from '@/hooks/store/modules/external-data-table';
 import { useWidgetPeriodicRefresh } from '@/hooks/widget/periodic-refresh';
@@ -90,6 +93,7 @@ export default {
     } = useExternalDataTableWidgetTable({ widget: toRef(props, 'widget') });
 
     const initialQuery = computed(() => prepareWidgetQuery(props.widget, userPreference.value));
+    const { observer } = useObserver({ key: REFRESH_OBSERVER_KEY });
 
     /**
      * RECORDS LIST METHODS
@@ -114,6 +118,7 @@ export default {
     } = useExternalDataTableRecordsList({
       externalDataTable,
       initialQuery,
+      refreshObserver: observer,
     });
 
     const updateOptions = (newOptions) => {
@@ -192,6 +197,7 @@ export default {
       handler: fetchItemWithRecords,
     });
 
+    observer.register(fetchItemWithRecords);
     onMounted(fetchItemWithRecords);
 
     return {
