@@ -23,7 +23,7 @@
         :disabled="disabled"
       />
       <external-data-table-column-data-type-field-string-array-menu
-        v-if="isStringArray && !disabled"
+        v-if="showStringArrayChip"
         v-field="value"
         :table-separator="tableSeparator"
         :disabled="disabled"
@@ -127,6 +127,10 @@ export default {
     const types = computed(() => Object.values(typesMap.value));
     const isNumber = computed(() => props.value.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.number);
     const isStringArray = computed(() => props.value.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.stringArray);
+    const showStringArrayChip = computed(() => (
+      isStringArray.value
+      && (!props.disabled || (props.value.string_array_type && props.value.string_array_separator))
+    ));
 
     const isCustomValueTypeSelected = computed(() => (
       props.value.string_array_type === EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES.custom
@@ -168,6 +172,7 @@ export default {
       types,
       isNumber,
       isStringArray,
+      showStringArrayChip,
       isCustomValueTypeSelected,
       stringArrayChip,
     };

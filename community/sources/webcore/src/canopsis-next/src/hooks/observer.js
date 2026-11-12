@@ -6,6 +6,8 @@ import {
   onBeforeUnmount,
 } from 'vue';
 
+import { REFRESH_OBSERVER_KEY } from '@/constants';
+
 import Observer from '@/services/observer';
 
 /**
@@ -41,13 +43,13 @@ export const useObserver = ({ key }) => {
  *
  * @param {Object} params - The parameters object.
  * @param {Function} params.handler - The handler function to register as a child.
- * @param {Ref|string} [params.key='$refresh'] - The key used to inject the Observer instance.
+ * @param {Ref|string} [params.key=REFRESH_OBSERVER_KEY] - The key used to inject the Observer instance.
  *                                              It can be a ref or a plain string.
  *
  * @returns {Object} An object containing the Observer instance.
  * @returns {Observer} return.observer - The injected Observer instance.
  */
-export const useChildObserver = ({ handler, key = '$refresh' }) => {
+export const useChildObserver = ({ handler, key = REFRESH_OBSERVER_KEY }) => {
   const observer = inject(unref(key), new Observer());
 
   onMounted(() => {
