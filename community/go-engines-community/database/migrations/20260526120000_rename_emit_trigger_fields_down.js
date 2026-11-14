@@ -1,12 +1,25 @@
 db.action_scenario.find({actions: {$exists: true, $ne: []}}).forEach(function (doc) {
-    var rename = {};
+    var set = {};
     var unset = {};
+
     for (var index = 0; index < doc.actions.length; index++) {
-        rename["actions." + index + ".emit_trigger_success"] = "actions." + index + ".emit_trigger";
+        var action = doc.actions[index];
+
+        if (action.emit_trigger_success !== undefined) {
+            set["actions." + index + ".emit_trigger"] = action.emit_trigger_success;
+            unset["actions." + index + ".emit_trigger_success"] = "";
+        }
+
         unset["actions." + index + ".emit_trigger_fail"] = "";
     }
-    db.action_scenario.updateOne({_id: doc._id}, {$rename: rename});
-    db.action_scenario.updateOne({_id: doc._id}, {$unset: unset});
+
+    if (Object.keys(set).length > 0) {
+        db.action_scenario.updateOne({_id: doc._id}, {$set: set});
+    }
+
+    if (Object.keys(unset).length > 0) {
+        db.action_scenario.updateOne({_id: doc._id}, {$unset: unset});
+    }
 });
 
 db.declare_ticket_rule.updateMany({}, {$rename: {emit_trigger_success: "emit_trigger"}});
