@@ -12,6 +12,6 @@ func NewBreakApplicator() RuleApplicator {
 	return &breakApplicator{}
 }
 
-func (a *breakApplicator) Apply(_ context.Context, _ ParsedRule, _ *types.Event, _ map[string]UpdatedValue, _ RegexMatch, _ map[string]any) (RuleResult, error) {
-	return RuleResult{Outcome: OutcomeBreak}, nil
+func (a *breakApplicator) Apply(_ context.Context, _ ParsedRule, _ *types.Event, updatedEntityInfos map[string]UpdatedValue, _ RegexMatch, _ map[string]any) (RuleResult, error) {
+	return RuleResult{Outcome: OutcomeBreak, UpdatedEntityInfos: updatedEntityInfos}, nil
 }
