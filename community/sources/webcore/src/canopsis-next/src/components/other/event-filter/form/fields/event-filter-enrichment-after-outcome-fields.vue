@@ -1,20 +1,22 @@
 <template>
-  <c-layout>
-    <c-select
-      :model-value="onSuccess"
-      :label="$t('eventFilter.onSuccess')"
-      :items="eventFilterAfterTypes"
-      class="mr-3"
-      @update:model-value="emit('update:on-success', $event)"
-    />
-    <c-select
-      :model-value="onFailure"
-      :label="$t('eventFilter.onFailure')"
-      :items="eventFilterAfterTypes"
-      class="ml-3"
-      @update:model-value="emit('update:on-failure', $event)"
-    />
-  </c-layout>
+  <v-row density="default">
+    <v-col cols="6">
+      <c-select
+        :model-value="onSuccess"
+        :label="$t('eventFilter.onSuccess')"
+        :items="eventFilterAfterTypes"
+        @update:model-value="$emit('update:on-success', $event)"
+      />
+    </v-col>
+    <v-col cols="6">
+      <c-select
+        :model-value="onFailure"
+        :label="$t('eventFilter.onFailure')"
+        :items="eventFilterAfterTypes"
+        @update:model-value="$emit('update:on-failure', $event)"
+      />
+    </v-col>
+  </v-row>
 </template>
 
 <script>
