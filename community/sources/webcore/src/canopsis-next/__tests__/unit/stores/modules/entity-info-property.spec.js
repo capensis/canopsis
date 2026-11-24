@@ -25,7 +25,10 @@ describe('entity info property store', () => {
   it('shares an active request and allows fetching again after completion', async () => {
     const store = useEntityInfoPropertyStore();
     const response = { data: [{ _id: 'property', alias: 'Alias' }], meta: { total_count: 1 } };
-    const { promise, resolve } = Promise.withResolvers();
+    let resolve;
+    const promise = new Promise((resolvePromise) => {
+      resolve = resolvePromise;
+    });
 
     requestGetMock.mockReturnValueOnce(promise).mockResolvedValue(response);
 
@@ -53,7 +56,10 @@ describe('entity info property store', () => {
 
   it('matches parameters regardless of object key order', async () => {
     const store = useEntityInfoPropertyStore();
-    const { promise, resolve } = Promise.withResolvers();
+    let resolve;
+    const promise = new Promise((resolvePromise) => {
+      resolve = resolvePromise;
+    });
 
     requestGetMock.mockReturnValue(promise);
 
@@ -68,10 +74,16 @@ describe('entity info property store', () => {
 
   it('keeps different requests separate and stays pending until both finish', async () => {
     const store = useEntityInfoPropertyStore();
-    const firstRequest = Promise.withResolvers();
-    const secondRequest = Promise.withResolvers();
+    let resolveFirstRequest;
+    let resolveSecondRequest;
+    const firstRequest = new Promise((resolve) => {
+      resolveFirstRequest = resolve;
+    });
+    const secondRequest = new Promise((resolve) => {
+      resolveSecondRequest = resolve;
+    });
 
-    requestGetMock.mockReturnValueOnce(firstRequest.promise).mockReturnValueOnce(secondRequest.promise);
+    requestGetMock.mockReturnValueOnce(firstRequest).mockReturnValueOnce(secondRequest);
 
     const first = store.fetchList({ params: { paginate: false } });
     const second = store.fetchList({ params: { paginate: false, type: 1 } });
@@ -79,12 +91,12 @@ describe('entity info property store', () => {
 
     expect(requestGetMock).toHaveBeenCalledTimes(2);
 
-    firstRequest.resolve({ data: [] });
+    resolveFirstRequest({ data: [] });
     await Promise.all([first, repeatedFirst]);
 
     expect(store.pending).toBe(true);
 
-    secondRequest.resolve({ data: [] });
+    resolveSecondRequest({ data: [] });
     await second;
 
     expect(store.pending).toBe(false);
@@ -93,7 +105,10 @@ describe('entity info property store', () => {
   it('allows retrying after a shared request fails', async () => {
     const store = useEntityInfoPropertyStore();
     const error = new Error('Request failed');
-    const { promise, reject } = Promise.withResolvers();
+    let reject;
+    const promise = new Promise((resolvePromise, rejectPromise) => {
+      reject = rejectPromise;
+    });
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     requestGetMock.mockReturnValueOnce(promise).mockResolvedValue({ data: [] });
