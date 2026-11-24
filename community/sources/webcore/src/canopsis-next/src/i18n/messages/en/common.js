@@ -620,9 +620,6 @@ export default {
       text: 'Ticket associated',
       selectedText: 'Ticket associated with an alarm',
     },
-    [TRIGGERS_TYPES.ticketremove]: {
-      text: 'Ticket removed',
-    },
     [TRIGGERS_TYPES.snooze]: {
       text: 'Snoozed',
       selectedText: 'Alarm snoozed',
