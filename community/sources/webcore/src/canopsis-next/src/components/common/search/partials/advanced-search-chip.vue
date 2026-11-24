@@ -121,7 +121,7 @@
 </template>
 
 <script>
-import { isArray } from 'lodash';
+import { isArray, isEqual } from 'lodash';
 import { computed, ref, watch, toRef, inject, nextTick, onMounted, onBeforeUnmount } from 'vue';
 
 import { KEY_CODES, REGISTER_LAST_INPUT_FOCUS_KEY } from '@/constants';
@@ -556,15 +556,12 @@ export default {
     );
 
     /**
-     * We need to fetch items when the items list changes after fetching (example: infos)
+     * Refresh local suggestions only when their content changes (e.g. infos or aliases).
      */
     watch(
       () => props.items,
       (newItems, oldItems) => {
-        const newItemsWithItemsValue = newItems.filter(item => item?.[props.childrenKey]?.length);
-        const oldItemsWithItemsValue = oldItems.filter(item => item?.[props.childrenKey]?.length);
-
-        if (newItemsWithItemsValue.length !== oldItemsWithItemsValue.length) {
+        if (!props.fetchItems && !isEqual(newItems, oldItems)) {
           fetchItems();
         }
       },

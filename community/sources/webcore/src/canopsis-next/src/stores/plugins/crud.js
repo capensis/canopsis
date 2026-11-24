@@ -1,3 +1,4 @@
+import { cloneDeep, isEqual } from 'lodash';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
@@ -42,6 +43,7 @@ export const createCRUDStore = ({
   withFetchingParams = false,
   withMeta = true,
   withWithoutStore = false,
+  withRequestDeduplication = false,
   bulkRoute,
   setup: additionalSetup,
   actions: additionalActions = {},
@@ -51,10 +53,11 @@ export const createCRUDStore = ({
     const meta = ref({});
     const pending = ref(false);
     const fetchingParams = ref();
+    const activeRequests = new Set();
 
     const hasItems = computed(() => items.value.length > 0);
 
-    const fetchList = async ({ params } = {}) => {
+    const fetchListRequest = async ({ params } = {}) => {
       try {
         pending.value = true;
 
@@ -76,8 +79,32 @@ export const createCRUDStore = ({
 
         throw err;
       } finally {
-        pending.value = false;
+        if (!withRequestDeduplication) {
+          pending.value = false;
+        }
       }
+    };
+
+    const fetchList = ({ params } = {}) => {
+      if (!withRequestDeduplication) {
+        return fetchListRequest({ params });
+      }
+
+      const activeRequest = [...activeRequests].find(entry => isEqual(entry.params, params));
+
+      if (activeRequest) {
+        return activeRequest.promise;
+      }
+
+      const entry = { params: cloneDeep(params) };
+
+      entry.promise = fetchListRequest({ params }).finally(() => {
+        activeRequests.delete(entry);
+        pending.value = activeRequests.size > 0;
+      });
+      activeRequests.add(entry);
+
+      return entry.promise;
     };
 
     const fetchListWithPreviousParams = () => fetchList({ params: fetchingParams.value });
