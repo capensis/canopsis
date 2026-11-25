@@ -132,7 +132,6 @@ func NewFailoverOptions(sURL string, db int, logger zerolog.Logger,
 	reconnectCount int, minReconnectTimeout time.Duration) (*redis.FailoverOptions, error) {
 	failoverOptions, err := redis.ParseFailoverURL(strings.ReplaceAll(sURL, "redis-sentinel://", "redis://"))
 	if err != nil {
-		// @todo: remove NewFailoverOptions in the next version and use redis.ParseFailoverURL()
 		redisURL, err := url.ParseRequestURI(sURL)
 		if err != nil {
 			return nil, err
@@ -196,6 +195,8 @@ func NewFailoverOptions(sURL string, db int, logger zerolog.Logger,
 				return nil, fmt.Errorf("redis-sentinel timeout parameter error %w", err)
 			}
 		}
+	} else if db >= 0 {
+		failoverOptions.DB = db
 	}
 
 	failoverOptions.OnConnect = func(ctx context.Context, cn *redis.Conn) error {
