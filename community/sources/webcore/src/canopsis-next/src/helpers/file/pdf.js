@@ -15,6 +15,7 @@ import { compile } from '../handlebars';
 import { createInstanceWithHelpers } from '../handlebars/alarm-export-pdf-helpers';
 import { convertDateToStringWithNewTimezone } from '../date/date';
 import { convertDurationToString } from '../date/duration';
+import { normalizeHandlebarsNbsp } from '../handlebars/normalize';
 
 /**
  * @typedef {Object} AlarmExport
@@ -169,7 +170,7 @@ const prepareAlarmForExport = (alarm = {}, timezone) => {
 export const exportAlarmToPdf = async (template = ALARM_EXPORT_PDF_TEMPLATE, alarm = {}, timezone) => {
   const doc = new JsPDF();
   const handlebars = createInstanceWithHelpers();
-  const ast = parseWithoutProcessing(template ?? ALARM_EXPORT_PDF_TEMPLATE);
+  const ast = parseWithoutProcessing(normalizeHandlebarsNbsp(template ?? ALARM_EXPORT_PDF_TEMPLATE));
   const scanner = new AlarmExportToPdfVisitor();
   const html = await compile(
     scanner.accept(ast),
