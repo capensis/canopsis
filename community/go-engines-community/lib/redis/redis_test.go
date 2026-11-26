@@ -165,7 +165,7 @@ func TestNewFailoverOptions(t *testing.T) {
 		t.Fatalf("redis bad SentinelAddrs: %s", redisOptions.SentinelAddrs)
 	}
 
-	if redisOptions.SentinelAddrs[0] != "host1:7777" && redisOptions.SentinelAddrs[1] != "host2:7777" {
+	if redisOptions.SentinelAddrs[0] != "host1:7777" || redisOptions.SentinelAddrs[1] != "host2:7778" {
 		t.Fatalf("redis bad SentinelAddrs: %s", redisOptions.SentinelAddrs)
 	}
 
@@ -175,6 +175,33 @@ func TestNewFailoverOptions(t *testing.T) {
 
 	if redisOptions.MasterName != "prime" {
 		t.Fatalf("redis bad master: %s", redisOptions.MasterName)
+	}
+
+	redisOptions, err = redis.NewFailoverOptions("redis-sentinel://:sentinel-password@host1:7777/3?master_name=prime&addr=host2:7778&password=redis-password", redis.QueueStorage, zerolog.Nop(), 0, 0)
+	if err != nil {
+		t.Fatalf("redis options error: %v", err)
+	}
+
+	if redisOptions.DB != redis.QueueStorage {
+		t.Fatalf("redis bad database: %d", redisOptions.DB)
+	}
+
+	redisOptions, err = redis.NewFailoverOptions("redis-sentinel://:sentinel-password@host1:7777/3?master_name=prime&addr=host2:7778&password=redis-password", redis.CacheAlarm, zerolog.Nop(), 0, 0)
+	if err != nil {
+		t.Fatalf("redis options error: %v", err)
+	}
+
+	if redisOptions.DB != redis.CacheAlarm {
+		t.Fatalf("redis bad database: %d", redisOptions.DB)
+	}
+
+	redisOptions, err = redis.NewFailoverOptions("redis-sentinel://:sentinel-password@host1:7777?master_name=prime&db=3&addr=host2:7778&password=redis-password", redis.QueueStorage, zerolog.Nop(), 0, 0)
+	if err != nil {
+		t.Fatalf("redis options error: %v", err)
+	}
+
+	if redisOptions.DB != redis.QueueStorage {
+		t.Fatalf("redis bad database: %d", redisOptions.DB)
 	}
 }
 
@@ -192,7 +219,7 @@ func TestNewFailoverOptionsDeprecatedFormat(t *testing.T) {
 		t.Fatalf("redis bad SentinelAddrs: %s", redisOptions.SentinelAddrs)
 	}
 
-	if redisOptions.SentinelAddrs[0] != "host1:7777" && redisOptions.SentinelAddrs[1] != "host2:7777" {
+	if redisOptions.SentinelAddrs[0] != "host1:7777" || redisOptions.SentinelAddrs[1] != "host2:7778" {
 		t.Fatalf("redis bad SentinelAddrs: %s", redisOptions.SentinelAddrs)
 	}
 
