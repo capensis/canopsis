@@ -11,6 +11,7 @@ export const useEntityInfoPropertyStore = createCRUDStore({
   withFetchingParams: true,
   withMeta: true,
   withWithoutStore: true,
+  withRequestDeduplication: true,
   setup({ items }) {
     const itemsWithAlias = computed(() => items.value.filter(item => !!item.alias));
     const itemsWithoutAlias = computed(() => items.value.filter(item => !item.alias));
