@@ -621,9 +621,6 @@ export default {
       text: 'Ticket associé',
       selectedText: 'Ticket associé à une alarme',
     },
-    [TRIGGERS_TYPES.ticketremove]: {
-      text: 'Ticket retiré',
-    },
     [TRIGGERS_TYPES.snooze]: {
       text: 'Mise en veille',
       selectedText: 'Alarme mise en veille',

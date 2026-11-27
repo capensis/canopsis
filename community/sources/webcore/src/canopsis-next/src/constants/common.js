@@ -393,7 +393,6 @@ export const TRIGGERS_TYPES = {
   declareticketwebhook: 'declareticketwebhook',
   declareticketwebhookfail: 'declareticketwebhookfail',
   assocticket: 'assocticket',
-  ticketremove: 'ticketremove',
   snooze: 'snooze',
   unsnooze: 'unsnooze',
   resolve: 'resolve',
@@ -446,8 +445,8 @@ export const GROUPED_TRIGGERS = {
   [TRIGGERS_GROUPS.tickets]: [
     TRIGGERS_TYPES.declareticket,
     TRIGGERS_TYPES.declareticketwebhook,
+    TRIGGERS_TYPES.declareticketwebhookfail,
     TRIGGERS_TYPES.assocticket,
-    TRIGGERS_TYPES.ticketremove,
   ],
   [TRIGGERS_GROUPS.instructions]: [
     TRIGGERS_TYPES.instructionfail,
